@@ -1,12 +1,52 @@
+<div align="center">
+
 # Research OS Studio
 
-可安装到普通科研项目的 provider-neutral Agent Skills、typed Artifact 契约、确定性 validators 与薄 Adapter。用户逐个调用 workflow；输出 candidate／报告／下一步选项后停止，无中央 planner、自动科研循环或隐式接受。
+**安装到普通科研项目的 provider-neutral Agent Skills、typed Artifact 契约与确定性 validator**
 
-**当前是已通过本地 P0 构建与发布门的候选实现。** 实测 catalog 为 **15 workflows、8 disciplines**；八项 community ports 已由用户对固定 acceptance request 作最终 digest 接纳，`validate-repository` 与 `validate-ports` 均 PASS。固定 Lean 4.19 reference 已真实 PASS。Claude/Codex live host 与 SSH／SLURM 真实环境仍是条件性 NOT_EVALUATED，不影响本地 Core/skills 构建完成，但不能据此声称真实宿主或集群验收。
+[![Build Status](https://img.shields.io/github/actions/workflow/status/toRolex/Research-OS-Studio/acceptance.yml?style=flat-square&label=Build)](https://github.com/toRolex/Research-OS-Studio/actions)
+![Python](https://img.shields.io/badge/Python->=3.12-3776ab?style=flat-square&logo=python&logoColor=white)
+[![uv](https://img.shields.io/badge/uv-managed-DE5FE9?style=flat-square)](https://docs.astral.sh/uv/)
+![Dependencies](https://img.shields.io/badge/runtime%20dependencies-0-success?style=flat-square)
 
-## 安装与开始
+[概述](#概述) • [快速开始](#快速开始) • [使用](#使用) • [验收](#验收) • [支持矩阵](#支持矩阵) • [文档](#文档)
 
-需要 Git、[uv](https://docs.astral.sh/uv/)、Python 3.12+。开发／验收环境使用已有锁文件。
+</div>
+
+Research OS Studio 是一个可安装到任意科研项目的 portable core：**15 个用户显式调用的 workflow、8 个模型在 workflow 内调用的 discipline**、typed Artifact 契约、确定性 validators 与薄 Adapter。每个 workflow 读取用户固定的输入，产出 candidate／报告／下一步选项后停止——**没有中央 planner、自动科研循环或隐式接受**，研究语义、预算、推进与发布权始终在用户手中。
+
+> [!NOTE]
+> 当前是已通过本地 P0 构建与发布门的候选实现。`validate-repository` 与 `validate-ports` 均 PASS，8 项 community ports 已由用户对固定 acceptance request 作最终 digest 接纳，固定 Lean 4.19 reference 已真实 PASS。Claude/Codex live host 与 SSH／SLURM 真实环境仍是条件性 **BLOCKED / NOT_EVALUATED**——不影响本地 Core/skills 构建完成，但不能据此声称真实宿主或集群验收。
+
+## 概述
+
+**是什么**
+
+- 一套以 Markdown／JSON／Git 为材料的 Agent Skills，通过 wheel 安装进普通科研项目，不修改项目自身依赖。
+- 唯一的规范交接是 **typed Artifact**：workflow 之间、Workstream 之间只通过固定（path + SHA-256 + 完整 commit）的 Artifact 传递。
+- **确定性 validators**：只判断可复现事实，稳定退出码 `0/1/2/3`，不代替研究判断或 human acceptance。
+- **薄 Adapter**：把 provider-neutral Core 投影到 Claude Code／Codex，探测能力、映射调用并执行阻止；删掉 Adapter 后 Core 仍可阅读、验证和手工执行。
+- **不可变 Publication**：用户最终 digest 确认后冻结，封闭成员、不可覆盖，替代／撤回只能包外追加。
+
+**不是什么**
+
+- 不是网页产品、中央 scheduler 或自动科研 runtime（`research-architecture.html` 只是历史架构展示）。
+- 不承诺自动文献搜索、自动修订研究目标、自动发表、GPU／远端费用可靠计量或 hostile executable 安全沙箱。完整非承诺清单见 [PRODUCT.md](PRODUCT.md)。
+
+## 特性
+
+- **用户掌握推进权**：workflow 只能由用户显式调用，输入逐项 pin 死；输出是 candidate，建议不是授权。
+- **六轴 Assurance**：`structural_conformance`、`empirical_reproducibility`、`mathematical_argument_review`、`formal_verification`、`independent_review`、`human_acceptance` 互不线性化，不汇总成分数。
+- **预算硬停止**：`seconds`/`cost_usd`/`tokens`/`gpu_hours`/`attempts`/`rounds` 六维预算；失败现场与 ledger 不可删除重写。
+- **Port-first 治理**：社区能力逐项固定来源、完整 commit、SPDX 许可、baseline hash、keep/modify/delete/add ledger 与人工 `preserve|adapt|reject` 决定；缺来源或许可证证据即 hard block。
+- **两条真实 reference 产物线**：计算（CPU 常数均值 baseline，期望 MSE=1.25）与数学（普通证明 + 固定 Lean 4.19 形式化），从 wheel 安装走到 PDF、freeze 与历史恢复。
+- **零运行时依赖**：薄 Python CLI，冻结 `uv.lock`，构建后端固定 hatchling 1.27.0。
+
+## 快速开始
+
+需要 Git、[uv](https://docs.astral.sh/uv/) 与 Python 3.12+。
+
+### 1. 构建并安装独立工具环境
 
 ```bash
 git clone https://github.com/toRolex/Research-OS-Studio.git
@@ -16,45 +56,112 @@ uv sync --frozen
 uv build --wheel --out-dir /tmp/research-os-dist
 uv venv /tmp/research-os-tooling
 uv pip install --python /tmp/research-os-tooling/bin/python /tmp/research-os-dist/research_os-0.1.0-py3-none-any.whl
-uv run --no-project /tmp/research-os-tooling/bin/research-os setup-research-os --project /absolute/research-project
 ```
 
-这里 wheel 安装使用 UV 的独立环境接口，不修改科研项目依赖。setup 从已安装 wheel 校验资源来源，复制 Core／templates／references 并生成项目级 Claude Code／Codex projection；不启动研究、不自动更新，不安装全局专用 runtime。不要把 dirty checkout 当成已验证安装来源。通用 Skills 复制入口、更新和历史恢复见[安装指南](docs/guides/installation.md)。
+wheel 安装到 UV 独立环境，**不修改科研项目的依赖**。
 
-每一步 request 由用户指定和固定，不能把前一步的建议当作授权。
+> [!WARNING]
+> 不要把 dirty checkout 当成已验证安装来源：setup 只接受 wheel RECORD 或干净固定 checkout。
+
+### 2. 安装到科研项目
 
 ```bash
-# request 文件的完整可运行实例由 reference 验收保存，见下方指南。
-uv run --no-project /tmp/research-os-tooling/bin/research-os workflow research-charter \
+uv run --no-project /tmp/research-os-tooling/bin/research-os setup-research-os \
+  --project /absolute/research-project
+```
+
+setup 从已安装 wheel 校验资源来源，复制 Core／templates／references，并生成项目级 Claude Code／Codex projection。**它不会启动任何研究、不自动更新、不安装全局 runtime。**
+
+## 使用
+
+### 调用 workflow
+
+每一步 request 由用户指定并固定输入（path + SHA-256；计算 handoff 另含完整 commit），不能把前一步的建议当作授权：
+
+```bash
+CLI=/tmp/research-os-tooling/bin/research-os
+
+uv run --no-project "$CLI" workflow research-charter \
   --project /absolute/research-project --request requests/charter.json
-uv run --no-project /tmp/research-os-tooling/bin/research-os validate \
+uv run --no-project "$CLI" validate \
   --project /absolute/research-project charter.json
 ```
 
-退出码：`0 pass`、`1 validation failure`、`2 usage/configuration error`、`3 blocked external prerequisite`。结构通过不是研究正确或 human acceptance。
+15 个 workflow 按研究阶段组织：
 
-## 文档
+| 阶段 | workflows |
+|---|---|
+| 安装 | `setup-research-os` |
+| 研究外循环 | `research-charter` → `research-literature` → `research-gap` → `research-idea` → `research-novelty` → `research-reflect` |
+| 计算实验 | `design-experiment` → `prepare-experiment` → `run-experiment` → `analyze-experiment` → `assess-result-to-claim` |
+| 数学 | `math-proof`、`lean-formalize` |
+| 发布 | `freeze-publication` |
 
-- [安装、显式更新、历史恢复](docs/guides/installation.md)
-- [15 workflows 与准确 CLI](docs/guides/workflows.md)
-- [Artifact／target／relation／Assurance、Publication、migration、ports 与 license](docs/guides/contracts-publication.md)
-- [Adapter capability／support matrix](docs/guides/support-matrix.md)
-- [计算与数学 reference 复现、证据边界](docs/guides/references.md)
-- [领域词汇](CONTEXT.md)、[产品范围](PRODUCT.md)、[发布验收记录](gates/leaf-release.md)
+8 个 discipline（仅在 workflow 内由模型调用，无接受／预算／冻结权限）：`citation-reference-audit`、`environment-check`、`experiment-audit`、`independent-proof-review`、`publication-claim-audit`、`statistical-check`、`training-health-check`、`trusted-statement-comparison`。
+
+> [!TIP]
+> 完整可运行的 request 实例由 reference 验收保存。先跑一次[验收](#验收)里的 E2E，再查看产物目录下 `requests/` 逐个仿写。
+
+### 冻结 Publication
+
+```bash
+uv run --no-project "$CLI" freeze-publication \
+  --project /absolute/research-project \
+  --manifest stage.json --principal alice \
+  --confirm 'EXACT FINAL DIGEST CONFIRMATION'
+```
+
+错误确认、成员不封闭或必需 gate 阻塞都会 hard block；已冻结的 Publication 拒绝覆盖。
+
+### 退出码
+
+| 退出码 | 含义 |
+|---|---|
+| `0` | pass |
+| `1` | validation failure |
+| `2` | usage / configuration error |
+| `3` | blocked：外部前置条件不可用 |
+
+结构通过不等于研究正确或 human acceptance。
 
 ## 验收
 
-在仓库根运行。收集 runner 检查所有测试文件均已进入 suite，输出逐项 ID 与真实计数，拒绝零测试、重复 ID、import errors 和漏收集。
+在仓库根运行。收集 runner 检查所有测试文件均已进入 suite，输出逐项 ID 与真实计数，拒绝零测试、重复 ID、import errors 和漏收集：
 
 ```bash
 uv sync --frozen
 uv run --frozen python tests/e2e/run_suite.py --collect-only --output /tmp/research-os-counts
 uv run --frozen python tests/e2e/run_suite.py --e2e --output /tmp/research-os-e2e
 uv run --frozen python tests/e2e/run_suite.py --output /tmp/research-os-all-tests
-# 综合环境发布门当前预期返回非零：本地 Core／ports／Lean 为 PASS，但真实 SSH／SLURM 为 NOT_EVALUATED、live host execution 为 BLOCKED；不能忽略后声称完整环境发布获准。
+
+# 综合发布门当前预期返回非零，见下方说明
 uv run --frozen python tests/e2e/check_release.py --output /tmp/research-os-release-gates
 ```
 
-两 reference 的产物线从真实 wheel/setup 经显式 CLI、固定输入、稿件／真实 PDF，到最终 digest 确认和不可覆盖 Publication，再显式更新与旧 commit 恢复。固定研究／review／acceptance 输入仅为 fixture，不代表真实模型评审或学术接受。Manuscript、Publication、external reference 与数学 typed projections 已接入统一 `validate` registry，并由直接 CLI 与两 Adapter 共用。
+两条 reference 的产物线从真实 wheel/setup 出发，经显式 CLI、固定输入、稿件／真实确定性 PDF，到最终 digest 确认、不可覆盖 Publication，再显式更新与旧 commit 恢复。固定研究／review／acceptance 输入仅为 fixture，**不代表真实模型评审或学术接受**。
 
-CI 固定 UV／Python／Action revision、使用冻结锁安装并保存计数和证据。固定 Lean 4.19 reference 已用项目外临时官方 elan 完成真实 build/audit/comparator/replay。第三方许可证与修改归属随 `core/licenses/ports/` 进入发行资源；community ports 已由用户对 `ports/acceptance-request.json` 的固定 digest 作最终接纳，并由安装时 bundled release attestation 强制绑定 canonical disciplines。
+> [!IMPORTANT]
+> `check_release.py` 当前返回非零是**准确结论**：本地 Core／ports／Lean 为 PASS，但真实 SSH／SLURM 为 NOT_EVALUATED、live host execution 为 BLOCKED。不能忽略后声称完整环境发布获准，详见 [GATES.md](GATES.md)。
+
+## 支持矩阵
+
+| 边界 | 当前状态 |
+|---|---|
+| Direct CLI（15 workflows + validators） | PASS |
+| Claude Code／Codex projection | 生成、digest 绑定、共享 validator PASS；真实宿主执行 BLOCKED（隔离未证实） |
+| 8 disciplines | Claude 完整 model-only projection 实测；Codex 为 workflow-only，8 项明示 BLOCKED |
+| 本地 CPU references（计算 + 普通数学） | E2E PASS，含失败保留、预算硬停、PDF、freeze、历史恢复 |
+| 固定 Lean 4.19 reference | 官方临时 elan 真实 build／axiom audit／comparator／kernel replay PASS |
+| 8 community ports | `validate-ports` PASS，用户最终 digest 接纳，`release_authorized=true` |
+| SSH／SLURM | 本地协议与缺配置检查完成；真实环境 NOT_EVALUATED（缺配置探测返回结构化 exit 3） |
+
+完整状态定义与不可推导的能力见[支持矩阵](docs/guides/support-matrix.md)。
+
+## 文档
+
+- [安装、显式更新、历史恢复](docs/guides/installation.md)
+- [15 workflows 与准确 CLI](docs/guides/workflows.md)
+- [Artifact／target／relation／Assurance、Publication、migration、ports 与 license](docs/guides/contracts-publication.md)
+- [Adapter capability／支持矩阵](docs/guides/support-matrix.md)
+- [计算与数学 reference 复现、证据边界](docs/guides/references.md)
+- [领域词汇](CONTEXT.md) • [产品范围](PRODUCT.md) • [发布验收记录](gates/leaf-release.md) • [架构决策记录](docs/adr)
