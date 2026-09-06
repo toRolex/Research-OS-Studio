@@ -1,0 +1,11 @@
+{
+  "admission_digest": "d50056894cf57e463336d9156be7cff22ad9461c2485b42b974d14247e3304ed",
+  "decision": "adapt",
+  "port_id": "publication-claim-audit",
+  "principal": "person:rolex",
+  "product": {
+    "path": "ports/products/publication-claim-audit/SKILL.md",
+    "sha256": "99281397d25824c2e0a2d1e2b1c56d8c90bab4f1addf905dff01037869b03c3e"
+  },
+  "reviewed_at": "2026-09-06T12:40:00Z"
+}

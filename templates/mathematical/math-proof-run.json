@@ -1,0 +1,15 @@
+{
+  "contract": {"name": "research-os/math-proof-run", "version": "1.0.0"},
+  "statement": {"revision": 1, "semantic_digest": "replace-with-confirmed-statement-sha256"},
+  "actor_principal": "project:proof-author",
+  "examples": [{"input": "0", "observation": "0 + 0 = 0"}],
+  "counterexamples": [],
+  "lemma_map": [{"id": "L1", "statement": "zero is a right identity", "depends_on": [], "status": "proved"}],
+  "budget": {"max_attempts": 2, "attempts_used": 1},
+  "attempts": [{"id": "A1", "approach": "induction", "argument": "Base and successor cases are discharged.", "outcome": "candidate-proof", "gaps": []}],
+  "proof_gaps": [],
+  "result": "candidate",
+  "stop_reason": "workflow-complete",
+  "next_steps": ["request independent proof review", "record human acceptance separately"],
+  "run_digest": "replace-with-canonical-sha256"
+}

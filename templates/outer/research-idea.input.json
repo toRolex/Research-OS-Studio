@@ -1,0 +1,11 @@
+{
+  "contract": {"name": "research-os/artifact", "version": "1.1.0"},
+  "target": {"kind": "git", "path": "artifacts/research-gap.json"},
+  "type": {"name": "research-gap", "version": "1.0.0"},
+  "spec": {
+    "gaps": [{"statement": "State a gap candidate.", "evidence": [], "support": "declared"}],
+    "selected_gap": null,
+    "idea_candidates": [],
+    "status": "candidate"
+  }
+}

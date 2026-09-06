@@ -1,0 +1,36 @@
+{
+  "checks": [
+    {
+      "name": "subject-digest",
+      "pass": true
+    },
+    {
+      "name": "nonempty-utf8",
+      "pass": true
+    },
+    {
+      "name": "model-only-boundary",
+      "pass": true
+    },
+    {
+      "name": "user-control-boundary",
+      "pass": true
+    },
+    {
+      "name": "no-upstream-provider-policy",
+      "pass": true
+    },
+    {
+      "name": "structured-procedure",
+      "pass": true
+    }
+  ],
+  "contract": {
+    "name": "research-os/port-evaluation-detail",
+    "version": "1.0.0"
+  },
+  "kind": "adapted-discipline",
+  "result": "pass",
+  "subject_sha256": "eb6541a9650ac916a1d54a511412c9dfcf53557ad0ce043fa9786d81469c2749",
+  "tree_sha256": "0c4f7447ffab26225401d5616629560a72a46c966575cf49774ac6eb59a274b6"
+}

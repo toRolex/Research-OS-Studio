@@ -1,0 +1,16 @@
+{
+  "contract": {
+    "name": "research-os/artifact",
+    "version": "1.0.0"
+  },
+  "target": {
+    "kind": "git",
+    "path": "artifacts/example.json",
+    "commit": "main"
+  },
+  "type": {
+    "name": "example",
+    "version": "1.0.0"
+  },
+  "spec": {}
+}

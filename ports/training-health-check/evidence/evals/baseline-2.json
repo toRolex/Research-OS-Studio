@@ -1,0 +1,10 @@
+{
+  "environment_sha256": "325a1ffa16ab9dee7534d99125d8407f1a92076e9d1b912ce09303a5a4f2abf8",
+  "executed_at": "2026-09-06T12:25:10Z",
+  "harness_sha256": "1417e8eeed9e6d13836a87907492140b38fe619cb0e53e6398c2dd2c3cee64d2",
+  "origin": "external",
+  "result": "pass",
+  "run_id": "training-health-check-baseline-2",
+  "side": "baseline",
+  "subject_sha256": "4c4e230ed1b2f029addf668c815623199040ed2173bd1e9cdc7e89ae3680893f"
+}

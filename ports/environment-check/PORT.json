@@ -1,0 +1,157 @@
+{
+  "adapted": {
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "05469de55a804d1ae6f04537db768347f11443485b2e5064447be34391c2d757"
+      }
+    ],
+    "path": "ports/environment-check/evidence/adapted"
+  },
+  "baseline": {
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "9d31e32d2a63cf2f27a843e171c652327596c3f9e911c265660618d4ba27c48e"
+      }
+    ],
+    "path": "ports/environment-check/evidence/baseline"
+  },
+  "contract": {
+    "name": "research-os/port",
+    "version": "1.0.0"
+  },
+  "decision": "adapt",
+  "decision_evidence": {
+    "path": "ports/environment-check/evidence/decision.json",
+    "sha256": "a0c62a7726141c8a1a838f21f0db899b3e4cbaf191c0866eb9a7f25fe9d5506d"
+  },
+  "decision_principal": "person:rolex",
+  "evaluation": {
+    "adapted": [
+      {
+        "detail": {
+          "path": "ports/environment-check/evidence/evals/adapted-detail-1.json",
+          "sha256": "d94ab205cf40cec2aa957b950314fd12da1ea4d2ce54dfebb50339f6a9835382"
+        },
+        "evidence": {
+          "path": "ports/environment-check/evidence/evals/adapted-1.json",
+          "sha256": "ac5dd84be888dcc0aa70f6e784d9cab5ab86bceea77103f90f3b9520c9f77294"
+        },
+        "executed_at": "2026-09-06T12:25:15Z",
+        "result": "pass",
+        "run_id": "environment-check-adapted-1",
+        "subject_sha256": "a22a59b1e89ad56c955c0e9e36cc010506e1b11aa60f6ab6399f7ef9a51b51b8"
+      },
+      {
+        "detail": {
+          "path": "ports/environment-check/evidence/evals/adapted-detail-2.json",
+          "sha256": "d94ab205cf40cec2aa957b950314fd12da1ea4d2ce54dfebb50339f6a9835382"
+        },
+        "evidence": {
+          "path": "ports/environment-check/evidence/evals/adapted-2.json",
+          "sha256": "370a13be2c8b33492af8b0dfd1e2b318a6e7675a52795b475420e1b8fddbe2b5"
+        },
+        "executed_at": "2026-09-06T12:25:16Z",
+        "result": "pass",
+        "run_id": "environment-check-adapted-2",
+        "subject_sha256": "a22a59b1e89ad56c955c0e9e36cc010506e1b11aa60f6ab6399f7ef9a51b51b8"
+      }
+    ],
+    "baseline": [
+      {
+        "detail": {
+          "path": "ports/environment-check/evidence/evals/baseline-detail-1.json",
+          "sha256": "e36ab4e90ffe3e11954d5507e2f9e15d70b06348c79ecc82869a9b69c4cfd83c"
+        },
+        "evidence": {
+          "path": "ports/environment-check/evidence/evals/baseline-1.json",
+          "sha256": "748138f31d3e5ee6b2c786a26429014ac52ffd559553f740f82c574d8411bd76"
+        },
+        "executed_at": "2026-09-06T12:25:13Z",
+        "result": "pass",
+        "run_id": "environment-check-baseline-1",
+        "subject_sha256": "b3fd3525718b48cfceb9096290aafdd6faab553e5e4daf4626ca6aee5c635cef"
+      },
+      {
+        "detail": {
+          "path": "ports/environment-check/evidence/evals/baseline-detail-2.json",
+          "sha256": "e36ab4e90ffe3e11954d5507e2f9e15d70b06348c79ecc82869a9b69c4cfd83c"
+        },
+        "evidence": {
+          "path": "ports/environment-check/evidence/evals/baseline-2.json",
+          "sha256": "f28b23526e7469a9e589ca21167a2f03c175f2b6dd73e18d7d4772f7fb2276c5"
+        },
+        "executed_at": "2026-09-06T12:25:14Z",
+        "result": "pass",
+        "run_id": "environment-check-baseline-2",
+        "subject_sha256": "b3fd3525718b48cfceb9096290aafdd6faab553e5e4daf4626ca6aee5c635cef"
+      }
+    ],
+    "environment": {
+      "path": "ports/environment-check/evidence/environment.txt",
+      "sha256": "325a1ffa16ab9dee7534d99125d8407f1a92076e9d1b912ce09303a5a4f2abf8"
+    },
+    "harness": {
+      "path": "ports/environment-check/evidence/harness.py",
+      "sha256": "1417e8eeed9e6d13836a87907492140b38fe619cb0e53e6398c2dd2c3cee64d2"
+    }
+  },
+  "id": "environment-check",
+  "ledger": [
+    {
+      "action": "modify",
+      "path": "SKILL.md",
+      "reason": "Retain the research check while adding pinned inputs, bounded verdicts, user-control and no-automation boundaries"
+    }
+  ],
+  "licensing": {
+    "license": {
+      "path": "ports/environment-check/evidence/LICENSE",
+      "sha256": "e30cf5dd5f49b4f9b656590e23d782b4756c924a9f0ff0162b3e7b5d87006bf5"
+    },
+    "notice": {
+      "reason": "The fixed upstream commit has no root NOTICE file; source attribution and modified-file notice are retained in this manifest and evidence.",
+      "status": "not-required"
+    },
+    "spdx": "MIT",
+    "status": "available"
+  },
+  "origin": "external",
+  "original": {
+    "behavior": {
+      "path": "ports/environment-check/evidence/original-behavior.md",
+      "sha256": "227fac232d476fd153eb69ad713ed816f6d21eb2420db77149f13bcc249753ce"
+    },
+    "dependencies": []
+  },
+  "product": {
+    "path": "ports/products/environment-check/SKILL.md",
+    "sha256": "05469de55a804d1ae6f04537db768347f11443485b2e5064447be34391c2d757"
+  },
+  "review": {
+    "principal": "person:rolex",
+    "rationale": "User explicitly approved this fixed source for read-only minimal adaptation. Review recommends only the bounded text discipline under Research OS controls; upstream runtime and commands were not executed.",
+    "reviewed_at": "2026-09-06T12:40:00Z"
+  },
+  "snapshot": {
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "9d31e32d2a63cf2f27a843e171c652327596c3f9e911c265660618d4ba27c48e"
+      }
+    ],
+    "path": "ports/environment-check/evidence/snapshot"
+  },
+  "source": {
+    "commit": "2349f63ccfd7502aae95ec987b4d0a4c65d69c52",
+    "evidence": {
+      "path": "ports/environment-check/evidence/source.json",
+      "sha256": "12dd81935dc148db8ca717ec839716a15a595e79bd02ddf8fc571de3beba1c08"
+    },
+    "path": "skills/system-profile/SKILL.md",
+    "retrieved_at": "2026-09-06T12:24:48Z",
+    "status": "available",
+    "url": "https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep.git"
+  }
+}

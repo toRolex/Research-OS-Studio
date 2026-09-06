@@ -1,0 +1,28 @@
+{
+  "checks": [
+    {
+      "name": "subject-digest",
+      "pass": true
+    },
+    {
+      "name": "nonempty-utf8",
+      "pass": true
+    },
+    {
+      "name": "substantive-procedure",
+      "pass": true
+    },
+    {
+      "name": "research-operation",
+      "pass": true
+    }
+  ],
+  "contract": {
+    "name": "research-os/port-evaluation-detail",
+    "version": "1.0.0"
+  },
+  "kind": "baseline-text",
+  "result": "pass",
+  "subject_sha256": "9d31e32d2a63cf2f27a843e171c652327596c3f9e911c265660618d4ba27c48e",
+  "tree_sha256": "b3fd3525718b48cfceb9096290aafdd6faab553e5e4daf4626ca6aee5c635cef"
+}

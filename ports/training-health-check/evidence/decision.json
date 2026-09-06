@@ -1,0 +1,11 @@
+{
+  "admission_digest": "a7e2624d9c1b5ea2f40b7cdc197c08e7583db55d18c8eb9ddd60e3b4bf64e965",
+  "decision": "adapt",
+  "port_id": "training-health-check",
+  "principal": "person:rolex",
+  "product": {
+    "path": "ports/products/training-health-check/SKILL.md",
+    "sha256": "d0cfd4bc59f14c5a503c66ffadc2f0761376bf2f25e20729119eb7a64779effb"
+  },
+  "reviewed_at": "2026-09-06T12:40:00Z"
+}

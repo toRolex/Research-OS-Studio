@@ -1,0 +1,10 @@
+{
+  "contract": {"name": "research-os/artifact", "version": "1.1.0"},
+  "target": {"kind": "git", "path": "inputs/reflection-input.json"},
+  "type": {"name": "reflection-input", "version": "1.0.0"},
+  "spec": {
+    "observations": [],
+    "failures": [],
+    "uncertainties": []
+  }
+}

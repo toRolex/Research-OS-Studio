@@ -1,0 +1,13 @@
+{
+  "contract": {"name": "research-os/workflow-report", "version": "1.0.0"},
+  "workflow": {"name": "research-charter", "version": "1.0.0"},
+  "status": "stopped",
+  "stop_reason": "candidate_complete",
+  "inputs": [],
+  "outputs": [],
+  "budget": {"limits": {}, "used": {}},
+  "invariants": [],
+  "next_steps": [],
+  "automatic_next_workflow": false,
+  "human_acceptance": null
+}

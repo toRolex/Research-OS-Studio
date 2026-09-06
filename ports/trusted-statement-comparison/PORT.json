@@ -1,0 +1,162 @@
+{
+  "adapted": {
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "d80e3f5082b02021bc7f57b246e35665227eec8a9523cc19b4229d79cf2e5fe9"
+      }
+    ],
+    "path": "ports/trusted-statement-comparison/evidence/adapted"
+  },
+  "baseline": {
+    "files": [
+      {
+        "path": "B_BinaryCodes.json",
+        "sha256": "b100ddca78898d7df24225bef99c54be286ad5251cbd0806e584b7646a3700b2"
+      }
+    ],
+    "path": "ports/trusted-statement-comparison/evidence/baseline"
+  },
+  "contract": {
+    "name": "research-os/port",
+    "version": "1.0.0"
+  },
+  "decision": "adapt",
+  "decision_evidence": {
+    "path": "ports/trusted-statement-comparison/evidence/decision.json",
+    "sha256": "95c8e7b841856e1471f37754d6e47d34f6220e35ed84b967b04ad7b1361f6c16"
+  },
+  "decision_principal": "person:rolex",
+  "evaluation": {
+    "adapted": [
+      {
+        "detail": {
+          "path": "ports/trusted-statement-comparison/evidence/evals/adapted-detail-1.json",
+          "sha256": "5f524537624bc196fd2406306d8c884619fb7f7b542183b3dbb726e0e44e721d"
+        },
+        "evidence": {
+          "path": "ports/trusted-statement-comparison/evidence/evals/adapted-1.json",
+          "sha256": "b5a6608ab34e10da403216d2711d6513f175cec2d812bdf94da269d74c456d9e"
+        },
+        "executed_at": "2026-09-06T12:25:31Z",
+        "result": "pass",
+        "run_id": "trusted-statement-comparison-adapted-1",
+        "subject_sha256": "c5d1836a796167790fd97ddc5f44b90ae0cbf1a01b3475025cd3787d128e6cdb"
+      },
+      {
+        "detail": {
+          "path": "ports/trusted-statement-comparison/evidence/evals/adapted-detail-2.json",
+          "sha256": "5f524537624bc196fd2406306d8c884619fb7f7b542183b3dbb726e0e44e721d"
+        },
+        "evidence": {
+          "path": "ports/trusted-statement-comparison/evidence/evals/adapted-2.json",
+          "sha256": "b67ca46e879a86f45715d4f081085fd7255ec8cbe4fb2e9b1814a0a413209498"
+        },
+        "executed_at": "2026-09-06T12:25:32Z",
+        "result": "pass",
+        "run_id": "trusted-statement-comparison-adapted-2",
+        "subject_sha256": "c5d1836a796167790fd97ddc5f44b90ae0cbf1a01b3475025cd3787d128e6cdb"
+      }
+    ],
+    "baseline": [
+      {
+        "detail": {
+          "path": "ports/trusted-statement-comparison/evidence/evals/baseline-detail-1.json",
+          "sha256": "375a92f96a81543a9f43a383c6845d10f6e1417025092d2aa9abf010ae6e4317"
+        },
+        "evidence": {
+          "path": "ports/trusted-statement-comparison/evidence/evals/baseline-1.json",
+          "sha256": "a17e4f231f09fab4e1339d8f5e3783ff3140e871e40506d8ba0021cbc9a058b6"
+        },
+        "executed_at": "2026-09-06T12:25:29Z",
+        "result": "pass",
+        "run_id": "trusted-statement-comparison-baseline-1",
+        "subject_sha256": "366e0851941192abc2c70f5802ddc72171c8c393343431e73e21ef936d1f7349"
+      },
+      {
+        "detail": {
+          "path": "ports/trusted-statement-comparison/evidence/evals/baseline-detail-2.json",
+          "sha256": "375a92f96a81543a9f43a383c6845d10f6e1417025092d2aa9abf010ae6e4317"
+        },
+        "evidence": {
+          "path": "ports/trusted-statement-comparison/evidence/evals/baseline-2.json",
+          "sha256": "7330a1ce05d697c675b102e1cc0d7b8f0c8ea227ddd364d7fa7add18bc5c7193"
+        },
+        "executed_at": "2026-09-06T12:25:30Z",
+        "result": "pass",
+        "run_id": "trusted-statement-comparison-baseline-2",
+        "subject_sha256": "366e0851941192abc2c70f5802ddc72171c8c393343431e73e21ef936d1f7349"
+      }
+    ],
+    "environment": {
+      "path": "ports/trusted-statement-comparison/evidence/environment.txt",
+      "sha256": "325a1ffa16ab9dee7534d99125d8407f1a92076e9d1b912ce09303a5a4f2abf8"
+    },
+    "harness": {
+      "path": "ports/trusted-statement-comparison/evidence/harness.py",
+      "sha256": "1417e8eeed9e6d13836a87907492140b38fe619cb0e53e6398c2dd2c3cee64d2"
+    }
+  },
+  "id": "trusted-statement-comparison",
+  "ledger": [
+    {
+      "action": "delete",
+      "path": "B_BinaryCodes.json",
+      "reason": "Remove upstream provider policy or incompatible orchestration surface"
+    },
+    {
+      "action": "add",
+      "path": "SKILL.md",
+      "reason": "Add provider-neutral Research OS discipline contract"
+    }
+  ],
+  "licensing": {
+    "license": {
+      "path": "ports/trusted-statement-comparison/evidence/LICENSE",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    "notice": {
+      "reason": "The fixed upstream commit has no root NOTICE file; source attribution and modified-file notice are retained in this manifest and evidence.",
+      "status": "not-required"
+    },
+    "spdx": "Apache-2.0",
+    "status": "available"
+  },
+  "origin": "external",
+  "original": {
+    "behavior": {
+      "path": "ports/trusted-statement-comparison/evidence/original-behavior.md",
+      "sha256": "a733d5a50fff9073df7e8b50989560d4d03f98fe9866533f7c30751a822688af"
+    },
+    "dependencies": []
+  },
+  "product": {
+    "path": "ports/products/trusted-statement-comparison/SKILL.md",
+    "sha256": "d80e3f5082b02021bc7f57b246e35665227eec8a9523cc19b4229d79cf2e5fe9"
+  },
+  "review": {
+    "principal": "person:rolex",
+    "rationale": "User explicitly approved this fixed source for read-only minimal adaptation. Review recommends only the bounded text discipline under Research OS controls; upstream runtime and commands were not executed.",
+    "reviewed_at": "2026-09-06T12:40:00Z"
+  },
+  "snapshot": {
+    "files": [
+      {
+        "path": "B_BinaryCodes.json",
+        "sha256": "b100ddca78898d7df24225bef99c54be286ad5251cbd0806e584b7646a3700b2"
+      }
+    ],
+    "path": "ports/trusted-statement-comparison/evidence/snapshot"
+  },
+  "source": {
+    "commit": "94bc0feb6a9ff12c7d31d6de640a725c9d43d2b6",
+    "evidence": {
+      "path": "ports/trusted-statement-comparison/evidence/source.json",
+      "sha256": "d01e7b473a633f67f9b571f0272451b1eba0d82668abb8701ce06691f540859e"
+    },
+    "path": "ComparatorChallenges/B_BinaryCodes.json",
+    "retrieved_at": "2026-09-06T12:24:48Z",
+    "status": "available",
+    "url": "https://github.com/openai/ten-proofs.git"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "contract": {"name": "research-os/lean-formalization", "version": "1.0.0"},
+  "statement": {"revision": 1, "semantic_digest": "replace-with-confirmed-statement-sha256"},
+  "proof": {"run_digest": "replace-with-proof-run-sha256"},
+  "review": {"review_digest": "replace-with-review-sha256"},
+  "authorization": {
+    "principal": "project:user",
+    "revision": 1,
+    "statement_digest": "replace-with-confirmed-statement-sha256",
+    "phrase": "AUTHORIZE LEAN r1 replace-with-confirmed-statement-sha256"
+  },
+  "toolchain": {"lean": "leanprover/lean4:v4.19.0", "lake": "Lake version 5.0.0", "file": "lean-toolchain"},
+  "dependencies": [],
+  "sources": [
+    {"path": "ResearchOSMath/Challenge.lean", "sha256": "replace-with-file-sha256"},
+    {"path": "ResearchOSMath/Solution.lean", "sha256": "replace-with-file-sha256"}
+  ],
+  "allowed_imports": ["ResearchOSMath.Challenge"],
+  "permitted_axioms": ["propext", "Classical.choice", "Quot.sound"],
+  "comparator": {
+    "trusted_file": "ResearchOSMath/Challenge.lean",
+    "solution_file": "ResearchOSMath/Solution.lean",
+    "declaration": "research_os_add_zero",
+    "normalized_statement_sha256": "replace-with-normalized-statement-sha256"
+  },
+  "replay": {"command": ["lake", "build"], "independent_principal": "project:kernel-replayer"},
+  "claim_boundary": "Kernel pass covers only the fixed Lean statement in the recorded trusted base; it does not establish natural-language alignment, paper correctness, research significance, or human acceptance."
+}

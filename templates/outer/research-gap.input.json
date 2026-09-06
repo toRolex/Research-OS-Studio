@@ -1,0 +1,11 @@
+{
+  "contract": {"name": "research-os/artifact", "version": "1.1.0"},
+  "target": {"kind": "git", "path": "artifacts/literature-review.json"},
+  "type": {"name": "literature-review", "version": "1.0.0"},
+  "spec": {
+    "question": "State the fixed research question.",
+    "citations": [],
+    "gap_candidates": [],
+    "status": "candidate"
+  }
+}

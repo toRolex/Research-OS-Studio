@@ -1,0 +1,16 @@
+{
+  "contract": {
+    "name": "research-os/port-inventory",
+    "version": "1.0.0"
+  },
+  "manifests": [
+    "ports/experiment-audit/PORT.json",
+    "ports/statistical-check/PORT.json",
+    "ports/training-health-check/PORT.json",
+    "ports/environment-check/PORT.json",
+    "ports/independent-proof-review/PORT.json",
+    "ports/publication-claim-audit/PORT.json",
+    "ports/citation-reference-audit/PORT.json",
+    "ports/trusted-statement-comparison/PORT.json"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "actor_principal": "project:proof-author",
+  "attempts": [
+    {
+      "approach": "apply the defining right-identity theorem",
+      "argument": "For arbitrary n, Nat.add_zero n has exactly the required conclusion.",
+      "gaps": [],
+      "id": "A1",
+      "outcome": "candidate-proof"
+    }
+  ],
+  "budget": {
+    "attempts_used": 1,
+    "max_attempts": 2
+  },
+  "contract": {
+    "name": "research-os/math-proof-run",
+    "version": "1.0.0"
+  },
+  "counterexamples": [],
+  "examples": [
+    {
+      "input": "0",
+      "observation": "0 + 0 = 0"
+    },
+    {
+      "input": "7",
+      "observation": "7 + 0 = 7"
+    }
+  ],
+  "lemma_map": [
+    {
+      "depends_on": [],
+      "id": "L1",
+      "statement": "Nat.add_zero proves right identity for every natural number",
+      "status": "proved"
+    }
+  ],
+  "next_steps": [
+    "request independent proof review",
+    "record human acceptance separately"
+  ],
+  "proof_gaps": [],
+  "result": "candidate",
+  "run_digest": "dee8c2ed9d080670f1a392392e0f37ad541080bb299e7105401f5b5dc2fd608f",
+  "statement": {
+    "revision": 1,
+    "semantic_digest": "ccda97654ad5a1db3862890260e05d0c1202b6043ef1f02fac32d1e26671215c"
+  },
+  "stop_reason": "workflow-complete"
+}

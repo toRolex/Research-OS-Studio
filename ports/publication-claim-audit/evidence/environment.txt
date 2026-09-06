@@ -1,0 +1,6 @@
+Research OS port evaluation environment
+OS: macOS Darwin 24.6.0 arm64
+Python: UV-managed project interpreter
+Network: not used by harness
+Subprocess: harness only; upstream code never executed
+Evaluation kind: deterministic static/text discipline checks

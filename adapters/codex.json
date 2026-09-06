@@ -1,0 +1,26 @@
+{
+  "adapter": "codex",
+  "version": "1.0.0",
+  "projection_version": "1.0.0",
+  "role": "generated platform projection",
+  "core_semantics": "shared",
+  "workflow_invocation": "explicit_user_only",
+  "automatic_next_workflow": false,
+  "workflow_policy": {
+    "allow_implicit_invocation": false
+  },
+  "discipline_policy": {
+    "allow_implicit_invocation": false
+  },
+  "required_capabilities": [
+    "workflow_implicit_invocation_control"
+  ],
+  "capability_profile": {
+    "version": "1.0.0",
+    "capabilities": {
+      "discipline_private_visibility": "unsupported",
+      "execution_isolation": "unverified",
+      "workflow_implicit_invocation_control": "supported"
+    }
+  }
+}

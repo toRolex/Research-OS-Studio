@@ -1,0 +1,157 @@
+{
+  "adapted": {
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "99281397d25824c2e0a2d1e2b1c56d8c90bab4f1addf905dff01037869b03c3e"
+      }
+    ],
+    "path": "ports/publication-claim-audit/evidence/adapted"
+  },
+  "baseline": {
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "7cf2a3659a0de183925969039a026a585d111d324f564bb3d2a6ff5cc4457f68"
+      }
+    ],
+    "path": "ports/publication-claim-audit/evidence/baseline"
+  },
+  "contract": {
+    "name": "research-os/port",
+    "version": "1.0.0"
+  },
+  "decision": "adapt",
+  "decision_evidence": {
+    "path": "ports/publication-claim-audit/evidence/decision.json",
+    "sha256": "2c859ba0877b2f5efeb9a72eff009a8dfd458a916265cf3335d167ad4be8a407"
+  },
+  "decision_principal": "person:rolex",
+  "evaluation": {
+    "adapted": [
+      {
+        "detail": {
+          "path": "ports/publication-claim-audit/evidence/evals/adapted-detail-1.json",
+          "sha256": "46d7fbf24fb5d7aeb16614b928d210d6ab3c8810a174a5c12466b4b37a7f1271"
+        },
+        "evidence": {
+          "path": "ports/publication-claim-audit/evidence/evals/adapted-1.json",
+          "sha256": "1df564f1128d404fc7d15304d0a827b388d1709cedd10f113eb2104cbb274001"
+        },
+        "executed_at": "2026-09-06T12:25:23Z",
+        "result": "pass",
+        "run_id": "publication-claim-audit-adapted-1",
+        "subject_sha256": "43c9730fe920345c5b00d2433f70ad3482f31b3722f18713245013fa53e9626c"
+      },
+      {
+        "detail": {
+          "path": "ports/publication-claim-audit/evidence/evals/adapted-detail-2.json",
+          "sha256": "46d7fbf24fb5d7aeb16614b928d210d6ab3c8810a174a5c12466b4b37a7f1271"
+        },
+        "evidence": {
+          "path": "ports/publication-claim-audit/evidence/evals/adapted-2.json",
+          "sha256": "f02e40483e790705c42fb442b564d586f8e79bfaa450be758d28a9db3a9a739e"
+        },
+        "executed_at": "2026-09-06T12:25:24Z",
+        "result": "pass",
+        "run_id": "publication-claim-audit-adapted-2",
+        "subject_sha256": "43c9730fe920345c5b00d2433f70ad3482f31b3722f18713245013fa53e9626c"
+      }
+    ],
+    "baseline": [
+      {
+        "detail": {
+          "path": "ports/publication-claim-audit/evidence/evals/baseline-detail-1.json",
+          "sha256": "6f9f9cdde07332a9ab6dbcf47625c8b782b90f9a14f87f00516b5af2e82d3c8e"
+        },
+        "evidence": {
+          "path": "ports/publication-claim-audit/evidence/evals/baseline-1.json",
+          "sha256": "d1e45a20f6754365ae7edb4ff73a9d0f9d241bde12af6c4b2320140f67a5d69c"
+        },
+        "executed_at": "2026-09-06T12:25:21Z",
+        "result": "pass",
+        "run_id": "publication-claim-audit-baseline-1",
+        "subject_sha256": "cc9eb4f7cfc5ca1a0f31e257525d8d379a8f0b6ef34da038cc46e5d5016526d8"
+      },
+      {
+        "detail": {
+          "path": "ports/publication-claim-audit/evidence/evals/baseline-detail-2.json",
+          "sha256": "6f9f9cdde07332a9ab6dbcf47625c8b782b90f9a14f87f00516b5af2e82d3c8e"
+        },
+        "evidence": {
+          "path": "ports/publication-claim-audit/evidence/evals/baseline-2.json",
+          "sha256": "a1667fc5aada5221b94241c109082c99cbaf39142299260a9de4fee0673b52ca"
+        },
+        "executed_at": "2026-09-06T12:25:22Z",
+        "result": "pass",
+        "run_id": "publication-claim-audit-baseline-2",
+        "subject_sha256": "cc9eb4f7cfc5ca1a0f31e257525d8d379a8f0b6ef34da038cc46e5d5016526d8"
+      }
+    ],
+    "environment": {
+      "path": "ports/publication-claim-audit/evidence/environment.txt",
+      "sha256": "325a1ffa16ab9dee7534d99125d8407f1a92076e9d1b912ce09303a5a4f2abf8"
+    },
+    "harness": {
+      "path": "ports/publication-claim-audit/evidence/harness.py",
+      "sha256": "1417e8eeed9e6d13836a87907492140b38fe619cb0e53e6398c2dd2c3cee64d2"
+    }
+  },
+  "id": "publication-claim-audit",
+  "ledger": [
+    {
+      "action": "modify",
+      "path": "SKILL.md",
+      "reason": "Retain the research check while adding pinned inputs, bounded verdicts, user-control and no-automation boundaries"
+    }
+  ],
+  "licensing": {
+    "license": {
+      "path": "ports/publication-claim-audit/evidence/LICENSE",
+      "sha256": "e30cf5dd5f49b4f9b656590e23d782b4756c924a9f0ff0162b3e7b5d87006bf5"
+    },
+    "notice": {
+      "reason": "The fixed upstream commit has no root NOTICE file; source attribution and modified-file notice are retained in this manifest and evidence.",
+      "status": "not-required"
+    },
+    "spdx": "MIT",
+    "status": "available"
+  },
+  "origin": "external",
+  "original": {
+    "behavior": {
+      "path": "ports/publication-claim-audit/evidence/original-behavior.md",
+      "sha256": "7eeede400e5f5eb300cfcbb7b42404dbed2c2b87b4be923309816e64b95dcc00"
+    },
+    "dependencies": []
+  },
+  "product": {
+    "path": "ports/products/publication-claim-audit/SKILL.md",
+    "sha256": "99281397d25824c2e0a2d1e2b1c56d8c90bab4f1addf905dff01037869b03c3e"
+  },
+  "review": {
+    "principal": "person:rolex",
+    "rationale": "User explicitly approved this fixed source for read-only minimal adaptation. Review recommends only the bounded text discipline under Research OS controls; upstream runtime and commands were not executed.",
+    "reviewed_at": "2026-09-06T12:40:00Z"
+  },
+  "snapshot": {
+    "files": [
+      {
+        "path": "SKILL.md",
+        "sha256": "7cf2a3659a0de183925969039a026a585d111d324f564bb3d2a6ff5cc4457f68"
+      }
+    ],
+    "path": "ports/publication-claim-audit/evidence/snapshot"
+  },
+  "source": {
+    "commit": "2349f63ccfd7502aae95ec987b4d0a4c65d69c52",
+    "evidence": {
+      "path": "ports/publication-claim-audit/evidence/source.json",
+      "sha256": "51407681a01c9733b14d3f74531723be6a6a7a34d0a7ea61b09e7ac0cd03f971"
+    },
+    "path": "skills/paper-claim-audit/SKILL.md",
+    "retrieved_at": "2026-09-06T12:24:48Z",
+    "status": "available",
+    "url": "https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep.git"
+  }
+}

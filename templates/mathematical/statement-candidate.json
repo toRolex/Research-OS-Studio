@@ -1,0 +1,11 @@
+{
+  "contract": {"name": "research-os/mathematical-statement", "version": "1.0.0"},
+  "revision": 1,
+  "quantifiers": ["for every natural number n"],
+  "hypotheses": [],
+  "domain": "natural numbers",
+  "conclusion": "n + 0 = n",
+  "rationale": "State the user-selected conjecture without changing its meaning.",
+  "semantic_digest": "replace-with-canonical-sha256",
+  "confirmation": null
+}

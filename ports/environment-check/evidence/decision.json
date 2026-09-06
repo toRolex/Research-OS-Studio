@@ -1,0 +1,11 @@
+{
+  "admission_digest": "8266702fced76523cd8ef1497f7d2fe8889731297476d166c0f60f2a9bc4c1ac",
+  "decision": "adapt",
+  "port_id": "environment-check",
+  "principal": "person:rolex",
+  "product": {
+    "path": "ports/products/environment-check/SKILL.md",
+    "sha256": "05469de55a804d1ae6f04537db768347f11443485b2e5064447be34391c2d757"
+  },
+  "reviewed_at": "2026-09-06T12:40:00Z"
+}

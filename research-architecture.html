@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>5 个自动科研仓库：架构与执行流</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#121a2d;--panel2:#18233b;--text:#e8eefc;--muted:#9eacc8;--line:#2b3a5e;--accent:#71b7ff;--green:#77e0b5;--yellow:#ffd479;--red:#ff9b9b}
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(135deg,#0b1020,#10172b 55%,#0e1d30);color:var(--text);font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+    main{max-width:1180px;margin:auto;padding:34px 20px 60px} h1{margin:0 0 8px;font-size:28px;letter-spacing:.02em} h2{margin:0 0 10px;font-size:20px} h3{margin:18px 0 6px;color:var(--accent);font-size:15px} p{margin:6px 0} a{color:var(--accent)} code,pre{font-family:ui-monospace,SFMono-Regular,Menlo,monospace} code{color:#dce7ff}
+    .lead{color:var(--muted);max-width:850px}.meta{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 24px}.badge{border:1px solid var(--line);border-radius:999px;padding:3px 10px;color:var(--muted);background:#10192d}.badge.ok{color:var(--green);border-color:#276950}.badge.warn{color:var(--yellow);border-color:#765d22}
+    .overview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0 30px}.stat{padding:13px 15px;background:var(--panel);border:1px solid var(--line);border-radius:12px}.stat b{display:block;font-size:18px;color:var(--green)}.stat span{color:var(--muted);font-size:12px}
+    .cards{display:grid;gap:16px}.card{background:rgba(18,26,45,.94);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 8px 30px #05091455}.card-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.num{min-width:34px;height:34px;border-radius:10px;background:var(--accent);color:#081225;display:grid;place-items:center;font-weight:800;font-size:17px}.title{display:flex;gap:12px;align-items:flex-start}.title small{display:block;color:var(--muted);font-weight:400;margin-top:2px}.kind{white-space:nowrap;color:var(--green);border:1px solid #276950;border-radius:999px;padding:3px 9px;font-size:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.box{background:var(--panel2);border:1px solid #263653;border-radius:11px;padding:12px 14px}.box ul{margin:6px 0 0;padding-left:20px}.box li{margin:3px 0}.flow{white-space:pre-wrap;margin:7px 0 0;color:#d7e4ff;font-size:12px;line-height:1.7}.tree{white-space:pre-wrap;margin:7px 0 0;color:#c3d3f5;font-size:12px;line-height:1.55}.evidence{color:var(--muted);font-size:12px}.note{border-left:3px solid var(--yellow);padding:7px 11px;margin-top:10px;background:#2a2516;color:#f4ddb0}.good{border-left:3px solid var(--green);padding:7px 11px;margin-top:10px;background:#11281f;color:#bfeeda}
+    details{margin-top:12px;border-top:1px solid var(--line);padding-top:9px}summary{cursor:pointer;color:var(--accent)}.compare{width:100%;border-collapse:collapse;background:var(--panel);border-radius:12px;overflow:hidden;margin-top:12px}.compare th,.compare td{border:1px solid var(--line);padding:9px;text-align:left;vertical-align:top}.compare th{color:var(--accent);background:#17223a;font-size:12px}.compare td{font-size:13px}.footer{margin-top:25px;color:var(--muted);font-size:12px;border-top:1px solid var(--line);padding-top:14px}
+    @media(max-width:760px){.overview,.grid{grid-template-columns:1fr}.card-head{display:block}.kind{display:inline-block;margin-top:10px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>5 个自动科研仓库：架构与实际执行流</h1>
+  <p class="lead">按仓库源码、配置、技能文件和测试/示例产物整理。这里的“架构”指实际提交内容，不把 README 的愿景当作已实现功能。</p>
+  <div class="meta">
+    <span class="badge ok">源码快照：2026-08-27 调研</span>
+    <span class="badge ok">未使用 Firecrawl</span>
+    <span class="badge">每个仓库一个 bullet/card</span>
+    <span class="badge warn">未对所有项目执行真实生产运行</span>
+  </div>
+
+  <div class="overview">
+    <div class="stat"><b>23 阶段</b><span>AutoResearchClaw：重型流水线</span></div>
+    <div class="stat"><b>5 主阶段</b><span>ARIS：Skill 驱动的研究协议</span></div>
+    <div class="stat"><b>4 节点</b><span>EurekAgent：LangGraph + grader</span></div>
+    <div class="stat"><b>1 主会话</b><span>Archon-Horizon：当前源码为 Horizon-only</span></div>
+  </div>
+
+  <section class="cards">
+    <!-- 1 -->
+    <article class="card">
+      <div class="card-head">
+        <div class="title"><div class="num">1</div><div><h2>AutoResearchClaw</h2><small><a href="https://github.com/aiming-lab/AutoResearchClaw">aiming-lab/AutoResearchClaw</a> · HEAD <code>be4ba47</code></small></div></div>
+        <span class="kind">23 阶段状态机</span>
+      </div>
+      <p>定位：从主题、文献、假设、实验一路做到论文、质量门禁和引用验证的完整科研 pipeline。</p>
+      <div class="grid">
+        <div class="box"><h3>实际目录骨架</h3><pre class="tree">researchclaw/
+├─ pipeline/       # 阶段、合同、执行器、runner
+├─ literature/     # OpenAlex/S2/arXiv、引用验证
+├─ experiment/     # sandbox/Docker/SSH/Colab/Agent
+├─ llm/ domains/ prompts/
+├─ agents/ memory/ knowledge/
+├─ hitl/ server/ web/ mcp/
+├─ templates/ assessor/ evolution/
+└─ cli.py + __main__.py
+experiments/arc_bench/  tests/  docs/</pre></div>
+        <div class="box"><h3>主执行流</h3><pre class="flow">researchclaw run
+→ config/preflight/run_dir
+→ stage-01…stage-23
+→ literature → synthesis → hypothesis
+→ experiment design/code/run/refine
+→ analysis → decision
+  ├─ REFINE → stage 13
+  └─ PIVOT  → stage 8
+→ paper draft/review/revision
+→ quality gate → export → citation verify
+→ artifacts/.../deliverables/</pre></div>
+      </div>
+      <div class="grid">
+        <div class="box"><h3>阶段分层</h3><ul>
+          <li><b>1–3：</b>主题初始化、问题拆解、搜索计划</li>
+          <li><b>4–8：</b>收集/筛选文献、知识卡、综合、假设</li>
+          <li><b>9–15：</b>实验设计、代码、资源、运行、分析、决策</li>
+          <li><b>16–23：</b>论文、审稿、质量、归档、导出、引用验证</li>
+        </ul></div>
+        <div class="box"><h3>关键产物</h3><ul>
+          <li><code>stage-04/candidates.jsonl</code>、<code>references.bib</code></li>
+          <li><code>stage-12/runs/</code>、<code>results.json</code></li>
+          <li><code>stage-14/experiment_summary.json</code></li>
+          <li><code>deliverables/paper_final.md</code>、<code>paper.tex</code>、<code>verification_report.json</code></li>
+        </ul></div>
+      </div>
+      <div class="good">真实实现特征：每个 stage 有 input/output contract、Gate、健康检查；论文写作读取真实实验注册表和原始指标，避免无实验数字进入论文。</div>
+      <div class="note">边界：外部 ColliderAgent 只有指针 README；部分 MCP handler 是 stub。本次只做代码核查，未执行真实 pipeline。</div>
+      <details><summary>源码证据路径</summary><p class="evidence"><code>researchclaw/cli.py</code> · <code>researchclaw/pipeline/stages.py</code> · <code>pipeline/contracts.py</code> · <code>pipeline/executor.py</code> · <code>pipeline/runner.py</code> · <code>pipeline/stage_impls/_literature.py</code> · <code>_execution.py</code> · <code>_review_publish.py</code> · <code>experiment/validator.py</code> · <code>literature/verify.py</code></p></details>
+    </article>
+
+    <!-- 2 -->
+    <article class="card">
+      <div class="card-head">
+        <div class="title"><div class="num">2</div><div><h2>Auto-claude-code-research-in-sleep（ARIS）</h2><small><a href="https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep">wanshuiyin/Auto-claude-code-research-in-sleep</a> · HEAD <code>94d8093</code></small></div></div>
+        <span class="kind">Skill / helper 组合</span>
+      </div>
+      <p>定位：不是常驻应用，而是让 Claude Code/Codex/Gemini 等宿主 Agent 按 <code>SKILL.md</code>、helper、MCP 和文件协议执行科研。</p>
+      <div class="grid">
+        <div class="box"><h3>实际目录骨架</h3><pre class="tree">skills/                 # 82 个主线 SKILL.md
+├─ shared-references/   # 状态、审计、review 合约
+├─ skills-codex/        # Codex 镜像
+├─ skills-codex-claude-review/
+└─ skills-codex-gemini-review/
+tools/                  # 47 个 helper
+mcp-servers/            # 7 个服务
+ templates/ docs/ tests/
+aris-monitor/</pre></div>
+        <div class="box"><h3>默认 pipeline</h3><pre class="flow">安装 tools/install_aris.sh
+→ Claude Code 读取 /research-pipeline
+→ idea-discovery
+  文献 → idea → 查新 → pilot → proposal
+→ experiment-bridge
+  写代码 → Codex review → sanity → GPU → results
+→ auto-review-loop
+  外部 review → 修复 → 重跑（最多 4 轮）
+→ NARRATIVE_REPORT.md
+→ AUTO_WRITE=true 才进入 paper-writing</pre></div>
+      </div>
+      <div class="grid">
+        <div class="box"><h3>文件化状态</h3><ul>
+          <li><code>.aris/runs/&lt;run_id&gt;.json</code>：阶段状态与恢复</li>
+          <li><code>.aris/traces/</code>：review 请求/响应取证</li>
+          <li><code>idea-stage/</code>、<code>refine-logs/</code>、<code>review-stage/</code></li>
+          <li><code>NARRATIVE_REPORT.md</code>：默认研究终点</li>
+        </ul></div>
+        <div class="box"><h3>研究 Wiki / ARA</h3><ul>
+          <li><code>research-wiki/</code> 用 paper/idea/exp/claim 节点建图</li>
+          <li>ARA compiler：输入 → 知识提取 → coverage check → Seal Level 1</li>
+          <li>Rigor reviewer 只审 ARA，不执行代码、不抓 URL</li>
+        </ul></div>
+      </div>
+      <div class="good">真实实现特征：研究记录、review receipt、provenance、assurance 状态被当作一等产物；实验和论文之间通过结果/claim 文件连接。</div>
+      <div class="note">边界：仓库本身没有完整研究工作区；模板定义了 <code>research-state.yaml</code>、<code>findings.md</code> 等，实际产物要在用户项目中生成。</div>
+      <details><summary>源码证据路径</summary><p class="evidence"><code>AGENT_GUIDE.md</code> · <code>skills/research-pipeline/SKILL.md</code> · <code>skills/idea-discovery/SKILL.md</code> · <code>skills/experiment-bridge/SKILL.md</code> · <code>skills/auto-review-loop/SKILL.md</code> · <code>tools/run_state.py</code> · <code>tools/verify_papers.py</code> · <code>tools/evidence_check.py</code> · <code>tools/install_aris.sh</code> · <code>mcp-servers/</code></p></details>
+    </article>
+
+    <!-- 3 -->
+    <article class="card">
+      <div class="card-head">
+        <div class="title"><div class="num">3</div><div><h2>AI-research-SKILLs</h2><small><a href="https://github.com/Orchestra-Research/AI-research-SKILLs">Orchestra-Research/AI-research-SKILLs</a> · main <code>773a529</code></small></div></div>
+        <span class="kind">知识/操作技能库</span>
+      </div>
+      <p>定位：98 个技能、23 个类别和一个 npm 安装器；本身不是“自动科研运行时”，研究执行依赖外部 coding agent。</p>
+      <div class="grid">
+        <div class="box"><h3>实际目录骨架</h3><pre class="tree">0-autoresearch-skill/
+01-model-architecture/ … 19-emerging-techniques/
+20-ml-paper-writing/
+21-research-ideation/
+22-agent-native-research-artifact/
+├─ compiler/
+├─ research-manager/
+└─ rigor-reviewer/
+packages/ai-research-skills/
+demos/ docs/ anthropic_official_docs/
+.github/workflows/</pre></div>
+        <div class="box"><h3>Autoresearch 实际流</h3><pre class="flow">外部 Agent 持续触发（/loop 或 cron）
+→ 创建 research-state.yaml / research-log.md
+→ bootstrap：文献 → survey → gap → 假设
+→ inner loop：protocol → sanity → experiment → analysis
+→ outer loop：汇总 → DEEPEN/BROADEN/PIVOT/CONCLUDE
+→ CONCLUDE：findings + citation check
+→ ml-paper-writing → paper/</pre></div>
+      </div>
+      <div class="grid">
+        <div class="box"><h3>安装器调用链</h3><pre class="flow">cli.js
+→ src/index.js
+→ src/agents.js（识别宿主）
+→ src/installer.js
+→ ~/.orchestra/skills/
+→ .claude/skills 或 .cursor/skills 等链接</pre></div>
+        <div class="box"><h3>技能内容形态</h3><ul>
+          <li>主体是 Markdown <code>SKILL.md</code>，配 <code>references/</code></li>
+          <li>少量 examples、templates、脚本</li>
+          <li>技能按需加载：metadata → SKILL → references</li>
+          <li>CI 检查库存数量，workflow 负责同步/发布</li>
+        </ul></div>
+      </div>
+      <div class="good">真实实现特征：它提供的是“研究方法与操作协议”，尤其强调预注册实验、claim→experiment→evidence、探索树和引用边界。</div>
+      <div class="note">已观察到：安装器的 <code>--all</code> 路径没有覆盖 22 类 ARA；部分 quick-start/individual skill 路径与磁盘实际名称不一致。库存总数检查仍可通过。</div>
+      <details><summary>源码证据路径</summary><p class="evidence"><code>0-autoresearch-skill/SKILL.md</code> · <code>0-autoresearch-skill/templates/</code> · <code>22-agent-native-research-artifact/compiler/SKILL.md</code> · <code>22-agent-native-research-artifact/research-manager/SKILL.md</code> · <code>22-agent-native-research-artifact/rigor-reviewer/SKILL.md</code> · <code>packages/ai-research-skills/src/index.js</code> · <code>src/installer.js</code> · <code>scripts/check-inventory.sh</code></p></details>
+    </article>
+
+    <!-- 4 -->
+    <article class="card">
+      <div class="card-head">
+        <div class="title"><div class="num">4</div><div><h2>EurekAgent</h2><small><a href="https://github.com/THU-Team-Eureka/EurekAgent">THU-Team-Eureka/EurekAgent</a> · HEAD <code>fb96df8</code></small></div></div>
+        <span class="kind">LangGraph 实验搜索</span>
+      </div>
+      <p>定位：把 Claude Code 变成并行实验研究员；控制器负责多轮 propose/implement，隐藏 evaluator 独立评分。</p>
+      <div class="grid">
+        <div class="box"><h3>实际目录骨架</h3><pre class="tree">src/
+├─ graph.py state.py pipeline.py
+├─ nodes/
+│  ├─ prepare_node.py
+│  ├─ propose_node.py
+│  └─ implement_node.py
+├─ acp/ docker/ eval_grader/
+├─ artifacts.py history.py ranking.py
+├─ monitor/ tui/ prompts/
+└─ time_budget.py resume_preflight.py
+examples/ results/ .claude/skills/</pre></div>
+        <div class="box"><h3>LangGraph 拓扑</h3><pre class="flow">START
+  ↓
+prepare
+  ↓
+propose（生成 manifest + approach.md）
+  ↓
+implement（每个 approach 并行）
+  ↓
+propose ← 循环
+  ↓
+end
+
+终止：max_loops / cost_limit /
+无有效结果 / 合同不完整 / 连续 API 错误</pre></div>
+      </div>
+      <div class="grid">
+        <div class="box"><h3>单轮实现流</h3><pre class="flow">approach_details/&lt;id&gt;/code/
+→ agent 实验与提交
+→ eureka_submit.py POST /grade
+→ grader Docker 读取 hidden_eval
+→ score / valid / feedback
+→ best_result.jsonl
+→ history/ranking
+→ 下一轮或结束</pre></div>
+        <div class="box"><h3>安全隔离</h3><ul>
+          <li>grader 与 agent 分离，agent 看不到 <code>hidden_eval_dir</code></li>
+          <li>实现 agent 只能写自己的 approach 目录</li>
+          <li>提交通过 controller client，不能直接改 best/intermediate 结果</li>
+          <li>GPU 通过锁文件分配，不信任 agent 自传 GPU ID</li>
+        </ul></div>
+      </div>
+      <div class="good">真实实现特征：它更像“可验证的实验/优化搜索器”，不是从文献到论文的全链路；核心价值在并行方案、隐藏评分、结果排序、可恢复运行。</div>
+      <details><summary>源码证据路径</summary><p class="evidence"><code>src/__main__.py</code> · <code>src/graph.py</code> · <code>src/state.py</code> · <code>src/pipeline.py</code> · <code>src/nodes/prepare_node.py</code> · <code>propose_node.py</code> · <code>implement_node.py</code> · <code>src/eval_grader/client.py</code> · <code>server.py</code> · <code>src/docker/container.py</code> · <code>.claude/skills/</code></p></details>
+    </article>
+
+    <!-- 5 -->
+    <article class="card">
+      <div class="card-head">
+        <div class="title"><div class="num">5</div><div><h2>Archon-Horizon</h2><small><a href="https://github.com/frenzymath/Archon-Horizon">frenzymath/Archon-Horizon</a> · main <code>0c5d4e1</code></small></div></div>
+        <span class="kind">Lean 证明工作空间编排</span>
+      </div>
+      <p>定位：围绕 Lean、LaTeX blueprint、hgraph 和 workspace ledger 管理可追溯证明/研究任务；不是通用文献科研 pipeline。</p>
+      <div class="grid">
+        <div class="box"><h3>实际目录骨架</h3><pre class="tree">src/archon_horizon/
+├─ commands/ config/ core/
+├─ orchestration/ agents/ harnesses/
+├─ blueprint/ hgraph/ search/
+├─ store/ vcs/ transcript/
+├─ inboxes/ subagents/ skills/
+├─ server/ render/ frontend/
+└─ runlog.py
+demo/ docs/ tests/
+pyproject.toml + uv.lock</pre></div>
+        <div class="box"><h3>当前源码执行流</h3><pre class="flow">horizon init
+→ config + .archon-horizon + Git ledger
+→ 编译 skills/subagents
+
+horizon run &lt;target&gt;
+→ load workspace / inbox / MCP
+→ build_orchestrator
+→ scheduler 选 queued Task
+→ HorizonAgent → Claude/Codex harness
+→ transcript + report + checks
+→ ledger integrate + events
+→ 下一轮 / run.finished</pre></div>
+      </div>
+      <div class="grid">
+        <div class="box"><h3>任务调度与产物</h3><ul>
+          <li>scheduler 按 priority，跳过冻结任务和 write-set 冲突</li>
+          <li>运行目录：<code>.archon-horizon/runs/&lt;id&gt;/sessions/</code></li>
+          <li>会话产物：<code>transcript.jsonl</code>、<code>meta.json</code>、<code>report.md</code>、<code>usage.json</code></li>
+          <li>证明结果：Lean、blueprint、hgraph、checks、Git provenance</li>
+        </ul></div>
+        <div class="box"><h3>图与 Dashboard</h3><ul>
+          <li><code>horizon graph sync</code>：LaTeX label / Lean declaration → 节点与边</li>
+          <li>离线搜索：BM25、声明名、signature pattern</li>
+          <li>Live server 默认 <code>127.0.0.1:8765</code></li>
+          <li><code>dashboard --static</code> 可导出 API 数据和静态页面</li>
+        </ul></div>
+      </div>
+      <div class="good">关键事实：当前 Python <code>Orchestrator</code> 是 Horizon-only；Ground 仍作为 native subagent 描述存在，但不是 Python 编排器自动交替执行。</div>
+      <div class="note">仓库 docs 仍保留旧的 Ground 交替模型描述；当前源码和测试优先。这个项目的“研究输出”主要是形式化证明与其 provenance，不是论文 PDF。</div>
+      <details><summary>源码证据路径</summary><p class="evidence"><code>src/archon_horizon/commands/run.py</code> · <code>commands/init.py</code> · <code>orchestration/orchestrator.py</code> · <code>orchestration/scheduler.py</code> · <code>agents/prompts.py</code> · <code>harnesses/command.py</code> · <code>hgraph/sync.py</code> · <code>runlog.py</code> · <code>subagents/descriptors/ground.md</code> · <code>tests/test_orchestrator_smoke.py</code></p></details>
+    </article>
+  </section>
+
+  <h2 style="margin-top:30px">横向比较</h2>
+  <table class="compare">
+    <thead><tr><th>仓库</th><th>真正的核心对象</th><th>Agent 角色</th><th>评估/质量控制</th><th>最终主要产物</th></tr></thead>
+    <tbody>
+      <tr><td>AutoResearchClaw</td><td>23-stage pipeline</td><td>阶段执行器 / 领域 agent</td><td>stage contract、Gate、HITL、质量与引用验证</td><td>论文、代码、实验与 archive</td></tr>
+      <tr><td>ARIS</td><td>SKILL + 文件协议</td><td>宿主 agent 自主读技能并执行</td><td>review loop、receipt、assurance、provenance</td><td>研究叙事、论文、审计文件</td></tr>
+      <tr><td>AI-research-SKILLs</td><td>技能知识库 + installer</td><td>外部 agent</td><td>库存 CI；技能内定义检查清单</td><td>用户项目中的研究工作区</td></tr>
+      <tr><td>EurekAgent</td><td>prepare → propose → implement 图</td><td>并行实验员</td><td>隐藏 Docker grader、排序、预算</td><td>候选代码、分数、结果历史</td></tr>
+      <tr><td>Archon-Horizon</td><td>Task/Run/Workspace ledger</td><td>Horizon 主会话，可 native-spawn Ground</td><td>Lean checks、冻结/冲突调度、Git provenance</td><td>Lean 证明、blueprint、图、transcript</td></tr>
+    </tbody>
+  </table>
+
+  <p class="footer">方法说明：各仓库采用只读浅克隆核查目录、入口、关键源码、配置和示例/测试；没有使用 Firecrawl。快照 commit 已写在每张卡片中。报告只说明代码层面的结构与流程，不等同于在当前机器上完成了所有外部依赖、API、Docker、GPU 或模型调用的运行验收。</p>
+</main>
+</body>
+</html>

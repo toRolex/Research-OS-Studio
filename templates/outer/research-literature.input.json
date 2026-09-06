@@ -1,0 +1,16 @@
+{
+  "contract": {"name": "research-os/artifact", "version": "1.1.0"},
+  "target": {"kind": "git", "path": "artifacts/research-charter.json"},
+  "type": {"name": "research-charter", "version": "1.0.0"},
+  "spec": {
+    "question": "State the fixed research question.",
+    "boundaries": ["State at least one explicit boundary."],
+    "success_criteria": [],
+    "budget": {},
+    "invariants": [],
+    "citations": [],
+    "literature_synthesis": "",
+    "literature_limitations": [],
+    "status": "candidate"
+  }
+}

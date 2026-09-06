@@ -1,0 +1,169 @@
+{
+  "contract": {
+    "name": "research-os/catalog",
+    "version": "1.0.0"
+  },
+  "skills": [
+    {
+      "id": "analyze-experiment",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/analyze-experiment/SKILL.md",
+      "sha256": "cfcbf1c4c3dffa2f9c4e6c57892f01aa44ef49c61c7c2aa35aaaee02431719ca"
+    },
+    {
+      "id": "assess-result-to-claim",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/assess-result-to-claim/SKILL.md",
+      "sha256": "e48b939dfa5de132b8fb78583a3ee247965fc6ffcb2a12c71e928f57559df3f8"
+    },
+    {
+      "id": "citation-reference-audit",
+      "kind": "discipline",
+      "version": "1.0.0",
+      "path": "core/skills/citation-reference-audit/SKILL.md",
+      "sha256": "eb6541a9650ac916a1d54a511412c9dfcf53557ad0ce043fa9786d81469c2749"
+    },
+    {
+      "id": "design-experiment",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/design-experiment/SKILL.md",
+      "sha256": "67e2d4c033c00f74221ceac42d9a473e119f58f74a8ea3deefac887853bd8b1f"
+    },
+    {
+      "id": "environment-check",
+      "kind": "discipline",
+      "version": "1.0.0",
+      "path": "core/skills/environment-check/SKILL.md",
+      "sha256": "05469de55a804d1ae6f04537db768347f11443485b2e5064447be34391c2d757"
+    },
+    {
+      "id": "experiment-audit",
+      "kind": "discipline",
+      "version": "1.0.0",
+      "path": "core/skills/experiment-audit/SKILL.md",
+      "sha256": "6e83072b8c00a08efd590b407859e8600d64f84b7916edb9f9475df3e68de104"
+    },
+    {
+      "id": "freeze-publication",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/freeze-publication/SKILL.md",
+      "sha256": "42d00ca42fc8b3fcc630792e01664115b2df7b14938e402798443f5602aa8139"
+    },
+    {
+      "id": "independent-proof-review",
+      "kind": "discipline",
+      "version": "1.0.0",
+      "path": "core/skills/independent-proof-review/SKILL.md",
+      "sha256": "b262918226af3371e92c2677c7fd2a8786da59c27fb880455d231ce98527fdda"
+    },
+    {
+      "id": "lean-formalize",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/lean-formalize/SKILL.md",
+      "sha256": "bfc3f08a44f3ca675a0baf791cb191b7ddc6b8a80cb711fbf6615008b510aa9b"
+    },
+    {
+      "id": "math-proof",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/math-proof/SKILL.md",
+      "sha256": "5c862dde315761bfd22b827610e6ed4a00fd4056a3b237b6224b1c92a2a791b9"
+    },
+    {
+      "id": "prepare-experiment",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/prepare-experiment/SKILL.md",
+      "sha256": "fa56ef9d7c63c8acdbb35cdc536c07dc37fba13a20ad5b484a1632f04f8948d4"
+    },
+    {
+      "id": "publication-claim-audit",
+      "kind": "discipline",
+      "version": "1.0.0",
+      "path": "core/skills/publication-claim-audit/SKILL.md",
+      "sha256": "99281397d25824c2e0a2d1e2b1c56d8c90bab4f1addf905dff01037869b03c3e"
+    },
+    {
+      "id": "research-charter",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/research-charter/SKILL.md",
+      "sha256": "6ac91970b38beb53767b4058b944543bd74557e9cc133fbffe98e5e5c6792925"
+    },
+    {
+      "id": "research-gap",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/research-gap/SKILL.md",
+      "sha256": "ab77304a3ebce0016f480560a4a4a5eb5c4c47aa8d3b064a11d3c356c733a06c"
+    },
+    {
+      "id": "research-idea",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/research-idea/SKILL.md",
+      "sha256": "b8acb284e590577409e07b4232295b21a919ab03977b7877526ef8534e2dcb43"
+    },
+    {
+      "id": "research-literature",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/research-literature/SKILL.md",
+      "sha256": "8af655e34caeca35f3b3087d64b86296389f694cdf5ac52bb3d7a70db5a0c8ef"
+    },
+    {
+      "id": "research-novelty",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/research-novelty/SKILL.md",
+      "sha256": "5577d015bef5ea2d58ab3d3c8f198603c2a8c2207846adc15bd487f9f6a4bc70"
+    },
+    {
+      "id": "research-reflect",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/research-reflect/SKILL.md",
+      "sha256": "e331d55a4c1480d9a286a203367bcbb6e46550e50b082725611c72c8ac784dc3"
+    },
+    {
+      "id": "run-experiment",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/run-experiment/SKILL.md",
+      "sha256": "815d847e7bae281966081c7c2a74f4aaba80e84c2774a08c86aecc7a8f6c511f"
+    },
+    {
+      "id": "setup-research-os",
+      "kind": "workflow",
+      "version": "1.0.0",
+      "path": "core/skills/setup-research-os/SKILL.md",
+      "sha256": "51a6e3ed2a471eba08ff32136530507173567889dac9f0f229d544b26f70b228"
+    },
+    {
+      "id": "statistical-check",
+      "kind": "discipline",
+      "version": "1.0.0",
+      "path": "core/skills/statistical-check/SKILL.md",
+      "sha256": "6cd3dbaa68b2d617ebc5a3eb9a56d39c7f4356537a7842335bbb046bf33c7ceb"
+    },
+    {
+      "id": "training-health-check",
+      "kind": "discipline",
+      "version": "1.0.0",
+      "path": "core/skills/training-health-check/SKILL.md",
+      "sha256": "d0cfd4bc59f14c5a503c66ffadc2f0761376bf2f25e20729119eb7a64779effb"
+    },
+    {
+      "id": "trusted-statement-comparison",
+      "kind": "discipline",
+      "version": "1.0.0",
+      "path": "core/skills/trusted-statement-comparison/SKILL.md",
+      "sha256": "d80e3f5082b02021bc7f57b246e35665227eec8a9523cc19b4229d79cf2e5fe9"
+    }
+  ]
+}

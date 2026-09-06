@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-os.invalid/contracts/semantics/migration-receipt-1.0.0.schema.json",
+  "type": "object",
+  "required": [
+    "contract",
+    "target",
+    "type",
+    "spec"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "research-os/artifact"
+        },
+        "version": {
+          "enum": [
+            "1.0.0",
+            "1.1.0"
+          ]
+        }
+      }
+    },
+    "target": {
+      "$ref": "definitions-1.0.0.schema.json#/$defs/target"
+    },
+    "type": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "migration-receipt"
+        },
+        "version": {
+          "const": "1.0.0"
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": [
+        "input",
+        "output",
+        "input_contract",
+        "output_contract",
+        "rule",
+        "migrator",
+        "input_validator",
+        "output_validator",
+        "created_at"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "input": {
+          "$ref": "definitions-1.0.0.schema.json#/$defs/fixedRef"
+        },
+        "output": {
+          "$ref": "definitions-1.0.0.schema.json#/$defs/fixedRef"
+        },
+        "input_contract": {
+          "type": "object",
+          "required": [
+            "artifact_contract",
+            "type_name",
+            "type_version"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "artifact_contract": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+            },
+            "type_name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "type_version": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+            }
+          }
+        },
+        "output_contract": {
+          "type": "object",
+          "required": [
+            "artifact_contract",
+            "type_name",
+            "type_version"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "artifact_contract": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+            },
+            "type_name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "type_version": {
+              "type": "string",
+              "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+            }
+          }
+        },
+        "rule": {
+          "$ref": "definitions-1.0.0.schema.json#/$defs/fixedRef"
+        },
+        "migrator": {
+          "type": "object",
+          "required": [
+            "component",
+            "verdict"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "component": {
+              "$ref": "definitions-1.0.0.schema.json#/$defs/component"
+            },
+            "verdict": {
+              "const": "pass"
+            }
+          }
+        },
+        "input_validator": {
+          "type": "object",
+          "required": [
+            "component",
+            "verdict"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "component": {
+              "$ref": "definitions-1.0.0.schema.json#/$defs/component"
+            },
+            "verdict": {
+              "const": "pass"
+            }
+          }
+        },
+        "output_validator": {
+          "type": "object",
+          "required": [
+            "component",
+            "verdict"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "component": {
+              "$ref": "definitions-1.0.0.schema.json#/$defs/component"
+            },
+            "verdict": {
+              "const": "pass"
+            }
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provenance": {
+      "$ref": "definitions-1.0.0.schema.json#/$defs/provenance"
+    },
+    "assurance": {
+      "type": "array",
+      "items": {
+        "$ref": "definitions-1.0.0.schema.json#/$defs/fixedRef"
+      }
+    }
+  }
+}

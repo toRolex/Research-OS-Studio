@@ -1,0 +1,26 @@
+[project]
+name = "research-os"
+version = "0.1.0"
+description = "Provider-neutral portable core for user-controlled research workflows"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+research-os = "research_os.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/research_os"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"core" = "research_os/_core"
+"adapters" = "research_os/_adapters"
+"templates" = "research_os/_templates"
+"reference-projects" = "research_os/_reference_projects"
+
+[tool.hatch.build.targets.sdist]
+include = ["/src", "/core", "/adapters", "/templates", "/reference-projects", "/scripts", "/tests", "/pyproject.toml", "/uv.lock", "/README.md"]

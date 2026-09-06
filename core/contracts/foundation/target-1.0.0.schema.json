@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-os.invalid/contracts/foundation/target-1.0.0.schema.json",
+  "title": "Research OS P0 target profile",
+  "oneOf": [
+    {
+      "type": "object",
+      "required": [
+        "kind",
+        "path"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "git"
+        },
+        "path": {
+          "type": "string",
+          "format": "research-os-git-path"
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "repository": {
+          "type": "string",
+          "format": "research-os-canonical-https-uri"
+        }
+      },
+      "dependentRequired": {
+        "repository": [
+          "commit"
+        ]
+      }
+    },
+    {
+      "type": "object",
+      "required": [
+        "kind",
+        "uri",
+        "sha256"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "const": "uri"
+        },
+        "uri": {
+          "type": "string",
+          "format": "research-os-canonical-https-uri"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  ]
+}

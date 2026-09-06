@@ -1,0 +1,19 @@
+{
+  "contract": {"name": "research-os/independent-proof-review", "version": "1.0.0"},
+  "subject": {"statement_digest": "replace-with-statement-sha256", "proof_digest": "replace-with-proof-run-sha256"},
+  "proof_actor_principal": "project:proof-author",
+  "reviewer_principal": "project:independent-reviewer",
+  "dimension": "independent_review",
+  "method": "fresh context review of fixed supplied inputs",
+  "isolation_receipt": {
+    "mode": "fresh-context-fixed-inputs",
+    "conversation_history_included": false,
+    "hidden_state_included": false,
+    "inputs": [{"path": "artifacts/statement.json", "sha256": "replace-with-file-sha256"}],
+    "input_manifest_digest": "replace-with-canonical-sha256"
+  },
+  "findings": [],
+  "verdict": "inconclusive",
+  "human_acceptance": false,
+  "review_digest": "replace-with-canonical-sha256"
+}

@@ -1,0 +1,82 @@
+{
+  "allowlist": [
+    {
+      "path": "ports/products/experiment-audit/SKILL.md",
+      "port_id": "experiment-audit",
+      "sha256": "6e83072b8c00a08efd590b407859e8600d64f84b7916edb9f9475df3e68de104"
+    },
+    {
+      "path": "ports/products/statistical-check/SKILL.md",
+      "port_id": "statistical-check",
+      "sha256": "6cd3dbaa68b2d617ebc5a3eb9a56d39c7f4356537a7842335bbb046bf33c7ceb"
+    },
+    {
+      "path": "ports/products/training-health-check/SKILL.md",
+      "port_id": "training-health-check",
+      "sha256": "d0cfd4bc59f14c5a503c66ffadc2f0761376bf2f25e20729119eb7a64779effb"
+    },
+    {
+      "path": "ports/products/environment-check/SKILL.md",
+      "port_id": "environment-check",
+      "sha256": "05469de55a804d1ae6f04537db768347f11443485b2e5064447be34391c2d757"
+    },
+    {
+      "path": "ports/products/independent-proof-review/SKILL.md",
+      "port_id": "independent-proof-review",
+      "sha256": "b262918226af3371e92c2677c7fd2a8786da59c27fb880455d231ce98527fdda"
+    },
+    {
+      "path": "ports/products/publication-claim-audit/SKILL.md",
+      "port_id": "publication-claim-audit",
+      "sha256": "99281397d25824c2e0a2d1e2b1c56d8c90bab4f1addf905dff01037869b03c3e"
+    },
+    {
+      "path": "ports/products/citation-reference-audit/SKILL.md",
+      "port_id": "citation-reference-audit",
+      "sha256": "eb6541a9650ac916a1d54a511412c9dfcf53557ad0ce043fa9786d81469c2749"
+    },
+    {
+      "path": "ports/products/trusted-statement-comparison/SKILL.md",
+      "port_id": "trusted-statement-comparison",
+      "sha256": "d80e3f5082b02021bc7f57b246e35665227eec8a9523cc19b4229d79cf2e5fe9"
+    }
+  ],
+  "contract": {
+    "name": "research-os/port-release",
+    "version": "1.0.0"
+  },
+  "products": [
+    {
+      "path": "ports/products/experiment-audit/SKILL.md",
+      "sha256": "6e83072b8c00a08efd590b407859e8600d64f84b7916edb9f9475df3e68de104"
+    },
+    {
+      "path": "ports/products/statistical-check/SKILL.md",
+      "sha256": "6cd3dbaa68b2d617ebc5a3eb9a56d39c7f4356537a7842335bbb046bf33c7ceb"
+    },
+    {
+      "path": "ports/products/training-health-check/SKILL.md",
+      "sha256": "d0cfd4bc59f14c5a503c66ffadc2f0761376bf2f25e20729119eb7a64779effb"
+    },
+    {
+      "path": "ports/products/environment-check/SKILL.md",
+      "sha256": "05469de55a804d1ae6f04537db768347f11443485b2e5064447be34391c2d757"
+    },
+    {
+      "path": "ports/products/independent-proof-review/SKILL.md",
+      "sha256": "b262918226af3371e92c2677c7fd2a8786da59c27fb880455d231ce98527fdda"
+    },
+    {
+      "path": "ports/products/publication-claim-audit/SKILL.md",
+      "sha256": "99281397d25824c2e0a2d1e2b1c56d8c90bab4f1addf905dff01037869b03c3e"
+    },
+    {
+      "path": "ports/products/citation-reference-audit/SKILL.md",
+      "sha256": "eb6541a9650ac916a1d54a511412c9dfcf53557ad0ce043fa9786d81469c2749"
+    },
+    {
+      "path": "ports/products/trusted-statement-comparison/SKILL.md",
+      "sha256": "d80e3f5082b02021bc7f57b246e35665227eec8a9523cc19b4229d79cf2e5fe9"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "research-os/slurm", "version": "1.0.0",
+  "entrypoint": ["python", "-m", "research_os.remote"],
+  "configuration_schema": "config.schema.json",
+  "capabilities": ["submit", "status", "cancel", "log", "artifact"],
+  "profile": "explicit-single-job-cpu-pinned-checkout",
+  "transport": "OpenSSH argv-only client, quoted fixed Python worker, JSON stdin",
+  "requires": ["preconfigured OpenSSH authentication and known_hosts", "remote Python >=3.10", "remote Git", "existing pinned checkout", "sbatch", "squeue", "sacct accounting with job names", "scancel", "shared work directory visible to batch nodes", "synchronized clocks"],
+  "unsupported": ["arrays", "heterogeneous jobs", "federation", "requeue/preemption recovery", "automatic unknown-state reconciliation", "GPU/cost/token metering", "uncommitted inputs", "snapshot symlinks/submodules", "arbitrary scheduler options", "job daemonization or hostile research executable"],
+  "state_policy": "queue/accounting identity mismatch, empty/duplicate rows, unsupported/contradictory states -> sticky unknown, hard stop, never resubmit; scancel acceptance is only cancel_requested",
+  "deadline_policy": "Persist absolute deadline, refuse expired queued work, supervisor walltime bound, sbatch no-requeue and time limit; caller timeout requests cancellation but never claims completion",
+  "exit_codes": {"pass": 0, "failure_or_unknown": 1, "configuration_error": 2, "blocked": 3},
+  "evidence": {"fake_lifecycle": "tests/remote/test_remote_worker.py", "real_environment": "NOT_EVALUATED"},
+  "acceptance": "Local trusted fake sbatch/squeue/sacct/scancel tests only. No configured real cluster lifecycle run; no real SLURM support acceptance claimed."
+}

@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-os.invalid/contracts/semantics/project-1.0.0.schema.json",
+  "type": "object",
+  "required": [
+    "contract",
+    "target",
+    "type",
+    "spec"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "contract": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "research-os/artifact"
+        },
+        "version": {
+          "enum": [
+            "1.0.0",
+            "1.1.0"
+          ]
+        }
+      }
+    },
+    "target": {
+      "$ref": "definitions-1.0.0.schema.json#/$defs/target"
+    },
+    "type": {
+      "type": "object",
+      "required": [
+        "name",
+        "version"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "project"
+        },
+        "version": {
+          "const": "1.0.0"
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "required": [
+        "name",
+        "question",
+        "boundaries",
+        "principals"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "boundaries": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "principals": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "identity",
+              "roles"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "identity": {
+                "type": "string",
+                "minLength": 1
+              },
+              "roles": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "user",
+                    "researcher",
+                    "reviewer",
+                    "maintainer",
+                    "agent"
+                  ]
+                },
+                "minItems": 1
+              },
+              "display_name": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provenance": {
+      "$ref": "definitions-1.0.0.schema.json#/$defs/provenance"
+    },
+    "assurance": {
+      "type": "array",
+      "items": {
+        "$ref": "definitions-1.0.0.schema.json#/$defs/fixedRef"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "admission_digest": "ef7c3cc4337859d8de53b0a895487d4df5e8dad0db0ee3917a742dd7da3370c6",
+  "decision": "adapt",
+  "port_id": "independent-proof-review",
+  "principal": "person:rolex",
+  "product": {
+    "path": "ports/products/independent-proof-review/SKILL.md",
+    "sha256": "b262918226af3371e92c2677c7fd2a8786da59c27fb880455d231ce98527fdda"
+  },
+  "reviewed_at": "2026-09-06T12:40:00Z"
+}

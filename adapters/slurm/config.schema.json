@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://research-os.invalid/adapters/slurm/config-1.0.0.schema.json",
+  "title": "Research OS SLURM configuration 1.0.0",
+  "allOf": [
+    {"$ref": "../ssh/config.schema.json"},
+    {"type": "object", "properties": {"backend": {"const": "slurm"}}, "required": ["backend"]}
+  ]
+}
