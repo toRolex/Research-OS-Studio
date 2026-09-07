@@ -472,6 +472,36 @@ class HostileContractTests(unittest.TestCase):
             with self.subTest(type_name=type_name):
                 self.assertEqual(SemanticsSchemaValidator().validate(type_name, value), [])
 
+    def test_semantics_schema_and_python_invariants_remain_layered(self) -> None:
+        validator = SemanticsSchemaValidator()
+
+        duplicate_boundary = project()
+        spec = duplicate_boundary["spec"]
+        assert isinstance(spec, dict)
+        spec["boundaries"] = ["fixed compute", "fixed compute"]
+        schema_path = CONTRACTS / "semantics" / "project-1.0.0.schema.json"
+        self.assertEqual(
+            validator._evaluate(
+                validator._load(schema_path),
+                duplicate_boundary,
+                schema_path,
+                "",
+                frozenset(),
+            ),
+            [],
+        )
+        self.assertIn(
+            "array.duplicate",
+            {item.code for item in validator.validate("project", duplicate_boundary)},
+        )
+
+        receipt_issues = validator.validate(
+            "migration-receipt", MigrationTests().receipt()
+        )
+        self.assertEqual(
+            {item.code for item in receipt_issues}, {"migration.context_required"}
+        )
+
     def test_semantics_target_profile_rejects_noncanonical_inputs(self) -> None:
         bad_git_paths = (" link.json", "link.json\n", "link.json\t")
         bad_uris = (

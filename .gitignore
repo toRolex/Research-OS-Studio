@@ -6,6 +6,7 @@
 
 # Python / UV
 /.venv/
+/dist/
 __pycache__/
 *.py[cod]
 

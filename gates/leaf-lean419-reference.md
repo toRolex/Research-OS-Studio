@@ -2,6 +2,9 @@
 
 Scope: 在隔离临时 elan 环境安装官方工具链，执行固定数学 reference 的真实 Lean/Lake 正向 gate；必要时仅修复数学/Lean相关文件。
 
+> [!NOTE]
+> 本页是 2026-09-06 的历史执行账本，不是可移植操作指南。以下 CHECK 原样保留当时临时 `/tmp` elan、旧 checkout 绝对路径和用户 shell hash，不能在其他机器直接复制，也不要求把临时隔离验收转成持久或全局安装。当时被测 Research OS 完整 commit 未写入账本，仓库 revision provenance 不完整；不得事后用当前 HEAD 冒充。当前复验方式见 `docs/guides/references.md`：从仓库根、使用用户选择的持久隔离 Lean 4.19 环境运行，不由本仓库自动安装 Lean。
+
 - [x] G1: 官方 elan 安装在项目外临时 ELAN_HOME/CARGO_HOME，且未修改用户全局默认或 PATH 配置
   CHECK: test -x /tmp/research-os-lean419/elan/bin/elan && test "$(shasum -a 256 "$HOME/.elan/settings.toml" | cut -d ' ' -f 1)" = "1b5185e66f865f3af295cb217fdcf86fb3ad8ac3d6886e3c565fb618949c34c3" && test "$(shasum -a 256 "$HOME/.profile" | cut -d ' ' -f 1)" = "1ad600935ee24f2dc8254c80e0e9ec064a5c5d7040f47d97d97742fa263ccf46" && test "$(shasum -a 256 "$HOME/.zprofile" | cut -d ' ' -f 1)" = "bbcf385e4691d979df3c1167dc106cbad239ab9c299bcec46602fa08e7477df5" && test "$(shasum -a 256 "$HOME/.zshrc" | cut -d ' ' -f 1)" = "785a97a2665581a28d019f889b79a293f0f4c154b1e63f4ca75eebdb8e063bff" && env ELAN_HOME=/tmp/research-os-lean419/elan CARGO_HOME=/tmp/research-os-lean419/cargo ELAN_TOOLCHAIN=leanprover/lean4:v4.19.0 /tmp/research-os-lean419/elan/bin/elan show
   EXPECT: environment override by ELAN_TOOLCHAIN

@@ -34,7 +34,6 @@ DISCIPLINE_IDS = (
     "independent-proof-review", "trusted-statement-comparison", "publication-claim-audit",
     "citation-reference-audit",
 )
-SKILL_IDS = WORKFLOW_IDS
 _DIRECTORY_FLAGS = os.O_RDONLY | os.O_DIRECTORY | getattr(os, "O_NOFOLLOW", 0)
 _FILE_FLAGS = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
 

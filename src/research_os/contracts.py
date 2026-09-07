@@ -21,14 +21,12 @@ def normalize_issues(issues):
     ) for item in issues]
 
 
-def _fields(spec, required, *, candidate=False):
+def _fields(spec, required):
     issues = []
     for name, kind in required.items():
         value = spec.get(name)
         if not isinstance(value, kind) or (kind is str and not value.strip()):
             issues.append(Issue("spec." + name, f"{name} must be {kind.__name__}", "/spec/" + name))
-    if candidate and spec.get("status") != "candidate":
-        issues.append(Issue("spec.status", "status must be candidate", "/spec/status"))
     return issues
 
 

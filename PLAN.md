@@ -21,20 +21,20 @@ Budget note: 完整产品级实现；强验证优先，禁止以 walking skeleto
 ## Tree
 
 - 1 Research OS P0 .................................... GATES.md
-  - 1.1 Core and capability system .................... gates/node-core.md
+  - 1.1 Core and capability system .................... GATES.md
     - 1.1.1 Foundation contracts ...................... gates/leaf-foundation.md
     - 1.1.2 Domain graph contracts .................... gates/leaf-semantics.md
     - 1.1.3 Port + disciplines ........................ gates/leaf-ports.md
-  - 1.2 Research workflows ............................ gates/node-workflows.md
+  - 1.2 Research workflows ............................ GATES.md
     - 1.2.1 Outer-loop workflows ...................... gates/leaf-outer.md
     - 1.2.2 Computational slice ....................... gates/leaf-computational.md
     - 1.2.3 Remote adapters ........................... gates/leaf-remote.md
     - 1.2.4 Mathematical + Lean slice ................. gates/leaf-mathematical.md
-  - 1.3 Delivery boundary ............................. gates/node-delivery.md
+  - 1.3 Delivery boundary ............................. GATES.md
     - 1.3.1 Publication + paper/PDF ................... gates/leaf-publication.md
     - 1.3.2 Install/update/history/projections ......... gates/leaf-install.md
     - 1.3.3 Unified integration facade ................ gates/leaf-integration.md
-  - 1.4 Release truth ................................. gates/node-release.md
+  - 1.4 Release truth ................................. GATES.md
     - 1.4.1 Release acceptance and documentation ...... gates/leaf-release.md
 
 ## Leaves

@@ -75,4 +75,4 @@ research-os migrate-artifact --project PROJECT \
 
 接纳前逐项固定 source repo URL、完整 commit、source path、retrieval time、SPDX／license evidence、NOTICE、逐文件 baseline hashes、不可变 source snapshot、原流程与依赖、keep/modify/delete/add ledger、baseline/adapted eval、reviewer 和人工 preserve/adapt/reject 决定。评分不抵消来源／许可／越权硬门；reject 源码不得进入产品树。
 
-公开 GitHub 仓库不自动授予复制／分发许可。当前根目录未交付可据此宣称完整发行许可的 LICENSE；不要替项目宣布 MIT／Apache，也不要以本地自造 port fixtures 代替真实社区授权。两个 required 学科 port 的真实取证／eval／人工接纳仍是未满足 gate。
+公开 GitHub 仓库不自动授予复制／分发许可。当前根目录未交付可据此宣称整个 Research OS Studio 发行包采用 MIT／Apache 等统一许可证的 LICENSE，不要替项目宣布许可证。community ports 的来源／许可／评价／人工接纳则已按上述固定证据完成并通过 release gate；这不反向推导整个仓库的发行许可证。

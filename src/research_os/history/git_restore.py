@@ -16,7 +16,7 @@ from pathlib import Path, PurePosixPath
 from types import MappingProxyType
 from typing import Mapping
 
-from research_os.install.bundle import InstallManifest, _check_directory_identity, _directory_fd, _same_inode
+from research_os.install.bundle import InstallManifest, _check_directory_identity, _directory_fd, _path_has_symlink, _same_inode
 from research_os.install.model import digest_bytes
 
 FULL_COMMIT = re.compile(r"^[0-9a-f]{40}$")
@@ -32,18 +32,6 @@ def _run_git(repository: Path, *arguments: str, text: bool = False) -> subproces
         text=text,
         env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"},
     )
-
-
-def _path_has_symlink(path: Path, boundary: Path) -> bool:
-    current = path
-    while True:
-        if current.is_symlink():
-            return True
-        if current == boundary:
-            return False
-        if boundary not in current.parents:
-            return True
-        current = current.parent
 
 
 def _existing_parent(path: Path) -> Path:

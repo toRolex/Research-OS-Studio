@@ -2,22 +2,26 @@
 
 所有命令从仓库根执行；Python 操作均通过 UV。测试驱动不是产品 orchestrator：它模拟用户逐条调用命令，固定模型／研究者提供的 candidate 和人工角色决定。没有真实模型请求、外部文献检索、社区 port 接纳或真实论文发布。
 
-## 一次性产物复现
+## 一次性或持久产物复现
 
 ```bash
 uv lock --check
 uv sync --frozen
-# 输出目录必须为新的绝对路径；两个 profile 各占子目录，拒绝覆盖旧证据。
-RESEARCH_OS_E2E_OUTPUT=/tmp/research-os-reference-evidence \
-  uv run --frozen python tests/e2e/run_suite.py --e2e --output /tmp/research-os-test-evidence
+# 必须是不存在的新绝对目录；需要长期保留证据时选择持久位置。
+EVIDENCE_ROOT=/replace/with/new/absolute/research-os-reference-evidence
+TEST_OUTPUT=/replace/with/new/absolute/research-os-test-evidence
+RESEARCH_OS_E2E_OUTPUT="$EVIDENCE_ROOT" \
+  uv run --frozen python tests/e2e/run_suite.py --e2e --output "$TEST_OUTPUT"
 ```
+
+`/tmp` 只适合一次性本地复验；不能作为持久证据位置。每次运行使用唯一新目录，避免覆盖旧证据。
 
 输出 `collection.json` 含完整 test ID 清单，`results.json` 明确 collected／selected／executed／passed／failures／errors／skipped；默认仅执行 tests/e2e，但先完整收集全树，禁止漏文件。全部测试运行用去掉 `--e2e` 的同一命令；本次只运行用户允许的 E2E，不借用其他叶子旧的“全量通过”计数。
 
 产物目录：
 
 ```text
-/tmp/research-os-reference-evidence/
+$EVIDENCE_ROOT/
   empirical-computational/
     requests/             # 每条显式用户请求，带真实 input digest/commit
     runs/                 # 成功、失败、预算耗尽的不可覆盖日志
@@ -66,16 +70,22 @@ RESEARCH_OS_E2E_OUTPUT=/tmp/research-os-reference-evidence \
 
 用户材料形成有限 Claim/Evidence、Manuscript；formal_verification 明确 not_applicable。之后与计算路径相同地 PDF → preflight → final digest freeze → immutable verify → 显式 update／历史恢复。普通证明产物可通过，不等于 Issue #24 的 accepted discipline 或统一 CLI 覆盖完成。
 
-## Lean 必需真实发布门
+## Lean 4.19 历史结论与可移植复验
 
-wheel 内固定 mathematical reference 带 `lean-toolchain`、Lake config、Challenge／Solution、metadata 与 pinned statement/proof/review。新增测试通过 **真实 canonical lean-formalize CLI** 运行，不注入 runner、不放 fake lean/lake。
+固定 mathematical reference 曾在隔离的官方 Lean 4.19 环境真实通过 build、axiom audit、statement comparator 与 kernel replay；历史命令和输出保留在 [`gates/leaf-lean419-reference.md`](../../gates/leaf-lean419-reference.md)。该 gate 是当时的 CHECK 账本，含临时 elan 路径、旧 checkout 绝对路径和用户 shell 摘要，**不是可移植安装脚本，也不要求把临时验收环境改成持久全局安装**。
+
+在另一台机器复验前，由用户自行准备一个持久、隔离且固定 Lean 4.19.0 的环境；本仓库不自动安装 Lean。先确认真实测试只需要 `lean`、`lake`、`ELAN_TOOLCHAIN=leanprover/lean4:v4.19.0` 和可选隔离的 `ELAN_HOME`／`CARGO_HOME`，再从当前仓库根运行：
 
 ```bash
+REPO="$(git rev-parse --show-toplevel)"
+cd "$REPO"
+lean --version
+lake --version
 RESEARCH_OS_REQUIRE_LEAN=1 uv run --frozen python -m unittest \
-  tests.e2e.test_e2e_mathematical.MathematicalReleaseTests.test_e2e_mathematical_real_lean_reports_blocked_or_verified -v
+  tests.mathematical.test_reference_fixture -v
 ```
 
-有工具时必须真实 result=verified、audit pass、kernel_replay pass（workflow 内含 fixed statement comparator）。当前无工具返回 exit 3／not-verified／blocked／tooling-blocked；普通回归将其明确记 skipped BLOCKED，严格发布模式断言失败，**不能作为 Lean PASS**。本次不下载或伪造 Lean 工具链。
+若用户的持久 Lean 可执行文件不在 PATH，应显式设置该环境的 PATH；不要复制 gate 中的旧 `/tmp` 或用户目录。工具不可用时普通回归可准确报告 BLOCKED/skip；严格发布复验不能把 BLOCKED 当 PASS。
 
 ## 独立发布检查
 
@@ -83,6 +93,6 @@ RESEARCH_OS_REQUIRE_LEAN=1 uv run --frozen python -m unittest \
 uv run --frozen python tests/e2e/check_release.py --output /tmp/research-os-strict-gates
 ```
 
-当前非零是准确结论：repository FAIL、ports FAIL、Lean BLOCKED、live host BLOCKED、SSH／SLURM NOT_EVALUATED。Manuscript、Publication、external reference 与数学 typed projections 已接入统一 `validate` registry；严格子测试通过统一 CLI 与两 Adapter 验证，不再依赖独立 API 旁路。
+`/tmp` 在此仅用于一次性结果；需留存时换成唯一的新持久绝对目录。当前仓库记录的 Core、ports 和固定 Lean reference 已 PASS；live Claude/Codex host 仍 BLOCKED，SSH／SLURM 真实环境仍 NOT_EVALUATED，因此综合检查可准确返回非零。以本次输出为准，不沿用早期构建阶段的 FAIL/BLOCKED 结论。
 
-冻结 UV CI 保存上述独立结果，不用 continue-on-error／mock／expectedFailure 把发布门改绿。CI 定义已交付，但本机运行不等于 GitHub Linux CI 已运行。
+冻结 UV CI 保存独立结果，不用 continue-on-error／mock／expectedFailure 把发布门改绿。CI 定义已交付，但本机运行不等于 GitHub Linux CI 已运行。

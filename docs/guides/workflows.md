@@ -22,7 +22,7 @@
 
 ## 实际命令形态
 
-`CLI` 以下表示已安装 wheel 的 `uv run --no-project /absolute/tooling/bin/research-os`；不是 shell 自带命令。
+`CLI` 以下表示 PATH 中由持久 `uv tool install` 安装的 `research-os`。若未配置 PATH，可先用 `uv tool dir --bin` 查询实际 executable 目录；不要硬编码某个平台的默认路径。
 
 ```text
 CLI setup-research-os --project PROJECT
@@ -31,10 +31,12 @@ CLI workflow research-literature --project PROJECT --request requests/literature
 CLI workflow design-experiment --project PROJECT --request requests/design.json
 CLI workflow math-proof --project PROJECT --request requests/math.json
 CLI workflow lean-formalize --project PROJECT --request requests/lean.json
-CLI freeze-publication --project PROJECT --manifest stage.json --principal alice --confirm 'EXACT FINAL DIGEST CONFIRMATION'
+CLI freeze-publication --project PROJECT --manifest stage.json --principal PROJECT_USER_PRINCIPAL --confirm 'EXACT_FINAL_DIGEST_CONFIRMATION'
 ```
 
 除 setup／freeze，其他研究 workflow 使用 `workflow NAME --request`；多数也有同名短命令。`research-charter --input --output --report` 是兼容入口，`--input` 现在是完整 typed pinned request，不是裸 `question.md`。setup／freeze 使用独立命令，不承诺 generic dispatcher 覆盖其执行分支。
+
+`PROJECT`、`PROJECT_USER_PRINCIPAL`、digest 和确认串均为占位符：PROJECT 必须替换为科研项目绝对路径；principal 必须存在于固定 Project Artifact 且具有 `user` role；digest／确认串必须来自实际 bytes 与 preflight，不能原样复制示例。
 
 outer request 最小形态（输入必须是现有合法 typed question 文件）：
 

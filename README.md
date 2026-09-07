@@ -23,7 +23,7 @@ Research OS Studio 是一个可安装到任意科研项目的 portable core：**
 **是什么**
 
 - 一套以 Markdown／JSON／Git 为材料的 Agent Skills，通过 wheel 安装进普通科研项目，不修改项目自身依赖。
-- 唯一的规范交接是 **typed Artifact**：workflow 之间、Workstream 之间只通过固定（path + SHA-256 + 完整 commit）的 Artifact 传递。
+- 唯一的规范交接是 **typed Artifact**：outer／math 输入固定 path + SHA-256；需要仓库历史身份的 computational handoff 另固定完整 40 字符 Git commit。
 - **确定性 validators**：只判断可复现事实，稳定退出码 `0/1/2/3`，不代替研究判断或 human acceptance。
 - **薄 Adapter**：把 provider-neutral Core 投影到 Claude Code／Codex，探测能力、映射调用并执行阻止；删掉 Adapter 后 Core 仍可阅读、验证和手工执行。
 - **不可变 Publication**：用户最终 digest 确认后冻结，封闭成员、不可覆盖，替代／撤回只能包外追加。
@@ -46,31 +46,45 @@ Research OS Studio 是一个可安装到任意科研项目的 portable core：**
 
 需要 Git、[uv](https://docs.astral.sh/uv/) 与 Python 3.12+。
 
-### 1. 构建并安装独立工具环境
+### 1. 构建并安装持久隔离工具
 
 ```bash
 git clone https://github.com/toRolex/Research-OS-Studio.git
 cd Research-OS-Studio
-uv lock --check
-uv sync --frozen
-uv build --wheel --out-dir /tmp/research-os-dist
-uv venv /tmp/research-os-tooling
-uv pip install --python /tmp/research-os-tooling/bin/python /tmp/research-os-dist/research_os-0.1.0-py3-none-any.whl
+(
+  set -e
+  uv lock --check
+  uv sync --frozen
+  BUILD_DIR="$HOME/research-os-builds/$(git rev-parse HEAD)"
+  mkdir -p "$(dirname "$BUILD_DIR")"
+  mkdir "$BUILD_DIR"
+  uv build --wheel --out-dir "$BUILD_DIR"
+)
 ```
 
-wheel 安装到 UV 独立环境，**不修改科研项目的依赖**。
-
-> [!WARNING]
-> 不要把 dirty checkout 当成已验证安装来源：setup 只接受 wheel RECORD 或干净固定 checkout。
-
-### 2. 安装到科研项目
+构建成功后，将下面的占位符替换为输出的精确 wheel 路径，再安装：
 
 ```bash
-uv run --no-project /tmp/research-os-tooling/bin/research-os setup-research-os \
-  --project /absolute/research-project
+uv tool install /replace/with/exact/persistent/wheel/path.whl
 ```
 
-setup 从已安装 wheel 校验资源来源，复制 Core／templates／references，并生成项目级 Claude Code／Codex projection。**它不会启动任何研究、不自动更新、不安装全局 runtime。**
+`BUILD_DIR` 是新的持久绝对目录；目录已存在或构建失败时，子 shell 会立即停止，不覆盖旧构建。安装时替换为本次输出的**精确 wheel 路径**，不要用可能命中多个旧版本的 `*.whl`。以上示例适用于 macOS/Linux shell。`uv tool install` 建立持久隔离 CLI 环境，不修改科研项目依赖，也不在科研项目内保存 Python runtime／lockfile。
+
+uv 的 tool 环境与可执行目录由平台和配置决定；用 `uv tool dir`、`uv tool dir --bin` 查询，不要把某个 Unix 默认目录当作跨平台保证。安装警告会给出当前 shell 的 PATH 命令；也可由用户显式运行 `uv tool update-shell`。安装流程不自动修改 shell 配置。
+
+> [!WARNING]
+> 不要把 dirty checkout 当成已验证安装来源：setup 只接受 wheel RECORD 或干净固定 checkout。保留 wheel、SHA-256、源码 commit 与兼容工具链记录，供旧版本复验；不要用自动 upgrade 覆盖唯一旧安装。
+
+### 2. 准备并安装到科研项目
+
+```bash
+PROJECT=/replace/with/persistent/absolute/research-project
+mkdir -p "$PROJECT"
+git -C "$PROJECT" init
+research-os setup-research-os --project "$PROJECT"
+```
+
+将 `PROJECT` 替换为用户选择的持久绝对路径。setup 从已安装 wheel 校验资源来源，复制 Core／templates／references，并生成项目级 Claude Code／Codex projection。**它不会启动研究、不自动更新、不安装项目内 runtime。**
 
 ## 使用
 
@@ -79,12 +93,10 @@ setup 从已安装 wheel 校验资源来源，复制 Core／templates／referenc
 每一步 request 由用户指定并固定输入（path + SHA-256；计算 handoff 另含完整 commit），不能把前一步的建议当作授权：
 
 ```bash
-CLI=/tmp/research-os-tooling/bin/research-os
-
-uv run --no-project "$CLI" workflow research-charter \
-  --project /absolute/research-project --request requests/charter.json
-uv run --no-project "$CLI" validate \
-  --project /absolute/research-project charter.json
+research-os workflow research-charter \
+  --project "$PROJECT" --request requests/charter.json
+research-os validate \
+  --project "$PROJECT" charter.json
 ```
 
 15 个 workflow 按研究阶段组织：
@@ -105,11 +117,13 @@ uv run --no-project "$CLI" validate \
 ### 冻结 Publication
 
 ```bash
-uv run --no-project "$CLI" freeze-publication \
-  --project /absolute/research-project \
-  --manifest stage.json --principal alice \
-  --confirm 'EXACT FINAL DIGEST CONFIRMATION'
+research-os freeze-publication \
+  --project "$PROJECT" \
+  --manifest stage.json --principal YOUR_PROJECT_USER_PRINCIPAL \
+  --confirm 'REPLACE_WITH_EXACT_FINAL_DIGEST_CONFIRMATION'
 ```
+
+两个大写值都是占位符，不能原样使用。principal 必须已存在于固定 Project Artifact 的 `spec.principals`，且具有 `user` role；确认串必须是 preflight 要求的本次最终 digest 确认。
 
 错误确认、成员不封闭或必需 gate 阻塞都会 hard block；已冻结的 Publication 拒绝覆盖。
 
@@ -126,7 +140,7 @@ uv run --no-project "$CLI" freeze-publication \
 
 ## 验收
 
-在仓库根运行。收集 runner 检查所有测试文件均已进入 suite，输出逐项 ID 与真实计数，拒绝零测试、重复 ID、import errors 和漏收集：
+在仓库根运行。收集 runner 检查所有测试文件均已进入 suite，输出逐项 ID 与真实计数，拒绝零测试、重复 ID、import errors 和漏收集。`371` 是 runner 的最低历史收集基线；`408` 是构建期间的中间记录；`416/416` 是 2026-09-06 Lean-enabled 最终历史验收。它们不冲突，也不是永久精确上限；当前结果以本次 `collection.json`／`results.json` 为准。
 
 ```bash
 uv sync --frozen
