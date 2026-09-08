@@ -1,37 +1,31 @@
 # Research OS 领域上下文
 
-本仓库定义并发布可安装到独立科研项目的 Research OS P0。它是 provider-neutral 的 Agent Skills、共享契约、确定性 validator、项目设置与薄平台 Adapter 集合；不是中央 planner、自动科研 runtime、scheduler 或具体科研项目。
+本仓库发布可安装到独立科研项目的纯 Agent Skills 套件。Skills 是产品本体；产品没有 Research OS 专用 runtime、CLI、统一 schema/validator、中央 planner 或自动跨主流程推进。
 
 ## 规范领域词汇
 
 以下术语是规范名称。实现、测试、Issue 和文档不得用未定义的同义词替代其语义。
 
-- **Project**：一个独立科研项目的边界与配置容器。它可以包含多个 Workstream 和多份 Publication，不保存全局 phase、current focus 或自动 next-step。
-- **Workstream**：Project 内可独立推进、暂停或并行的局部研究工作容器。不同 Workstream 不靠隐式状态通信，只通过 Artifact 交接。
-- **Artifact**：带 typed contract、稳定 target、可选 provenance/relations/assurance 的项目文件产物。它是 workflow 与 Workstream 之间唯一规范交换接口；失败现场和旧版本不可静默覆盖。
-- **Claim**：对研究对象、结果或贡献的版本化断言，是一等 Artifact。Claim 的成立不由 workflow 完成或单一 verified 状态自动推出。
-- **Evidence**：被明确定位、固定范围并用于支持 Claim 的一等 Artifact。Evidence 与 Claim 通过单向 `supports` 关系连接；supports 不表示证明、真值或全局可信度。
-- **Assessment**：独立、不可覆盖的 Assurance 结论 Artifact。它固定 subject、dimension、scope、method、evidence、assessor、verdict 和 validity。
-- **Publication**：经用户确认后创建的封闭、版本化发布投影。它固定主要公开文本、成员集、Claim、Evidence、条件、限制、外部引用 receipts 和纳入的 Assessments；冻结后不可覆盖，替代/撤回只能包外追加。
-- **workflow**：只能由用户显式调用的有边界流程。它读取用户指定的 pinned Artifact，在预算内产生 candidate Artifact 和报告，列出零到多个下一步后停止，不自动调用另一个 user workflow。
-- **discipline**：只在当前 workflow 内由模型调用的局部能力。它不得改变研究语义、statement、评价标准或预算，不得跨 workflow、接受成果、冻结 Publication 或把失败改写为通过。
-- **validator**：只判断可复现的确定性事实并生成结构化 Validation Report 的工具。稳定退出码为 `0=pass`、`1=validation failure`、`2=usage/configuration error`、`3=blocked/external prerequisite unavailable`；validator 不代替研究判断或 human acceptance。
-- **Adapter**：把 provider-neutral Core 投影到具体平台、探测能力、映射调用并执行阻止的薄层。它不得复制或改写 contract、validator、研究语义、预算、gate 或停止规则；Core 删除 Adapter 后仍可阅读、验证和手工执行。
-- **port**：逐项接纳外部社区能力的可审计记录。它必须固定来源仓库 URL、完整 commit、source path、retrieval time、SPDX/license evidence、NOTICE、逐文件 baseline hash、原流程、依赖、keep/modify/delete/add ledger、来源快照、baseline/adapted eval、reviewer 与人工 `preserve|adapt|reject` 决定。
-- **target**：定位 Artifact、Publication 或外部材料的结构化 locator，不是 Research OS 自造 ID。支持合法 `git` 或 `uri`；固定 Git 使用完整 commit，跨仓库还需无凭据绝对获取 URI；固定 URI 内容记录 SHA-256。禁止绝对路径、目录、`.`、`..`、fragment、缩写 commit 和 floating branch/tag/latest。
+- **Research Project**：用户已有或新建的科研项目。它拥有自己的材料、环境、目录和 Git 历史；Research OS 只在用户确认后补齐人类可读工作区。
+- **Research Workspace**：Research Project 内由 setup 记录位置的人类可读导航、研究日志与 Workflow 产物集合。默认建议 `research/`，但不强制迁移已有文件，也不是隐藏 runtime 状态。
+- **Skill**：可由 Agent 宿主发现和执行的自包含能力，连同自身 references、templates、assets 和必要 scripts 构成产品发行单元。
+- **Workflow**：用户显式调用、职责有界的顶层或独立 Skill。它可在当前授权内调用内部 Skill，产出候选材料和报告后停止；不得自动进入另一条顶层 Workflow。
+- **Internal Skill**：由 Workflow 在当前职责、写入范围和资源授权内调用的局部能力；也可被高级用户明确点名单独运行。它不得扩大研究目标、预算或外部副作用。
+- **Idea Discovery**：主动检索文献、生成多视角候选、查新、独立评审并收敛为可验证 Proposal 的主流程；完成后停止，不自动开始 Validation。
+- **Validation**：通过计算／实证实验或数学／理论方法形成受证据约束结论的主流程；环境与资源由 Research Project 所有，不自动进入写作。
+- **Paper Writing and Improvement**：依据原始研究材料规划、起草、绘图、编译、审计和修订论文的主流程；不自动投稿、宣布接受或触发后续 Workflow。
+- **Research Material**：Markdown、代码、数据、CSV、图片、LaTeX、Lean 等保持自然格式的项目文件。文件存在不自动等于论断成立，Research OS 不用统一 JSON Artifact 包装它们。
+- **Claim**：研究者拟表达的范围受限主张。Claim 是否成立由证据、独立审查和用户判断约束，不由 Workflow 完成、文件格式或模型共识推出。
+- **Evidence**：用于支持或限制 Claim 的原始结果、推导、来源或观察。定位和解释必须可供审查，但不要求 Research OS 维护额外 digest、receipt 或 content pin。
+- **Source Record**：集中记录上游仓库、作者、核对 revision、原路径、采用内容、许可证和 attribution 的维护信息；它不是 port database、来源认证协议或运行时 gate。
+- **Router**：只读 Skill，用于解释能力地图并推荐入口；不修改研究材料，也不执行推荐的 Workflow。
 
-## 关键架构约束
+## 关键边界
 
-1. 用户拥有研究语义、目标、成功标准、预算追加、statement 修改确认、workflow 间推进、正式接受与 Publication 冻结权。
-2. P0 采用 provider-neutral Core、typed file Artifact handoff 和确定性 validators，不引入中央 planner、全局 phase、自动循环或专用运行时。
-3. Assurance 采用六个不可线性化维度：`structural_conformance`、`empirical_reproducibility`、`mathematical_argument_review`、`formal_verification`、`independent_review`、`human_acceptance`。新 Artifact revision 不继承旧 Assessment；同维度重叠 scope 的有效冲突必须阻塞 gate。
-4. Publication 冻结是显式用户行为。内容无法固定、成员不封闭、外部 receipt 缺失或必需 gate 阻塞时 hard block。
-5. 缺少 port 来源或许可证证据时 hard block；`reject` 的源码不能进入产品树。评分不能抵消硬门。
-6. GitHub Issues 是当前规划和状态真源。旧 Wayfinder `MAP.md`、`tracker.json` 和本地 tickets 是历史快照；发现 closed/open 或 blocked-by 矛盾时不得用快照改写当前状态，必须以 GitHub Issue 关系为准并保留矛盾记录。
-
-## 证据边界
-
-- `docs/research/sources/comparison.md`、`docs/research/sources/aris-report.md`、`docs/research/sources/ai-research-skills-report.md` 与 `docs/research/sources/anthropic-openai-math-workflows-20260901.md` 是实现前审计材料；`docs/research/sources/README.md` 固定其原始路径、上游完整 revision 与 digest。
-- `prototypes/artifact-min-contract-prototype.html`（commit `3428eb72aa31ed532a036909e857e768441c0bcb`）与 `minimal-project-workstream-publication-prototype.html`（commit `6c24ac721af4ccdbc8c57eb980abe006477d477a`）只用于契约决策验证，不是生产运行 seam。
-- 分析、原型和规划完成不等于 P0 产品完成；后续实现仍必须通过契约、许可、validator、两条 reference project 与 E2E 验收。
-- **验收证据边界**：fixture 中的 researcher、reviewer、user 是固定测试角色。其 candidate、review 和 human-acceptance 输入只验证契约，不代表真实学术判断、社区 port 接纳或产品发布许可；产物线通过不得替代独立发布 gate。
+1. 三条主流程是产品地图，不是状态机；用户决定何时调用、停止或转入下一条流程。
+2. setup 只探索、展示、询问、起草、确认并补齐缺失内容；不安装 Skills、配置环境、覆盖现有材料或创建具体 Idea／Claim／Evidence／论文。
+3. Skills 优先完整搬运许可证兼容的成熟资产并最小适配；许可证不兼容或证据不足时只 clean-room 借鉴公开思想。
+4. Research OS 不提供专用 CLI、Python/Node runtime、wheel、统一 contracts/validators、Adapters、SHA/digest/receipt、Publication freeze 或 port gates。
+5. GitHub Issues 是规划和状态真源；来源与许可证决定集中记录于 `docs/upstream-sources-and-licenses.md`。
+6. 未经用户确认，不执行付费资源、远程写入、投稿、发布、Git push 或破坏性操作；外部能力缺失时如实报告。
+7. 用户真实科研项目验收前，不声称端到端体验或科研质量已经通过。

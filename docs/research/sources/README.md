@@ -1,4 +1,6 @@
-# Issue #25 实施证据索引
+# 历史调研证据索引
+
+> 本文件记录 Issue #25 时的历史归档，不再作为搬运 revision、许可证或产品 gate 的当前真源。六仓 revision 后经核对存在仓库错位，且本文件的 digest／port hard gate 属于已被 ADR-0005 取代的旧架构。后续采用决定以 `docs/upstream-sources-and-licenses.md` 为准。
 
 Issue #24 指定的四份分析材料已从原工作树的 `analysis/` 目录恢复到本目录。下表固定归档副本、原始报告路径、生成报告时审计的上游完整 revision，以及归档副本 SHA-256；不能仅凭日期或浮动分支替代这些 revision。
 
