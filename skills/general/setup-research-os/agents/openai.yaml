@@ -1,0 +1,5 @@
+interface:
+  display_name: "Setup Research OS"
+  short_description: "确认草稿后安全初始化科研项目"
+policy:
+  allow_implicit_invocation: false
