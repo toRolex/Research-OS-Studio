@@ -47,6 +47,21 @@
 - **调用核对**：上游 `skills/idea-discovery/SKILL.md` Phase 3 实际调用 `novelty-check`；上游查新引用的 `integration-contract.md`、`citation-discipline.md`、`review-tracing.md` 及 `tools/verify_papers.py` 已阅读。保留核实与独立复核职责，不继承其 runtime、自动 pilots、receipt 或后续 Workflow 调用。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。新增报告模板和引用规则为上述方法的局部适配，不依赖中央文档运行。
 
+## 已采用的候选评审与方法改进
+
+2026-09-12 从 ARIS 官方 GitHub API 重新解析 `0472e530251cdbd3364c33b110063c58f819edd7` 并完整读取下述正文、目录树、直接引用与 MIT 许可；采用固定版本，不声称是最新 HEAD。两个原 Skill 目录都只有 `SKILL.md`，没有额外共置 references/templates/assets 或第三方资产。
+
+| 本仓 Skill | 上游原路径与采用内容 | 共置许可与适配 |
+|---|---|---|
+| `skills/idea-cycle/idea-review/` | wanshuiyin / ARIS，`skills/research-review/SKILL.md`：上下文采集、独立 adversarial 初评、逻辑/证据/叙事/贡献四面审查、证据反驳、同 reviewer 有界澄清、条件性 Claim 矩阵、优先行动与完整对话记录。 | MIT 全文及 `Copyright (c) 2026 wanshuiyin` 放在 `LICENSE`。将含论文/结果的宽泛 review 限定为现成 Idea；保留实质评审任务与后续提问，按需披露到共置 reference/template。删除固定 provider/MCP、安装指令、tracing/runtime；仅评审报告写入，reviewer 不修订候选。 |
+| `skills/idea-cycle/idea-refinement/` | wanshuiyin / ARIS，`skills/research-refine/SKILL.md`：固定五字段 Problem Anchor、完整 Phase 1 方法开发、MVP/frontier 双路线、十一项机制具体化、1–3 项 Claim 驱动验证草图、七轴独立方法评审、Anchor/Simplicity Check、证据 pushback、逐轮完整 Proposal 与改进记录。 | 同 revision、同 MIT notice，随 `LICENSE` 发行。原方法开发段、修订检查及完整 Proposal 模板搬入共置 resources 后最小适配；保留七轴实质评价与可选原权重。移除 provider、JSON checkpoint、中央输出协议、强制分数停止、自动实验/跨流程调用；领域不适用项明确说明。 |
+
+**调用关系复核**：原 `idea-discovery` Phase 4 实际调用 `research-review`；Phase 4.5 调用 `research-refine-pipeline`，后者 Phase 1 调用 `research-refine`、Phase 3 再调用 `experiment-plan`。本票保留前两项研究职责，未复制 pipeline 的自动规划/执行链。本仓二者均为 model-invoked Internal Skills，用户可点名 standalone，明确授权时 composed；review 不自动启动 refinement，refinement 自带局部独立方法评审任务，无 sibling Skill 安装依赖。
+
+**引用与取舍**：完整读取 `reviewer-routing.md`、`reviewer-independence.md`、`review-scope-limits.md`、`external-cadence.md`、`review-tracing.md`、`integration-contract.md`、`output-composition.md`、`output-versioning.md`、`output-manifest.md`、`output-language.md`、`taste-calibration.md`。采纳原始材料直达 reviewer、同 reviewer 续轮、standalone/composed 明确信号与完整原始交互记录；舍弃安装、provider routing、`.aris`、中央 helper/schema/manifest、自动状态恢复与越权写入。独立性规则优先于原 refine 中传作者 key-changes 摘要的示例。`taste-calibration.md` 含其他来源归因，不复制该文件；七轴来自 `research-refine`，只有用户提供人工精选参照时才可报告有参照评分，缺少即说明未校准。
+
+场景材料（公开现成候选、论文、原实验代码）仅临时用于实现期验证，不随产品分发；用户真实研究效果与端到端体验仍待用户验收。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
