@@ -29,7 +29,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 | 分类 | 目录 | 当前正式 Skill |
 |---|---|---|
 | General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)（user-invoked） |
-| Idea Cycle | `idea-cycle/` | [idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)（均 model-invoked，用户可点名；支持 standalone / composed） |
+| Idea Cycle | `idea-cycle/` | [idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)（均 model-invoked，用户可点名；支持 standalone / composed） |
 | Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止） |
 | Writing Cycle | `writing-cycle/` | 后续独立票交付；当前无正式入口 |
 
