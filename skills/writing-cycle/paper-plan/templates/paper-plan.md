@@ -41,7 +41,9 @@ What / Why（证据）/ So What；用户选择及未决 framing。
 - 预计篇幅与计数方式
 - 缺口、保留的范围限定、主文/附录划分
 
-摘要用贡献、难点、方法、证据、最值得记住的已支持结果五槽位；引言用动机、prior-work gap、贡献、问题、结果预览与 hero figure。已知局限进入相应主张限定及专门讨论位置。
+摘要默认用贡献、难点、方法、证据、最值得记住的已支持结果五槽位；Systems 稿可改用 [Systems 摘要蓝图](../references/systems-blueprints.md#abstract-blueprint-150250-words)，在计划中注明所选结构，按该结构组织而不叠加两套顺序。两者均受 Claim—Evidence 范围和已核实 venue 规则约束。
+
+引言用动机、prior-work gap、贡献、问题、结果预览与 hero figure。已知局限进入相应主张限定及专门讨论位置。
 
 ## 页数预算
 
