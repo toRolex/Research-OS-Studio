@@ -47,6 +47,21 @@
 - **调用核对**：上游 `skills/idea-discovery/SKILL.md` Phase 3 实际调用 `novelty-check`；上游查新引用的 `integration-contract.md`、`citation-discipline.md`、`review-tracing.md` 及 `tools/verify_papers.py` 已阅读。保留核实与独立复核职责，不继承其 runtime、自动 pilots、receipt 或后续 Workflow 调用。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。新增报告模板和引用规则为上述方法的局部适配，不依赖中央文档运行。
 
+## 已采用的 Conference Talk
+
+`skills/writing-cycle/paper-talk/` 是唯一演讲入口，独立 user-invoked。2026-09-13 通过官方 GitHub API 重新解析以下固定 revision、读取目录树、完整正文和 MIT 许可；不是宣称采用最新 HEAD。本地 ARIS checkout HEAD 不同，因此采用下列官方固定版本，不以本地 HEAD 代替来源核对。
+
+| 来源、作者与 revision | 原路径及实际采用内容 | 共置资源与适配 |
+|---|---|---|
+| ARIS / wanshuiyin，`0472e530251cdbd3364c33b110063c58f819edd7` | `skills/paper-talk/SKILL.md`；其真实调用的 `paper-slides/SKILL.md`、`slides-polish/SKILL.md`、`paper-claim-audit/SKILL.md`、`citation-audit/SKILL.md`。保留大纲确认、完整 notes/逐字 script/Q&A、独立只读审查、演讲质量七维、逐页 triage/fresh review、Beamer/PPTX 修复 catalog、数字七类问题、引用三轴、匿名及导出完整性。五个 Skill 目录均只有正文，无额外共置资产。 | 方法共置于 `story-and-delivery.md`、`visual-polish.md`、`talk-audit.md` 及两份材料/报告模板。保留 baseline、notes 不变和独立性要求；新增 Beamer 源位置分支，不套用 PPTX shape 模型。MIT 全文在 `LICENSE-ARIS.txt`。 |
+| Orchestra / Claude AI Research Skills Contributors / Orchestra Research，`773a52944ba4747a18bd4ae9ade53fff041adcbc` | `20-ml-paper-writing/presenting-conference-talks/SKILL.md` 及唯一共置 `references/slide-templates.md`，两份完整阅读。保留四类逐页结构、Systems 请求 walkthrough、demo 录像备用、结果讲解、Dahlin 三层叙事、完整 Beamer 和可编辑 PPTX 模板。 | `story-and-delivery.md` 与 `slide-templates.md` 保留完整方法和模板；修复原 PPTX 固定七页、类型参数无效、占位元数据、双标题与图片拉伸。原文“受 ARIS paper-slides 启发、独立实现”的归属在此保留。MIT 全文在 `LICENSE-Orchestra.txt`。 |
+
+ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment-integrity,assurance-contract,effort-contract,integration-contract,reviewer-routing,review-tracing,external-cadence,citation-discipline}.md` 与 `tools/extract_paper_style.py` 已全文核对。只保留审查独立性、证据范围及抽象风格参考方法；不搬运 provider/MCP、固定模型、`.aris`、helper resolver、网络风格提取器、SHA/trace/receipt、统一 JSON、合成论文审查 adapter、自动通知/发布或环境安装。`citation-discipline.md` 末尾标明来自 Anthropic 的 Apache-2.0 段落，以及许可链未充分明确的 insleep/LOOPS 派生段不在复制范围内。
+
+两源比较后以 ARIS 的完整准备与审查链作为入口，以 Orchestra 的结构与双格式模板补齐 Systems 演讲；不另发行 `presenting-conference-talks`、`paper-slides` 或 `slides-polish` 竞争入口。所有档位审查实际 slides、notes、script；视觉深度受本次预算控制，不沿用上游低档跳过内容审计。故事/密度/计时等审查与数值/引用审查并列，审查和修订分权。自然 Markdown 可独立交付；缺二进制/渲染/独立 reviewer 时如实注明，不认证 conference-ready。
+
+模板没有附带第三方主题文件、论文图表或外部 Dahlin PDF；其中 `metropolis` 等是对用户已有工具的可选依赖，不随本 Skill vendoring。Dahlin 的方法归属保留，不复制外链 PDF 正文。参考论文、用户模板、图表和录像的复用仍需用户授权，两个 MIT notice 不代替这些素材的权利许可。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
