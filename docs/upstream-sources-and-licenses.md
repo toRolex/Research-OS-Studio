@@ -47,6 +47,14 @@
 - **调用核对**：上游 `skills/idea-discovery/SKILL.md` Phase 3 实际调用 `novelty-check`；上游查新引用的 `integration-contract.md`、`citation-discipline.md`、`review-tracing.md` 及 `tools/verify_papers.py` 已阅读。保留核实与独立复核职责，不继承其 runtime、自动 pilots、receipt 或后续 Workflow 调用。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。新增报告模板和引用规则为上述方法的局部适配，不依赖中央文档运行。
 
+## 已采用的 Rebuttal Workflow
+
+- **来源**：wanshuiyin / ARIS，`skills/rebuttal/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。2026-09-13 通过官方 GitHub API 重新解析固定 revision、读取377行完整正文、递归目录树及根 MIT 许可；不是采用未核对版本的本地 checkout，也不声称为最新 HEAD。该目录只有 `SKILL.md`，方法、提示和模板原为内嵌正文，无额外共置第三方资产。
+- **采用**：`skills/writing-cycle/rebuttal/` 保留 concern 原子化与原文锚点、类型／严重度／pivotal 策略、七类回应、共享主题和长度预算、单文档／独立线程、最小充分证据与设计选择披露、八项检查、独立压力测试提示、有界修订与 follow-up、修订承诺双向映射、quick mode。按使用时机将原内嵌方法和模板分到共置 `references/response-methods.md`、`templates/working-documents.md`，不是短契约壳或中央运行时。
+- **调用核对**：完整读取相同 revision 的 `skills/shared-references/{reviewer-routing,review-tracing,integration-contract}.md`、`skills/{experiment-bridge,render-html}/SKILL.md` 及 `tools/save_trace.sh`、`skills/render-html/scripts/render_html.py`。上游 rebuttal 的条件实验调用实际可进入实现／部署／运行／监控链；自动 HTML 的审查仅关注渲染保真。两条调用、固定 provider/MCP、安装配置、trace helper、隐藏状态与摘要 sidecar 均不移植，亦不复制这些排除路径的模板或第三方依赖。
+- **适配**：独立 user-invoked Workflow，`disable-model-invocation: true` 与 `agents/openai.yaml` 的隐式调用禁用策略一致。只读现成论文与结果，写用户允许的回复材料；补实验留待用户另行授权并启动，不保留自动实验开关。证据准备度与回应处理分开；用户选择策略后再拟稿，完整措辞确认后交付；strict／rich 在检查前生成，长度硬门只约束粘贴目标。没有可用独立审查者时如实声明未执行，不将自查或用户陈述升级为验证。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；原始完整 notice 共置于 `LICENSE` 并随 Skill 安装。新增输出模板与引用核实指导是 rebuttal 方法的局部适配，运行不依赖本来源文档。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。

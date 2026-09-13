@@ -1,0 +1,5 @@
+interface:
+  display_name: "Rebuttal"
+  short_description: "从审稿意见形成受证据约束的逐项回复"
+policy:
+  allow_implicit_invocation: false
