@@ -187,7 +187,8 @@ report.md 为自然 Markdown：可用时给证明；否则给有效片段、诊�
 ```text
 从已审计的缺口准备新的手动重做包，不启动无限迭代。
 
-输入：旧轮 local-proof.md、external-answer.md、audit.md、source-manifest.md。
+输入：旧轮 external-answer.md、audit.md、source-manifest.md；若曾执行本地尝试
+且文件存在，再读 local-proof.md。用户跳过尝试时，直接依据返回原文与审计缺口重做。
 新本轮目录：<本轮目录>；旧轮只读。
 
 要求：
