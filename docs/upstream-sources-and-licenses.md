@@ -47,6 +47,15 @@
 - **调用核对**：上游 `skills/idea-discovery/SKILL.md` Phase 3 实际调用 `novelty-check`；上游查新引用的 `integration-contract.md`、`citation-discipline.md`、`review-tracing.md` 及 `tools/verify_papers.py` 已阅读。保留核实与独立复核职责，不继承其 runtime、自动 pilots、receipt 或后续 Workflow 调用。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。新增报告模板和引用规则为上述方法的局部适配，不依赖中央文档运行。
 
+## 已采用的引用审计与显式修复能力
+
+- **来源**：wanshuiyin / [ARIS](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep)，`skills/citation-audit/SKILL.md`，固定 revision `df729a3f942e4a97646d212eb8aee1144ab5e31b`。2026-09-13 核对本地官方上游 checkout 的 origin、HEAD、tracked 原文与根 MIT LICENSE；完整读取 502 行原正文。该目录只有 `SKILL.md`，没有共置模板、脚本或额外资产；不声称该 revision 为在线最新版本。
+- **直接引用资源**：完整读取同 revision 的 `skills/shared-references/{citation-discipline,reviewer-independence,external-cadence,review-tracing,integration-contract,assurance-contract}.md`。采用前两者的具体查询、多源身份核对、BibTeX 获取与字段核实、版本区分、逐处 claim 原文支持、fresh 独立审查方法。`citation-discipline.md` 末尾注明 Anthropic／Apache-2.0 来源的 Output Discipline 段落未采用；其余资源仅用于核对边界，不复制其中的调度、provider、tracing、schema、hash 或 verifier 机制。
+- **本仓发行单元**：`skills/writing-cycle/citation-audit/` 保留逐条三轴及每处语境检查、显式 uncited、soft-only 的 bib 冻结与正文 REMOVE 特例；只输出授权 Markdown 报告，支持 standalone／composed，内部调用只贡献父报告。`skills/writing-cycle/apply-citation-fixes/` 从原混合修改职责拆出 user-invoked 入口，所有修改先展示精确 diff 并获授权；重读来源与影响集合，冲突停止，部分批准／拒绝／未核实分别处理，写后重新核对三轴及所有受影响引用。
+- **适配**：每个发行单元独立携带 `references/verification-methods.md`；detect 另含自然 Markdown 报告模板。保留完整实质检索和核实方法，去除固定 provider／MCP、隐藏状态、JSON、render、自动编译与自动修改绑定。没有来源或独立 reviewer 能力时披露未核实，未找到不等于不存在；replacement 先查原始来源与具体 claim 支持，预算不足不扩大授权。没有新增中央资源依赖。
+- **真实调用核对**：原 `paper-writing/SKILL.md` Phase 5.8／6 调用三轴审计；`resubmit-pipeline/SKILL.md` Phase 1 detect-only 调用带 soft-only；`paper-talk/SKILL.md` Phase 4.2 审查 slides／notes／script；`overleaf-sync` 将新引用和 key 变化路由到重审，`integrity-forensics` 引用其修复方法。本仓保留局部审计与影响范围方法，不继承父流程自动推进、合成论文 adapter、同步或提交 gate。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整根 LICENSE 分别随两个 Skill 的 `LICENSE` 发行，覆盖改编正文、方法资源与报告模板的上游 attribution。未复制具有另行许可标注的第三方段落或资产。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
