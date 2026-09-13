@@ -149,14 +149,12 @@ If the derivation needs a decomposition, derive it from the chosen global quanti
 Do not make a split appear magically from one local variable itself.
 
 ### Step 7: Write the Derivation Document
-Write to the chosen target derivation file.
+沿用开始前确定的交付方式与授权范围：
+- 无写入授权：在聊天中返回完整 package，不创建文件。
+- composed 且获准写入：仅更新调用者指定的报告区块，保留其他内容，不另建主报告。
+- standalone 且获准写入：写入约定文件；已有文件先读取，仅更新相关区块，保留此前尝试，避免重复内容。
 
-If the target derivation file already exists:
-- read it first
-- update the relevant section
-- do not blindly duplicate prior content
-
-If the user does not specify a target, default to `DERIVATION_PACKAGE.md` in project root.
+默认文件名只用于建议目的地，不在本步骤重新选择路径或扩大授权。以下完整 package 结构同样适用于聊天与报告区块；嵌入既有报告时可调整标题层级。
 
 Do NOT write directly into paper sections or appendix `.tex` files unless the user explicitly asks for that target.
 
