@@ -47,6 +47,14 @@
 - **调用核对**：上游 `skills/idea-discovery/SKILL.md` Phase 3 实际调用 `novelty-check`；上游查新引用的 `integration-contract.md`、`citation-discipline.md`、`review-tracing.md` 及 `tools/verify_papers.py` 已阅读。保留核实与独立复核职责，不继承其 runtime、自动 pilots、receipt 或后续 Workflow 调用。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。新增报告模板和引用规则为上述方法的局部适配，不依赖中央文档运行。
 
+## 已采用的论文编译与显式修复
+
+- **来源与许可**：wanshuiyin / [ARIS](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep)，`skills/paper-compile/SKILL.md`，本次采用 revision `df729a3f942e4a97646d212eb8aee1144ab5e31b`。2026-09-13 通过官方 GitHub API 核对该 revision、完整正文、目录与根 `LICENSE`；正文和许可与本地 checkout 字节一致。该版本的编译目录仅有 `SKILL.md`，没有共置 references/templates/assets 或第三方模板。MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 分别随两个 Skill 的 `LICENSE` 发行。此记录不更改其他 Skill 已采用的版本。
+- **拆分**：`skills/writing-cycle/paper-compile/` 保留默认 model-invoked 的 check-only，支持用户点名 standalone 或在已授权父 Workflow 中贡献报告；`skills/writing-cycle/paper-compile-repair/` 是独立 user-invoked 修复，逐文件、具体 diff、构建与最多三轮预算均须用户确认。检查不修改原稿或快照源，亦不自动启动修复；两个包各自携带构建方法、异常诊断、PDF 检查及 Markdown 报告模板，互不构成安装前置。
+- **采用方法**：完整保留入口/引擎/文献后端发现、多遍编译、八类异常诊断、有界修复与无进展复核、五项视觉检查、页数及正文/参考文献/附录边界、孤立章节检测、匿名/字体嵌入/大小/VERIFY 检查和全部报告维度。依赖图改为递归追踪并保留条件不明文件；当期官方 venue 规则取代过期固定页数与大小门槛；PDF 实际解析取代仅以 100KB 判断有效性。
+- **边界适配**：新空输出与普通文件快照取代清理原构建，保留真实退出码、所有失败日志和残余警告。完整审阅的闭合输入可在有界、明确授权的宿主执行；复杂或不明可执行输入需已有可验证隔离，否则停止。前后内容核对不冒充 OS 写保护。删除自动安装、固定 Codex 插件、自动后续 Workflow/投稿及远程副作用，不引入用户环境配置或中央 runtime。
+- **调用核对**：已阅读上游 `paper-writing/SKILL.md`，其 Phase 4 实际调用 `paper-compile` 并期待自动修复；`resubmit-pipeline/SKILL.md` Phase 4 也调用它。后者提到的 `COMPILE_REPORT.json` 与实际 compile 正文 Markdown 输出不一致，本仓以实际正文为准，不移植 JSON、自动缩页或 Overleaf push。其余写作、改进、引用审计中的编译提及不构成本仓自动调用许可。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
