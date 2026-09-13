@@ -26,6 +26,15 @@
 
 - `skills/general/setup-research-os/`：2026-09-12 重新核对 Matt Pocock Skills 官方 HEAD，仍为上表 `3cca18b368ae95cdbdebbff572ccafa662551015`。完整阅读原 `setup-matt-pocock-skills/SKILL.md`、五个共置 Markdown 种子、`agents/openai.yaml` 及根 MIT 许可后改编。保留 prompt-driven 探索、推荐逐问、完整草稿确认、CLAUDE/AGENTS 优先级和原位区块更新；以自包含科研工作区种子替换工程 tracker/triage/domain 配置，增加重复执行、冲突、写入后验证和明确停止边界。没有移植 tracker 远程操作或其他 Skill 调用。MIT 全文与 `Copyright (c) 2026 Matt Pocock` 随 Skill 的 `LICENSE` 一起发行，宿主元数据保留显式调用策略。
 
+## 已采用的只读导航
+
+`skills/general/ask-research-os/`：2026-09-13 从 Matt Pocock Skills 官方 GitHub API 重新解析 `3cca18b368ae95cdbdebbff572ccafa662551015`，当日官方 HEAD 仍为该 revision。完整阅读原 `skills/engineering/ask-matt/SKILL.md`、共置 `PHASE-BOUNDARIES.md`、`agents/openai.yaml`、根 `LICENSE`，以及 `docs/engineering/ask-matt.md`、调用约定、注册清单与递归真实引用。该目录无其他 references/templates/assets/scripts 或独立第三方许可。
+
+- **采用与保真**：保留主流程、条件切入点、独立入口、底层能力的导航结构，以及 Continue／Clear／Handoff／Subagent／Compact 的有序判断和一手上下文取舍；正文方法按科研职责适配，不搬运工程 tracker／实现链或强制 setup。完整研究地图与条件披露的会话边界指南随 Skill 共置，不依赖仓库外部中央文档。
+- **针对上游已知问题**：原说明指出 user-only 入口可能被宿主注入列表隐藏，以及一行地图会与实际正文漂移；本版分开发行状态与宿主可用性，关键推荐优先读取实际安装正文，无法核实时明确说明，不根据列表缺席判定未安装。
+- **真实调用关系**：上游 ask-matt 是插件注册和文档指向的 user-invoked Router；其列出的其他 Skill 是给人的建议，不是自动调用。本版同样只读咨询，不执行所推荐的 U／M 能力，不派代理代执行，也不写交接文件或自动切换上下文。三条科研流程与全部独立能力来自父 spec 的批准地图，不伪称上游原生科研调用链；计划入口不冒充已实现。
+- **许可与角色**：MIT，`Copyright (c) 2026 Matt Pocock`；完整 notice 以共置 `LICENSE` 发行。保留 `disable-model-invocation: true` 与 `agents/openai.yaml` 中 `allow_implicit_invocation: false`，宿主须自行核实加载策略。经完整 `writing-for-agents` 正文审核、修正会话中途压缩边界及独立顾问复核后进入正式 inventory；受限合成场景不代表真实科研验收。
+
 ## 已采用的候选生成能力
 
 2026-09-12 通过官方 GitHub API 重新解析上表 ARIS 与 Orchestra 的固定 revision，并读取完整原文、递归目录树、实际调用引用及仓库 MIT 许可；此日期表示采用复核，不声称所列版本为最新 HEAD。下列三个原 Skill 目录在该版本均只有 `SKILL.md`，没有额外共置 references/templates/assets 或单独第三方资产许可。

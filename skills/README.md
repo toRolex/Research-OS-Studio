@@ -28,12 +28,20 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 
 | 分类 | 目录 | 当前正式 Skill |
 |---|---|---|
-| General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)（user-invoked） |
-| Idea Cycle | `idea-cycle/` | [idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)（均 model-invoked，用户可点名；支持 standalone / composed） |
+| General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)、[ask-research-os](general/ask-research-os/SKILL.md)（均 user-invoked） |
+| Idea Cycle | `idea-cycle/` | [idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)（均 model-invoked，用户可点名；支持 standalone / composed） |
 | Validation Cycle | `validation-cycle/` | 后续独立票交付；当前无正式入口 |
 | Writing Cycle | `writing-cycle/` | 后续独立票交付；当前无正式入口 |
 
 只有实际含 `SKILL.md` 的目录才是可安装 Skill。不为分类创建占位 Skill，不把保留的旧工程纳入这份清单。
+
+## 只读入口导航
+
+不确定从哪里开始时，显式调用 `ask-research-os`；已知入口可直接点名，无需先 setup 或经过 Router。它接受方向、已有结果或稿件，只在对话中推荐并停止，不写研究材料、不启动推荐任务。
+
+自包含的[完整批准地图](general/ask-research-os/PRODUCT-MAP.md)区分三条主流程、独立 user-invoked 入口、model-invoked 能力及数学／Lean、ML／Systems 专业扩展，同时区分已实现、计划和宿主可用性。计划条目不是当前安装命令，文件安装成功也不代表宿主已加载。当前完整 Discovery、Validation 与 Writing 入口仍待后续票交付。
+
+在可丢弃项目中可分别用“只有方向”“已有外部结果”“已有稿件”咨询；核对推荐理由、不强制前序流程、计划状态如实说明，以及项目零写入、零自动启动。实现阶段的受限合成模型场景不等于真实科研或宿主交互验收。
 
 ## 初始化与人工验收
 
