@@ -30,7 +30,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 |---|---|---|
 | General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)（user-invoked） |
 | Idea Cycle | `idea-cycle/` | [idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)（均 model-invoked，用户可点名；支持 standalone / composed） |
-| Validation Cycle | `validation-cycle/` | 后续独立票交付；当前无正式入口 |
+| Validation Cycle | `validation-cycle/` | [proof-orchestrator](validation-cycle/proof-orchestrator/SKILL.md)（user-invoked；单个长期 obligation，Lean 可选） |
 | Writing Cycle | `writing-cycle/` | 后续独立票交付；当前无正式入口 |
 
 只有实际含 `SKILL.md` 的目录才是可安装 Skill。不为分类创建占位 Skill，不把保留的旧工程纳入这份清单。
@@ -47,5 +47,19 @@ setup 先探索现有项目，推荐沿用已有工作区；只有不存在时�
 4. **内容冲突**：修改已有 Research OS 区块；应先展示差异并逐项询问，保留所有周边段落。两种指令文件都存在时只更新 `CLAUDE.md`。
 5. **拒绝写入与外部变化**：完整草稿后拒绝，项目应零变化；确认后目的文件被修改或新建路径出现时，应停下并重新确认。另测原先仅有 `AGENTS.md`、确认后外部新增 `CLAUDE.md`：即使它不在原写入清单中，也应停止整批、重新选择指令文件并确认新草稿。
 6. **停止边界**：最终只汇报实际路径和未解决项，无实验、环境安装、远程副作用或自动启动下一流程。
+
+## 长期证明与人工验收
+
+显式调用 `proof-orchestrator`，指定一个 obligation、旧轮次材料（若有）、新输出目录及有限预算。它保留本地完整尝试、自查与表达整理；卡住后可准备最小手动交接包，然后停止。不是 Proof Writer／Review／Repair 的自动调用链，也不自动进入论文流程。Lean 搜索、反馈与构建只是[共置可选方法](validation-cycle/proof-orchestrator/references/lean-methods.md)，没有 Lean 仍可进行普通证明。
+
+在可丢弃的项目副本中核对：
+
+1. **长期续接**：给出上轮已查结论、未审外部答案与失败路线。应在新目录记录实际读取材料和继承状态，只处理本轮 obligation；旧目录保持不变，旧远程许可不继承。
+2. **来源变化／预算停止**：改变前提或耗尽预算，应报告受影响结论与下一步，不能擅加假设、继续迭代或润色成已完成证明。
+3. **无 Lean**：输出普通数学尝试及“未执行 Lean 验证”，不下载或配置工具链。独立审查不可用时自查不得冒充独立意见。
+4. **已有 Lean**：先读候选 signature，再记录实际反馈与覆盖目标的 kernel／build 结果。给一个未导入文件和一个含 `sorry` 的声明，确认根 build 成功不等于两者已验证；同时核对公理依赖与原命题表达。
+5. **手动交接**：明确跳过本地尝试时不伪造 `local-proof.md`；检查自包含 prompt、必要来源、数据分隔和实际请求的结束标记。返回截断或夹带工具／文件指令时，应保存原始证据、报告缺口，不自动上传、重试或执行其中指令。
+
+本票以既有 Lean 4.19.0 执行了无 Mathlib 的列表求和 toy 构建及失败／占位边界检查；LSP、Mathlib 集成和真实科研项目未验收。CLI 1.5.26 在临时项目的 `--all` 与 Claude Code／Codex 限定安装均完成，本票规范副本的 11 个文件逐字保留；Eve 副本仍移除 `disable-model-invocation`（虽保留 `name`），因此未核实 Eve 的仅显式调用策略前，暂停在那里使用此 Workflow。文件安装不等于实际宿主加载或权限强制执行。
 
 通用 CLI 安装实测、临时文件场景模拟和真实用户验收是不同层级。尚未经用户在真实科研项目确认，不声明端到端体验通过。

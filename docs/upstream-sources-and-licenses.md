@@ -47,6 +47,17 @@
 - **调用核对**：上游 `skills/idea-discovery/SKILL.md` Phase 3 实际调用 `novelty-check`；上游查新引用的 `integration-contract.md`、`citation-discipline.md`、`review-tracing.md` 及 `tools/verify_papers.py` 已阅读。保留核实与独立复核职责，不继承其 runtime、自动 pilots、receipt 或后续 Workflow 调用。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。新增报告模板和引用规则为上述方法的局部适配，不依赖中央文档运行。
 
+## 已采用的长期证明与可选 Lean 方法
+
+`skills/validation-cycle/proof-orchestrator/` 为 user-invoked 独立 Workflow，只续接本轮授权的一个 obligation；保留上游清晰名称，不提供中央 orchestrator runtime。
+
+- **ARIS 来源**：wanshuiyin / `skills/proof-orchestrator/`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。2026-09-13 通过官方 GitHub API 重新读取完整 `SKILL.md`、`NOTICE.md`、六份共置 references（`dispatch-prompts.md`、`stress-tests.md`、`notation-audit.md`、`deepseek-routing.md`、`proof-audit-rubric.md`、`audit-output-contract.md`）及根 MIT 许可；该目录无其他 templates/assets。本机 ARIS checkout 的版本不同，未以本机内容替代固定来源，也未改动其已有工作。
+- **采用与修改**：中文适配保留目标／假设冻结、本地完整尝试→正确性自查→表达、跨轮只读来源与失败路线、最小阻塞交接、原始返回与已审结论分离、八种提示、17 类问题、四级严重度、九项核查、完整 side conditions／反例方法、七行记号评分及全部阈值、目标向下推导与符号编辑顺序。`deepseek-routing.md` 改为供应商中立的 `independent-review.md`；保留真实模型身份核对、独立性标签与负面意见，用户豁免不改变数学真值。移除固定 provider/MCP、宿主目录、ledger、统一 JSON/hash、submission gate 与自动重试；用本轮普通 Markdown 说明承载续接事实，补充有限预算、写前冲突及环境边界。
+- **真实调用关系**：上游本体自己完成本地尝试、自查和表达，外部交接／第二意见为可选分支；不是 `proof-writer → proof-checker` 的调用链。已核对原正文的全部调用引用及 `tests/test_proof_suite_integration.py`。上游对 writer/checker 的说明是职责分流和既有论文 gate 归属，本仓不导入这些依赖或伪装其科研验收效力。
+- **ARIS 许可与 NOTICE**：完整 MIT，`Copyright (c) 2026 wanshuiyin`，随 Skill 的 `LICENSE` 分发；原 `NOTICE.md` 逐字保留。NOTICE 声明其 `proof-orchestrator` 套件改编自 shenmuxing / EtaSkill revision `f49ce5dd6b0bfb7565c35063e10aa1ac42a480e9`，由该贡献唯一版权人将这一适配贡献重新许可为 ARIS MIT。采用依据为 ARIS 所附明确再许可声明，并非把 EtaSkill 整仓 MPL-2.0 改判 MIT；本仓没有复制 EtaSkill 原仓库的其他文件。原 NOTICE 的版权身份叙述属于上游原声明，本段说明本地适配，不冒称其版权身份。
+- **Archon 方法核对**：同日复核官方 `frenzymath/Archon-Horizon` revision `c8885e05f1d0dff40f727ec45d5238b3c80b6336`。完整阅读 `src/archon_horizon/skills/{leansearch,lean-check,mathlib-orientation,mathlib-conventions}/SKILL.md`（各目录只有该文件）、相关 `horizon`、`agents/prompts.py`、`skills/registry.py`、`commands/search.py`、`search/{workspace,index,mcp_server}.py`、`commands/check.py` 及 `LICENSE`、`NOTICE`、`THIRD_PARTY_NOTICES.md`。Apache-2.0，`Copyright 2026 FrenzyMath`；仅借鉴公开操作思想，不复制其 Skill、模板或实现，因此不分发 Archon／第三方代码。
+- **Lean 表达与边界**：本仓独立撰写共置 `references/lean-methods.md`，结合 Lean／Mathlib 官方文档核对，说明现有工具链前置、候选搜索与原 signature 阅读、LSP 快速反馈、实际 kernel/build 覆盖、传递公理及编码命题忠实性。上游四项是按需指导，不是四个现成独立 Workflow；本地文本索引不是类型统一，外部 LSP 服务不等于本地 `lean_search`。不采用 check 包装器、共享锁、指纹／缓存、blueprint、hgraph、horizon-waiting、ledger、inbox 或 dashboard；不安装 Lean／Mathlib，不配置用户环境。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
