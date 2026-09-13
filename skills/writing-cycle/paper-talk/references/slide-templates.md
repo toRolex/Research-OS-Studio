@@ -591,10 +591,15 @@ def create_presentation(title, authors, affiliation, venue, talk_type, minutes, 
         raise ValueError("类型或净演讲时间无效")
     prs = Presentation()
     prs.slide_width, prs.slide_height = Inches(13.333), Inches(7.5)
-    # 自带模板的 6 通常为 blank；按实际 placeholder 检查，不信任索引或名称。
-    blank = next((layout for layout in prs.slide_layouts if len(layout.placeholders) == 0), None)
-    if blank is None or len(blank.shapes) != 0:
-        raise RuntimeError("未找到无 placeholder 且无布局形状的 blank layout；人工检查模板")
+    # 日期、页脚、页码占位符不会复制到新页；Blank 布局可保留这些辅助槽位。
+    for blank in prs.slide_layouts:
+        if any(blank.iter_cloneable_placeholders()):
+            continue
+        if any(not shape.is_placeholder for shape in blank.shapes):
+            continue
+        break
+    else:
+        raise RuntimeError("未找到无内容占位符且无装饰形状的 blank layout；人工检查模板")
     timings, backup_ids = build_confirmed_outline(
         prs, blank, VENUE_COLORS[palette], title, authors, affiliation, venue
     )
@@ -616,8 +621,12 @@ def create_presentation(title, authors, affiliation, venue, talk_type, minutes, 
         if tf is None:
             raise RuntimeError(f"第 {index} 页缺 notes placeholder")
         require_text(tf.text, f"第 {index} 页 notes")
-    slow, fast = SECONDS_PER_SLIDE[talk_type]
-    pacing = [f"页 {i}: {seconds:g} 秒" for i, seconds in timings if not slow <= seconds <= fast]
+    min_seconds, max_seconds = SECONDS_PER_SLIDE[talk_type]
+    pacing = [
+        f"页 {index}: {seconds:g} 秒"
+        for index, seconds in timings
+        if not min_seconds <= seconds <= max_seconds
+    ]
     return prs, count, backup_ids, total_seconds, pacing
 
 
@@ -734,6 +743,7 @@ uv run --offline --no-python-downloads --no-project \
 - Beamer 每个 `frame` 都有 `\TalkNote`，默认全模板 24 个 frame；22 正文、2 备份，Component A 三次 reveal。不要把 `\maketitle`、自动 section page 或 notes 页面漏计；本模板显式避免前两者。
 - Python 代码块可用标准库 `ast.parse` 做语法检查：用上方相同的 **uv + 现有解释器**运行检查，不执行未填生成器、不安装库。语法通过仅证明代码可解析。
 - 原样执行生成器必须因 `CONFIRMED_TALK_TYPE` 未填而失败，且不创建输出。单独调用 `required_asset()` 测试不存在文件须抛 `FileNotFoundError`；`require_text()` 对未填作者/图注/notes 须拒绝。
+- 默认模板的 Blank 布局含日期、页脚、页码辅助占位符，仍须能创建无内容占位符的新页；带标题/正文占位符或装饰形状的布局须跳过，无可用布局时明确失败。不能只以布局名称或固定索引判断。
 - 填好测试副本后分别验证类型不匹配、超出主讲页数且无确认理由、总时长超预算、既有输出、notes placeholder 缺失都明确失败。保留输出文件被拒绝覆盖。
 - 用已安装库重新打开合法生成的 PPTX，核对实体页数、每页 notes、原生文本框和图片长宽比。横图/竖图都须 fit 且不超目标框。类型测试需要不同的真实页面实例化，不是只改参数跑同一 22 页。
 
