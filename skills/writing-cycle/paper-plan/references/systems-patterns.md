@@ -131,7 +131,7 @@ Evaluation: Test the scoped comparison of X with baselines for Y in Z
 ### How to Apply This Pattern
 
 1. Distill your contribution to one sentence: "[System] is better for [application] in [environment] because [insight]"
-2. In Abstract (sentence 3): state this thesis verbatim
+2. 在所选摘要蓝图的贡献/论点槽位陈述 thesis；槽位顺序遵循[计划模板的摘要选择规则](../templates/paper-plan.md#叙事与结构)，不固定为第 3 句
 3. In Introduction: use it as the culmination of the gap analysis
 4. In Design: show how each component serves the thesis
 5. In Evaluation: locate tests of the thesis with appropriate baselines and workloads, marking missing tests
