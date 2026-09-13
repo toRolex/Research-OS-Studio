@@ -47,6 +47,18 @@
 - **调用核对**：上游 `skills/idea-discovery/SKILL.md` Phase 3 实际调用 `novelty-check`；上游查新引用的 `integration-contract.md`、`citation-discipline.md`、`review-tracing.md` 及 `tools/verify_papers.py` 已阅读。保留核实与独立复核职责，不继承其 runtime、自动 pilots、receipt 或后续 Workflow 调用。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。新增报告模板和引用规则为上述方法的局部适配，不依赖中央文档运行。
 
+## 已采用的学术图表能力
+
+`skills/writing-cycle/academic-plotting/`（Writing Cycle，Issue #21）组合两方方法，默认 model-invoked，支持用户点名 standalone 与职责受限 composed；不自动启动写作总流程。
+
+- **2026-09-13 采用复核**：通过官方 GitHub API 重新解析 ARIS `0472e530251cdbd3364c33b110063c58f819edd7` 与 Orchestra `773a52944ba4747a18bd4ae9ade53fff041adcbc`，完整读取下列正文与共置资源、仓库 MIT 许可及调用位置。这是固定采用版本，不声称最新 HEAD；本地旧 analysis 目录不是对应上游 checkout，未使用其父仓 revision。
+- **ARIS / wanshuiyin**：`skills/paper-figure/SKILL.md`（目录仅此文件）。采用图表计划、保护已有手工图、每图独立源脚本、比较表／符号定义、LaTeX 引用片段、实际导出后复核、五项 caption／比较质量审查。共置 `references/table-and-review.md` 保留表格／引用／审查方法；其余融入主 Skill。去除固定 Codex/MCP reviewer、批跑未知脚本及无依据的自动生成比例承诺；不复制该正文明确标为 Anthropic Claude Science、pedrohcgs、Imbad0202 或 baoyu 来源的清单／样式／决策树文本，未将 ARIS MIT 当作第三方独立许可。相应数据类型、样式和证据约束使用 Orchestra 资产及本票要求。
+- **Orchestra / Claude AI Research Skills Contributors**：`20-ml-paper-writing/academic-plotting/SKILL.md` 与完整 `references/{data-visualization,diagram-generation,style-guide}.md`。保留上下文抽取、九种数据图模式、六段示意图设计、四种完整视觉风格、示例、配色、字体／版式／可访问性及 LaTeX 集成；视觉风格从主文披露到 `references/diagram-styles.md`。该目录无额外 templates/assets/scripts 或独立第三方许可文件。新增 `templates/figure-note.md` 是组合职责的自然格式记录模板，不是统一 schema。
+- **正文级职责适配**：ARIS `paper-figure` 将架构图留给手工／其他能力，Orchestra 默认 Gemini 生成示意图；本仓合并为一个图表入口，以来源可查的数据图及明确非实验证据的可编辑示意图分支保留两方独有方法。去除 Gemini/模型版本绑定、凭据配置和固定三次远程请求，已有本地能力优先；AI 生成须显式上传／费用／尝试授权，提示词与 PNG 不冒称可编辑或像素复现。修复 Orchestra 示例中不存在的 `COLORS["red"]`、SD 误称 CI、默认自动 log／拟合／回归、负指标截断及任意数值标百分比；venue 数值降为历史示例，调色板不保证所有色觉条件可辨。
+- **真实调用关系**：已完整读取 ARIS `skills/paper-writing/SKILL.md`，其 Phase 2 调用 `paper-figure` 做数据图／表，Phase 2b 分别路由到 illustration／figure-spec／Mermaid；后者不是原 `paper-figure` 的内部自动调用，本票不移植这些 runtime／额外 Skill。Orchestra 原 `academic-plotting` 仅建议配合 `ml-paper-writing`；核对 `ml-paper-writing` 与 `systems-paper-writing` 的图表相关正文，未发现它们调用 `academic-plotting` 的指令。两方组合是本仓适配，不伪称原生跨仓调用。
+- **许可随包**：`LICENSE-ARIS.txt` 保存 MIT 与 `Copyright (c) 2026 wanshuiyin`；`LICENSE-Orchestra.txt` 保存 MIT 与 `Copyright (c) 2025 Claude AI Research Skills Contributors`。未搬运第三方 venue 模板、图像资产或外部实验数据。
+- **审核边界**：完成 `writing-for-agents`／`SKILL-MECHANICS` 的触发、角色、输入输出、写入授权、停止、资源完整性、幽灵依赖、逐分支披露及成熟方法保真自核，并修复顾问指出的三处定量示例问题后进入 inventory。临时真实绘图／缺库检查与静态检查不作为中央测试平台提交，也不等于用户科研验收。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
