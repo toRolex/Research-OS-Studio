@@ -1,0 +1,49 @@
+# 结构范例：只转移骨架
+
+改编 ARIS paper-plan 的 opt-in style reference 与 Gap Report，保留其结构抽取和隔离方法，使用现有宿主读取能力，不依赖上游 Python helper 或缓存协议。原想法致谢 @zhangpelf（ARIS #217）。
+
+## 1. 读取用户明确指定的范例
+
+默认关闭，不自动从文献中挑 exemplar。可接受本地 TeX 文件/目录、可读 PDF、公开 URL/arXiv 的论文全文。读取 TeX 时跟随其实际 include/input 到相关章节；PDF/远程正文不可读、只有摘要或只拿到元数据时，不声称已抽取完整结构。记录具体缺失，请用户提供可读全文或明确取消 style-ref 后继续；不安装工具，不拉取私有 Overleaf 项目，不上传材料。
+
+**完成条件**：实际读取的内容足以观察所需结构，或暂停 style 分支并明确未完成。部分可测特征可记录，但不可测的计数标“未知”，不能把解析器没找到写成零。
+
+## 2. 建立结构 profile
+
+standalone 在授权的 `STYLE_PROFILE.md` 中记录；composed 默认仅在作者侧上下文保留，只有用户另行明确授权路径与范围才持久化。记录来源标识、读取日期、读取范围，然后逐项描述：
+
+- 顶层 section 的功能与顺序（用中性功能名重述，不照搬独有节名）；
+- 各节大致篇幅、子节数量/密度；
+- theorem/lemma/proposition/assumption 等环境的分布，正文/附录分工；
+- figures/tables 数量、类型及布局密度；
+- citation 分布与 numeric/author-year 等格式；
+- 如可可靠观察，句长节奏、行间数学占比、caption 长度习惯；只标实测或估计，不伪造精确统计；
+- 显式 contributions 段、Setup → Result → Interpretation 节奏、limitations 等结构特征。
+
+只保留骨架，绝不复制范例的文字、主张、术语、例子、作者/单位信息或研究数字到计划。不能把参考论文的结果转成用户研究的 Evidence。
+
+**完成条件**：每个观察有范围/不确定性说明；profile 中没有范例的实质内容。
+
+## 3. 结构槽位对照用户材料
+
+在开始 outline 前，用用户原始材料清单对照 profile：ablation table、scaling curve、failure-case analysis、proof block、related-work synthesis 等。即使用户没有材料，也输出真实缺口，不把空项目视为无需检查。
+
+standalone 在授权的 `STYLE_GAPS.md` 中写；composed 默认保留作者侧上下文，持久化同样须另获明确路径与范围授权：
+
+| Slot ID | 结构槽位与范例特征 | 用户实际材料定位 | covered / partial / missing / unreadable | 拟采用/省略及原因 | 关联 Claim/章节 |
+|---|---|---|---|---|---|
+
+- `covered` 要有实质支持，不是文件名存在；`partial` 写出已有部分与缺少部分。
+- 用可读短 ID（如 `GAP_EVAL_ABLATION`）供计划的作者侧占位引用；无需统一 schema。
+- 按状态列计数与采用范围，便于用户看清成本；结构偏好不是实质研究义务。论文范例引用多，不等于用户也必须凑同样数量。
+- 缺槽位时可省略不适用结构、缩窄叙事或标 `DATA_NEEDED`；不补造观察、理论或命令。需要新实验/证明时只列证据需求，留给用户另行决定。
+
+**完成条件**：每个拟采用的槽位有真实材料或明确缺口，outline 不暗示未完成内容已经存在。
+
+## 4. 隔离与 handoff
+
+独立评审者直接看论文计划、普通 Claim—Evidence 矩阵、普通证据缺口与原始研究材料，不提供 style 来源、profile、STYLE_GAPS 或其摘要。写作者可在授权内读取 style 资料；style 文件位置仅在作者侧 handoff 标注。提交评审时准备请求和计划副本，只移除 style 来源（含原请求中的 URL/路径）、作者侧链接及范例衍生指令；保留用户研究目标、授权限制、完整普通矩阵与证据缺口，不改作者原件。副本可作为上下文传递，无须额外持久化。
+
+若某个 style-gap 暴露了真实 Claim 证据缺口，用用户材料独立表述到普通矩阵/缺口部分，不能因隔离而隐藏科研不足。
+
+**完成条件**：评审输入没有范例暗示，实际证据缺口仍完整；style 输出只对用户/作者开放，不改变本次规划权限。
