@@ -13,7 +13,7 @@
 | `[VERIFY]` | 搜索所有范围内源稿与新 PDF 文本，含被宏/换行拆分的可疑变体；追到具体待核验事实或引用。 | 记录每个位置、所需证据及影响；可向用户索取真实资料。保留标记，不直接删掉，不把编译通过当事实核验。 |
 | `Overfull \hbox (12.5pt too wide) ... lines 42--45` | 记录每项超宽值、行号并对照页面。上游 >20pt 是优先检查的严重提示，小值也可能越界或影响匿名稿排版。 | 建议缩合文字、合法断行、核对真实图宽；微小且视觉无影响可记低优先 warning。不能统一忽略、全局缩字号/页边距绕过模板。 |
 | BibTeX 语法：`I was expecting a ',' or a '}'---line 15 ...` | 读取对应 `.bib` 与 `.blg`，检查缺逗号、括号不匹配、标题特殊字符、重复 key；Biber 的对应语法/数据错误亦保留。 | 对真实条目作最小语法 diff，保持文献语义和元数据；修复后完整重跑文献链。 |
-| 自定义定理的 `\crefname` 未定义/名称缺失 | 核对 cleveref 已加载、`\newtheorem{assumption}` 定义及顺序，区分命令根本不存在与类型名称未注册。 | 适用时在对应 `\newtheorem{assumption}` 后的前导区补 `\crefname{assumption}{Assumption}{Assumptions}`，其他类型按实际定义处理；先解决包/模板冲突，不盲加宏。 |
+| 自定义定理的 `\crefname` 未定义/名称缺失 | 核对 cleveref 已加载、`\newtheorem{assumption}` 定义及顺序，区分命令根本不存在与类型名称未注册。 | 适用时在对应 `\newtheorem{assumption}` 后的导言区补 `\crefname{assumption}{Assumption}{Assumptions}`，其他类型按实际定义处理；先解决包/模板冲突，不盲加宏。 |
 
 编码、宏展开、包冲突、权限、后端不匹配等非表内问题：保留完整错误上下文，定位最小相关输入；不能为了“八类齐全”漏掉其他错误。成功构建仍保留 underfull/overfull、rerun、未定义引用及其他警告，区分本次中间遍已消除与最终遍残留，附对应日志。
 
