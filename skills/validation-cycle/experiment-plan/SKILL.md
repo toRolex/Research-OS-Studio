@@ -116,7 +116,13 @@ Specify future milestones; do not execute them:
 
 For each milestone estimate compute, turnaround time, stop/go gate, risk and mitigation. **Baseline-first**: candidate runs require a valid baseline on the same evaluation surface, with original configuration and raw evidence retained. An earlier baseline may be reused only when its protocol and evidence are actually comparable; a literature number alone is insufficient. Baseline failure blocks main runs rather than encouraging optimization against an unreliable reference.
 
-Separate **must-run** from **nice-to-have**. State per-run and total hard limits: run count (including seeds, sanity and retries), wall time including startup/evaluation, CPU/GPU time, memory/storage, data preparation, human effort, monetary cost and remote/API use as applicable. Explicit zero or not-applicable is preferable to an unbounded blank. Show arithmetic and distinguish estimates from user-approved ceilings. Define resource accounting: occupied vs active GPU time, CPU cores × hours, whether existing data/cache counts toward storage, and cleanup time inside the wall-time cap. Count failed attempts against the budget; unused headroom authorizes neither retries nor new variants. Record who may stop a future job and what authorization is required, without stopping any job now.
+Separate **must-run** from **nice-to-have**. State per-run and total hard limits:
+
+- run count (including seeds, sanity and retries), wall time including startup/evaluation, CPU/GPU time, memory/storage, data preparation, human effort, monetary cost and remote/API use as applicable; explicit zero or not-applicable is preferable to an unbounded blank.
+- Show arithmetic and distinguish estimates from user-approved ceilings.
+- Define resource accounting: occupied vs active GPU time, CPU cores × hours, whether existing data/cache counts toward storage, and cleanup time inside the wall-time cap.
+- Count failed attempts against the budget; unused headroom authorizes neither retries nor new variants.
+- Record who may stop a future job and what authorization is required, without stopping any job now.
 
 If the minimum discriminating suite exceeds a ceiling, reduce optional work or present a smaller hypothesis with user approval; do not quietly increase budget or remove the decisive control. Gate on missing resources, invalid baseline, exhausted budget or protocol changes; new decisions go to the user, not an automatic loop.
 
@@ -126,7 +132,7 @@ If the minimum discriminating suite exceeds a ceiling, reduce optional work or p
 
 Read [计划与 tracker 模板](templates/experiment-plan.md) now. Fill every applicable section; explain any omitted block. Preserve natural-format evidence paths instead of wrapping them in a central schema. Follow the user's language preference; code, paths and metric names retain their original form.
 
-Present the full draft in the conversation, or write only the authorized destinations under the write rules above. The tracker is a human-readable list of proposed runs, not a scheduler; initial status is **NOT RUN** or **BLOCKED**, and planned evidence is not a result. Future execution may record successful, negative, invalid, crashed and timed-out attempts there without deleting history.
+Present the full draft in the conversation, or write only the authorized destinations under the write rules above ([调用与授权](#调用与授权)). The tracker is a human-readable list of proposed runs, not a scheduler; initial status is **NOT RUN** or **BLOCKED**, and planned evidence is not a result. Future execution may record successful, negative, invalid, crashed and timed-out attempts there without deleting history.
 
 Finish with:
 
@@ -139,4 +145,4 @@ Finish with:
 
 ## 来源
 
-改编自 wanshuiyin / ARIS `skills/experiment-plan/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。MIT 全文见 [LICENSE](LICENSE)。保留原 Phase 0–5 研究方法与完整产物字段；替换固定目录、自动版本/manifest 协议、工具白名单和跨流程建议。固定预算与修改面方法仅借鉴 autoresearch 公开思想；评价职责分离仅借鉴 EurekAgent 公开思想，不包含其源码或 Skill 文本。
+改编自 ARIS by wanshuiyin；随发行保留 [MIT 许可](LICENSE)。来源版本、作者与复制范围集中记录于仓库来源说明；使用本 Skill 无需访问产品仓库或上游。
