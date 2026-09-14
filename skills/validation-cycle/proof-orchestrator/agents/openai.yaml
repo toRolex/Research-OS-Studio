@@ -1,0 +1,5 @@
+interface:
+  display_name: "Proof Orchestrator"
+  short_description: "显式续接单个长期证明，Lean 可选"
+policy:
+  allow_implicit_invocation: false
