@@ -1,12 +1,12 @@
 ---
 name: monitor-experiment
-description: "只读观测已有实验或训练作业的运行事实（running/completed/crashed、进度、输出与退出证据）；用户问“跑完了吗/还在跑吗”，或父 Workflow 在授权范围内需要运行状态时使用。只报告观测事实，不判断科研结果、不触发分析、不停止或重启作业。"
+description: "只读观测已有实验或训练作业的运行事实（running/completed/crashed/unknown、进度、输出与退出证据）；用户问“跑完了吗/还在跑吗”，或父 Workflow 在授权范围内需要运行状态时使用。只报告观测事实，不判断科研结果、不触发分析、不停止或重启作业。"
 argument-hint: "[运行标识或日志/状态路径；可指定报告位置]"
 ---
 
 # Monitor Experiment
 
-从现有作业与观测报告**运行事实**：作业是 running、completed、crashed 还是无法确定，以及可核对的进度与输出证据。它回答“现在发生了什么”，不回答“结果好不好”。
+从现有作业与观测报告**运行事实**：作业是 running、completed、crashed 还是 unknown，以及可核对的进度与输出证据。它回答“现在发生了什么”，不回答“结果好不好”。
 
 ## Scope and authorization
 
@@ -25,7 +25,7 @@ Use exactly one primary run status, with the evidence that establishes it:
 - **running** — an active process/session/job exists and has produced output or a heartbeat within its expected interval. Evidence: a live process or scheduler entry plus a recent log timestamp or progress counter.
 - **completed** — a terminal success fact exists: a recorded exit code 0, or a completion marker emitted by the job itself. The process is no longer active. This is a run fact only; it does not mean the experiment succeeded scientifically, that a metric is good, or that a Claim holds.
 - **crashed** — a terminal failure fact exists: a recorded non-zero exit, an OOM/kill signal, or a fatal error in the job's own output. The process is no longer active.
-- **unknown / not started** — no usable surface, conflicting evidence, or unreadable observations. Say `unknown` rather than infer a status from file presence alone.
+- **unknown** — no usable surface, conflicting evidence, or unreadable observations (including not started). Say `unknown` rather than infer a status from file presence alone.
 
 Record only what is actually observed: observation time, run identity, elapsed, last output timestamp, progress counters (step/epoch/total if the log emits them), output/artifact paths present or absent, recorded exit code, and any resource or cost figure the run itself logged. Quote raw recorded values as evidence; do not compare, rank or interpret them.
 

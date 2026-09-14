@@ -6,8 +6,8 @@
 
 ## Primary status
 
-- **Status:** [running / completed / crashed / not started / unknown]
-- **Evidence:** [locator plus the observed fact that establishes it]
+- **Status:** [running / completed / crashed / unknown]
+- **Evidence:** [locator plus the observed fact that establishes it; a run that has not started is `unknown` with the reason stated here]
 - **Limits:** [what would change this status; any missing terminal evidence]
 
 ## Surfaces observed
