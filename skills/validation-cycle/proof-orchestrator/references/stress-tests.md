@@ -2,7 +2,7 @@
 
 以下是文档分支的桌面演练，不是证明成立或科研验收。默认由用户手动浏览器交接，执行器只准备本地包，不操作浏览器。每个测试先完成本地尝试并定位被测试的单一 obligation；用户明确仅要交接包或跳过本地尝试时记录该例外。
 
-模板见[八种提示](dispatch-prompts.md)，审查路线见[独立意见](independent-review.md)，结果语义见[审计输出约定](audit-output-contract.md)，数学与符号检查分别见[证明审计准则](proof-audit-rubric.md)和[符号审计](notation-audit.md)。
+模板见[提示模板](dispatch-prompts.md)，审查路线见[独立意见](independent-review.md)，结果语义见[审计输出约定](audit-output-contract.md)，数学与符号检查分别见[证明审计准则](proof-audit-rubric.md)和[符号审计](notation-audit.md)。
 
 ## 每个交接测试的步骤
 
