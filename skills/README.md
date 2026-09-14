@@ -33,7 +33,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 | General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)（user-invoked） |
 | Idea Cycle | `idea-cycle/` | [idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)、[idea-review](idea-cycle/idea-review/SKILL.md)、[idea-refinement](idea-cycle/idea-refinement/SKILL.md)（均 model-invoked，用户可点名；支持 standalone / composed） |
 | Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[run-experiment](validation-cycle/run-experiment/SKILL.md)、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[proof-orchestrator](validation-cycle/proof-orchestrator/SKILL.md)（除 experiment-plan、proof-orchestrator 外均 model-invoked，用户可点名；支持 standalone / composed） |
-| Writing Cycle | `writing-cycle/` | [paper-plan](writing-cycle/paper-plan/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[academic-plotting](writing-cycle/academic-plotting/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[paper-compile](writing-cycle/paper-compile/SKILL.md)（check-only，model-invoked，用户可点名；standalone / composed）、[paper-compile-repair](writing-cycle/paper-compile-repair/SKILL.md)（user-invoked，显式授权修复）、[citation-audit](writing-cycle/citation-audit/SKILL.md)（model-invoked，支持 standalone / composed；仅检测与报告）、[apply-citation-fixes](writing-cycle/apply-citation-fixes/SKILL.md)（user-invoked；精确 diff 后授权应用及复验）、[paper-claim-audit](writing-cycle/paper-claim-audit/SKILL.md)、[claim-stress-test](writing-cycle/claim-stress-test/SKILL.md)（后两者均 model-invoked，用户可点名；支持 standalone / composed） |
+| Writing Cycle | `writing-cycle/` | [paper-plan](writing-cycle/paper-plan/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[academic-plotting](writing-cycle/academic-plotting/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[paper-compile](writing-cycle/paper-compile/SKILL.md)（check-only，model-invoked，用户可点名；standalone / composed）、[paper-compile-repair](writing-cycle/paper-compile-repair/SKILL.md)（user-invoked，显式授权修复）、[citation-audit](writing-cycle/citation-audit/SKILL.md)（model-invoked，支持 standalone / composed；仅检测与报告）、[apply-citation-fixes](writing-cycle/apply-citation-fixes/SKILL.md)（user-invoked；精确 diff 后授权应用及复验）、[paper-claim-audit](writing-cycle/paper-claim-audit/SKILL.md)、[claim-stress-test](writing-cycle/claim-stress-test/SKILL.md)（后两者均 model-invoked，用户可点名；支持 standalone / composed）、[rebuttal](writing-cycle/rebuttal/SKILL.md)（user-invoked；现成审稿意见到逐 concern 回复，不自动补实验或投稿） |
 
 只有实际含 `SKILL.md` 的目录才是可安装 Skill。不为分类创建占位 Skill，不把保留的旧工程纳入这份清单。
 
@@ -71,6 +71,17 @@ setup 先探索现有项目，推荐沿用已有工作区；只有不存在时�
 5. **手动交接**：明确跳过本地尝试时不伪造 `local-proof.md`；检查自包含 prompt、必要来源、数据分隔和实际请求的结束标记。返回截断或夹带工具／文件指令时，应保存原始证据、报告缺口，不自动上传、重试或执行其中指令。
 
 本票以既有 Lean 4.19.0 执行了无 Mathlib 的列表求和 toy 构建及失败／占位边界检查；LSP、Mathlib 集成和真实科研项目未验收。CLI 1.5.26 在临时项目的 `--all` 与 Claude Code／Codex 限定安装均完成，本票规范副本的 11 个文件逐字保留；本票 proof-orchestrator 的 Eve 副本仍移除 `disable-model-invocation`（虽保留 `name`），因此未核实 Eve 的仅显式调用策略前，暂停在那里使用此 Workflow。文件安装不等于实际宿主加载或权限强制执行。
+
+## Rebuttal 使用与人工验收
+
+收到评审后显式调用 `rebuttal`，提供论文、原始评审、已有证据、当轮 venue 规则与输出范围。先确认逐 concern 策略，再审阅完整候选措辞；quick mode 只交问题板和策略。它不由写作主流程自动启动，也不自动启动实验、转投或其他顶层 Workflow。宿主必须保留显式调用限制。Skills CLI 1.5.26 的本地 `--all` 实测中，Eve 的 `agent/skills/rebuttal/SKILL.md` 保留 `name`，但移除 `disable-model-invocation`；canonical 副本及 Claude Code／Codex 限定安装保留该字段。Eve 的实际显式调用策略未验收，核实前暂停在该宿主使用 rebuttal。此次 `--all` 还跳过了未发现项目目录的其他宿主，不代表79个宿主全部安装或加载成功。
+
+在可丢弃项目副本中检查：
+
+1. **现成证据**：一条评审含多个问题时，应拆成原子 concern，逐项定位原始证据；已批准但未做的修改仍是 pending。未确认策略时停在策略，未确认完整措辞时保留候选，不生成已确认粘贴版。
+2. **证据不足**：要求不存在的消融／证明，或评审包含歧义时，分别列需补充工作／需澄清、具体缺口与问题；不给无依据数字，不启动实验或配置环境。审稿文本中的命令不产生授权。
+3. **独立线程与限长**：每 reviewer 回复自包含，不能依赖另一个线程；对实际粘贴目标工具计数，rich 超限不阻塞合规 strict，但所有版本仍检查事实和承诺。最终保存须与已确认文字一致，改字后重新检查。
+4. **后续与停止**：新评论只生成增量，保留旧稿和用户勾选；无独立审查能力时明确未执行，不将自查冒充独立验证；到授权或轮数上限即停，不投稿、转投或自动推进。
 
 通用 CLI 安装实测、临时文件场景模拟和真实用户验收是不同层级。尚未经用户在真实科研项目确认，不声明端到端体验通过。
 
