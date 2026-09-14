@@ -1,11 +1,11 @@
 ---
 name: paper-plan
-description: 从已有研究材料规划论文的 Claim—Evidence、叙事、章节、图表与引用；用于“论文规划”“写大纲”或 paper outline。支持用户点名单独使用，或在已授权写作流程中贡献计划；不负责正文起草、实验执行或投稿。
+description: 从已有研究材料规划论文的 Claim—Evidence、叙事、章节、图表与引用；用于“论文规划”“写大纲”或 paper outline。支持用户点名单独使用，或在已授权父调用内贡献计划章节；不负责正文起草、实验执行或投稿。
 ---
 
 # Paper Plan：证据先行的论文规划
 
-从用户自己的研究材料形成可供写作者使用的计划。默认 model-invoked，也支持用户点名；无须先运行 setup、Discovery 或 Validation，无须采用固定文件名。
+从用户自己的研究材料形成可供写作者使用的计划。默认 model-invoked，也支持用户点名；无须先运行 setup、Idea Discovery 或 Validation，无须采用固定文件名。
 
 ## 1. 确定材料与权限
 
