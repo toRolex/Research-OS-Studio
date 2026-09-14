@@ -70,9 +70,9 @@ metadata:
 
 ## 4. 正确性自查，再整理表达
 
-先读 [证明审查量表](references/proof-audit-rubric.md)，逐子目标核对每个定理、引理、归约、等式、界、常数和量词。区分已证明、引用、猜测、提议修订和无支持陈述；反例必须代数核实，未核实只能叫候选。
+先读 [证明审计准则](references/proof-audit-rubric.md)，逐子目标核对每个定理、引理、归约、等式、界、常数和量词。区分已证明、引用、猜测、提议修订和无支持陈述；反例必须代数核实，未核实只能叫候选。
 
-按 [审查报告](references/audit-output-contract.md) 保存定位、适用的 side conditions、依赖与未查范围。只调用现成、已授权的局部内部能力；无独立审查时记录“执行者自查”，不冒充外部验收。用户明确请求本轮独立意见时才读取 [独立意见](references/independent-review.md)，不可用则报告缺失，不能悄悄换模型。
+按 [审计输出约定](references/audit-output-contract.md) 保存定位、适用的 side conditions、依赖与未查范围。只调用现成、已授权的局部内部能力；无独立审查时记录“执行者自查”，不冒充外部验收。用户明确请求本轮独立意见时才读取 [独立意见](references/independent-review.md)，不可用则报告缺失，不能悄悄换模型。
 
 正确性检查后才整理表达：
 
