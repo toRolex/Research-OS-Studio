@@ -50,8 +50,11 @@ For each extracted claim, find the supporting raw data:
 - What is the EXACT value in that file, in its original unit?
 - Which configuration/dataset/split/seed produced it?
 - Show any aggregation, unit conversion or arithmetic needed to reproduce it.
-- Match status: exact_match / rounding_ok / mismatch, then use the more
-  specific per-claim status below for a mismatch or an unresolved mapping.
+- Match status: exact_match / rounding_ok for matches (including standard
+  rounding); otherwise use exactly one specific status from section D below
+  (ambiguous_mapping / missing_evidence / config_mismatch /
+  aggregation_mismatch / number_mismatch / scope_overclaim /
+  unsupported_claim). Do not emit a generic `mismatch` label.
 If multiple files plausibly map to a claim, show the alternatives; do not
 choose the favorable run. Missing evidence is not evidence of falsity, and
 an existing file is not by itself scientific support.
