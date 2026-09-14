@@ -152,7 +152,8 @@ def plot_training_curves(data, metric="Loss", save_path="figures/fig_training.pd
     # Use a log scale only when justified, declared, and all plotted values are positive.
 
     fig.savefig(save_path)
-    fig.savefig(save_path.replace(".pdf", ".png"), dpi=300)
+    if save_path.endswith(".pdf"):
+        fig.savefig(save_path[:-len(".pdf")] + ".png", dpi=300)
     plt.close(fig)
 ```
 
@@ -245,7 +246,7 @@ def plot_scatter(x, y, labels=None, xlabel="", ylabel="",
                  save_path="figures/fig_scatter.pdf"):
     fig, ax = plt.subplots(figsize=FIG_ICML_SINGLE)
 
-    scatter = ax.scatter(x, y, c=COLOR_LIST[0], s=30, alpha=0.7, edgecolors="white", linewidth=0.5)
+    ax.scatter(x, y, c=COLOR_LIST[0], s=30, alpha=0.7, edgecolors="white", linewidth=0.5)
 
     if labels is not None:
         for i, label in enumerate(labels):
@@ -261,7 +262,7 @@ def plot_scatter(x, y, labels=None, xlabel="", ylabel="",
 
 ### Scatter with optional regression line
 
-Only fit if requested and assumptions are appropriate; record the fitted sample and method. Correlation is not a causal claim. SciPy is optional: prefer the existing NumPy fallback below; if neither is available, omit this fit or stop if the fit was required.
+Only fit if requested and assumptions are appropriate; record the fitted sample and method. Correlation is not a causal claim. SciPy is optional: use the NumPy fallback in the except branch; if neither is available, omit this fit or stop if the fit was required.
 
 ```python
 # Optional fit only: authorized analysis, not a default rendering step.
@@ -300,7 +301,8 @@ def plot_leaderboard(models, scores, highlight_idx=-1, xlabel="Score",
 
     # Value labels
     for bar, score in zip(bars, scores):
-        ax.text(bar.get_width() + 0.3, bar.get_y() + bar.get_height() / 2,
+        ax.text(bar.get_width() + (0.3 if score >= 0 else -0.3),
+                bar.get_y() + bar.get_height() / 2,
                 f"{score:.1f}", va="center", fontsize=8)
 
     fig.savefig(save_path)
@@ -394,7 +396,7 @@ def plot_stacked_bar(categories, segments, segment_labels, *, unit, denominator_
     left = np.zeros(len(categories))
     for i, (seg_values, label) in enumerate(zip(segments, segment_labels)):
         ax.barh(y_pos, seg_values, left=left, height=0.6,
-                label=label, color=colors[i])
+                label=label, color=colors[i % len(colors)])
         # Percentage labels
         for j, v in enumerate(seg_values):
             if v > 5:  # Only label segments > 5%
@@ -526,7 +528,7 @@ import numpy as np
 import os
 
 # --- Publication styling ---
-plt.rcParams.update({...})  # Full rcParams block
+plt.rcParams.update({})  # Paste the full rcParams block from Setup above
 
 # --- Data ---
 # Implement a loader for the approved source; never paste invented example results.
