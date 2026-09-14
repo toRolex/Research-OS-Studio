@@ -67,7 +67,7 @@ Where the project lacks actual access separation, say that this is a planned res
 
 ### Phase 2: Build the Experimental Storyline
 
-Use a compact set of blocks; delete those not needed:
+Use a compact set of blocks (within MAX_CORE_BLOCKS); delete those not needed:
 
 1. **Main anchor result** — does the method solve the actual bottleneck?
 2. **Novelty isolation** — does the dominant contribution itself matter?
@@ -75,7 +75,7 @@ Use a compact set of blocks; delete those not needed:
 4. **Frontier necessity check** — if an LLM / VLM / Diffusion / RL-era component is central, is it the right tool?
 5. **Failure analysis or qualitative diagnosis** — what does the method still miss?
 
-For each block choose **Main paper** (essential), **Appendix** (non-blocking) or **Cut** (not worth the budget). Without a paper target, use core evidence / supplementary evidence / cut with the same meaning. Prefer one strong baseline family over many weak baselines. If a stronger modern baseline exists, use it rather than padding the list; mark an unverified baseline claim as such.
+For each block choose **Main paper** (essential), **Appendix** (non-blocking) or **Cut** (not worth the budget). Without a paper target, use core evidence / supplementary evidence / cut with the same meaning. Prefer one strong baseline family over many weak baselines (within MAX_BASELINE_FAMILIES). If a stronger modern baseline exists, use it rather than padding the list; mark an unverified baseline claim as such.
 
 Make the **discriminating experiment** explicit: list competing explanations and their different predictions. Prefer the cheapest comparison that can change the decision. Match data, tuning opportunity and compute as appropriate; if budgets differ, separate the efficiency and unconstrained-quality claims. A comparison that cannot distinguish the explanations cannot establish the mechanism.
 
@@ -98,9 +98,9 @@ Special rules:
 
 - A **simplicity check** compares the final method against an overbuilt variant or a tempting extra component intentionally rejected; deletion studies must preserve comparable tuning and evaluation.
 - A **frontier necessity check** compares the chosen modern primitive against the strongest plausible simpler or older alternative. If intentionally non-frontier, say so and skip the block.
-- Pre-specify sampling unit, repeated seeds, paired comparisons and uncertainty reporting when relevant. Keep tuning on development data and reserve final evaluation; label post-hoc analyses exploratory. Account for selection and multiple comparisons instead of presenting the best seed as confirmatory evidence.
+- Pre-specify sampling unit, repeated seeds (start from DEFAULT_SEEDS when stochastic variance matters and budget allows), paired comparisons and uncertainty reporting when relevant. Keep tuning on development data and reserve final evaluation; label post-hoc analyses exploratory. Account for selection and multiple comparisons instead of presenting the best seed as confirmatory evidence.
 - Separate **valid negative** (valid evidence rules out the pre-specified meaningful gain or meets an explicit falsification rule), **inconclusive** (uncertainty still permits competing conclusions), **invalid** (protocol/data leakage/evaluator defect), and **operational failure** (crash/OOM/timeout). Missing a success threshold alone does not establish a negative; pre-specify how uncertainty and effect size distinguish negative from inconclusive. A valid negative limits the tested Claim; operational failure is not scientific falsification. Preserve all attempts, not only winners; missing metrics remain missing, never zero-valued success.
-- For **each criterion**, identify the planned primary evidence: run IDs, actual or proposed raw-result location, metric/column or log section, comparison and decision rule. Record existing evidence separately with its source; future evidence stays **not collected**. File existence and model agreement do not establish that the criterion holds.
+- For **each criterion (including baseline validity and budget compliance)**, identify the planned primary evidence: run IDs, actual or proposed raw-result location, metric/column or log section, comparison and decision rule. Record existing evidence separately with its source; future evidence stays **not collected**. File existence and model agreement do not establish that the criterion holds.
 
 **完成条件**：每个 block 的所有字段与逐 criterion evidence 对应完整；正、负、不确定、无效及运行失败的含义可区分。
 
