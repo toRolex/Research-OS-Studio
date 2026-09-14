@@ -6,7 +6,7 @@ argument-hint: "[manifest 或 grid 规格；可指定并发上限、重试上限
 
 # Experiment Queue
 
-当单个 [run-experiment](../run-experiment/SKILL.md) 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞清理、状态可恢复。这是 model-invoked 的内部编排能力：当前 Validation 宏 Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停止在汇总报告，不自动分析、审计或进入下一轮。
+当单个 [run-experiment](../run-experiment/SKILL.md) 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞清理、状态可恢复。这是 model-invoked 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停止在汇总报告，不自动分析、审计或进入下一轮。
 
 上游 ARIS `experiment-queue` 用远端常驻 Python scheduler 管理 screen 作业。本 Skill 保留其作业清单、波次依赖、OOM 重试、停滞清理和恢复方法，但删除常驻 daemon、无限轮询、provider 绑定和隐藏调度：编排以用户可读的清单、状态表和日志保存，控制权留在用户手中。
 

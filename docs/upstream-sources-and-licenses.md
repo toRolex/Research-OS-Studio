@@ -49,7 +49,7 @@
 
 ## 已采用的实验执行能力
 
-`skills/validation-cycle/run-experiment/` 与 `skills/validation-cycle/experiment-queue/` 属于 Validation Cycle，默认 model-invoked 的内部能力；可由当前 Validation 宏 Workflow 在已授权职责内组合，用户也可点名 standalone。两者只贡献一次授权范围内的执行与 attempt 记录，不自动启动监控、分析、审计、Results-to-Claims 或写作。
+`skills/validation-cycle/run-experiment/` 与 `skills/validation-cycle/experiment-queue/` 属于 Validation Cycle，默认 model-invoked 的内部能力；可由当前 Validation Workflow 在已授权职责内组合，用户也可点名 standalone。两者只贡献一次授权范围内的执行与 attempt 记录，不自动启动监控、分析、审计、Results-to-Claims 或写作。
 
 - **来源**：wanshuiyin / ARIS，`skills/run-experiment/SKILL.md`（该目录仅 `SKILL.md`）与 `skills/experiment-queue/SKILL.md`（另有 `scripts/queue_manager.py`、`scripts/build_manifest.py`），revision `0472e530251cdbd3364c33b110063c58f819edd7`。2026-09-14 通过官方 GitHub API 重新解析 revision、逐文件目录树与仓库 MIT 许可；同时阅读 `experiment-bridge/SKILL.md`、`monitor-experiment/SKILL.md`、`training-check/SKILL.md` 及 `shared-references/compute-env-contract.md`、`shared-references/external-cadence.md` 以核对真实调用关系。
 - **采用**：保留计划解析与按 milestone 实现、代码 review、sanity-first、baseline-first、按规模选择单次/批量执行、OOM 有限重试、停滞清理、波次依赖、预期输出完成判定、状态持久化与 resume、完整 attempt 收集。
