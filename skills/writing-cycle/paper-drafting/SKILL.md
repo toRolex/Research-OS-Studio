@@ -5,7 +5,7 @@ description: 从现成论文计划和原始 Claims、Evidence、结果起草完�
 
 # Paper drafting
 
-将用户已有的计划写成受原始证据约束的候选正文。默认 model-invoked 的局部能力；用户可直接点名使用。`paper-writing` 是另一个由用户显式启动的总 Workflow，本能力既不代替它，也不自动启动它。无需运行 setup、paper-plan 或其他前序 Skill。
+将用户已有的计划写成受原始证据约束的候选正文。默认 model-invoked 的局部能力；用户可直接点名使用。与 `paper-writing` 总 Workflow 独立分工（另票交付）：本能力既不代替它，也不自动启动它。无需运行 setup 或其他前序 Skill。
 
 ## 1. 确认本次边界
 

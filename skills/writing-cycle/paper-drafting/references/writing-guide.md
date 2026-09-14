@@ -11,6 +11,7 @@ Adapted from Orchestra Research’s MIT-licensed writing guide. This reference p
 - [Abstract Writing Formula](#abstract-writing-formula)
 - [Introduction Structure](#introduction-structure)
 - [Sentence-Level Clarity](#sentence-level-clarity)
+- [Micro-Level Writing Tips](#micro-level-writing-tips)
 - [Word Choice and Precision](#word-choice-and-precision)
 - [Mathematical Writing](#mathematical-writing)
 - [Figure Design](#figure-design)
@@ -214,8 +215,6 @@ Provide context before asking the reader to consider anything new. This applies 
 | One Unit, One Function | Each paragraph = one point | "One idea per container" |
 | Action in Verb | Use verbs, not nominalizations | "Verbs do, nouns sit" |
 | Context Before New | Explain before presenting | "Set the stage first" |
-
----
 
 ---
 
