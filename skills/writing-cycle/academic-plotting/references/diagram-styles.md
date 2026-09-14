@@ -20,8 +20,8 @@ VISUAL STYLE — HAND-DRAWN SKETCH:
 - Borders are dark charcoal (#2C2C2C) with 2-3px line weight, slightly uneven
 - Arrows are hand-drawn with slight curves, ending in simple open arrowheads (not filled triangles)
 - Text uses a rounded sans-serif font (like Comic Neue or Architects Daughter feel)
-- Small doodle-style icons inside boxes: a tiny gear  for processing, a lightbulb  for ideas,
-  a magnifying glass  for search — rendered as simple line drawings, NOT emoji
+- Small doodle-style icons inside boxes: a tiny gear for processing, a lightbulb for ideas,
+  a magnifying glass for search — rendered as simple line drawings, NOT emoji
 - Overall feel: a carefully drawn whiteboard diagram, clean but with personality
 - NO clip art, NO stock icons, NO photorealistic elements
 ```

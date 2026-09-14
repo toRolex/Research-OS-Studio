@@ -52,4 +52,4 @@ Apply to each figure/table after reopening the actual render. Use as self-check 
 > 6. Do actual exported labels, glyphs, legends and panel markers remain readable at the intended size and in grayscale?
 > 7. Can a reader locate editable source, source data and exact reproduction steps? Separate static checks, executed commands, visual inspection and scientific interpretation.
 >
-> Return specific findings with figure/panel and source location, a scoped correction or question, and checks you could not perform. A score or no-foundings result is not user acceptance.
+> Return specific findings with figure/panel and source location, a scoped correction or question, and checks you could not perform. A score or no-findings result is not user acceptance.
