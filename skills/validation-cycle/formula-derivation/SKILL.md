@@ -19,7 +19,7 @@ Use the user's finite budget; otherwise attempt one derivation map and at most o
 
 Ordinary Markdown mathematics is sufficient. Lean, symbolic tools, network access, paid resources, and environment setup are not prerequisites or actions of this Skill. Use only available authorized local reading/writing capabilities; report unavailable inputs or capabilities instead of pretending to have checked them. Numerical examples, self-checks, and model agreement are not mathematical proof or formal verification.
 
-Completion means every nontrivial step has its category and justification, or an explicit gap, and the final package records status and remaining risks. Return the actual destination (or chat-only result), unchanged target versus authorized variant, checks performed and checks not performed, then stop. Relationships below are recommendations only: do not automatically invoke proof-writer, proof-review, proof-repair, or another Workflow.
+Completion means every nontrivial step has its category and justification, or an explicit gap, and the final package records status and remaining risks. Return the actual destination (or chat-only result), unchanged target versus authorized variant, checks performed and checks not performed, then stop. Relationships below are recommendations only: do not automatically invoke proof-writer or another Workflow, and do not automatically start a separate review or repair process.
 
 ## Constants
 
@@ -149,12 +149,12 @@ If the derivation needs a decomposition, derive it from the chosen global quanti
 Do not make a split appear magically from one local variable itself.
 
 ### Step 7: Write the Derivation Document
-沿用开始前确定的交付方式与授权范围：
-- 无写入授权：在聊天中返回完整 package，不创建文件。
-- composed 且获准写入：仅更新调用者指定的报告区块，保留其他内容，不另建主报告。
-- standalone 且获准写入：写入约定文件；已有文件先读取，仅更新相关区块，保留此前尝试，避免重复内容。
+Keep the delivery mode and authorization established before Step 1:
+- No write authorization: return the full package in chat; create no files.
+- Composed with write authorization: update only the caller-designated report section, preserve everything else, and do not create a second canonical report.
+- Standalone with write authorization: write to the agreed file; read existing files first, update only the relevant section, preserve prior attempts, and avoid duplicated content.
 
-默认文件名只用于建议目的地，不在本步骤重新选择路径或扩大授权。以下完整 package 结构同样适用于聊天与报告区块；嵌入既有报告时可调整标题层级。
+The default filename only suggests a destination; do not reselect paths or expand authorization here. The full package structure below applies equally to chat and report sections; adjust heading levels when embedding into an existing report.
 
 Do NOT write directly into paper sections or appendix `.tex` files unless the user explicitly asks for that target.
 
