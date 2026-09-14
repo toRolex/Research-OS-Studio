@@ -48,9 +48,7 @@ argument-hint: "[实验计划、tracker 或 proposal 路径；说明演练/真�
 
 先做一次范围清单，标出计划未声明的输入、估算和歧义。若 plan 与 proposal 冲突，保留出处，询问用户选择；不擅自改题、改 metric 或把可选实验变成必跑。
 
-**完成条件**：本次运行的目标、输入、写入清单、资源上限、执行模式、停止条件和未决问题均可逐项核对。
-
-## 3. 实现：候选与评估器分界
+**完成条件**：里程碑顺序、每 block 输入与判据、可改/不可改范围、must/nice 及已有结果均已列出；plan 与 proposal 冲突已保留出处待用户选择；未声明项已标歧义。
 
 先检查项目中已有实现、数据加载器、训练/评估入口、固定 split 和日志格式。复用可用代码，避免重复实现。对每个计划内 milestone 执行以下检查：
 
@@ -111,7 +109,7 @@ Baseline 失败时：记录失败事实及日志，判断是环境/实现/数据
 
 按计划的 milestone 顺序执行。可使用项目已有脚本、宿主已提供的终端/作业工具和用户明确指定的远程能力；这些工具只是执行手段，不成为本产品 runtime。
 
-**批量路由**：单次或少量作业（约 ≤5）在本 Skill 内逐项执行。当某 milestone 声明 ≥10 个作业、多 seed 网格或阶段依赖时，把该 milestone 交给 [experiment-queue](../experiment-queue/SKILL.md) 组织为有界批次；本 Skill 仍负责实现、审查、sanity 口径和结果收集。阈值接近时按并发上限、状态可见性和用户偏好决定。
+**批量路由**：单次或少量作业（约 ≤5）在本 Skill 内逐项执行。当某 milestone 声明 ≥10 个作业、多 seed 网格或阶段依赖时，把该 milestone 交给 [experiment-queue](../experiment-queue/SKILL.md) 组织为有界批次；本 Skill 仍负责实现、审查、sanity 口径和结果收集。6–9 个作业按并发上限、状态可见性和用户偏好决定走哪条路。
 
 - 小批量可逐项或按已确认并发执行；大批量先给出分批草案和每批预算，等用户确认后继续。
 - 运行中只观察事实：running、completed、crashed、timed out、OOM、NaN、日志缺失和资源消耗。监控不作科学结论，不自动触发 analysis 或下一 Workflow。
