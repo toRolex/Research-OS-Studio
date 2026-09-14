@@ -54,7 +54,7 @@
 | 本仓 Skill | 上游原路径与采用内容 | 共置许可与适配 |
 |---|---|---|
 | `skills/idea-cycle/idea-review/` | wanshuiyin / ARIS，`skills/research-review/SKILL.md`：上下文采集、独立 adversarial 初评、逻辑/证据/叙事/贡献四面审查、证据反驳、同 reviewer 有界澄清、条件性 Claim 矩阵、优先行动与完整对话记录。 | MIT 全文及 `Copyright (c) 2026 wanshuiyin` 放在 `LICENSE`。将含论文/结果的宽泛 review 限定为现成 Idea；保留实质评审任务与后续提问，按需披露到共置 reference/template。删除固定 provider/MCP、安装指令、tracing/runtime；仅评审报告写入，reviewer 不修订候选。 |
-| `skills/idea-cycle/idea-refinement/` | wanshuiyin / ARIS，`skills/research-refine/SKILL.md`：固定五字段 Problem Anchor、完整 Phase 1 方法开发、MVP/frontier 双路线、十一项机制具体化、1–3 项 Claim 驱动验证草图、七轴独立方法评审、Anchor/Simplicity Check、证据 pushback、逐轮完整 Proposal 与改进记录。 | 同 revision、同 MIT notice，随 `LICENSE` 发行。原方法开发段、修订检查及完整 Proposal 模板搬入共置 resources 后最小适配；保留七轴实质评价与可选原权重。移除 provider、JSON checkpoint、中央输出协议、强制分数停止、自动实验/跨流程调用；领域不适用项明确说明。 |
+| `skills/idea-cycle/idea-refinement/` | wanshuiyin / ARIS，`skills/research-refine/SKILL.md`：固定五字段 Problem Anchor、完整 Phase 1 方法开发、MVP/frontier 双路线、十一项机制具体化、1–3 项 Claim 驱动验证草图、七轴独立方法评审、Anchor/Simplicity Check、证据 pushback、逐轮完整 Proposal 与改进记录。 | 同 revision、同 MIT notice，随 `LICENSE` 发行。原方法开发段、修订检查及完整 Proposal 模板搬入共置 references/templates 后最小适配；保留七轴实质评价与可选原权重。移除 provider、JSON checkpoint、中央输出协议、强制分数停止、自动实验/跨流程调用；领域不适用项明确说明。 |
 
 **调用关系复核**：原 `idea-discovery` Phase 4 实际调用 `research-review`；Phase 4.5 调用 `research-refine-pipeline`，后者 Phase 1 调用 `research-refine`、Phase 3 再调用 `experiment-plan`。本票保留前两项研究职责，未复制 pipeline 的自动规划/执行链。本仓二者均为 model-invoked Internal Skills，用户可点名 standalone，明确授权时 composed；review 不自动启动 refinement，refinement 自带局部独立方法评审任务，无 sibling Skill 安装依赖。
 
