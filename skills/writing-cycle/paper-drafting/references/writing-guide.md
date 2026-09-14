@@ -16,6 +16,7 @@ Adapted from Orchestra Research’s MIT-licensed writing guide. This reference p
 - [Mathematical Writing](#mathematical-writing)
 - [Figure Design](#figure-design)
 - [Common Mistakes to Avoid](#common-mistakes-to-avoid)
+- [Author Drafting Self-Check](#author-drafting-self-check)
 
 ---
 
