@@ -215,6 +215,16 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 
 模板没有附带第三方主题文件、论文图表或外部 Dahlin PDF；其中 `metropolis` 等是对用户已有工具的可选依赖，不随本 Skill vendoring。Dahlin 的方法归属保留，不复制外链 PDF 正文。参考论文、用户模板、图表和录像的复用仍需用户授权，两个 MIT notice 不代替这些素材的权利许可。
 
+## 已采用的结果分析 Skill
+
+`skills/validation-cycle/analyze-results/` 属于 Validation Cycle，默认 model-invoked，也支持用户点名 standalone；被 Workflow 调用时只贡献已授权的分析章节，不自动推进科研流程。
+
+- **来源**：wanshuiyin / ARIS，`skills/analyze-results/SKILL.md`。2026-09-15 从官方仓库重新核对；当日 HEAD `f1bd907b58f653131ebe6807c482e2554e07f9b9` 的该正文与集中来源文档记录 revision 内版本一致（均为 46 行通用建议），该 Skill 目录没有共置 references/templates/assets。经仓库静态评估为薄弱内容（无产物路径契约、无命令、无检查清单），**未照搬**，只取其问题起点（定位结果文件、相对 baseline、统计分析、形成洞见）。
+- **组合**：结果—证据回溯口径保留同 revision 同仓 `skills/paper-claim-audit/SKILL.md` 的数字对应与范围核对方法（best-seed、config mismatch、aggregation mismatch、delta error、scope overclaim 检查项）；Claim 与证据分离保留同仓 `skills/result-to-claim/SKILL.md` 的 support／don't support／missing evidence 三分法；attempt 全量留存（含 crash／timeout）借鉴 karpathy / autoresearch `program.md` 的固定记录纪律（该仓许可证据不足，仅 clean-room 借鉴公开方法，未复制正文）。`references/statistical-checks.md` 与 `templates/analysis-report.md` 承载检查问题与报告字段，均为上述方法的局部适配。
+- **适配**：删除 Codex／provider 审查后端、`.aris` 跟踪与凭据输出、机器 JSON 输出、定时包装与 pipeline 自动调用；改为使用宿主已有的独立审查能力，不可用时如实降级为 single-agent assessment。新增结果账本、Description／Statistical evidence／Claim 三分、选择偏差与多重比较检查、授权与写入边界、standalone/composed 与停止条件；不运行、重跑、修复或扩展实验，不写中央状态。
+- **调用核对**：上游 `skills/experiment-queue/SKILL.md` 末尾以 `Run /analyze-results` 作为建议性下一步（非自动调用）；本仓不继承该调用链，分析只由用户或已授权父 Workflow 显式触发。上游引用的 `shared-references/experiment-integrity.md` 与 `shared-references/evidence-precheck.md` 已阅读，其 fake ground truth／score normalization／phantom result 口径属于独立审计职责，不属本分析能力。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
