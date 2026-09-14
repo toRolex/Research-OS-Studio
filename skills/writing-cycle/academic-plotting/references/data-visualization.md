@@ -261,11 +261,19 @@ def plot_scatter(x, y, labels=None, xlabel="", ylabel="",
 
 ### Scatter with optional regression line
 
-Only fit if requested and assumptions are appropriate; record the fitted sample and method. Correlation is not a causal claim. SciPy is optional: if absent, omit this fit or stop if the fit was required.
+Only fit if requested and assumptions are appropriate; record the fitted sample and method. Correlation is not a causal claim. SciPy is optional: prefer the existing NumPy fallback below; if neither is available, omit this fit or stop if the fit was required.
 
 ```python
-from scipy import stats
-slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+# Optional fit only: authorized analysis, not a default rendering step.
+try:
+    from scipy import stats
+    slope, intercept, r_value, _, _ = stats.linregress(x, y)
+except ImportError:
+    try:
+        slope, intercept = np.polyfit(x, y, 1)
+        r_value = np.corrcoef(x, y)[0, 1]
+    except (ValueError, TypeError, np.linalg.LinAlgError):
+        raise RuntimeError("No regression tool available; omit this fit or stop if the fit was required")
 line_x = np.linspace(min(x), max(x), 100)
 ax.plot(line_x, slope * line_x + intercept, color=COLOR_LIST[1],
         linestyle="--", linewidth=1, label=f"$R^2$={r_value**2:.3f}")
