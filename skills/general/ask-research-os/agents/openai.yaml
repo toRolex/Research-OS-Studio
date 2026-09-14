@@ -1,0 +1,5 @@
+interface:
+  display_name: "Ask Research OS"
+  short_description: "只读选择科研流程与独立入口"
+policy:
+  allow_implicit_invocation: false
