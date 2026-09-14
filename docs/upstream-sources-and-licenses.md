@@ -67,6 +67,17 @@
 - **调用核对**：上游 `skills/idea-discovery/SKILL.md` Phase 3 实际调用 `novelty-check`；上游查新引用的 `integration-contract.md`、`citation-discipline.md`、`review-tracing.md` 及 `tools/verify_papers.py` 已阅读。保留核实与独立复核职责，不继承其 runtime、自动 pilots、receipt 或后续 Workflow 调用。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。新增报告模板和引用规则为上述方法的局部适配，不依赖中央文档运行。
 
+## 已采用的文献综合 Skill
+
+`skills/idea-cycle/research-lit/` 保留 ARIS 原名，属于 Idea Cycle；默认 model-invoked，支持用户点名 standalone，以及向父报告返回 Literature Landscape 的 composed 模式。
+
+- **来源与复核**：2026-09-12 通过官方 GitHub API 重新解析 ARIS / wanshuiyin 的 revision `0472e530251cdbd3364c33b110063c58f819edd7`，读取 `skills/research-lit/SKILL.md` 全文、递归目录树与根 MIT 许可。该版本 Skill 目录只有正文，没有共置 references/templates/assets 或第三方模板。复核当日官方 HEAD 为 `f1bd907b58f653131ebe6807c482e2554e07f9b9`；本次采用的是明确固定版本，不声称采用最新全文。
+- **完整方法适配**：保留 Step 0 的文献库、批注/标签/集合、研究笔记链接与本地前三页筛读；Step 1 的多角度主动搜索、预印本与发表渠道互补、渐进阅读、广域网页及辅助 scout、跨学科引文图、去重和版本归属；Step 1.5 的逐候选身份核实与未核实保留；Step 2–5 的逐篇字段、只读并行/顺序提取、主题/共识/分歧/空白综合、表格及 3–5 段叙述、按需 BibTeX 和下载。来源选择及保存分支披露到共置 `references/source-methods.md`，核实方法与报告结构分别随 `references/source-verification.md`、`templates/literature-report.md` 发行。
+- **关联规则与真实调用**：完整读取同 revision 的 `skills/shared-references/{citation-discipline,output-composition,fan-out-pattern,acceptance-gate,integration-contract,wiki-helper-resolution}.md` 及 `skills/idea-discovery/SKILL.md`。上游 Phase 1 实际调用 `research-lit` 并传 composed 参数，默认追加 Gemini；本仓不继承 provider 注入或父流程自动推进。只采用 `citation-discipline.md` 的身份/语境核实方法，不复制其末尾标注 Anthropic Apache-2.0 来源的输出段落或无关论文编辑职责。
+- **删除与校准**：删除 `.aris` resolver、中央 fetcher/verifier、统一 JSON/cache/hash、跨模型验收 gate、自动 wiki ingest 和固定 MCP/provider 名称；宿主已有能力承接真实检索，缺失时准确降级。增加有界分类预算、候选/已核实/未核实与阅读深度分离、写入授权及停止条件；固定年份和 scout 最少 15 篇改为范围内检索，保留方法而不为配额编造。`all` 改为所有可用且已授权来源，用户显式来源范围优先；发表元数据冲突回到原始记录，不把某索引恒定认作最权威。上述是显式语义适配，不声称上游行为逐条不变。
+- **择优依据**：同日解析 Orchestra revision `773a52944ba4747a18bd4ae9ade53fff041adcbc` 的目录，并全文比较 `20-ml-paper-writing/ml-paper-writing/references/citation-workflow.md`。其检索—身份—引用语境方法与 ARIS 重叠，正文侧重写作期 BibTeX/Python 管理，未发现独立同名文献综合 Skill；本票采用覆盖用户材料、主动发现与 landscape 更完整的 ARIS，不复制 Orchestra 代码、venue templates 或其示例中的仅检查 HTTP/关键词即核实的实现。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随本 Skill 的 `LICENSE` 发行。共置资源为该方法的局部适配；用户运行不依赖本文、上游 checkout 或其他 Skill 的资源。
+
 ## 已采用的候选评审与方法改进
 
 2026-09-12 从 ARIS 官方 GitHub API 重新解析 `0472e530251cdbd3364c33b110063c58f819edd7` 并完整读取下述正文、目录树、直接引用与 MIT 许可；采用固定版本，不声称是最新 HEAD。两个原 Skill 目录都只有 `SKILL.md`，没有额外共置 references/templates/assets 或第三方资产。
