@@ -2,6 +2,14 @@
 
 Research OS Studio 是一套安装到现有科研项目中的 Agent Skills：把研究拆成可追踪的步骤，让 AI 生成候选结果，但把输入、验收和是否继续的决定留给用户。
 
+## 已交付 Skills：Writing Cycle
+
+| Skill | 调用方式 | 输入与产物 |
+|---|---|---|
+| [academic-plotting](skills/writing-cycle/academic-plotting/SKILL.md) | 默认 model-invoked；支持用户点名 standalone，也可在当前授权职责内 composed | 从真实数据生成定量图／比较表，从方法说明制作明确标注的示意图；保留可编辑源、数据对应、复现命令与图注。仅用已有环境，缺工具停止；不自动启动写作总流程。 |
+
+图表 Skill 自带方法资源、模板和许可证，可独立使用。实现期真实绘图场景、静态检查或模型复核均不等于用户科研项目验收。
+
 ## 安装
 
 需要 Git 和 [uv](https://docs.astral.sh/uv/)。
