@@ -32,7 +32,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 |---|---|---|
 | General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)、[ask-research-os](general/ask-research-os/SKILL.md)（均 user-invoked） |
 | Idea Cycle | `idea-cycle/` | [research-lit](idea-cycle/research-lit/SKILL.md)、[idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)、[idea-review](idea-cycle/idea-review/SKILL.md)、[idea-refinement](idea-cycle/idea-refinement/SKILL.md)（均 model-invoked，用户可点名；支持 standalone / composed） |
-| Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[run-experiment](validation-cycle/run-experiment/SKILL.md)、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[proof-orchestrator](validation-cycle/proof-orchestrator/SKILL.md)、[analyze-results](validation-cycle/analyze-results/SKILL.md)（除 experiment-plan、proof-orchestrator 外均 model-invoked，用户可点名；支持 standalone / composed） |
+| Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[run-experiment](validation-cycle/run-experiment/SKILL.md)、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[proof-orchestrator](validation-cycle/proof-orchestrator/SKILL.md)、[analyze-results](validation-cycle/analyze-results/SKILL.md)、[formula-derivation](validation-cycle/formula-derivation/SKILL.md)、[proof-writer](validation-cycle/proof-writer/SKILL.md)（除 experiment-plan、proof-orchestrator 外均 model-invoked，用户可点名；支持 standalone / composed） |
 | Writing Cycle | `writing-cycle/` | [paper-plan](writing-cycle/paper-plan/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[academic-plotting](writing-cycle/academic-plotting/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[paper-compile](writing-cycle/paper-compile/SKILL.md)（check-only，model-invoked，用户可点名；standalone / composed）、[paper-compile-repair](writing-cycle/paper-compile-repair/SKILL.md)（user-invoked，显式授权修复）、[citation-audit](writing-cycle/citation-audit/SKILL.md)（model-invoked，支持 standalone / composed；仅检测与报告）、[apply-citation-fixes](writing-cycle/apply-citation-fixes/SKILL.md)（user-invoked；精确 diff 后授权应用及复验）、[paper-claim-audit](writing-cycle/paper-claim-audit/SKILL.md)、[claim-stress-test](writing-cycle/claim-stress-test/SKILL.md)（后两者均 model-invoked，用户可点名；支持 standalone / composed）、[rebuttal](writing-cycle/rebuttal/SKILL.md)（user-invoked；现成审稿意见到逐 concern 回复，不自动补实验或投稿）、[paper-talk](writing-cycle/paper-talk/SKILL.md)（独立 user-invoked：从论文生成 slides、notes、script 并审查演讲产物；不自动发布或启动后续 Workflow） |
 
 只有实际含 `SKILL.md` 的目录才是可安装 Skill。不为分类创建占位 Skill，不把保留的旧工程纳入这份清单。
@@ -52,6 +52,14 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 手工验收：提供一个有明显弱点的现成候选、原始文献和约束；先点名 review，核对 reviewer 实际原文定位与问题，再点名 refinement，核对每轮 Anchor 原样保留、双路线取舍及未解决项。限制一轮修订、零实验预算，应只得到方法及验证草图。另测缺原文、缺独立 reviewer、已有同名输出和 composed 章节授权：应准确暴露缺口、保留已有材料并停止，不配置环境或自动实验。实现期场景结果不替代用户真实科研验收。
 
 Writing Cycle 审查能力均只读审查研究材料、输出 Markdown 报告与建议：`paper-claim-audit` 核对数字、比较、配置、图表/caption 和实验覆盖；`claim-stress-test` 由两个 fresh reviewer 分别构造整篇拒稿攻击、对照原材料逐点裁决。standalone 独立交付报告，composed 贡献父 Workflow 的 canonical report；默认不改稿，报告后停止。Claim / Citation / Proof / Stress 并列按需，不自动串联；Citation 与 Proof 不由这两项替代，其入口由独立票交付。
+
+## 普通公式推导与证明生成
+
+`formula-derivation` 用于组织推导主线、选定不变量、说明假设与近似并生成完整公式链；`proof-writer` 用于固定命题的证明生成，不替代只读证明审查。两者默认 model-invoked，也支持用户点名单独运行。Standalone 产出获准路径中的 Markdown package；composed 将同样完整的内容贡献到调用者指定报告，不另建重复主报告。没有写入授权时仅在聊天返回。
+
+开始前固定目标、输入范围、目的路径和有限尝试预算；变更假设、弱化命题或重构目标只是建议，获明确授权后才发展独立变体。成功、缺口、实际失败路线和可复用教训都应保留；承重缺口未解决时不标成功。普通数学推导不需要 Lean，也不安装工具链；生成完成即停止，不自动进入通用 review / repair 或推进其他 Workflow。
+
+在可丢弃项目中分别验收：带误差界的公式近似、包含边界情况的固定命题证明、缺少关键假设的无法完成报告，以及仅聊天/向既有报告贡献的写入边界。核对原命题未改、失败未被隐藏、没有自动修复。此类 toy 场景与安装检查不代表真实科研或形式化验证通过。
 
 ## 初始化与人工验收
 
