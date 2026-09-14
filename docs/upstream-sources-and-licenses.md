@@ -62,6 +62,16 @@
 
 场景材料（公开现成候选、论文、原实验代码）仅临时用于实现期验证，不随产品分发；用户真实研究效果与端到端体验仍待用户验收。
 
+## 已采用的实验计划 Workflow
+
+`skills/validation-cycle/experiment-plan/` 为独立 user-invoked Workflow，只将已有问题转为可授权执行的计划，不运行实验。2026-09-12 通过官方 GitHub API 重新解析以下固定 revision；这是采用复核，不声称最新 HEAD。
+
+- **可复制来源**：wanshuiyin / ARIS，`skills/experiment-plan/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。全文阅读原正文和递归目录树；该目录仅有 `SKILL.md`，无共置 references/templates/assets 或额外第三方许可。根 MIT 全文随本 Skill 的 `LICENSE` 发行。
+- **完整方法与最小适配**：保留 Phase 0–5 的 Problem Anchor、主/支持/反主张、最小可信证据、五类实验 block、主文/附录/删去划分、strong baselines、simplicity/deletion 与 frontier necessity、每 block 全部字段、五阶段顺序、风险缓解、计划与 tracker 全部原字段及最终检查表。原内联输出模板移到共置 `templates/experiment-plan.md`，未缩写为契约壳；新增固定评价面、判别性比较、逐 criterion 原始证据、硬预算和负/无效/不确定/运行失败区分。
+- **引用与真实调用核对**：全文阅读原 `skills/shared-references/{output-versioning,output-manifest,output-language,output-composition}.md`，以及实际调用方 `skills/research-refine-pipeline/SKILL.md` 和消费计划的 `skills/experiment-bridge/SKILL.md`。前者 Phase 3 调用 experiment-plan；后者读取 plan/tracker 后实现与部署，并非 experiment-plan 的必需执行依赖。本仓不复制这些调用者或协议：以确认输出路径、不覆盖和用户语言替代固定目录/自动 latest-copy/manifest；删除 provider 工具名单、权限失败改用 shell 的绕过指令和自动后续 Workflow 建议。独立 user-invoked 入口不提供由另一 Workflow 自动调用的 composed 模式；用户可以直接把既有材料作为输入，无前置流程 gate。
+- **仅借鉴 autoresearch 方法**：Andrej Karpathy，revision `228791fb499afffb54b46200aca536f79142f117`；重新全文读取 `README.md`、`program.md` 并核对目录树。该版本 README 声明 MIT，但树内仍无 LICENSE；延续许可证证据不足决定，不复制正文、训练实现或资源。只独立表达 baseline-first、固定修改面、固定时间/metric 和保留失败尝试思想；不采用无限循环、自动 commit/reset 或超时自动 kill。训练/评估运行时不作为本 Skill 依赖。
+- **仅借鉴评价职责分离**：THU-Team-Eureka / EurekAgent，revision `fb96df897dfb99797a77623aa0dd9ee178fe89d2`；全文读取公开 `README.md` 的设计与评价接口说明，核对固定版本 LICENSE 存在及 GitHub AGPL-3.0 识别。只依据公开思想独立表述候选与评价职责分离；不读取后搬运 AGPL Skill/源码、容器/grader/hook/runtime，也不声称 Skill 指令本身能提供强制隔离。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
