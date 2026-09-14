@@ -1,10 +1,10 @@
-# AI-Powered Diagram Generation Guide
+# Diagram Generation Guide
 
 Complete prompt engineering reference for generating distinctive, publication-quality diagrams.
 
 ## Why Prompts Matter More Than Anything
 
-The same Gemini model produces wildly different results depending on prompt quality:
+The same image model produces wildly different results depending on prompt quality:
 - **Generic prompt** → boring corporate flowchart with random colors
 - **Style-specific prompt** → distinctive, memorable figure with consistent visual identity
 

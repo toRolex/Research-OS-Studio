@@ -8,10 +8,7 @@ Use [style-guide.md](style-guide.md) for print/export checks. All dimensions bel
 
 ```python
 import matplotlib.pyplot as plt
-import matplotlib as mpl
 import numpy as np
-import seaborn as sns
-from matplotlib.ticker import MaxNLocator, FuncFormatter
 
 # --- Publication defaults (polished, not generic) ---
 plt.rcParams.update({
@@ -80,13 +77,14 @@ OKABE_ITO = ["#E69F00", "#56B4E9", "#009E73", "#F0E442",
 
 ```python
 # Warm sequential (more interesting than plain Blues)
-cmap_warm = sns.color_palette("YlOrRd", as_cmap=True)
+cmap_warm = plt.cm.YlOrRd
 
 # Cool sequential (clean, professional)
-cmap_cool = sns.light_palette("#264653", as_cmap=True)
+from matplotlib.colors import LinearSegmentedColormap
+cmap_cool = LinearSegmentedColormap.from_list("teal_light", ["#FFFFFF", "#264653"])
 
 # Diverging (for correlation/difference, centered at 0)
-cmap_div = sns.color_palette("RdBu_r", as_cmap=True)
+cmap_div = plt.cm.RdBu_r
 
 # Perceptually uniform (for continuous scientific data)
 cmap_viridis = plt.cm.viridis
@@ -217,10 +215,13 @@ def plot_heatmap(matrix, xlabels, ylabels, title="",
     """
     fig, ax = plt.subplots(figsize=(max(4, len(xlabels) * 0.6), max(3, len(ylabels) * 0.5)))
 
-    sns.heatmap(matrix, annot=True, fmt=fmt, cmap=cmap, ax=ax,
-                xticklabels=xlabels, yticklabels=ylabels,
-                cbar_kws={"shrink": 0.8}, linewidths=0.5, linecolor="white",
-                annot_kws={"size": 8})
+    im = ax.imshow(matrix, cmap=cmap, aspect="auto")
+    ax.figure.colorbar(im, ax=ax, shrink=0.8)
+    ax.set_xticks(range(len(xlabels)), labels=xlabels)
+    ax.set_yticks(range(len(ylabels)), labels=ylabels)
+    for i in range(len(ylabels)):
+        for j in range(len(xlabels)):
+            ax.text(j, i, format(matrix[i][j], fmt), ha="center", va="center", fontsize=8)
 
     ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")
     if title:
@@ -233,8 +234,8 @@ def plot_heatmap(matrix, xlabels, ylabels, title="",
 ### Diverging Heatmap (correlation)
 
 ```python
-sns.heatmap(corr_matrix, annot=True, fmt=".2f", cmap="RdBu_r",
-            center=0, vmin=-1, vmax=1, ax=ax)
+im = ax.imshow(corr_matrix, cmap="RdBu_r", vmin=-1, vmax=1, aspect="auto")
+ax.figure.colorbar(im, ax=ax, shrink=0.8)
 ```
 
 ## Chart Type 4: Scatter Plot
@@ -479,25 +480,24 @@ ax.set_ylabel(r"$\mathcal{L}$ (loss)")
 ax.set_xlabel(r"$\alpha$ (learning rate)")  # Still works for simple math
 ```
 
-## Seaborn Integration
+## Statistical Plots with Matplotlib Only
 
-Seaborn is built on matplotlib and useful for statistical plots:
+All patterns below use only matplotlib and numpy from the existing environment; no seaborn import is required. A regression or fitted line is a separate, explicitly authorized analysis choice — only then fit, and document the sample, method and interval settings.
 
 ```python
-# Use seaborn styling with matplotlib control
-sns.set_theme(style="whitegrid", font_scale=0.9, rc={
-    "axes.spines.top": False,
-    "axes.spines.right": False,
-})
-
-# Pair plot (for exploratory analysis, not usually in papers)
-g = sns.pairplot(df, hue="method", palette=COLOR_LIST[:3])
-
-# Joint plot (scatter + marginal distributions)
-g = sns.jointplot(data=df, x="param_count", y="accuracy",
-                  kind="scatter", color=COLOR_LIST[0])
-# A regression is a separate, explicitly authorized analysis choice;
-# only then use kind="reg" and document fit assumptions and interval settings.
+# Scatter with marginal histograms (matplotlib only)
+fig = plt.figure(figsize=FIG_ICML_SINGLE)
+gs = fig.add_gridspec(4, 4)
+ax = fig.add_subplot(gs[1:, :3])
+ax_top = fig.add_subplot(gs[0, :3], sharex=ax)
+ax_right = fig.add_subplot(gs[1:, 3], sharey=ax)
+ax.scatter(x, y, c=COLOR_LIST[0], s=30, alpha=0.7,
+           edgecolors="white", linewidth=0.5)
+ax_top.hist(x, bins=30, color=COLOR_LIST[0], alpha=0.7)
+ax_right.hist(y, bins=30, orientation="horizontal",
+              color=COLOR_LIST[0], alpha=0.7)
+plt.setp(ax_top.get_xticklabels(), visible=False)
+plt.setp(ax_right.get_yticklabels(), visible=False)
 ```
 
 ## Reproducibility Script Template
