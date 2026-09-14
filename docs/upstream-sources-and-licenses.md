@@ -155,6 +155,23 @@
 - **真实调用核对**：原 `paper-writing/SKILL.md` Phase 5.8／6 调用三轴审计；`resubmit-pipeline/SKILL.md` Phase 1 detect-only 调用带 soft-only；`paper-talk/SKILL.md` Phase 4.2 审查 slides／notes／script；`overleaf-sync` 将新引用和 key 变化路由到重审，`integrity-forensics` 引用其修复方法。本仓保留局部审计与影响范围方法，不继承父流程自动推进、合成论文 adapter、同步或提交 gate。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整根 LICENSE 分别随两个 Skill 的 `LICENSE` 发行，覆盖改编正文、方法资源与报告模板的上游 attribution。未复制具有另行许可标注的第三方段落或资产。
 
+## 已采用的论文 Claim 审计与压力测试
+
+2026-09-13 仅核对本地 ARIS checkout，未联网、fetch 或 pull。实际 HEAD 为 `df729a3f942e4a97646d212eb8aee1144ab5e31b`，origin 为 `ssh://git@ssh.github.com:443/wanshuiyin/Auto-claude-code-research-in-sleep.git`；这不是上表固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`，也不声称是远端最新版本。本地仅有未跟踪目录 `skills/run-experiment-mlx/`，下列采用文件及共享引用对 HEAD 无修改；未读取或采用该未跟踪目录。
+
+| 本仓 Skill | 上游原路径与完整保留的方法 | 共置资源与适配 |
+|---|---|---|
+| `skills/writing-cycle/paper-claim-audit/` | wanshuiyin / ARIS，`skills/paper-claim-audit/SKILL.md`：零上下文独立 reviewer、完整定量 Claim 抽取与逐项溯源提示、七类失真（数字膨胀、最佳 seed、配置、聚合、delta、caption、实验范围）、九种逐 Claim 状态、全量明细及整体裁决。 | 完整实质提示在 `references/audit-prompt.md`，人类可读模板在 `templates/claim-audit-report.md`。保留跨执行者模型家族与直接读取原始结果；移除固定 provider、自动改稿消费链、HTML、机器输出与认证设施；支持原生稿件/结果格式，不把配置文件或作者摘要当结果。 |
+| `skills/writing-cycle/claim-stress-test/` | wanshuiyin / ARIS，`skills/kill-argument/SKILL.md`：单一最强约 200 词拒稿 memo、六个攻击轴、独立 fresh 裁决者、3–7 原子点分解、三种当前文本回应标签与三档严重度、故意立场不等于已回答、net assessment/最多三条动作；保留可选六轴探测后最多两轴合成一段攻击。 | `references/attack-prompt.md`、`adjudication-prompt.md`、`axis-probes.md` 保留完整提示及广度分支；`templates/stress-test-report.md` 集中报告与互斥裁决。用职责清晰的产品名替换 kill-argument；攻击与裁决分离，只有当次逐字攻击跨越上下文；默认 detect-only，建议不自动实施。 |
+
+两份上游 Skill 正文（分别 349、437 行）已完整读取；原目录均仅有 `SKILL.md`，无遗漏的共置 scripts/templates/assets 或内嵌第三方许可。两份发行目录各自携带根 MIT `LICENSE` 全文：`Copyright (c) 2026 wanshuiyin`。新增提示/模板是上述方法的局部适配，不依赖中央文档或另一 Skill 安装目录运行。
+
+**直接共享引用核对**：完整读取同一实际 revision 的 `skills/shared-references/{external-cadence,review-tracing,integration-contract,assurance-contract,reviewer-independence,reviewer-routing,fan-out-pattern}.md`。采用对两个原语有效的 fresh/不预消化材料、跨模型独立性、原始回复保留、错误与缺证据不静默跳过、探测与最终裁决分离、顺序 fresh 探测降级及只读边界。将方法就地融入各 Skill；不搬运这些共享文件的中央 helper、安装解析链、调度器、provider 路由、模型身份认证、schema/JSON、hash/trace/receipt、HTML gate 或递归 runtime 依赖。
+
+**真实调用关系**：本地 `skills/paper-writing/SKILL.md` Phase 4.7 / 5.5 调用 paper-claim-audit，Phase 5.6 调用 kill-argument；`skills/auto-paper-improvement-loop/SKILL.md` Step 5.5 实际委托 kill-argument 并读取结果，随后由调用者合并修复项。已读取这些调用段落，不虚构上游相互调用。本仓两项都是 model-invoked、用户可点名的 standalone / composed 能力；只返回完整报告，不移植上游调用者的自动改稿、提交 gate 或 Claim → Stress → Citation 顺序，Claim/Citation/Proof/Stress 并列按需。
+
+**必要语义修正**：上游 kill 表的 PASS 行重叠、unresolved 与 partial 条件重叠，且漏掉单个 partial major；按其表后“任何 partial major 及以上至多 WARN”的明确规则修成互斥完备表。保留标准舍入可通过、实质 mismatch 失败；证据缺失/歧义无确定错项时明确 BLOCKED。以可读的真实稿件和适用 Claim 代替 `main.tex` / `sec/` 布局门、无 PDF 编译门、最近两次提交标题变化门及简单定理计数门；不足三个真实攻击点允许解释，不人为凑数。攻击仍须强制承诺，但不能故意抹掉决定性原文限定或编造缺失证明来制造拒稿理由。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
