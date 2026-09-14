@@ -12,6 +12,7 @@
 
 | 协议要求 | 结论（conforms/deviates/unknown） | 材料定位 | 影响范围 |
 |---|---|---|---|
+| [协议项] | [结论] | [文件:行] | [影响] |
 
 ## Independent experiment integrity
 

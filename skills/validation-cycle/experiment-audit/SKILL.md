@@ -77,10 +77,10 @@ argument-hint: "[协议、代码、配置、运行日志、原始结果、evalua
 
 - **A. Ground truth provenance**：evaluator 读取的是数据集提供的真值，还是从模型输出、同一生成链、测试答案泄漏或报告摘要中重建的参考答案；派生真值是否明确标为 proxy evaluation；是否优先使用该 benchmark 的官方 eval 脚本。
 - **B. Score normalization**：是否有 metric 除以被评对象自身输出的 max/min/mean；是否同时报告 raw score；是否出现可疑地接近 1.0 或 100% 的分数。
-- **C. Result existence 与数字对应**：每个声称的结果是否有对应文件；文件里是否存在该 metric key；报告数字是否与文件一致；tracker 状态是否为 DONE 而非 TODO/IN_PROGRESS。没有对应原始输出、只有报告数字、只有"成功"标记或与运行时间/配置不符的，标为 `phantom result` 候选。
+- **C. Result existence 与数字对应**：每个声称的结果是否有对应文件；文件里是否存在该 metric key；报告数字是否与文件一致；如使用实验 tracker，状态是否为 DONE 而非 TODO/IN_PROGRESS，无 tracker 时记 `unknown` 不虚构。没有对应原始输出、只有报告数字、只有"成功"标记或与运行时间/配置不符的，标为 `phantom result` 候选。
 - **D. Dead code**：每个 metric 函数是否真的在评价管线中被调用，其输出是否出现在结果文件中。
 - **E. Scope**：实际测试了多少 scene/dataset/configuration、每个配置多少 seed/run；报告是否使用 "comprehensive"、"extensive"、"robust" 等词，实际范围是否支撑这些声明。
-- **F. Evaluation type**：把每个评价归类为 `real_gt`（数据集真值）、`synthetic_proxy`（模型生成参考）、`self_supervised_proxy`（设计上无 GT）、`simulation_only`（模拟环境）或 `human_eval`。
+- **F. Evaluation type**：把每个评价归类为 `real_gt`（数据集真值）、`synthetic_proxy`（模型生成参考）、`self_supervised_proxy`（设计上无 GT）、`simulation_only`（模拟环境）、`human_eval` 或 `unknown`（材料不足）。
 - **尝试完整性**：枚举成功、失败、超时、崩溃、无效、取消、重试和预算耗尽的所有 attempt，检查是否覆盖完整时间范围和输出位置，是否存在 winner-only 汇总、覆盖旧结果、重用 attempt 名称、静默排除失败或只报告最佳 seed/检查点。
 - **代码—运行对应**：将声称的代码版本与日志、输出及运行记录对应；代码存在不能证明它被运行，记录该类断裂。
 
@@ -135,8 +135,6 @@ argument-hint: "[协议、代码、配置、运行日志、原始结果、evalua
 
 Standalone 在对话或用户指定文件返回；composed 只贡献调用者指定 canonical report 的审计章节，不创建重复报告。报告结束后停止，并如实列出未运行、未修复、未修改和未启动的事项。
 
-## 上游边界
+## 来源
 
-本 Skill 移植自 [ARIS / Auto-claude-code-research-in-sleep](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep) 的 `skills/experiment-audit/SKILL.md`（MIT，`Copyright (c) 2026 wanshuiyin`，revision `0472e530251cdbd3364c33b110063c58f819edd7`），保留执行者收集路径、独立审查者判定、A–F 检查、对结果存在性与数字对应的要求，以及发现分级与如实标注的报告口径。同时仅借鉴 [EurekAgent](https://github.com/THU-Team-Eureka/EurekAgent)（AGPL-3.0）公布的 evaluator 隔离与权威评价思想，未复制其源码、Skill 文本、grader、容器、runtime 或 hooks。
-
-相对上游的适配：移除 provider 绑定的审查后端、运行期 trace／receipt、机器可读 JSON 输出、定时包装和 pipeline 自动调用；改为使用宿主已有的独立审查能力，不可用时如实降级。补充 protocol conformance 与 independent integrity 双证据线、授权与写入边界、standalone/composed、finding 分级与停止条件。完整 MIT notice 随 Skill 放在 `LICENSE`；集中的采用与替换细节见仓库 `docs/upstream-sources-and-licenses.md`；该文档是维护信息，不是运行依赖。
+改编自 ARIS `skills/experiment-audit/SKILL.md`（wanshuiyin，MIT），保留执行者收集路径、独立审查者判定、A–F 检查、结果存在性与数字对应、发现分级与如实标注口径；仅 clean-room 借鉴 EurekAgent 公布的 evaluator 隔离思想，未复制其源码、Skill 文本、grader、容器、runtime 或 hooks。许可见 [MIT](LICENSE)。来源版本、作者与复制范围集中记录于仓库来源说明；使用本 Skill 无需访问产品仓库或上游。

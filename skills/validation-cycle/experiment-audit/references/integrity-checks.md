@@ -1,6 +1,6 @@
 # 完整性检查细则
 
-本文件详列 [Experiment Audit](../SKILL.md) 第 3 步 A–F 的具体判断问题。每个问题针对 primary artifact 本身，结论必须给出实际文件与行号定位；不能定位即保持 `unknown`。
+本文件详列 [Experiment Audit](../SKILL.md) 第 3 步 A–F 的具体判断问题。每个问题针对 primary artifact 本身，结论必须给出实际文件与行号定位；不能定位即保持 `unknown`。下文 **FAIL**／**WARN** 是单项检查信号，按 SKILL 第 4 步映射为 blocker/major/minor/note，不直接等于整体 PASS/FAIL/BLOCKED。
 
 ## A. Ground truth provenance
 
@@ -30,7 +30,7 @@
 1. 引用的结果文件是否真的存在？
 2. 该文件中是否存在声称的 metric key？
 3. 声称的数字是否与文件中的值一致？
-4. 实验 tracker 状态是否为 DONE，而不是 TODO/IN_PROGRESS？
+4. 如使用实验 tracker，其状态是否为 DONE，而不是 TODO/IN_PROGRESS？无 tracker 时记 `unknown`。
 
 **FAIL**：声称的结果引用不存在的文件或数字不符。
 
@@ -60,7 +60,8 @@
 - `synthetic_proxy`：使用模型生成的参考；
 - `self_supervised_proxy`：设计上无 GT；
 - `simulation_only`：模拟环境；
-- `human_eval`：人工评判。
+- `human_eval`：人工评判；
++- `unknown`：材料不足以归类。
 
 ## 尝试完整性
 
