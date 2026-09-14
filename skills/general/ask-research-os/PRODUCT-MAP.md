@@ -6,7 +6,7 @@
 
 - **已实现**：本发行包含正式 Skill 正文；不等于当前宿主已安装、已加载或真实科研验收通过。
 - **计划**：批准范围，尚未进入本发行。下表中的代码名称是规划名称，不是可执行命令；写“名称待定”的能力标签尤其不能当作 Skill 名。后续正文审核可能拆分、合并或改名。
-- **宿主可用性**：另行报告“已确认／未核实／已确认不可用”，注明实际正文、入口注册信息或用户确认等依据。模型注入列表会隐藏 user-invoked 入口，不能据其缺席断言未安装。即便文件存在，宿主加载与调用策略仍可能未核实。
+- **宿主可用性**：另行报告“已确认／未核实／已确认不可用”，注明实际正文、入口注册信息或用户确认等依据。模型自动发现清单会隐藏 user-invoked 入口，不能据其缺席断言未安装。即便文件存在，宿主加载与调用策略仍可能未核实。
 - **user-invoked（U）**：人类显式选择的 Workflow／独立入口，互不自动启动。
 - **model-invoked（M）**：当前已授权职责中的内部能力，也可由用户点名 standalone；composed 时贡献父报告。M 不等于只读，生成、绘图等写入仍受各自边界约束。Router 本身不调用它们。
 
@@ -49,7 +49,7 @@
 | 入口 | 角色／状态 | 选择依据、结果与停止边界 |
 |---|---|---|
 | `experiment-plan` | U／计划（#9） | 已有研究问题尚缺可执行计划；明确 hypothesis、baseline、metric、ablation、固定评价面、修改范围、预算和失败含义，只产计划 |
-| `experiment-bridge` | U／计划（#15） | 已有获批计划，需一次授权完成实现、code review、sanity、正式／批量运行、监控、收集、分析审计与授权 tracker 更新；不要求先用本产品规划。消融仅建议，不自行扩预算／下一轮；不启动独立 result-to-claim |
+| `experiment-bridge` | U／计划（#15） | 已有获批计划，需一次授权完成实现、code review、sanity、正式／批量运行、监控、收集、分析审计与授权 tracker 更新；不要求先用本产品规划。消融仅建议，不自行扩预算／下一轮；不启动独立 `result-to-claim` |
 | `result-to-claim`（Results-to-Claims） | U／计划（#14） | 已有外部或本产品结果，需判断能说什么；区分 Evidence 存在、统计可信度、支持程度与 Claim scope，将部分支持缩窄为可辩护主张。最终采用由用户决定，产出候选 Claim 就停 |
 
 ### 内部能力与局部点名入口
@@ -72,7 +72,7 @@
 | `proof-writer` | U／计划（#16） | 固定命题的证明或明确 gaps；保留失败路线与教训，不把尝试当证明成功 |
 | `proof-review` | M／计划（#17） | 只读现成证明，直接报告错误／gaps；可用户点名，不改命题、证明或 LaTeX |
 | `proof-repair` | U／计划（#17） | 用户希望修复已知 gaps；明确 scope、写入范围、轮数及工具授权，命题／假设变化由用户决定 |
-| `proof-workflow` | U／计划（#18） | 单个复杂长期 obligation 的延续工作；其真实内部组合以后续正文为准，**不宣称它原生调用 proof-writer／review** |
+| `proof-workflow` | U／计划（#18） | 单个复杂长期 obligation 的延续工作；其真实内部组合以后续正文为准，**不宣称它原生调用 `proof-writer`／`proof-review`** |
 | Lean premise／lemma search、LSP、Mathlib 规范与 kernel／build 检查 | 专业内部方法／计划（#18），不是独立已安装 Skill | premise 搜索结果是候选，需读 signature；LSP 是快速反馈，kernel／build 才是形式化检查。无 Lean 继续普通推导／证明，形式化标未验证；不安装工具链或引入 Archon runtime |
 
 ## Writing Cycle：从材料或现成稿件开始
