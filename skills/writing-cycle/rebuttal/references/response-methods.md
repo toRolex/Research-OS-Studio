@@ -1,6 +1,6 @@
 # 回应方法与压力测试
 
-改编自 ARIS rebuttal 的策略、drafting heuristics 和 reviewer-defensive moves；使用时事实与授权以当前材料为准。
+改编自 ARIS rebuttal 的策略、起草经验方法与评审应对方法；使用时事实与授权以当前材料为准。
 
 ## concern 分类
 

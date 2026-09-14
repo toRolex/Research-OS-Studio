@@ -34,7 +34,7 @@ disable-model-invocation: true
 
 ## 2. 原子化 concern 并映射证据
 
-按 [问题板与策略模板](templates/working-documents.md) 创建 `ISSUE_BOARD.md`。将一个评审句中的多个请求拆开；共享主题可合并分析，但保留每个 reviewer 的独立 concern 和原文锚点，也覆盖友好 reviewer 的问题。
+按 [工作材料模板：问题板](templates/working-documents.md#issue_boardmd) 创建 `ISSUE_BOARD.md`。将一个评审句中的多个请求拆开；共享主题可合并分析，但保留每个 reviewer 的独立 concern 和原文锚点，也覆盖友好 reviewer 的问题。
 
 逐 concern 记录类别、严重度、立场、优先级、回应方式及证据：论文页／节／表／公式或结果文件中的具体位置、它实际支持什么、适用条件、冲突或未读部分。文件存在与支持结论分开判断。用户说“做过”但无材料时只能记录用户陈述及未核实边界；用户确认不是独立验证。
 
@@ -46,9 +46,9 @@ disable-model-invocation: true
 
 ## 3. 制定策略，交用户选择
 
-先读 [回应方法](references/response-methods.md)。识别两至四个共享主题（少量 concern 不凑数），为每项选择直接澄清、证据答复、closest-work 差异、假设层次、窄让步、未来工作边界或结构性区别。
+先读 [回应方法与压力测试](references/response-methods.md)。识别两至四个共享主题（少量 concern 不凑数），为每项选择直接澄清、证据答复、closest-work 差异、假设层次、窄让步、未来工作边界或结构性区别。
 
-统一文档的参考预算：开头10–15%、逐 reviewer75–80%、结尾5–10%，选取合计100%的分配；独立线程各自设定预算。按实际评审理由识别 pivotal reviewer／concern，优先给可处理且影响判断的问题留空间，不把对投票的预测当事实，不因优先级遗漏其他 reviewer。
+统一文档的参考预算：开头 10–15%、逐 reviewer 75–80%、结尾 5–10%，三部分合计 100%；独立线程各自设定预算。按实际评审理由识别 pivotal reviewer／concern，优先给可处理且影响判断的问题留空间，不把对投票的预测当事实，不因优先级遗漏其他 reviewer。
 
 列出无来源 Claim、未批准承诺、需澄清问题与补工作建议。实验建议只说明要做什么（消融／baseline／规模／条件检查）、何种结果能够回答 concern（含失败和不确定情形）、估计资源与截止时间；不能为迎合 reviewer 指定正向结果。超过期限或资源不明时明确不可承诺。
 
@@ -60,11 +60,11 @@ disable-model-invocation: true
 
 按用户选择写“直接回答→已有证据→对论文的含义”。通常第一句直答，随后二至四句证据，最后限定影响；证据少时缩短，不填造数字、引用、实验或推导。
 
-- **统一文档**：`REBUTTAL_DRAFT_v1.md` 含简短致谢与共享解决主题、逐 reviewer 编号答复、面向 meta-reviewer 的已解决／剩余事项及证据约束的贡献总结。同时准备 `PASTE_CANDIDATE.txt` 作为限长纯文本候选（不是已确认粘贴版），以及 `REBUTTAL_DRAFT_rich.md` 保存较完整证据和备选段落，用 `[OPTIONAL — cut if over limit]` 标识额外段落。rich 可超限，但其全部事实与承诺同样须检查和交用户审阅。
-- **独立线程**：每 reviewer 一个 `Reviewer_<ID>_response.md`，简短回应该 reviewer 主旨，逐 W#/Q# 回答。每份必须能单独阅读，无全局开场或“参见另一个 reviewer 回复”。ID 仅作显示标签，文件名使用安全简短标识，避免原始 ID 中路径字符影响写入范围。
+- **统一文档**：`REBUTTAL_DRAFT_v1.md` 含简短致谢与共享解决主题、逐 reviewer 编号答复、面向 meta-reviewer 的已解决／剩余事项及证据约束的贡献总结。同时准备 `PASTE_CANDIDATE.txt` 作为限长纯文本候选（不是已确认粘贴版），以及 `REBUTTAL_DRAFT_rich.md` 保存较完整证据和备选段落，用 `[OPTIONAL — cut if over limit]` 标识额外段落。rich 可超限，但其全部事实与承诺同样须检查和交用户审阅。下文把限长粘贴目标（统一文档的 `PASTE_CANDIDATE.txt` 或各独立线程回复）称为 strict，把较完整证据版称为 rich。
+- **独立线程**：每 reviewer 一个 `Reviewer_<ID>_response.md`，简短回应该 reviewer 主旨，逐条编号回答（沿用评审原文编号如 W1/Q1，无编号时按 concern 编号）。每份必须能单独阅读，无全局开场或“参见另一个 reviewer 回复”。ID 仅作显示标签，文件名使用安全简短标识，避免原始 ID 中路径字符影响写入范围。
 - **共享设置分支**：多线程使用相同实验配置／metric 时，可创建 `SETUP_METRICS_BLOCK.md`，通常不超过150词；将所需内容实际展开到各线程，修改后检查全部副本，不能要求 reviewer 打开本地共享文件。
 
-同时按 [修订计划模板](templates/working-documents.md) 生成 `REVISION_PLAN.md`，覆盖所有显式及隐式论文修改承诺，绑定 concern 与当前草稿句子。已完成要有可检查的实际修改依据；获准但未执行仍是 pending；未来工作不是执行承诺。该计划仅记录，不修改论文。
+同时按 [工作材料模板：修订计划](templates/working-documents.md#revision_planmd) 生成 `REVISION_PLAN.md`，覆盖所有显式及隐式论文修改承诺，绑定 concern 与当前草稿句子。已完成要有可检查的实际修改依据；获准但未执行仍是 pending；未来工作不是执行承诺。该计划仅记录，不修改论文。
 
 **完成条件**：每个选择回应的 concern 有草稿锚点，每个承诺有用户授权及真实完成状态；未采用项保留理由，草稿明确为候选。
 
