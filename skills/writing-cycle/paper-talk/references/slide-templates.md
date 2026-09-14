@@ -592,16 +592,16 @@ def create_presentation(title, authors, affiliation, venue, talk_type, minutes, 
     prs = Presentation()
     prs.slide_width, prs.slide_height = Inches(13.333), Inches(7.5)
     # 日期、页脚、页码占位符不会复制到新页；Blank 布局可保留这些辅助槽位。
-    for blank in prs.slide_layouts:
-        if any(blank.iter_cloneable_placeholders()):
+    for blank_layout in prs.slide_layouts:
+        if any(blank_layout.iter_cloneable_placeholders()):
             continue
-        if any(not shape.is_placeholder for shape in blank.shapes):
+        if any(not shape.is_placeholder for shape in blank_layout.shapes):
             continue
         break
     else:
         raise RuntimeError("未找到无内容占位符且无装饰形状的 blank layout；人工检查模板")
     timings, backup_ids = build_confirmed_outline(
-        prs, blank, VENUE_COLORS[palette], title, authors, affiliation, venue
+        prs, blank_layout, VENUE_COLORS[palette], title, authors, affiliation, venue
     )
     count = len(timings)
     low, high = SLIDE_COUNTS[talk_type]
