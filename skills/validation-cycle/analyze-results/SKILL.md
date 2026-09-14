@@ -56,15 +56,15 @@ argument-hint: "[baseline、结果文件、attempt 记录与待答问题的路�
 
 ## Phase 4: 独立复核
 
-When an authorized independent reviewer is available, request one read-only review in a fresh context; prefer a different model when already available, without requiring a provider. Give paths to the baseline source, all attempt outputs, and the Phase 1–3 dossier — never only the executor's summary. Ask: “Do these results support the stated reading? What is the weakest link — uncertainty, selection, or scope?” Preserve the actual briefing and full response in the authorized report location. Reconcile disagreements against primary passages, retaining unresolved disagreements; model agreement is not scientific evidence.
+有已授权的独立审查者时，在全新上下文中请求一次只读复核；已有不同模型可用时优先使用，不强制要求特定 provider。提供 baseline 出处、全部 attempt 输出与 Phase 1–3 案卷的路径——绝不只给执行者摘要。提问：“Do these results support the stated reading? What is the weakest link — uncertainty, selection, or scope?” 将实际 briefing 与完整回复保存在授权的报告位置。对照原始段落调和分歧，保留未解决的分歧；模型一致不是科学证据。
 
-If an independent reviewer is unavailable or outside authorization, label the output **single-agent assessment; independent verification not performed**. Do not impersonate a second reviewer or repeatedly seek a more favorable verdict.
+无独立审查者或超出授权时，标注输出 **single-agent assessment; independent verification not performed**。不冒充第二审查者，不反复寻求更有利的结论。
 
 **Complete when:** the actual response has been considered and retained, or the missing independent verification is explicitly recorded.
 
 ## Phase 5: 报告与判定
 
-Output a readable Markdown report using [the report template](templates/analysis-report.md). The template organizes this analysis, not a machine schema. In composed mode, nest it inside the authorized analysis section rather than creating a duplicate deliverable.
+Output a readable Markdown report using [报告模板](templates/analysis-report.md). The template organizes this analysis, not a machine schema. In composed mode, nest it inside the authorized analysis section rather than creating a duplicate deliverable.
 
 - 严格分离 **Description**（观察到什么，带定位）、**Statistical evidence**（统计支撑是什么、不确定性与分母是什么）、**Claim**（在什么范围内可以说什么）。排名、单 metric winner、一次阳性结果都不单独构成科学结论。
 - 每个 Claim 写清支持范围：固定设置、固定 metric、固定数据划分下的观察，还是可外推的判断；后者需要明确的额外依据，否则降级为观察陈述。
@@ -83,4 +83,4 @@ Output a readable Markdown report using [the report template](templates/analysis
 
 ## 来源
 
-以 wanshuiyin / ARIS `skills/analyze-results/SKILL.md`（MIT，`Copyright (c) 2026 wanshuiyin`；上游 HEAD `f1bd907b58f653131ebe6807c482e2554e07f9b9` 与集中来源文档记录的 revision 内该正文一致，该目录无共置资源）的问题起点为基础，但其 46 行通用建议经仓库静态评估为薄弱内容，未照搬。结果—证据回溯口径保留同仓 `skills/paper-claim-audit/SKILL.md` 的数字对应与范围核对方法（best-seed、config mismatch、aggregation mismatch、delta error、scope overclaim 检查项），Claim 与证据分离保留同仓 `skills/result-to-claim/SKILL.md` 的 support／don't support／missing evidence三分法；均删除其 Codex／provider 审查后端、上游跟踪目录与回执式输出、机器 JSON 输出、定时包装与 pipeline 自动调用。attempt 全量留存（含 crash／timeout）借鉴 karpathy / autoresearch `program.md` 的固定记录纪律（该仓许可证据不足，仅 clean-room 借鉴公开方法，未复制正文）。完整 MIT notice 见 [LICENSE](LICENSE)。来源与采用细节记录于仓库集中来源文档，该文档是维护信息，不是执行依赖。
+以 wanshuiyin / ARIS `skills/analyze-results/SKILL.md`（MIT，`Copyright (c) 2026 wanshuiyin`；上游 HEAD `f1bd907b58f653131ebe6807c482e2554e07f9b9` 与集中来源文档记录的 revision 内该正文一致，该目录无共置资源）的问题起点为基础，但其 46 行通用建议经仓库静态评估为薄弱内容，未照搬。结果—证据回溯口径保留同仓 `skills/paper-claim-audit/SKILL.md` 的数字对应与范围核对方法（best-seed、config mismatch、aggregation mismatch、delta error、scope overclaim 检查项）；Claim 与证据分离保留同仓 `skills/result-to-claim/SKILL.md` 的 support／don't support／missing evidence 三分法。两者均删除其 Codex／provider 审查后端、上游跟踪目录与回执式输出、机器 JSON 输出、定时包装与 pipeline 自动调用。attempt 全量留存（含 crash／timeout）借鉴 karpathy / autoresearch `program.md` 的固定记录纪律（该仓许可证据不足，仅 clean-room 借鉴公开方法，未复制正文）。完整 MIT notice 见 [LICENSE](LICENSE)。来源与采用细节记录于仓库集中来源文档，该文档是维护信息，不是执行依赖。

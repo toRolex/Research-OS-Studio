@@ -13,6 +13,7 @@
 
 | Attempt | 配置／seed | 原始数值与定位 | 状态 |
 |---|---|---|---|
+| [每项一行；不可重算的保留并标 unknown] | | | |
 
 ## Statistical evidence：统计支撑与不确定性
 
@@ -32,6 +33,7 @@
 
 | Claim | 声明范围 | 实际支持范围 | 结论（supported/needs qualifier/unsupported/unknown） |
 |---|---|---|---|
+| [Claim 原文] | [声明的范围] | [材料实际支撑的范围] | [四者取一] |
 
 ## Evidence gaps 与下一步
 
