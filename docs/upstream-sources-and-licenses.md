@@ -37,6 +37,17 @@
 
 原始调用关系为 ARIS `idea-discovery → idea-creator`，后者原版再调用 novelty/review、实验和 wiki；Orchestra 两个 ideation 能力仅在正文建议配合，没有 ARIS 到 Orchestra 的原生调用实现。本仓组合是有意适配：两个默认 model-invoked 能力均支持用户点名 standalone；`idea-generation` 可在当前授权生成职责内使用已安装的 `creative-thinking-for-research`，后者只返回洞见。两个 Skill 各自资源自包含，无中央 runtime，亦不自动启动顶层 Workflow。构思自查与回顾性 reflection 均不替代独立 idea-review；最终科研采用仍由用户决定。
 
+## 已采用的运行监控与训练健康 Skill
+
+`skills/validation-cycle/monitor-experiment/` 与 `skills/validation-cycle/training-health-check/` 均为 model-invoked 内部能力，用户可点名 standalone，被父 Workflow 调用时只在授权职责内贡献对应章节。2026-09-13 通过官方 GitHub API 重新解析 ARIS revision `0472e530251cdbd3364c33b110063c58f819edd7`，全文读取两个 `SKILL.md`、递归目录树，以及其引用的 `skills/shared-references/{external-cadence,output-composition,experiment-integrity}.md` 与实际调用方 `skills/experiment-bridge/SKILL.md`。两个原目录在该版本均只有 `SKILL.md`，无共置 references/templates/assets 或独立第三方许可；仓库根 MIT 覆盖两者。
+
+| 本仓 Skill | 上游原路径、作者与实际采用内容 | 共置许可与适配边界 |
+|---|---|---|
+| `skills/validation-cycle/monitor-experiment/` | ARIS / wanshuiyin，`skills/monitor-experiment/SKILL.md`：保留“外部等待只自判机器可查完成、绝不重跑质量裁决”的核心分离，以及读取进程／调度状态、日志尾部、输出文件与退出证据的监控方法。 | `LICENSE` 保存完整 MIT notice。删除 `/loop`/CronCreate 自调度与定时重入、固定 SSH/screen/vast.ai/Modal 供应商假设、Feishu 通知、W&B 强制读取、成本提醒及结果比较／下一步建议；改为环境中立、只读、每次调用一次被动观测，状态仅限 running/completed/crashed/unknown，缺观测如实标 unknown。新增 `references/observation-sources.md` 与 `templates/run-status-report.md`。 |
+| `skills/validation-cycle/training-health-check/` | ARIS / wanshuiyin，`skills/training-check/SKILL.md`：保留 NaN/Inf、发散、停滞的可检查信号、多 checkpoint 趋势优先于单点噪声、模糊降级和观察间隔自适应思想；从同 revision `experiment-bridge` 的 W&B 调用点及训练检查“质量 vs 进程健康”分层补充 OOM 与日志完整性。 | `LICENSE` 保存完整 MIT notice。按父 spec 重命名并重写为只诊断：删除 CronCreate 自调度、Codex MCP 裁决、`tools/watchdog.py` 分层、固定 model/W&B 依赖和“kill training”动作；诊断为 `no anomaly detected`／`anomaly detected`／`insufficient observation`／`indeterminate`，只给建议，停止／重启由用户执行。新增 `references/health-signals.md` 与 `templates/health-report.md`。 |
+
+调用边界沿用 `output-composition` 的显式 composed 信号与 standalone 默认：无父 Workflow 的 `composed:` 指令时只输出自身报告，父 Workflow 存在时只贡献命名 canonical report 的对应章节。两者都不自调度、不创建后台轮询；按父 spec 移除上游 `external-cadence` 的定时等待，改为用户或授权父 Workflow 决定是否再次观测。`experiment-integrity` 的“执行者不评审自己的实验”在此仅体现为两项能力都不判断科研结论，不构成强制隔离声明。
+
 ## 已采用的查新 Skill
 
 `skills/idea-cycle/novelty-check/` 属于 Idea Cycle，默认 model-invoked，也支持用户点名 standalone；被 Workflow 调用时只贡献已授权的查新报告，不自动推进科研流程。
