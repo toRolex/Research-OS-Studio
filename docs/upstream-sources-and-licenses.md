@@ -206,7 +206,7 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 
 ## 已采用的 Resubmit 转投适配
 
-`skills/writing-cycle/resubmit-pipeline/` 是唯一转投入口，独立 user-invoked。2026-09-15 通过官方 GitHub API 重新解析固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`、读取目录树（该目录仅 `SKILL.md`，447 行）、完整正文与根 MIT 许可；不是宣称采用最新 HEAD。本地 ARIS checkout HEAD（`df729a3`）与固定 revision 正文仅 4 处固定 reviewer 模型名差异（`gpt-6-astra`／`gpt-5.6-sol`），均属不移植的 provider 内容；采用固定 revision 为准。
+`skills/writing-cycle/resubmit-pipeline/` 是唯一转投入口，独立 user-invoked。2026-09-15 通过官方 GitHub API 重新解析固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`、读取目录树（该目录仅 `SKILL.md`，447 行）、完整正文与根 MIT 许可；不是宣称采用最新 HEAD。本地 ARIS checkout HEAD（`df729a3`）与固定 revision 正文仅 4 处固定 reviewer 模型名差异（`gpt-6-astra`／`gpt-5.6-sol`），均属不移植的 provider 内容；以固定 revision 为准。
 
 - **来源**：wanshuiyin / ARIS，`skills/resubmit-pipeline/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。
 - **采用**：`skills/writing-cycle/resubmit-pipeline/` 保留旧稿只读与新目录物理隔离、venue 模板适配、页限收缩顺序、匿名五类检查、只读编译验收与 soft-only 引用检测、用户逐项确认改动、复验新稿与交付后停止。方法与报告字段分别共置于 `references/adaptation-methods.md`、`templates/adaptation-report.md`，不是短契约壳或中央运行时。
