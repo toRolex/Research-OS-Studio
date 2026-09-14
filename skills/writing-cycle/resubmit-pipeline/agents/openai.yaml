@@ -1,0 +1,5 @@
+interface:
+  display_name: "Resubmit Pipeline"
+  short_description: "保留旧稿并适配新 venue 的转投材料"
+policy:
+  allow_implicit_invocation: false
