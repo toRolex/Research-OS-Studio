@@ -20,6 +20,12 @@ __pycache__/
 /.impeccable/config.json
 /.impeccable/hook.cache.json
 /.impeccable/review/
+/.pytest_cache/
+/.ruff_cache/
+
+# AFK 编排运行现场与派发记录
+/.afk/
+/docs/afk-dispatch.json
 
 # 一次性发布验收记录
 /gates/publish-github.md
