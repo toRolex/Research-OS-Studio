@@ -93,6 +93,17 @@
 - **调用核对**：上游 `experiment-bridge` Phase 4 按 job 数在 `run-experiment` 与 `experiment-queue` 间路由，Phase 5 收集初步结果并调用 `training-check`；本票只实现路由所需的两个执行能力，监控/分析/审计/Claims 属后续独立票，未在此虚构调用。上游 queue 引用的 `compute-env-contract.md`、`external-cadence.md` 已阅读，只保留其中与执行边界相关的有界性方法。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随两个 Skill 的 `LICENSE` 一起发行。
 
+## 已采用的独立实验审计 Skill
+
+`skills/validation-cycle/experiment-audit/` 属于 Validation Cycle，默认 model-invoked，也支持用户点名 standalone；被 Workflow 调用时只贡献已授权的审计章节，不自动推进科研流程。
+
+- **来源**：wanshuiyin / ARIS，`skills/experiment-audit/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。2026-09-14 从官方 GitHub API 重新核对；当日 HEAD `f1bd907b58f653131ebe6807c482e2554e07f9b9` 的该正文与采用版本逐字一致。该 Skill 目录没有共置 references/templates/assets。
+- **采用**：保留“执行者只收集路径、独立审查者直接读取并判定”的核心原则，A–F 检查（ground truth provenance、score normalization、result existence 与数字对应、dead code、scope、evaluation type），以及 fake ground truth、phantom results、insufficient scope 的失败模式说明。`references/integrity-checks.md` 与 `templates/audit-report.md` 逐条承载这些检查问题和报告字段，均为上述方法的局部适配。
+- **适配**：删除 Codex／Manual Review MCP 后端与 reviewer 路由、`.aris/` trace/receipt、`EXPERIMENT_AUDIT.json` 机器输出、`/loop`/`/schedule` 定时包装及 pipeline 自动调用；改为使用宿主已有的独立审查能力，不可用时如实降级为 single-agent assessment。补充 protocol conformance 与 independent experiment integrity 双证据线、授权与写入边界、standalone/composed、finding 分级与停止条件；不修改代码、不重跑实验、不写中央状态。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`。
+- **仅借鉴**：[EurekAgent](https://github.com/THU-Team-Eureka/EurekAgent)（AGPL-3.0，revision `fb96df897dfb99797a77623aa0dd9ee178fe89d2`）的 evaluator 隔离与权威评价思想只作 clean-room 参考，未复制其源码、Skill 文本、grader、容器、runtime 或 hooks。
+- **已排除**：同 revision 的 ARIS `skills/integrity-forensics/SKILL.md` 是 SHA-pin 薄启动器，依赖 `git clone`、eval gate、`.aris/forensics/*.json` 与 append-only obligations ledger；这些 runtime、hash/receipt 和 typed gate 属于父 spec 明确排除的范围，因此不搬运。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
