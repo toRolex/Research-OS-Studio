@@ -95,7 +95,7 @@ We prove that X converges linearly under assumption Y.
 This addresses a long-standing question about why optimization remains stable in an apparently non-convex setting.
 Our analysis reduces the training dynamics to Z, which yields a tractable theoretical structure.
 We validate the prediction on datasets A and B and observe close agreement between theory and experiment.
-Compared with prior methods, we reduce error by 15% and provide the first convergence guarantee in this setting.
+Compared with prior methods, we reduce error by 15% and provide a convergence guarantee in this setting.
 ```
 
 ### Openings to Delete
