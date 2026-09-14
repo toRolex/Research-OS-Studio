@@ -1,8 +1,7 @@
 ---
 name: proof-writer
-description: Writes rigorous mathematical proofs for ML/AI theory. Use when asked to prove a theorem, lemma, proposition, or corollary, fill in missing proof steps, formalize a proof sketch, 补全证明, 写证明, 证明某个命题, or determine whether a claimed proof can actually be completed under the stated assumptions.
-argument-hint: "[theorem-statement-and-assumptions]"
-allowed-tools: Read, Write, Edit, Grep, Glob
+description: 为固定命题撰写严谨证明：当用户需要证明定理、引理、命题或推论，补全证明，写证明，证明某个命题，补齐缺失步骤、形式化证明草图，或判断所声称证明在给定假设下能否完成时使用；不替代只读证明审查。
+argument-hint: "[定理陈述与假设；可指定输出位置与尝试预算]"
 ---
 
 # Proof Write: Rigorous Theorem / Lemma Drafting
