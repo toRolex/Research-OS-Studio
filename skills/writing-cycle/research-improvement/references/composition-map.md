@@ -20,7 +20,7 @@
 
 ## 本 Workflow 不启动的顶层入口
 
-以下均为 user-invoked，只能由用户在另一轮显式调用；`research-improvement` 不自动启动、不代为授权、不据其名称暗示已执行：
+以下均为 user-invoked，只能由用户另行显式调用；`research-improvement` 不自动启动、不代为授权、不据其名称暗示已执行：
 
 - `experiment-bridge`、`experiment-plan`（完整实验计划与执行宏流程）
 - `paper-writing`（完整写作总流程，当前为计划入口 #25）
