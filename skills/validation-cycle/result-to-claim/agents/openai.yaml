@@ -1,0 +1,5 @@
+interface:
+  display_name: "Result to Claim"
+  short_description: "把已有结果转为范围受限的候选主张"
+policy:
+  allow_implicit_invocation: false

@@ -225,6 +225,16 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **调用核对**：上游 `skills/experiment-queue/SKILL.md` 末尾以 `Run /analyze-results` 作为建议性下一步（非自动调用）；本仓不继承该调用链，分析只由用户或已授权父 Workflow 显式触发。上游引用的 `shared-references/experiment-integrity.md` 与 `shared-references/evidence-precheck.md` 已阅读，其 fake ground truth／score normalization／phantom result 口径属于独立审计职责，不属本分析能力。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`，安装后仍保留。
 
+## 已采用的 Results-to-Claims Workflow
+
+`skills/validation-cycle/result-to-claim/` 属于 Validation Cycle，是 `disable-model-invocation: true` 的 user-invoked Workflow；用户显式要求判断“已有结果能支持什么 Claim”时使用，产出候选主张后停止，不自动启动分析、审计、写作或补实验。
+
+- **来源**：wanshuiyin / ARIS，`skills/result-to-claim/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。2026-09-15 从官方 GitHub API 重新核对；当日 HEAD `f1bd907b58f653131ebe6807c482e2554e07f9b9` 的该 311 行正文与采用版本逐字一致（`diff` 无差异）。该 Skill 目录只有 `SKILL.md`，没有共置 references/templates/assets 或内嵌第三方许可。
+- **采用**：保留存在性核对与支持判断分离、确定性 evidence pre-check 只“驱动”不“开释”（value_not_found／path_missing 直接终局否决，verified 仍由审查判定支持）、三档 verdict（yes／partial／no，适配后加 `unknown` 缺口档）、单点阳性不支撑一般 Claim 的范围诚实、低置信度视为不确定、integrity 疑虑降级 confidence、verdict 与理由必须记录，以及审查不可用时不得冒充第二审查者（适配为如实标注 single-agent assessment）。`references/claim-judgment.md` 与 `templates/claim-report.md` 逐项承载存在性、统计、范围、缩窄、评价类型上限与反证缺口，是上述方法的局部适配。
+- **适配**：删除固定 Codex MCP jury 与三档模型路由、W&B／SSH 固定来源、`.aris/claims.json` 与 `tools/evidence_check.py` helper 及安装解析链、`EXPERIMENT_AUDIT.json` 机器 verdict、`CLAIMS_FROM_RESULTS.md` 与 `REVIEW_UNAVAILABLE` 回执约定、research-wiki 边／query-pack／log、ablation-planner 自动触发与跨 Workflow 推进、`/loop`／`/schedule` 定时包装。改为宿主已有的读取与独立审查能力；不可用时如实降级为 single-agent assessment。新增逐 Claim 缩窄候选、评价类型天花板、反证／缺口与写入授权边界；不运行、重跑、修复或扩展实验，不改 ground truth／metric／选择规则。
+- **调用核对**：完整读取同 revision 的 `skills/shared-references/{evidence-precheck,experiment-integrity,external-cadence,reviewer-routing,review-tracing,integration-contract}.md`，以及实际调用方 `skills/auto-review-loop/SKILL.md`（:948 建议下一步调用 result-to-claim）、`skills/ablation-planner/SKILL.md`（读取其 verdict 触发消融）与 `skills/experiment-bridge/SKILL.md`。这些调用链、外部等待调度、provider 路由与 trace 回执均不继承；本仓 `analyze-results` 与 `experiment-audit` 支持 composed，仅在用户明确授权时于本次职责内贡献对应检查，本 Skill 不自动启动它们，也不把二者缺席当作通过。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 的 `LICENSE` 发行。新增判定细则与报告模板不依赖中央文档或另一 Skill 运行。
+
 ## 已采用的普通公式推导与证明生成
 
 2026-09-13 采用复核：ARIS / wanshuiyin，独立核对 revision `df729a3f942e4a97646d212eb8aee1144ab5e31b`。该版本由官方 GitHub API 解析；官方固定版本的两份完整正文与根 `LICENSE` 均与本机 checkout 逐字比对一致，不声称是最新 HEAD，也不替换上表其他已采用资产的版本记录。
