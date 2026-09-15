@@ -55,7 +55,7 @@ Writing Cycle 审查能力均只读审查研究材料、输出 Markdown 报告�
 
 ## 完整 Idea Discovery Workflow
 
-`idea-discovery` 是一次显式调用、内部组合已交付能力的 user-invoked Workflow：Phase 0 读取 brief／参考论文，随后依次调用 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，把各章节合入单一 `IDEA_DISCOVERY.md`，并写入 `RESEARCH_PROPOSAL.md`。它保留多视角 fan-out、淘汰理由、closest prior work、独立 reviewer 与固定 Problem Anchor，不运行 pilot、不制定实验计划、不进入 Validation 或 Writing。阶段间默认停下等用户确认，只有明确授权“一次走完”时才连续执行；工具或材料缺失时按 `references/composition-notes.md` 降级并保留缺口。
+`idea-discovery` 是一次显式调用、内部组合已交付能力的 user-invoked Workflow：Phase 0 读取 brief／参考论文，随后依次调用 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，把各章节合入单一 `IDEA_DISCOVERY.md`，并写入 `RESEARCH_PROPOSAL.md`。它保留多视角 fan-out、淘汰理由、closest prior work、独立 reviewer 与固定 Problem Anchor，不运行 pilot、不制定实验计划、不进入 Validation 或 Writing。阶段间默认停下等用户确认，只有明确授权“一次走完”时才连续执行；工具或材料缺失时按 `idea-cycle/idea-discovery/references/composition-notes.md` 降级并保留缺口。
 
 在可丢弃项目中手工验收：
 

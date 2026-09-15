@@ -61,7 +61,7 @@ argument-hint: "[研究方向；可附 brief 路径、参考论文、已有材�
 
 - 保留 Claim → 具体位置 → 重叠 → 关键区别 → 未知 的比较、来源核实与检索日志。
 - 裁决为 PROCEED／PROCEED WITH CAUTION／ABANDON／EVIDENCE GAP；**ABANDON 必须点名具体已发表工作**，不因模糊相似误杀。
-- 有独立复核能力时按 `novelty-check` 的 Phase C 做一次只读独立核实；否则标“single-agent assessment; independent verification not performed”。
+- 有独立复核能力时按 `novelty-check` 的 Phase C 做一次只读独立核实；否则标 **single-agent assessment; independent verification not performed**。
 - 被近邻覆盖的候选如实淘汰并保留理由；EVIDENCE GAP 给出最小补证动作，不永久 inconclusive。
 
 **完成条件**：每个入围候选都有 closest-work 比较或具名证据缺口；检索日志区分已尝试／成功／不可用；裁决与依据可追溯。
