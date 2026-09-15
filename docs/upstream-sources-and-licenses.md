@@ -302,6 +302,18 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **未采用 ARIS `paper-write`**：完整阅读后发现其引用规则署名来自 `Imbad0202/academic-research-skills`，该第三方许可未核清（参见「已采用的正文起草能力」），正文起草改用本仓已交付的 `paper-drafting`（#20，Orchestra 来源）。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；原始完整 notice 共置于 `LICENSE` 并随 Skill 安装。新增组合映射与报告模板是 W3 方法的局部适配，运行不依赖本来源文档。
 
+## 已采用的 ML 专业写作 Workflow
+
+`skills/writing-cycle/ml-paper-writing/` 是 ML/AI 专业写作的独立 user-invoked Workflow（票 #26），与通用 `paper-writing`（#25）和计划中的 `systems-paper-writing`（#27）并列而不互相启动。2026-09-15 通过官方 GitHub API 重新解析固定 revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`，读取完整目录树与完整正文，并核对仓库根 `LICENSE`；该 revision 解析成功且 GitHub 识别为 MIT，采用固定版本，不声称为最新 HEAD。
+
+- **来源**：Orchestra Research / AI-Research-SKILLs，`20-ml-paper-writing/ml-paper-writing/`，revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`。共置 `references/` 含 `checklists.md`、`citation-workflow.md`、`reviewer-guidelines.md`、`sources.md`、`writing-guide.md`；`templates/` 含 45 个文件（6 个会议模板目录，含示例 PDF 与 TeX／style／bst）。完整读取 `SKILL.md`（982 行）、`references/checklists.md`（347 行）、`references/reviewer-guidelines.md`（348 行），并核读 `references/writing-guide.md`、`references/citation-workflow.md`、`references/sources.md` 以确认与已交付 `paper-drafting` 的拆分边界。
+- **采用（正文级）**：主动探索研究仓库并先交付完整候选草稿的协作姿态、What／Why／So What 叙事、五部分摘要与逐节结构；实验报告、统计报告、compute、复现、消融、失败结果与 Limitations 的完整要求；ML venue checklist（NeurIPS 16 项形态、ICML Broader Impact／reproducibility、ICLR LLM disclosure、ACL mandatory Limitations／responsible-NLP、通用投稿前清单）与 reviewer 四维／评分校准／常见质疑预防；引用核查、模板处理与作者自查经 `paper-drafting` 复用；并列适用审查与有界修订。
+- **共置资源**：ML 专属方法落在 `references/experiment-reporting.md`（实验报告、seeds／runs、error bars 及方法、超参与选择、数据划分、compute、消融、复现、失败结果、limitations）、`references/venue-checklists.md`（要求结构与投稿前清单）、`references/reviewer-expectations.md`（四维、常见质疑、投稿前自评）；组合与复用边界在 `references/composition-map.md`，方法归属在 `references/sources.md`，自然 Markdown 报告骨架在 `templates/ml-writing-report.md`。不是短契约壳。
+- **调用核对**：上游 `.claude-plugin/marketplace.json` 注册嵌套 `ml-paper-writing`；`0-autoresearch-skill/SKILL.md` 在研究结束后指向该写作能力；同目录 `academic-plotting`、`presenting-conference-talks`、`systems-paper-writing` 为兄弟 Skill。本仓把已交付的 `paper-plan`（#19）、`paper-drafting`（#20）、`academic-plotting`（#21）、`paper-compile`（#22）、`citation-audit`（#23）、`paper-claim-audit`／`claim-stress-test`（#24）与 `proof-review`（#17）按 ML 写作职责组合；`paper-writing`、`systems-paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement` 均为独立 user-invoked 入口，本 Workflow 不启动它们。
+- **适配**：删除固定 `Exa MCP`／Semantic Scholar Python manager 等 provider 绑定与安装指令；历史页数、deadline、评分标签与 policy 措辞降为方法形态并要求当前官方 edition 现场核对；不分发会议模板、style、`.bst` 或示例 PDF；删除自动写作、自动补实验、自动投稿与自动启动其他 Workflow，改为授权门、当前官方规则现场核对、可见缺口（`[EVIDENCE NEEDED]`／`[SEED COUNT NEEDED]`／`[COMPUTE NEEDED]`）、有界轮数与用户逐项批准、自然 Markdown 报告。
+- **许可与模板排除**：MIT，`Copyright (c) 2025 Claude AI Research Skills Contributors`；完整 notice 随 Skill 的 `LICENSE` 发行，方法归属保留在共置 `references/sources.md`。`templates/` 目录虽经核对但不得搬运：其中含 LPPL 类 bibliography style、`natbib.sty` 及其未随附的 `natbib.dtx` 再分发条件、以及算法宏包和社区模板（含下载／删除动作），均不在仓库 MIT 概括范围内；本 Skill 要求用户使用已有或官方授权渠道获取的模板并自检许可证。
+- **未采用 ARIS**：延续已记录的决定，不复制 ARIS `paper-write`；正文起草用本仓 `paper-drafting`（Orchestra 来源）。
+
 ## 已采用的全研究工作有界改进循环
 
 `skills/writing-cycle/research-improvement/` 是跨流程的独立 user-invoked Workflow，对 Claims/草稿、方法与代码、原始结果、当前 diff 与历史 findings 做一次授权内的有界 review → repair → re-review；它是高权限**可写**入口，不是只读审计。2026-09-15 通过官方 GitHub API 重新解析固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`，读取两个上游目录的完整树（`skills/auto-review-loop/` 与 `skills/auto-paper-improvement-loop/` 各自仅有 `SKILL.md`，分别 1137、695 行）、两份完整正文与根 MIT 许可；采用固定版本，不声称为最新 HEAD。同日核对本地 ARIS checkout HEAD `df729a3`：模型名与少量句子不同，以固定 revision 为准，本地内容未混用于采用。

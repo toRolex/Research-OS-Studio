@@ -10,7 +10,7 @@
 - **user-invoked（U）**：人类显式选择的 Workflow／独立入口，互不自动启动。
 - **model-invoked（M）**：当前已授权职责中的内部能力，也可由用户点名 standalone；composed 时贡献父报告。M 不等于只读，生成、绘图等写入仍受各自边界约束。Router 本身不调用它们。
 
-状态快照：本票交付时，General 的 `setup-research-os`、`ask-research-os`，Idea Cycle 的 `idea-discovery`、`research-lit`、`idea-generation`、`creative-thinking-for-research`、`novelty-check`、`idea-review`、`idea-refinement`，Validation 计算／实证路径的 `experiment-plan`、`experiment-bridge` 与其真实组合的 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`、`analyze-results`、`experiment-audit`，以及 Writing Cycle 的 `paper-plan`、`paper-drafting`、`academic-plotting`、`paper-compile`、`paper-compile-repair`、`citation-audit`、`apply-citation-fixes`、`paper-claim-audit`、`claim-stress-test` 与总 Workflow `paper-writing` 已有正式 Skill 正文。此表是发行说明，不是运行时状态数据库；入口交付、改名或角色变更时维护者同步更新，使用时以可读取的真实安装正文核实关键行为。
+状态快照：本票交付时，General 的 `setup-research-os`、`ask-research-os`，Idea Cycle 的 `idea-discovery`、`research-lit`、`idea-generation`、`creative-thinking-for-research`、`novelty-check`、`idea-review`、`idea-refinement`，Validation 计算／实证路径的 `experiment-plan`、`experiment-bridge` 与其真实组合的 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`、`analyze-results`、`experiment-audit`，以及 Writing Cycle 的 `paper-plan`、`paper-drafting`、`academic-plotting`、`paper-compile`、`paper-compile-repair`、`citation-audit`、`apply-citation-fixes`、`paper-claim-audit`、`claim-stress-test`、总 Workflow `paper-writing` 与 ML 专业入口 `ml-paper-writing` 已有正式 Skill 正文。此表是发行说明，不是运行时状态数据库；入口交付、改名或角色变更时维护者同步更新，使用时以可读取的真实安装正文核实关键行为。
 
 ## 三条主流程
 
@@ -18,7 +18,7 @@
 |---|---|---|
 | Idea Discovery | 从方向主动检索、多视角生成、查新、独立评审、固定问题下收敛；交付发现报告与 Proposal 后停止，不启动 pilot 或 Validation | `idea-discovery`，U，已实现（#8） |
 | Validation | 计算／实证路径以批准计划落实实验、分析、审计并形成受约束候选 Claim；数学／理论路径推导、证明、审查与显式修复。各入口完成自己的职责就停，不自动写论文 | 下方多个独立 U 入口；这是主流程名称，**不是另一个名为 validation 的 Skill** |
-| Paper Writing and Improvement | 从现有材料规划、起草、绘图、编译、并列适用审查和授权修订；交付候选稿与审查报告后停止，不补实验或投稿 | `paper-writing`，U，已实现（#25）；ML／Systems 专业入口另列 |
+| Paper Writing and Improvement | 从现有材料规划、起草、绘图、编译、并列适用审查和授权修订；交付候选稿与审查报告后停止，不补实验或投稿 | `paper-writing`，U，已实现（#25）；ML 专业入口 `ml-paper-writing`，U，已实现（#26）；Systems 专业入口待 #27 |
 
 上述是可选路径，不是线性通关表。任意外部材料都能成为切入点；有结果不必先跑 Discovery，有稿件不必重新实验或起草，普通证明无需 Lean。
 
@@ -98,7 +98,7 @@ Claim、Citation、Proof（理论内容适用）、Stress 与独立评审是并�
 | 入口 | 角色／状态 | 选择依据与边界 |
 |---|---|---|
 | `paper-writing` | U／已实现（#25） | 通用完整 W3：plan、draft、figures、compile、适用 audits、独立评审与授权 revision；不是 drafting 薄壳；不自动启动其他 user-invoked Workflow |
-| `ml-paper-writing` | U／计划（#26） | ML 实验报告：seeds、error bars、compute、limitations 等专属方法；复用内部资产，不自动调用 user-invoked W3 |
+| `ml-paper-writing` | U／已实现（#26） | ML/AI 会议论文：实验报告、seeds／runs、error bars、compute、limitations 与复现纪律，ML venue 投稿前清单与 reviewer 预期；复用同一批内部资产，不自动调用 user-invoked W3 |
 | `systems-paper-writing` | U／计划（#27） | Systems 的 design rationale、implementation、end-to-end、microbenchmark、scalability；不与 ML 合并、不自动启动通用 W3 |
 | `paper-compile-repair` | U／已实现（#22） | 已知编译错误且希望改源码；显式确认范围后修复并复验，与 check-only 分离 |
 | `apply-citation-fixes` | U／已实现（#23） | 已有引用 findings 且希望替换／删除／修正文或 BibTeX；先展示拟修改范围并获授权，与 detect 分离 |
