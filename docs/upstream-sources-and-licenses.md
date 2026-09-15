@@ -113,6 +113,15 @@
 - **调用核对**：上游 `experiment-bridge` Phase 4 按 job 数在 `run-experiment` 与 `experiment-queue` 间路由，Phase 5 收集初步结果并调用 `training-check`；本票只实现路由所需的两个执行能力，监控/分析/审计/Claims 属后续独立票，未在此虚构调用。上游 queue 引用的 `compute-env-contract.md`、`external-cadence.md` 已阅读，只保留其中与执行边界相关的有界性方法。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随两个 Skill 的 `LICENSE` 一起发行。
 
+## 已采用的完整 Experiment Bridge Workflow
+
+`skills/validation-cycle/experiment-bridge/` 为独立 user-invoked Workflow：从用户已批准的现成计划出发，在一次授权内完成实现、代码审查、sanity、正式/批量运行、监控、初步收集、分析审计与 tracker 更新，并给出可选消融建议。不要求先运行本产品的 `experiment-plan`，不自动启动独立 `result-to-claim`。
+
+- **来源**：wanshuiyin / ARIS，`skills/experiment-bridge/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。2026-09-15 通过官方 GitHub API 重新解析 revision、读取完整正文（376 行）、递归目录树与仓库 MIT 许可；该目录仅有 `SKILL.md`，无共置 references/templates/assets 或第三方资产许可。复核当日官方 HEAD 为 `f1bd907b58f653131ebe6807c482e2554e07f9b9`；本次采用的是明确固定版本，不声称采用最新全文。同时全文重读 `skills/run-experiment/SKILL.md`、`skills/experiment-queue/SKILL.md`、`skills/monitor-experiment/SKILL.md`、`skills/training-check/SKILL.md` 及 `shared-references/{output-versioning,output-manifest,output-language,compute-env-contract,external-cadence}.md` 以核对真实调用关系。
+- **采用**：保留读取现成计划 → 按 milestone 实现 → 代码 review → sanity-first → 按 job 数路由单次/批量执行 → 监控收集 → 分析审计 → tracker 更新 → 消融建议的完整主体，以及 baseline-first、evaluator 真实 ground truth、完整 attempt 留存。批量路由与执行细节复用本产品已交付的 `run-experiment`（#10）与 `experiment-queue`（#10），监控/健康/分析/审计分别复用 `monitor-experiment`/`training-health-check`（#11）、`analyze-results`（#12）、`experiment-audit`（#13）；`references/composition-map.md` 与 `templates/bridge-report.md` 为局部适配资源。
+- **适配**：删除固定 `mcp__codex`/GPT-6-Astra 审查、`AUTO_DEPLOY` 自动部署、无限调试与自动重试（改为批准上限内的有界修复）、`BASE_REPO` 默认 clone、`COMPACT` 双模式、`research_contract.md` 自动创建、Vast.ai/Modal/serverless-modal provider 绑定、W&B 强制读取、wandb/Feishu 通知、统一输出版本/manifest/语言协议、自动 `ablation-planner` 与 `auto-review-loop` 调用。新增执行前授权门、候选实现/evaluator 隔离、演练/真实区分、预算耗尽停止；消融仅建议，不自动执行，不扩预算，不开启下一轮，不启动 `result-to-claim`（#14）、Paper Writing 或其他顶层 Workflow。顶层 user-invoked Workflows 互不自动启动。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`。
+
 ## 已采用的独立实验审计 Skill
 
 `skills/validation-cycle/experiment-audit/` 属于 Validation Cycle，默认 model-invoked，也支持用户点名 standalone；被 Workflow 调用时只贡献已授权的审计章节，不自动推进科研流程。
