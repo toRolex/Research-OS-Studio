@@ -87,7 +87,7 @@ H. **DEPENDENCY CONSISTENCY**：检测环、语义循环和指向尚未证明结
 | FATAL | INVALID + GLOBAL |
 | CRITICAL | INVALID + LOCAL，或 UNJUSTIFIED + GLOBAL |
 | MAJOR | UNJUSTIFIED + LOCAL，或 UNDERSTATED/OVERSTATED + GLOBAL |
-| MINOR | 不改变论断的记号、清晰度、维度记录问题 |
+| MINOR | UNCLEAR + COSMETIC，或不改变论断的记号、清晰度、维度记录问题 |
 
 未列组合根据实际依赖影响解释分级，不把改假设/弱化结论硬塞入 MINOR。即使没有 FATAL/CRITICAL，也不能跳过尚未闭合的 MAJOR 义务宣布完整证明。
 

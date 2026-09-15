@@ -1,7 +1,11 @@
 ---
 name: proof-repair
 description: 在用户确认的命题、写入边界与轮数内修复数学证明，保留完整推导并通过 proof-review 复审。
+license: MIT
 disable-model-invocation: true
+metadata:
+  category: validation-cycle
+  invocation: user
 argument-hint: "[证明路径或目标] [--deep-fix] [--restatement-check]"
 ---
 

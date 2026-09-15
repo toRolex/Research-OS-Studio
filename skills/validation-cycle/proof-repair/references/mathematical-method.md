@@ -20,7 +20,7 @@
 | FATAL | INVALID + GLOBAL |
 | CRITICAL | INVALID + LOCAL，或 UNJUSTIFIED + GLOBAL |
 | MAJOR | UNJUSTIFIED + LOCAL，或 UNDERSTATED/OVERSTATED + GLOBAL |
-| MINOR | 不改变数学命题的清晰性、符号与维数记账 |
+| MINOR | UNCLEAR + COSMETIC，或不改变数学命题的清晰性、符号与维数记账 |
 
 不能精确落入上述组合时，保留两轴并要求 proof-review 解释严重度；不自动把影响命题的假设缺失降成 MINOR。
 
