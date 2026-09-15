@@ -67,7 +67,7 @@
 - 未完成／失败项：[状态 · 材料定位 · 最小下一步]
 - 停止原因：[授权到期／轮数到限／预算耗尽／材料不足／用户要求停止／完成]
 - 已写入清单 vs 批准清单：[一致／差异]
-- 未启动的 Workflow（`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、跨研究改进循环均未启动）：
+- 未启动的 Workflow（`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、跨研究改进循环均未启动）：[实际逐项核对]
 - User options：[接受候选稿 / 继续修订 / 显式调用专用修复入口 / 停止]
 
 > 本报告只记录事实、审查发现与修订记录。编译成功与审查通过不证明论文论断成立、可投稿或已被接受；是否投稿、发布或接受由用户决定。
