@@ -44,7 +44,7 @@ Venue 的页数、模板、deadline、track、匿名、AI 政策与 artifact eva
 | 实现 | 可选 | 期望可工作系统 |
 | Novelty | 新方法／洞见 | 新系统设计／途径 |
 | 论文核心 | 算法与实验 | 设计、实现与评价 |
-| 页限 | 通常 7–9 页 | 通常 12 页（以当期 CFP 为准） |
+| 页限 | 历史示例 7–9 页，以当期 CFP 为准 | 历史示例约 12 页，以当期 CFP 为准 |
 | 模板 | venue `.sty` | USENIX `.sty` 或 ACM `acmart.cls` |
 | 复现 | checklist | artifact evaluation（可选） |
 

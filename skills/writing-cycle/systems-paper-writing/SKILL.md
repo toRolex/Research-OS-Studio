@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Systems Paper Writing：系统论文专业写作
 
-用户显式调用的 Systems 专业写作 Workflow：从已有系统研究材料、现成 `PAPER_PLAN.md` 或已有稿件出发，在一次授权内按系统论文的成熟结构完成规划、图表、起草、真实编译、并列适用审查、独立评审与授权修订，交付候选稿与审查报告后停止。它保留系统研究专属的 design rationale、implementation、end-to-end、microbenchmark／ablation、scalability 方法，是父 spec 实施决定第 33 条中与通用写作、ML 写作并列的独立入口。
+用户显式调用的 Systems 专业写作 Workflow：从已有系统研究材料、现成 `PAPER_PLAN.md` 或已有稿件出发，在一次授权内按系统论文的成熟结构完成规划、图表、起草、真实编译、并列适用审查、独立评审与授权修订，交付候选稿与审查报告后停止。它保留系统研究专属的 design rationale、implementation、end-to-end、microbenchmark／ablation、scalability 方法，是与通用写作、ML 写作并列的独立入口。
 
 这是 **user-invoked Workflow**：只由用户显式调用，不被其他 Workflow 自动启动，也不自动启动其他顶层 Workflow。它直接组合已交付的 model-invoked 内部能力，**不调用通用 `paper-writing`（#25）**，也不调用 ML 专业入口（#26）。`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement` 都需要用户另行点名；本 Workflow 不会代替它们的授权。
 
@@ -64,7 +64,7 @@ disable-model-invocation: true
 1. **起草**：从计划与证据清单起草 10–20 条可检查断言，除通用项外覆盖系统论文专属对象——thesis 是否可按「X 对处于环境 Z 的 Y 更好」判定；每条贡献是否有 §N 交叉引用；每个主要设计决策是否至少讨论一个替代方案；end-to-end、microbenchmark／ablation、scalability 各自是否有证据或显式缺口；每条实验结论是否在段首假设、段尾结论与图 caption 三处一致；baseline 是否配置公平；页码是否满足现场核对的 venue 规则。
 2. **独立 pushback**：由独立 reviewer 对抗性审查契约本身（不是计划）：不可检验的断言、计划中有而契约未覆盖的主张、证据无法满足的断言。返回明确的接受／拒绝与逐条修改要求；若返回缺失或格式错误，视为本轮未获接受。宿主根本没有独立审查能力时不适用本步：按第 7 节标注 `single-agent assessment; independent verification not performed`，不据此判 contested。
 3. **迭代**：按修改要求修订并重提，最多 3 轮，保持同一协商上下文。
-4. **兜底**：第 3 轮仍被拒时，把未决要求原文记入契约的 `## Disputed` 并标 `status: contested`。contested 契约本 Workflow 不自行裁决：暂停提交用户 tie-break；若无人响应且必须继续，最终报告必须把争议原样重述并把交付口径上限降为「不满意即未完成」，不得报告 submission-candidate 就绪。
+4. **兜底**：第 3 轮仍被拒时，把未决要求原文记入契约的 `## Disputed` 并标 `status: contested`。contested 契约本 Workflow 不自行裁决：暂停并提交用户裁决（tie-break）；若无人响应且必须继续，最终报告必须把争议原样重述并把交付口径上限降为「不满意即未完成」，不得报告 submission-candidate 就绪。
 
 契约一旦接受即冻结；后续阶段按它实现，不静默重写。若写作中确实发现某断言错误（而非只是不方便），在检查点向用户提出，不自行改写。契约是 writer 侧 gate，**绝不传给 claim auditor 等独立审查能力**——两套网各自独立。
 
