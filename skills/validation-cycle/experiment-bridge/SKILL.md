@@ -27,7 +27,7 @@ disable-model-invocation: true
 
 - 本次目标、Problem Anchor、hypothesis、Claim、metric、baseline、数据 split 和不变量；
 - 允许修改的文件/目录、允许新增的实验脚本和输出位置；
-- 本次确认运行的**运行数**（按 planned run 名额计数：每个已确认 run 无论其 attempt 成功、失败、无效或超时都占用一个名额，除非用户明确只说成功运行计数）、并发数、时间/GPU/CPU/存储预算、seed 与停止阈值；
+- 本次确认的**运行数**（按 planned run 名额计数：每个已确认 run 无论其 attempt 成功、失败、无效或超时都占用一个名额，除非用户明确只说成功运行计数）、并发数、时间/GPU/CPU/存储预算、seed 与停止阈值；
 - 是否只做演练（dry-run/mock/no-op）还是允许真实执行；
 - 付费 API/GPU、远程机器、SSH/Slurm/云服务、远程写入和凭据使用是否逐项获批；
 - 何时建议停止、谁可以停止/重启、失败后是否允许修复并再次尝试，以及每个失败允许的最大修复轮数。
@@ -40,12 +40,12 @@ disable-model-invocation: true
 
 读取原始计划，不只读取摘要。提取并原样记录：
 
-- 里程碑和顺序：sanity → baseline → main method → decisive ablations → polish（decisive ablations 默认属 nice-to-have，未列入本次确认运行清单时只按第 7 节给建议，不执行）；
+- 里程碑和顺序：演练检查 → sanity → baseline → main method → decisive ablations → polish（decisive ablations 默认属 nice-to-have，未列入本次确认的运行清单时只按第 7 节给建议，不执行）；
 - 每个 block 的 dataset/split/task、比较系统、指标、超参数、seed、成功标准和失败解释；
 - must-run 与 nice-to-have；总预算及单次/累计消耗；
 - 计划已有结果、失败记录和用户提供的环境事实。
 
-先做一次范围清单，标出计划未声明的输入、估算和歧义。若 plan 与 proposal 冲突，保留出处，询问用户选择；不擅自改题、改 metric 或把可选实验变成必跑。
+先列出范围清单，标出计划未声明的输入、估算和歧义。若 plan 与 proposal 冲突，保留出处，询问用户选择；不擅自改题、改 metric 或把可选实验变成必跑。
 
 **完成条件**：里程碑顺序、每 block 输入与判据、可改/不可改范围、must/nice 及已有结果均已列出；冲突已保留出处待用户选择；未声明项已标歧义。
 
@@ -61,11 +61,11 @@ disable-model-invocation: true
 
 ## 4. 正式与批量运行
 
-默认执行顺序固定为：演练检查 → sanity → baseline-first → main method → polish；decisive ablations 只在本次确认明确把它列入运行清单时才执行，否则按第 7 节只给建议，不进入默认运行列表。Baseline 先行：先运行计划指定的 strongest baseline 并保留原始结果；baseline 失败时记录事实与日志，不把失败 baseline 当作主方法优势，也不自动跳过；改变 baseline、预算、split、评估器或实现范围时回到授权门。
+默认执行顺序固定为：演练检查 → sanity → baseline-first → main method → polish；decisive ablations 只在本次确认明确把它列入本次确认的运行清单时才执行，否则按第 7 节只给建议，不进入默认运行列表。Baseline 先行：先运行计划指定的 strongest baseline 并保留原始结果；baseline 失败时记录事实与日志，不把失败 baseline 当作主方法优势，也不自动跳过；改变 baseline、预算、split、评估器或实现范围时回到授权门。
 
 **批量路由**：单次或少量作业（约 ≤5）在 [run-experiment](../run-experiment/SKILL.md) 内逐项执行。当某 milestone 声明 ≥10 个作业、多 seed 网格或阶段依赖时，把该 milestone 交给 [experiment-queue](../experiment-queue/SKILL.md) 组织为有界批次；6–9 个作业按并发上限、状态可见性和用户偏好决定走哪条路。每个 milestone 启动前显示执行草案（run IDs、命令、输入、输出、并发、预计耗时和预算、付费/远程副作用、停止与清理动作），用户确认后才启动；一次确认只覆盖列出的命令和范围。
 
-运行中只观察事实，不作科学结论。接近预算、**本次确认的运行数已用完**、达到超时、出现重复失败、远程写入风险或付费上限时停止并报告。已确认运行数优先于计划总预算：即使计划预算更大，也不得未经再次确认继续运行。每个 attempt 都有唯一的人类可读 ID 和状态；保留成功、失败、无效、超时、取消和未执行条目；不覆盖 baseline，不删除失败历史，不只汇报最佳结果。失败恢复按“读主要错误产物 → 分类 → 最小修复 → 展示变化与代价 → 重新获得执行确认 → 重跑对应 attempt”进行；修复轮数上限按每个 distinct failure 计数，同时约束第 3 节代码审查修复与本节执行修复；已确认修复轮数内的重跑复用对应 planned run 的运行数名额、不新增名额，超出名额需用户再次确认扩大到新运行数。同一失败达到本次确认的修复轮数上限仍复现时停止，并列出每次尝试与最小决策问题。
+运行中只观察事实，不作科学结论。接近预算、**本次确认的运行数已用完**、达到超时、出现重复失败、远程写入风险或付费上限时停止并报告。已确认运行数优先于计划总预算：即使计划预算更大，也不得未经再次确认继续运行。每个 attempt 都有唯一的人类可读 ID 和状态；保留成功、失败、OOM、无效、超时、取消和未执行条目；不覆盖 baseline，不删除失败历史，不只汇报最佳结果。失败恢复按“读主要错误产物 → 分类 → 最小修复 → 展示变化与代价 → 重新获得执行确认 → 重跑对应 attempt”进行；修复轮数上限按每个不同失败（distinct failure）计数，同时约束第 3 节代码审查修复与本节执行修复；已确认修复轮数内的重跑复用对应 planned run 的运行数名额、不新增名额，超出名额需用户再次确认扩大到新运行数。同一失败达到本次确认的修复轮数上限仍复现时停止，并列出每次尝试与最小决策问题。
 
 **完成条件**：本批次每个 run 都有实际状态、原始结果位置、资源/时间事实和停止原因；所有真实启动均可回溯到对应的用户确认；没有未授权重试、自动下一轮或隐藏的远程/付费副作用。
 

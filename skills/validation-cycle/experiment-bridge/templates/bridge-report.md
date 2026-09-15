@@ -51,7 +51,7 @@ Status 取值：`completed` / `failed` / `invalid` / `timeout` / `oom` / `cancel
 ## 审计
 
 - Protocol conformance（逐项结论与定位）：
-- Independent integrity（A–F、attempt、代码/结果对应的结论与定位）：
+- Independent integrity（A–F、尝试完整性、代码—运行对应的结论与定位）：
 - 发现（严重级别 · 材料定位 · 保守结论 · 需另行授权的最小补救）：
 - 整体判定：PASS / FAIL / BLOCKED（含缺失材料的 BLOCKED）：
 
