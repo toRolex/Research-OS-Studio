@@ -269,6 +269,16 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **未采用 ARIS**：完整阅读 `paper-write`、`paper-writing` 后发现前者明确署名引用规则来自 `Imbad0202/academic-research-skills`；2026-09-13 所见该第三方 HEAD `91fc74d37e90c879b6a2376e244f4e26fd59cceb` 为 CC-BY-NC-4.0。实际被采用的历史版本、贡献边界及额外授权未核清，因此不复制 ARIS `paper-write` 正文或资源。不能据此断言上游侵权，也不能仅删除署名段就认定剩余正文全部可按 MIT 搬运。
 - **许可与审核**：本次复制限独立 Orchestra drafting 表达和所列方法资源；完整 `Copyright (c) 2025 Claude AI Research Skills Contributors` MIT notice 随包 `LICENSE` 发行，方法出处保留在共置 `references/sources.md`。`writing-for-agents`／`SKILL-MECHANICS` 全项静态机制审核通过后修剪重复所有格示例与重复检查表，保留唯一检查表指针；不把该审核或 toy 模型场景当真实科研验收。
 
+## 已采用的 Resubmit 转投适配
+
+`skills/writing-cycle/resubmit-pipeline/` 是唯一转投入口，独立 user-invoked。2026-09-15 通过官方 GitHub API 重新解析固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`、读取目录树（该目录仅 `SKILL.md`，447 行）、完整正文与根 MIT 许可；不是宣称采用最新 HEAD。本地 ARIS checkout HEAD（`df729a3`）与固定 revision 正文仅 4 处固定 reviewer 模型名差异（`gpt-6-astra`／`gpt-5.6-sol`），均属不移植的 provider 内容；以固定 revision 为准。
+
+- **来源**：wanshuiyin / ARIS，`skills/resubmit-pipeline/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。
+- **采用**：`skills/writing-cycle/resubmit-pipeline/` 保留旧稿只读与新目录物理隔离、venue 模板适配、页限收缩顺序、匿名五类检查、只读编译验收与 soft-only 引用检测、用户逐项确认改动、复验新稿与交付后停止。方法与报告字段分别共置于 `references/adaptation-methods.md`、`templates/adaptation-report.md`，不是短契约壳或中央运行时。
+- **调用核对**：上游 Phase 1–4 实际调用 proof-checker、paper-claim-audit、citation-audit（soft-only）、auto-paper-improvement-loop（含 edit whitelist 与 HUMAN_CHECKPOINT）、kill-argument、paper-compile（含 `COMPILE_REPORT.json`）、integrity-forensics 与 overleaf-sync。本仓只复用已实现的 `paper-compile`（check-only）与 `citation-audit`（detect-only，soft-only 默认开启）；`paper-compile-repair` 与 `apply-citation-fixes` 各自仍需用户另行显式调用与逐项授权；不移植 provider／MCP／固定模型、`.aris`、edit whitelist 文件、round 快照、`RESUBMIT_REPORT.json`、SHA、trace、Overleaf push、自动缩页、自动多轮改进、kill-argument 对抗 gate、forensics gate、提交或跨 Workflow 自动调用；不自动调用 `rebuttal`、`paper-talk`。
+- **适配**：独立 user-invoked Workflow，`disable-model-invocation: true` 与 `agents/openai.yaml` 的隐式调用禁用策略一致。接受现成稿件，不要求先运行 setup 或写作流程；评审意见可选，无则只做 venue 适配；模板冲突由用户决定；缺资源不安装；全部拒绝零写入；目标已存在／非空／指向旧稿停止；交付后停止，不投稿、不发布。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；原始完整 notice 共置于 `LICENSE` 并随 Skill 安装。新增适配方法与报告模板是转投隔离方法的局部适配，运行不依赖本来源文档。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
