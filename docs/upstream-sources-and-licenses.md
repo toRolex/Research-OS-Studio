@@ -93,6 +93,17 @@
 
 场景材料（公开现成候选、论文、原实验代码）仅临时用于实现期验证，不随产品分发；用户真实研究效果与端到端体验仍待用户验收。
 
+## 已采用的 Idea Discovery Workflow
+
+`skills/idea-cycle/idea-discovery/` 是本仓当前的 Idea Discovery 主入口，user-invoked 顶层 Workflow；在一次显式调用内组合已交付的 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，交付单一 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止。
+
+- **来源与复核**：2026-09-15 通过官方 GitHub API 重新解析 ARIS／wanshuiyin revision `0472e530251cdbd3364c33b110063c58f819edd7`，全文读取 `skills/idea-discovery/SKILL.md`（527 行）、递归目录树（该目录仅 `SKILL.md`，无共置 references/templates/assets）、根 MIT 许可及它引用的 `templates/RESEARCH_BRIEF_TEMPLATE.md`。本次采用固定 revision，不声称最新 HEAD。
+- **完整方法采用**：保留 Phase 0 的 research brief 加载与一行方向合并、Phase 0.5 的参考论文摘要、Phase 1–4.5 的组合顺序（`research-lit` → `idea-creator` → `novelty-check` → `research-review` → `research-refine`）、逐候选查新与 closest prior work、独立 adversarial 评审、固定 Problem Anchor 收敛、单一权威交付物与逐阶段淘汰记录、阶段间检查点与诚实报告要求。brief 模板按上游 `RESEARCH_BRIEF_TEMPLATE.md` 适配为共置 `templates/research-brief.md`；报告结构落地为共置 `templates/discovery-report.md`；阶段—能力—章节映射与降级规则落地为共置 `references/composition-notes.md`。
+- **组合与真实调用核对**：上游 Phase 1/2/4 分别以 `— composed: idea-stage/IDEA_REPORT.md` 调用 `research-lit`、`idea-creator`、`research-review`，Phase 3 逐候选调用 `novelty-check`，Phase 4.5 调用 `research-refine-pipeline`（后者再调用 `research-refine` 与 `experiment-plan`）；本仓把已交付的同职责能力 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement` 按同一顺序组合，各贡献命名 canonical 章节。上游记录在 `shared-references/{output-composition,citation-discipline,reviewer-independence,review-tracing,integration-contract,resumable-runs}.md` 与 `tools/{run_state.py,idea_discovery_gate.py,iteration_log.py}`；本票已阅读并只采纳 output-composition 的“单一权威交付物”与 reviewer-independence 的原始材料直达原则。
+- **删除与校准**：删除 pilot 实验与全部 GPU／时长常量、`AUTO_PROCEED` 自动推进、外部 Feishu 通知、`research_contract.md` 与实验计划／tracker、`run_state`／证据门／`.aris` tracing、`RENDER_HTML`、`COMPACT` 与 provider/MCP 绑定、自动跨主流程调用。阶段间默认阻塞等用户确认，仅用户明确授权“一次走完”时才连续执行；不写统一 JSON、状态机、receipt、HTML 或 manifest。
+- **Orchestra 互补方法**：不新增独立编排；Orchestra 的 `21-research-ideation` 构思框架已由 `idea-generation`（十个操作框架）与 `creative-thinking-for-research`（八框架）承载，本文档在生成职责内调用它们，不另建薄弱 charter→literature→gap→idea 单线。
+- **许可与验证**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随本 Skill 的 `LICENSE` 发行。实现期以公开方向、公开材料及缺工具场景做静态与场景核对；未运行 pilot、未执行用户真实科研，不代表端到端体验或科研质量已验收。
+
 ## 已采用的实验计划 Workflow
 
 `skills/validation-cycle/experiment-plan/` 为独立 user-invoked Workflow，只将已有问题转为可授权执行的计划，不运行实验。2026-09-12 通过官方 GitHub API 重新解析以下固定 revision；这是采用复核，不声称最新 HEAD。

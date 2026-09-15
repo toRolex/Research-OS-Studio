@@ -31,7 +31,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 | 分类 | 目录 | 当前正式 Skill |
 |---|---|---|
 | General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)、[ask-research-os](general/ask-research-os/SKILL.md)（均 user-invoked） |
-| Idea Cycle | `idea-cycle/` | [research-lit](idea-cycle/research-lit/SKILL.md)、[idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)、[idea-review](idea-cycle/idea-review/SKILL.md)、[idea-refinement](idea-cycle/idea-refinement/SKILL.md)（均 model-invoked，用户可点名；支持 standalone / composed） |
+| Idea Cycle | `idea-cycle/` | [idea-discovery](idea-cycle/idea-discovery/SKILL.md)（user-invoked 完整 Workflow：方向→检索→候选→查新→独立评审→固定边界收敛，交付 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止）、[research-lit](idea-cycle/research-lit/SKILL.md)、[idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)、[idea-review](idea-cycle/idea-review/SKILL.md)、[idea-refinement](idea-cycle/idea-refinement/SKILL.md)（除 idea-discovery 外均 model-invoked，用户可点名；支持 standalone / composed） |
 | Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[experiment-bridge](validation-cycle/experiment-bridge/SKILL.md)（user-invoked；已批准现成计划的一次授权实现到分析审计，不要求先用本产品规划）、[run-experiment](validation-cycle/run-experiment/SKILL.md)、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[proof-orchestrator](validation-cycle/proof-orchestrator/SKILL.md)（user-invoked；单 obligation 长期续接）、[proof-review](validation-cycle/proof-review/SKILL.md)（model-invoked，用户可点名；只读，支持 standalone / composed）、[proof-repair](validation-cycle/proof-repair/SKILL.md)（user-invoked；显式授权的有界修复）、[analyze-results](validation-cycle/analyze-results/SKILL.md)、[formula-derivation](validation-cycle/formula-derivation/SKILL.md)、[proof-writer](validation-cycle/proof-writer/SKILL.md)（除 experiment-plan、experiment-bridge、proof-orchestrator、proof-repair 外均 model-invoked，用户可点名；支持 standalone / composed） |
 | Writing Cycle | `writing-cycle/` | [paper-plan](writing-cycle/paper-plan/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[paper-drafting](writing-cycle/paper-drafting/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed；从现成计划与原始证据起草，不代替总 Workflow）、[academic-plotting](writing-cycle/academic-plotting/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[paper-compile](writing-cycle/paper-compile/SKILL.md)（check-only，model-invoked，用户可点名；standalone / composed）、[paper-compile-repair](writing-cycle/paper-compile-repair/SKILL.md)（user-invoked，显式授权修复）、[citation-audit](writing-cycle/citation-audit/SKILL.md)（model-invoked，支持 standalone / composed；仅检测与报告）、[apply-citation-fixes](writing-cycle/apply-citation-fixes/SKILL.md)（user-invoked；精确 diff 后授权应用及复验）、[paper-claim-audit](writing-cycle/paper-claim-audit/SKILL.md)、[claim-stress-test](writing-cycle/claim-stress-test/SKILL.md)（后两者均 model-invoked，用户可点名；支持 standalone / composed）、[rebuttal](writing-cycle/rebuttal/SKILL.md)（user-invoked；现成审稿意见到逐 concern 回复，不自动补实验或投稿）、[paper-talk](writing-cycle/paper-talk/SKILL.md)（独立 user-invoked：从论文生成 slides、notes、script 并审查演讲产物；不自动发布或启动后续 Workflow）、[resubmit-pipeline](writing-cycle/resubmit-pipeline/SKILL.md)（独立 user-invoked：现成稿件换 venue，新目录适配并完整保留旧稿；不自动投稿或启动其他 Workflow） |
 
@@ -41,7 +41,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 
 不确定从哪里开始时，显式调用 `ask-research-os`；已知入口可直接点名，无需先 setup 或经过 Router。它接受方向、已有结果或稿件，只在对话中推荐并停止，不写研究材料、不启动推荐任务。
 
-自包含的[完整批准地图](general/ask-research-os/PRODUCT-MAP.md)区分三条主流程、独立 user-invoked 入口、model-invoked 能力及数学／Lean、ML／Systems 专业扩展，同时区分已实现、计划和宿主可用性。计划条目不是当前安装命令，文件安装成功也不代表宿主已加载。当前完整 Discovery、Validation 与 Writing 入口仍待后续票交付。
+自包含的[完整批准地图](general/ask-research-os/PRODUCT-MAP.md)区分三条主流程、独立 user-invoked 入口、model-invoked 能力及数学／Lean、ML／Systems 专业扩展，同时区分已实现、计划和宿主可用性。计划条目不是当前安装命令，文件安装成功也不代表宿主已加载。Idea Discovery 主入口已交付；完整 Validation 与 Writing 入口仍待后续票交付。
 
 在可丢弃项目中可分别用“只有方向”“已有外部结果”“已有稿件”咨询；核对推荐理由、不强制前序流程、计划状态如实说明，以及项目零写入、零自动启动。实现阶段的受限合成模型场景不等于真实科研或宿主交互验收。
 
@@ -52,6 +52,17 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 手工验收：提供一个有明显弱点的现成候选、原始文献和约束；先点名 review，核对 reviewer 实际原文定位与问题，再点名 refinement，核对每轮 Anchor 原样保留、双路线取舍及未解决项。限制一轮修订、零实验预算，应只得到方法及验证草图。另测缺原文、缺独立 reviewer、已有同名输出和 composed 章节授权：应准确暴露缺口、保留已有材料并停止，不配置环境或自动实验。实现期场景结果不替代用户真实科研验收。
 
 Writing Cycle 审查能力均只读审查研究材料、输出 Markdown 报告与建议：`paper-claim-audit` 核对数字、比较、配置、图表/caption 和实验覆盖；`claim-stress-test` 由两个 fresh reviewer 分别构造整篇拒稿攻击、对照原材料逐点裁决。standalone 独立交付报告，composed 贡献父 Workflow 的 canonical report；默认不改稿，报告后停止。Claim / Citation / Proof / Stress 并列按需，不自动串联；Citation 与 Proof 不由这两项替代，其入口由独立票交付。
+
+## 完整 Idea Discovery Workflow
+
+`idea-discovery` 是一次显式调用、内部组合已交付能力的 user-invoked Workflow：Phase 0 读取 brief／参考论文，随后依次调用 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，把各章节合入单一 `IDEA_DISCOVERY.md`，并写入 `RESEARCH_PROPOSAL.md`。它保留多视角 fan-out、淘汰理由、closest prior work、独立 reviewer 与固定 Problem Anchor，不运行 pilot、不制定实验计划、不进入 Validation 或 Writing。阶段间默认停下等用户确认，只有明确授权“一次走完”时才连续执行；工具或材料缺失时按 `idea-cycle/idea-discovery/references/composition-notes.md` 降级并保留缺口。
+
+在可丢弃项目中手工验收：
+
+1. **完整路径**：给一个真实方向及简短 brief。核对 Phase 1 有真实检索与来源标签，Phase 2 有多视角候选与筛选记录，Phase 3 每个入围候选有 closest prior work 或证据缺口，Phase 4 有独立 reviewer 的原文定位，Phase 4.5 逐字保留 Anchor 并给出双路线取舍；最终得到 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md`。
+2. **禁止自动越权**：全程核对未运行任何 pilot、未生成实验计划／tracker、未进入 Validation／Writing、未安装环境或做远程副作用、未写统一 JSON／状态记录／HTML。
+3. **工具缺失降级**：无检索能力时，阶段 1 降为 supplied-material synthesis 并限定覆盖；无独立 reviewer 时标 REVIEW UNAVAILABLE 并停止裁决；无参考论文全文时保留缺口，不凭记忆补写。
+4. **边界与停止**：已有报告或材料不被覆盖；阶段检查点默认等用户确认；交付后只建议下一步，不自动启动另一顶层 Workflow。
 
 ## 普通公式推导与证明生成
 

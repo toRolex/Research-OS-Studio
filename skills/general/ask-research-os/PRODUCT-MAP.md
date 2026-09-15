@@ -10,13 +10,13 @@
 - **user-invoked（U）**：人类显式选择的 Workflow／独立入口，互不自动启动。
 - **model-invoked（M）**：当前已授权职责中的内部能力，也可由用户点名 standalone；composed 时贡献父报告。M 不等于只读，生成、绘图等写入仍受各自边界约束。Router 本身不调用它们。
 
-状态快照：本票交付时，General 的 `setup-research-os`、`ask-research-os`，Idea Cycle 的 `idea-generation`、`creative-thinking-for-research`、`novelty-check`，以及 Validation 计算／实证路径的 `experiment-plan`、`experiment-bridge` 与其真实组合的 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`、`analyze-results`、`experiment-audit` 已有正式 Skill 正文。此表是发行说明，不是运行时状态数据库；入口交付、改名或角色变更时维护者同步更新，使用时以可读取的真实安装正文核实关键行为。
+状态快照：本票交付时，General 的 `setup-research-os`、`ask-research-os`，Idea Cycle 的 `idea-discovery`、`research-lit`、`idea-generation`、`creative-thinking-for-research`、`novelty-check`、`idea-review`、`idea-refinement`，以及 Validation 计算／实证路径的 `experiment-plan`、`experiment-bridge` 与其真实组合的 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`、`analyze-results`、`experiment-audit` 已有正式 Skill 正文。此表是发行说明，不是运行时状态数据库；入口交付、改名或角色变更时维护者同步更新，使用时以可读取的真实安装正文核实关键行为。
 
 ## 三条主流程
 
 | 主流程 | 用户目的与停止点 | 主入口与状态 |
 |---|---|---|
-| Idea Discovery | 从方向主动检索、多视角生成、查新、独立评审、固定问题下收敛；交付发现报告与 Proposal 后停止，不启动 pilot 或 Validation | `idea-discovery`，U，计划（#8） |
+| Idea Discovery | 从方向主动检索、多视角生成、查新、独立评审、固定问题下收敛；交付发现报告与 Proposal 后停止，不启动 pilot 或 Validation | `idea-discovery`，U，已实现（#8） |
 | Validation | 计算／实证路径以批准计划落实实验、分析、审计并形成受约束候选 Claim；数学／理论路径推导、证明、审查与显式修复。各入口完成自己的职责就停，不自动写论文 | 下方多个独立 U 入口；这是主流程名称，**不是另一个名为 validation 的 Skill** |
 | Paper Writing and Improvement | 从现有材料规划、起草、绘图、编译、并列适用审查和授权修订；交付候选稿与审查报告后停止，不补实验或投稿 | `paper-writing`，U，计划（#25）；ML／Systems 专业入口另列 |
 
@@ -33,14 +33,15 @@
 
 | 能力 | 角色／状态 | 适用输入与职责 |
 |---|---|---|
-| 文献检索与综合（名称待定） | M／计划（#4） | 主题或已有文献；主动检索，区分候选、已核实与未核实来源，输出有出处的综合 |
+| `idea-discovery` | U／已实现（#8） | 完整方向到 Proposal：一次显式调用内组合下列内部能力，交付 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止；不运行 pilot、不制定实验计划、不自动进入 Validation／Writing |
+| `research-lit` | M／已实现（#4） | 主题或已有文献；主动检索，区分候选、已核实与未核实来源，输出有出处的综合 |
 | `idea-generation` | M／已实现（#5） | 现成文献、笔记或已有结果；多视角候选、去重及硬约束筛选，保留暂存／淘汰理由；不是独立评审 |
 | `creative-thinking-for-research` | M／已实现（#5） | 构思卡在单一表述、表面类比或二选一；认知转换产生可检验洞见；不是候选池裁决 |
 | `novelty-check` | M／已实现（#6） | 已有候选核心 Claim；主动寻找 closest prior work、核实身份、对比关键区别并独立复核；缺证据时说明具体补证动作，不因模糊相似误杀 |
-| `idea-review` | M／计划（#7） | 原始候选和文献；独立 reviewer 直接读取材料，不以生成者摘要或自查代替裁决 |
-| `idea-refinement` | M／计划（#7） | 候选与评审 findings；固定 Problem Anchor，比较最小可行与前沿方案，不偷偷换题 |
+| `idea-review` | M／已实现（#7） | 原始候选和文献；独立 reviewer 直接读取材料，不以生成者摘要或自查代替裁决 |
+| `idea-refinement` | M／已实现（#7） | 候选与评审 findings；固定 Problem Anchor，比较最小可行与前沿方案，不偷偷换题 |
 
-完整路径是用户选择 `idea-discovery` 后在一次授权内组合这些内部能力，不是 Router 逐项启动。仅想发散、认知转换或查新时可直接点名相应已实现 M 能力；它们不等于已交付完整 Discovery。
+完整路径是用户选择 `idea-discovery` 后在一次授权内组合这些内部能力，不是 Router 逐项启动。仅想发散、认知转换或查新时可直接点名相应已实现 M 能力；它们是完整 Discovery 的局部能力，不自动串联或扩大授权。
 
 ## Validation：计算／实证
 
@@ -110,7 +111,7 @@ Claim、Citation、Proof（理论内容适用）、Stress 与独立评审是并�
 
 ## 按现有材料选切入点
 
-- **只有方向**：想形成完整 Proposal，可条件性推荐计划中的 Idea Discovery；当前已实现的候选生成／创意思考适合局部构思，仍需相应输入，不能代替尚未交付的完整检索与独立评审。已选候选再查新，而非对空方向捏造 novelty 结论。
+- **只有方向**：想形成完整 Proposal，推荐已实现的 `idea-discovery`；也可先点名候选生成／创意思考做局部构思，或对已选候选单独查新／评审／收敛，而非对空方向捏造 novelty 结论。
 - **已有结果**：先看用户要解释不确定性、审计真实性，还是形成候选 Claim；分别推荐对应内部能力或 `result-to-claim`，均清楚标计划。仅想从结果衍生新方向时才考虑已实现的 `idea-generation`；不因完整 Validation 未实现而强迫重新找 Idea。
 - **已有稿件**：按需要选引用／Claim／Proof／Stress 检查、局部修复、通用／专业写作或独立后续入口；都标明当前计划状态，不自动起草新稿、运行实验或初始化目录。
 
