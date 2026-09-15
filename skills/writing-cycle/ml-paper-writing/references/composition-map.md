@@ -24,4 +24,4 @@
 
 正文语言、摘要公式、引言结构、句级原则与微观改写、citation 决策序列、模板处理与作者自查由 [paper-drafting](../../paper-drafting/SKILL.md) 的共置 references 承担（`writing-guide.md`、`citation-workflow.md`、`draft-checklist.md`、`venue-and-format.md`、`sources.md`），本 Skill 不复制这些通用资产，只在 ML 专属分支补充实验报告与 venue／reviewer 方法。
 
-被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。审查能力之间并列按需，不由本 Workflow 自动串联成线性通过链。`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk` 与跨研究有界改进循环（#28）都是独立 user-invoked 入口，本 Workflow 不启动它们。
+被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。审查能力之间并列按需，不由本 Workflow 自动串联成线性通过链。`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk` 与跨研究有界改进循环 `research-improvement`（#28）都是独立 user-invoked 入口，本 Workflow 不启动它们。

@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 用户显式调用的 ML/AI 专业写作 Workflow：从已有 ML 研究材料（代码、结果、实验日志、配置、已有计划或稿件）出发，在一次授权内完成规划、实验报告纪律核对、图表、起草、真实编译、并列适用的独立审查与授权修订，交付候选稿与审查报告后停止。面向 NeurIPS／ICML／ICLR／ACL／AAAI／COLM 一类 ML/AI 会议，但它不假定任何默认 venue。
 
-这是 **user-invoked Workflow**：只由用户显式调用，不被其他 Workflow 自动启动。它不自动启动其他顶层 Workflow——通用 `paper-writing`（#25）、`systems-paper-writing`（#27，计划）、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk` 与跨研究有界改进循环（#28）都需用户另行点名；它内部只组合已交付的 model-invoked 能力。
+这是 **user-invoked Workflow**：只由用户显式调用，不被其他 Workflow 自动启动。它不自动启动其他顶层 Workflow——通用 `paper-writing`（#25）、`systems-paper-writing`（#27，计划）、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk` 与跨研究有界改进循环 `research-improvement`（#28）都需用户另行点名；它内部只组合已交付的 model-invoked 能力。
 
 上游 Orchestra `ml-paper-writing` 的专业方法在此正文级保留：主动探索研究仓库并先交付完整候选草稿、What／Why／So What 叙事、五部分摘要、逐节结构、引用核查、模板使用、ML venue 清单与 reviewer 预期。具体删除项见文末「来源与适配」。
 
@@ -171,7 +171,7 @@ disable-model-invocation: true
 - 需要补实验才能支撑某条 Claim（补实验不在本 Workflow 授权内，交用户另行决定）；
 - 达到修订轮数或预算上限、用户要求停止、或所有阶段已完成。
 
-不自动进入下一轮，不投稿、不发布、不宣布接受，不启动 `paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、通用 `paper-writing`、`systems-paper-writing`（#27，计划）或跨研究改进循环。每个未完成／失败项都有状态、材料定位与最小下一步；没有遗留的未授权写入或外部副作用。
+不自动进入下一轮，不投稿、不发布、不宣布接受，不启动 `paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、通用 `paper-writing`、`systems-paper-writing`（#27，计划）或 `research-improvement`（#28）。每个未完成／失败项都有状态、材料定位与最小下一步；没有遗留的未授权写入或外部副作用。
 
 **完成条件**：停止原因、未完成任务、已写入与未写入的清单都可核对；没有任何自动后续动作。
 
