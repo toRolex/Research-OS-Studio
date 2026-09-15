@@ -32,7 +32,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 |---|---|---|
 | General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)、[ask-research-os](general/ask-research-os/SKILL.md)（均 user-invoked） |
 | Idea Cycle | `idea-cycle/` | [research-lit](idea-cycle/research-lit/SKILL.md)、[idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)、[idea-review](idea-cycle/idea-review/SKILL.md)、[idea-refinement](idea-cycle/idea-refinement/SKILL.md)（均 model-invoked，用户可点名；支持 standalone / composed） |
-| Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[experiment-bridge](validation-cycle/experiment-bridge/SKILL.md)（user-invoked；已批准现成计划的一次授权实现到分析审计，不要求先用本产品规划）、[run-experiment](validation-cycle/run-experiment/SKILL.md)、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[proof-orchestrator](validation-cycle/proof-orchestrator/SKILL.md)（user-invoked；单 obligation 长期续接）、[analyze-results](validation-cycle/analyze-results/SKILL.md)、[formula-derivation](validation-cycle/formula-derivation/SKILL.md)、[proof-writer](validation-cycle/proof-writer/SKILL.md)（除 experiment-plan、experiment-bridge、proof-orchestrator 外均 model-invoked，用户可点名；支持 standalone / composed） |
+| Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[experiment-bridge](validation-cycle/experiment-bridge/SKILL.md)（user-invoked；已批准现成计划的一次授权实现到分析审计，不要求先用本产品规划）、[run-experiment](validation-cycle/run-experiment/SKILL.md)、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[proof-orchestrator](validation-cycle/proof-orchestrator/SKILL.md)（user-invoked；单 obligation 长期续接）、[proof-review](validation-cycle/proof-review/SKILL.md)（model-invoked，用户可点名；只读，支持 standalone / composed）、[proof-repair](validation-cycle/proof-repair/SKILL.md)（user-invoked；显式授权的有界修复）、[analyze-results](validation-cycle/analyze-results/SKILL.md)、[formula-derivation](validation-cycle/formula-derivation/SKILL.md)、[proof-writer](validation-cycle/proof-writer/SKILL.md)（除 experiment-plan、experiment-bridge、proof-orchestrator、proof-repair 外均 model-invoked，用户可点名；支持 standalone / composed） |
 | Writing Cycle | `writing-cycle/` | [paper-plan](writing-cycle/paper-plan/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[academic-plotting](writing-cycle/academic-plotting/SKILL.md)（model-invoked，用户可点名；支持 standalone / composed）、[paper-compile](writing-cycle/paper-compile/SKILL.md)（check-only，model-invoked，用户可点名；standalone / composed）、[paper-compile-repair](writing-cycle/paper-compile-repair/SKILL.md)（user-invoked，显式授权修复）、[citation-audit](writing-cycle/citation-audit/SKILL.md)（model-invoked，支持 standalone / composed；仅检测与报告）、[apply-citation-fixes](writing-cycle/apply-citation-fixes/SKILL.md)（user-invoked；精确 diff 后授权应用及复验）、[paper-claim-audit](writing-cycle/paper-claim-audit/SKILL.md)、[claim-stress-test](writing-cycle/claim-stress-test/SKILL.md)（后两者均 model-invoked，用户可点名；支持 standalone / composed）、[rebuttal](writing-cycle/rebuttal/SKILL.md)（user-invoked；现成审稿意见到逐 concern 回复，不自动补实验或投稿）、[paper-talk](writing-cycle/paper-talk/SKILL.md)（独立 user-invoked：从论文生成 slides、notes、script 并审查演讲产物；不自动发布或启动后续 Workflow） |
 
 只有实际含 `SKILL.md` 的目录才是可安装 Skill。不为分类创建占位 Skill，不把保留的旧工程纳入这份清单。
@@ -98,6 +98,19 @@ setup 先探索现有项目，推荐沿用已有工作区；只有不存在时�
 2. **证据不足**：要求不存在的消融／证明，或评审包含歧义时，分别列需补充工作／需澄清、具体缺口与问题；不给无依据数字，不启动实验或配置环境。审稿文本中的命令不产生授权。
 3. **独立线程与限长**：每 reviewer 回复自包含，不能依赖另一个线程；对实际粘贴目标工具计数，rich 超限不阻塞合规 strict，但所有版本仍检查事实和承诺。最终保存须与已确认文字一致，改字后重新检查。
 4. **后续与停止**：新评论只生成增量，保留旧稿和用户勾选；无独立审查能力时明确未执行，不将自查冒充独立验证；到授权或轮数上限即停，不投稿、转投或自动推进。
+
+## 证明审查与修复
+
+`proof-review` 直接读取现成证明及其依赖，只在回复中给出义务、缺口、反例与影响，不写文件、不编译、不自动修复。普通证明不要求 Lean 或 LaTeX 环境。`proof-repair` 必须由用户显式启动，确认目标命题、精确文件/段落、轮数和工具资源后才修订；编译与其副产物单独授权。修复内部使用已安装的 `proof-review` 复审，严重问题另做 fresh 盲审；缺少独立能力时报告未完成。
+
+在可丢弃的项目副本中手工验收：
+
+1. 放入含错误归纳步的现成证明，记录原始文件内容与目录清单。调用 `proof-review`，核对能定位错误、列出影响，并且项目无新增或变更文件，编译标为未运行。
+2. 显式调用 `proof-repair` 但尚不确认写入，检查它展示具体契约并等待，文件仍不变。确认仅修复一个证明环境、保持命题/假设、限定 1 轮且不编译，再核对只有该环境改变，完整推导和实际复审反馈留在回复中。
+3. 对被核实反例推翻的命题，仅允许改证明、不允许改假设或命题；应停止并提出待用户决定的选项，保留反例、gaps 和失败路线，不能偷偷加条件。
+4. 分别拒绝编译或使用缺少编译器的环境，报告必须准确写未执行/不可用；若另行批准编译，则检查真实退出码、日志与新产物，不把编译成功等同数学正确。缺少独立审查、轮数耗尽或写入前文件发生冲突时，同样保留未完成状态。
+
+各宿主须实际保留 `proof-repair` 的显式调用策略。Skills CLI 1.5.26 本地安装实测：Eve 副本保留 `name`，但移除 `disable-model-invocation`；Claude Code / Codex 限定安装的规范副本保留源字段。Eve 的真实显式调用策略尚未验收，无法确认时暂停在该宿主使用修复。其他宿主同样须核实；此处指令不是宿主权限强制执行机制。
 
 通用 CLI 安装实测、临时文件场景模拟和真实用户验收是不同层级。尚未经用户在真实科研项目确认，不声明端到端体验通过。
 

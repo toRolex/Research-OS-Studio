@@ -247,6 +247,16 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 
 两者是独立 model-invoked 生成能力，也支持用户点名 standalone；composed 只贡献当前授权报告。普通 Markdown 数学足够，不依赖 Lean、MCP/provider、中央 runtime 或其他未交付 Skill。经 `writing-for-agents` 正文与方法保真审核，并修复顾问指出的公式成功门槛后纳入 inventory；该审核不等同数学正确性、形式化或用户真实科研验收。
 
+## 已采用的证明审查与修复
+
+- **来源**：wanshuiyin / [ARIS](https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep)，`skills/proof-checker/SKILL.md`，固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`。2026-09-13 通过官方 GitHub API 重新解析该 commit、读取完整正文与目录；不声称这是最新 HEAD。该目录只有 `SKILL.md`，没有共置 references/templates/assets。邻近本地 checkout 的不同 HEAD 未混用于本次采用。
+- **产品拆分**：`skills/validation-cycle/proof-review/` 为只读、model-invoked 审查能力，用户可点名 standalone，composed 只返回主报告段落；`skills/validation-cycle/proof-repair/` 为显式 user-invoked、有界修复。后者在当前授权内调用前者，审查不会自动调用修复。
+- **方法保留**：完整六类证明义务记录、全局依赖与语义环、使用最小假设集、符号类型、量词与极限顺序；A–H 审查、原表全部 21 个分类、双轴严重度、定理侧条件、五类反例策略及失败记录；四种修复策略、完整数学推导、单独 LaTeX 编辑和编译、全文复审、严重问题 fresh 盲审、全局闭合与下游回归、无法修复时的挽救选项。深修复与重述检查仍为 opt-in，保留完整字段、代数四项 sanity 与六类漂移算法，以自然 Markdown 表达。纠正上游“有界非 sub-Gaussian”的字面错误，区分单个有界变量与缺乏统一参数界的分布族。
+- **权限适配**：review 所有文件零写入、不编译，仅建议修复方向；repair 先确认精确命题/假设、文件与段落、轮数、工具、外发及编译副产物。补丁计划由 repair 生成，review 只审原始材料；命题或假设变化需用户另行决定。普通证明保持原生 Markdown/LaTeX，不强制 Lean。编译未运行或失败、独立审查缺失、开放义务及失败路线均显式保留；模型意见不等于形式化或科研验收。
+- **引用与调用核对**：完整阅读同 revision 的 `skills/shared-references/{external-cadence,reviewer-routing,reviewer-independence,acceptance-gate,fan-out-pattern,assurance-contract,integration-contract,review-tracing}.md`，以及 `skills/{paper-writing,resubmit-pipeline,auto-paper-improvement-loop,proof-orchestrator}/SKILL.md`。前三条论文流程确有 checker 调用指令；proof-orchestrator 明确不替代 canonical checker，不据其虚构长期证明互调。复审采用直接读取完整当前证明、同次问题追踪与 fresh 盲审的区别。
+- **排除**：固定 provider/MCP、模型与线程工具、`.aris`、JSON/state/hash/verifier、wiki 自动写入、默认 HTML/PDF 渲染与跨 Workflow 自动推进；论文调用者中的 Orchestra-adapted、sciwrite、Anti-Autoresearch 及第三方模板/论文正文仅作关系核对，不复制。本次不改变这些其他票的流程。
+- **许可**：上述 checker 方法按 MIT 改编，`Copyright (c) 2026 wanshuiyin` 与完整 MIT notice 分别随两个 Skill 的 `LICENSE` 发行；新增共置 references/templates 为本次局部拆分适配，安装后无需本仓 runtime 或本机上游目录。过程映射和验证笔记不进入产品。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
