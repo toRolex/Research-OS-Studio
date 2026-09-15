@@ -279,6 +279,16 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **适配**：独立 user-invoked Workflow，`disable-model-invocation: true` 与 `agents/openai.yaml` 的隐式调用禁用策略一致。接受现成稿件，不要求先运行 setup 或写作流程；评审意见可选，无则只做 venue 适配；模板冲突由用户决定；缺资源不安装；全部拒绝零写入；目标已存在／非空／指向旧稿停止；交付后停止，不投稿、不发布。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；原始完整 notice 共置于 `LICENSE` 并随 Skill 安装。新增适配方法与报告模板是转投隔离方法的局部适配，运行不依赖本来源文档。
 
+## 已采用的全研究工作有界改进循环
+
+`skills/writing-cycle/research-improvement/` 是跨流程的独立 user-invoked Workflow，对 Claims/草稿、方法与代码、原始结果、当前 diff 与历史 findings 做一次授权内的有界 review → repair → re-review；它是高权限**可写**入口，不是只读审计。2026-09-15 通过官方 GitHub API 重新解析固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`，读取两个上游目录的完整树（`skills/auto-review-loop/` 与 `skills/auto-paper-improvement-loop/` 各自仅有 `SKILL.md`，分别 1137、695 行）、两份完整正文与根 MIT 许可；采用固定版本，不声称为最新 HEAD。同日核对本地 ARIS checkout HEAD `df729a3`：模型名与少量句子不同，以固定 revision 为准，本地内容未混用于采用。
+
+- **来源与拆分归属**：wanshuiyin / ARIS，`skills/auto-review-loop/SKILL.md`（W2 研究循环）与 `skills/auto-paper-improvement-loop/SKILL.md`（W3 论文改进）。本仓合并为唯一跨流程 `research-improvement`：W3 的论文 review → fix → recompile 能力由本入口承接，不另发行 paper-only 改进循环；命名依据完整正文与 `writing-for-agents` 审核决定。
+- **采用**：保留有界 review → repair → re-review 循环、fresh reviewer 与逐轮重新审查（`REVIEWER_BIAS_GUARD` 语义）、reviewer 直接读取 primary artifacts 而不看执行者摘要、分数/verdict/最小修复的裁决结构、完整原始回应逐字留存、逐轮分数轨迹、基线原稿/结果快照、claim 双向校准与叙事缺陷修复（genuine overclaim 收窄、支持结论去冗余对冲、caveat 归 Limitations、落败指标叙事与无论证任务实验的处理、语气编辑不改事实/范围/数字）、recompile 验证与 `--restatement-check` 的重述回归、edit-whitelist 的路径/操作约束原理、按严重度排序的最小修复。方法与修复模式共置于 `references/loop-methods.md`，能力组合边界共置于 `references/composition-map.md`，自然 Markdown 轮次日志共置于 `templates/improvement-log.md`，不是短契约壳或中央运行时。
+- **适配**：删除 `AUTO_PROCEED` 自动推进、Codex/MCP 固定 provider 与 `threadId` reviewer 记忆、`REVIEW_STATE.json`/`ACQUITTAL_LOG.jsonl`/SHA/trace/receipt、`render-html`/Feishu 通知/自动 `result-to-claim`、无限循环与自证式 acquittal、固定 reviewer 模型与 `codex exec` nightmare 后端、跨 Workflow 自动 handoff、YAML/JSON edit-whitelist 文件；改为显式授权门（scope、写入范围、最大轮数、资源预算、外部副作用、补实验运行数名额、停止条件）、有界修复与被拒绝编辑日志、未授权补实验的 unresolved/blocked 处理、停止后不自动续轮。
+- **调用核对**：完整读取上游 `skills/research-pipeline/SKILL.md`（`/auto-review-loop` 于 :241 被编排调用）、`skills/paper-writing/SKILL.md`（`/auto-paper-improvement-loop` 于 :478 被调用）、`skills/resubmit-pipeline/SKILL.md`（:206-218 以 `HUMAN_CHECKPOINT=true` 调用）、`skills/kill-argument/SKILL.md`（`auto-paper-improvement-loop` 于 :474 委托）。本仓以已交付的 model-invoked 能力组合：审查用 `paper-claim-audit`、`citation-audit`、`claim-stress-test`、`proof-review`、`experiment-audit`、`analyze-results`，验证用 `paper-compile`（check-only），授权内补实验用 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`；不自动启动 user-invoked 的 `experiment-bridge`、`paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`result-to-claim` 等顶层入口，不虚构未交付调用。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE` 并随安装保留。新增方法参考、组合映射与日志模板是上游循环方法的局部适配，运行不依赖上游仓库、中央 runtime 或其其他 Skill。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
