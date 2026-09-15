@@ -290,6 +290,18 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **适配**：独立 user-invoked Workflow，`disable-model-invocation: true` 与 `agents/openai.yaml` 的隐式调用禁用策略一致。接受现成稿件，不要求先运行 setup 或写作流程；评审意见可选，无则只做 venue 适配；模板冲突由用户决定；缺资源不安装；全部拒绝零写入；目标已存在／非空／指向旧稿停止；交付后停止，不投稿、不发布。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；原始完整 notice 共置于 `LICENSE` 并随 Skill 安装。新增适配方法与报告模板是转投隔离方法的局部适配，运行不依赖本来源文档。
 
+## 已采用的完整 Paper Writing W3
+
+`skills/writing-cycle/paper-writing/` 是通用 Paper Writing and Improvement 主入口，独立 user-invoked。2026-09-15 通过官方 GitHub API 重新解析固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`、读取目录树（该目录仅 `SKILL.md`，无共置 references/templates/assets）、完整正文与根 MIT 许可；不是宣称采用最新 HEAD。本地 ARIS checkout HEAD（`df729a3`）与固定 revision 正文差异经逐行比较：除固定 reviewer 模型名外，还有验收契约 reviewer 的 scope-limits 段、写作不变量段与部分校准措辞；均属不移植的 provider／repo 维护内容或已按本仓写作纪律改写，以固定 revision 为准。
+
+- **来源**：wanshuiyin / ARIS，`skills/paper-writing/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。
+- **采用**：保留 plan → figures → write → compile → 并列适用审查 → 独立评审 → 有界修订的完整 W3 主顺序；写作前协商验收契约与冻结、计划／图表／正文的 writer 侧评审、每轮 fresh 的 reviewer 独立性、CRITICAL／MAJOR／MINOR 分级、保留每轮 PDF 对照、证明审查仅理论内容适用、数字／引用／证明／整篇论证并列审查，以及「写作不变量」的 claim 校准纪律。组合映射共置于 `references/composition-map.md`，报告骨架共置于 `templates/paper-writing-report.md`，不是短契约壳或中央运行时。
+- **调用与组合核对**：上游 Phase 1 实际调用 `paper-plan`，Phase 2 调用 `paper-figure`，Phase 3 调用 `paper-write`，Phase 4 调用 `paper-compile`，Phase 5 调用 `auto-paper-improvement-loop`，Phase 4.5／4.7／5.5／5.6／5.8 分别调用 `proof-checker`、`paper-claim-audit`、`kill-argument`、`citation-audit`；Phase 5.9／6.0 调用 `integrity-forensics` 与 `verify_paper_audits.sh`。本仓只组合已交付的 `paper-plan`（#19）、`academic-plotting`（#21）、`paper-drafting`（#20）、`paper-compile`（#22）、`paper-claim-audit`／`claim-stress-test`（#24）、`citation-audit`（#23）与 `proof-review`（#17）；`paper-compile-repair`、`apply-citation-fixes`、`proof-repair` 仍是独立 user-invoked 入口，W3 不启动它们。
+- **适配**：删除固定 `REVIEWER_MODEL`（`gpt-6-astra`／`gpt-5.6-sol`）与 Codex MCP 调用、`.aris/assurance.txt`、`verify_paper_audits.sh`、JSON gate、`PAPER_IMPROVEMENT_STATE.json`、trace／receipt、`AUTO_PROCEED` 自动推进、固定 ICLR 默认 venue 与页数、`extract_paper_style.py` 网络风格提取器与缓存、`integrity-forensics`、`overleaf-sync`、Feishu 通知、`COMPILE_REPORT.json` 与 machine verdict；改为授权门、当前官方 venue 规则现场核对、用户本地 style-ref、并列审查、独立 reviewer fresh、有界轮数与用户逐项批准、自然 Markdown 报告。
+- **跨研究改进循环归属**：上游 `auto-paper-improvement-loop` 的 review→fix→recompile 方法分两层归属——W3 第 7 节的授权 revision 是本 Workflow 的阶段、在本次写入范围与轮数内实际改稿复编译；跨研究有界改进循环（票 #28）是独立 user-invoked 顶层 Workflow。W3 不复制其入口、不自动启动它、也不把 revision 伪装成只读的 model-invoked discipline。
+- **未采用 ARIS `paper-write`**：完整阅读后发现其引用规则署名来自 `Imbad0202/academic-research-skills`，该第三方许可未核清（参见「已采用的正文起草能力」），正文起草改用本仓已交付的 `paper-drafting`（#20，Orchestra 来源）。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；原始完整 notice 共置于 `LICENSE` 并随 Skill 安装。新增组合映射与报告模板是 W3 方法的局部适配，运行不依赖本来源文档。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。

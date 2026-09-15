@@ -1,0 +1,5 @@
+interface:
+  display_name: "Paper Writing"
+  short_description: "完整 W3：规划、起草、图表、编译、审查与授权修订"
+policy:
+  allow_implicit_invocation: false
