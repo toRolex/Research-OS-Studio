@@ -257,6 +257,18 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **排除**：固定 provider/MCP、模型与线程工具、`.aris`、JSON/state/hash/verifier、wiki 自动写入、默认 HTML/PDF 渲染与跨 Workflow 自动推进；论文调用者中的 Orchestra-adapted、sciwrite、Anti-Autoresearch 及第三方模板/论文正文仅作关系核对，不复制。本次不改变这些其他票的流程。
 - **许可**：上述 checker 方法按 MIT 改编，`Copyright (c) 2026 wanshuiyin` 与完整 MIT notice 分别随两个 Skill 的 `LICENSE` 发行；新增共置 references/templates 为本次局部拆分适配，安装后无需本仓 runtime 或本机上游目录。过程映射和验证笔记不进入产品。
 
+## 已采用的正文起草能力
+
+`skills/writing-cycle/paper-drafting/`：从现成计划及原始 Claims、Evidence、结果起草正文的 model-invoked 局部能力，支持用户点名 standalone 与授权内 composed；不取代 `paper-writing` 总 Workflow 或领域专用 ML／Systems 写作入口。
+
+- **来源**：Orchestra Research / Claude AI Research Skills Contributors，固定 revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`，`20-ml-paper-writing/ml-paper-writing/SKILL.md` 与其 `references/{writing-guide,citation-workflow,checklists,reviewer-guidelines,sources}.md`。2026-09-13 经官方 GitHub 固定树／归档重新核对并完整阅读正文与五项资源；此日期不是最新 HEAD 声明。
+- **采用与保真**：从独立 ML 写作 Skill 拆出逐节 drafting，保留原始材料探索、贡献确认、完整章节方法、What／Why／So What、五部分摘要、引言结构、七项读者预期原则及正反例、微观改写、术语、数学写作和 caption 方法。`writing-guide.md` 以完整搬运后局部适配为基础，仅去除重复、无依据阅读比例、可能被误当事实的科研样例和越界执行内容；作者检查表承接研究报告主题及质量／清晰／意义／原创性四维。
+- **适配**：引用保留 Search → Verify → Retrieve → Validate → Add 的完整决策与故障分支，取消 Python citation manager、provider/MCP 和安装指令；以原文定位与范围判断替代关键词命中，禁止 fallback 虚构元数据。模板方法保留完整依赖检查、逐节替换、符号和源文件一致性，但编译、绘图、环境安装、转投、投稿不属于 drafting。旧版页数、匿名和披露规则改为运行时核对当前官方 edition／track／stage；与用户模板冲突时询问。
+- **共置资产排除**：完整核读上游 `templates/` 45 文件的内容：41 个文本文件全文（相同 blob 去重），三份示例 PDF 的全文文本共 19 页，另一个统计图 PDF 视觉读取 1 页；示例 PDF 未做逐页视觉排版验收。不分发整个目录（包括 README、格式说明、TeX、BibTeX、数学宏、style、PDF、Makefile）。它们是独立 LaTeX 分支，不是 Markdown drafting 依赖。模板存在 LPPL bibliography styles、LPPL fancyhdr/natbib、未核清再分发授权的 algorithm/algorithmic 等第三方资产；ICLR/COLM `natbib.sty` 还要求随原始 `natbib.dtx` 分发，该固定树未含此文件。根 MIT 不覆盖这些条件。AAAI 引用的两个示例图片在树中缺失；NeurIPS 是 community template，Makefile 含下载更新及删除 PDF 的动作，均未搬运或执行。
+- **调用核对**：上游 `.claude-plugin/marketplace.json` 注册嵌套 `ml-paper-writing`；`0-autoresearch-skill/SKILL.md` 研究结束后实际指向该写作能力；Systems／talks／plotting 正文有相关转介。这里的局部拆分是本仓适配，不声称上游原生存在 `paper-drafting`，不继承 autoresearch 的自动写作调用。所有必要方法资源随 Skill 共置，无模板目录、兄弟 Skill 或中央文档运行依赖。
+- **未采用 ARIS**：完整阅读 `paper-write`、`paper-writing` 后发现前者明确署名引用规则来自 `Imbad0202/academic-research-skills`；2026-09-13 所见该第三方 HEAD `91fc74d37e90c879b6a2376e244f4e26fd59cceb` 为 CC-BY-NC-4.0。实际被采用的历史版本、贡献边界及额外授权未核清，因此不复制 ARIS `paper-write` 正文或资源。不能据此断言上游侵权，也不能仅删除署名段就认定剩余正文全部可按 MIT 搬运。
+- **许可与审核**：本次复制限独立 Orchestra drafting 表达和所列方法资源；完整 `Copyright (c) 2025 Claude AI Research Skills Contributors` MIT notice 随包 `LICENSE` 发行，方法出处保留在共置 `references/sources.md`。`writing-for-agents`／`SKILL-MECHANICS` 全项静态机制审核通过后修剪重复所有格示例与重复检查表，保留唯一检查表指针；不把该审核或 toy 模型场景当真实科研验收。
+
 ## 已解决的 revision／路径矛盾
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
