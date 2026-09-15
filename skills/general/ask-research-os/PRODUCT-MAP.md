@@ -10,7 +10,7 @@
 - **user-invoked（U）**：人类显式选择的 Workflow／独立入口，互不自动启动。
 - **model-invoked（M）**：当前已授权职责中的内部能力，也可由用户点名 standalone；composed 时贡献父报告。M 不等于只读，生成、绘图等写入仍受各自边界约束。Router 本身不调用它们。
 
-状态快照：本票交付时，General 的 `setup-research-os`、`ask-research-os`，Idea Cycle 的 `idea-discovery`、`research-lit`、`idea-generation`、`creative-thinking-for-research`、`novelty-check`、`idea-review`、`idea-refinement`，Validation 计算／实证路径的 `experiment-plan`、`experiment-bridge` 与其真实组合的 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`、`analyze-results`、`experiment-audit`，以及 Writing Cycle 的 `paper-plan`、`paper-drafting`、`academic-plotting`、`paper-compile`、`paper-compile-repair`、`citation-audit`、`apply-citation-fixes`、`paper-claim-audit`、`claim-stress-test` 与总 Workflow `paper-writing` 已有正式 Skill 正文。此表是发行说明，不是运行时状态数据库；入口交付、改名或角色变更时维护者同步更新，使用时以可读取的真实安装正文核实关键行为。
+状态快照：本票交付时，General 的 `setup-research-os`、`ask-research-os`，Idea Cycle 的 `idea-discovery`、`research-lit`、`idea-generation`、`creative-thinking-for-research`、`novelty-check`、`idea-review`、`idea-refinement`，Validation 计算／实证路径的 `experiment-plan`、`experiment-bridge` 与其真实组合的 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`、`analyze-results`、`experiment-audit`，数学／理论路径的 `formula-derivation`、`proof-writer`、`proof-review`、`proof-repair`、`proof-orchestrator`，以及 Writing Cycle 的 `paper-plan`、`paper-drafting`、`academic-plotting`、`paper-compile`、`paper-compile-repair`、`citation-audit`、`apply-citation-fixes`、`paper-claim-audit`、`claim-stress-test`、总 Workflow `paper-writing` 与 Systems 专业入口 `systems-paper-writing` 已有正式 Skill 正文。此表是发行说明，不是运行时状态数据库；入口交付、改名或角色变更时维护者同步更新，使用时以可读取的真实安装正文核实关键行为。
 
 ## 三条主流程
 
@@ -69,11 +69,11 @@
 
 | 入口／能力 | 角色／状态 | 选择依据与边界 |
 |---|---|---|
-| `formula-derivation` | U／计划（#16） | 澄清公式链、假设、近似与解释；生成职责，不降格为审计 |
-| `proof-writer` | U／计划（#16） | 固定命题的证明或明确 gaps；保留失败路线与教训，不把尝试当证明成功 |
-| `proof-review` | M／计划（#17） | 只读现成证明，直接报告错误／gaps；可用户点名，不改命题、证明或 LaTeX |
-| `proof-repair` | U／计划（#17） | 用户希望修复已知 gaps；明确 scope、写入范围、轮数及工具授权，命题／假设变化由用户决定 |
-| `proof-workflow` | U／计划（#18） | 单个复杂长期 obligation 的延续工作；其真实内部组合以后续正文为准，**不宣称它原生调用 `proof-writer`／`proof-review`** |
+| `formula-derivation` | U／已实现（#16） | 澄清公式链、假设、近似与解释；生成职责，不降格为审计 |
+| `proof-writer` | U／已实现（#16） | 固定命题的证明或明确 gaps；保留失败路线与教训，不把尝试当证明成功 |
+| `proof-review` | M／已实现（#17） | 只读现成证明，直接报告错误／gaps；可用户点名，不改命题、证明或 LaTeX |
+| `proof-repair` | U／已实现（#17） | 用户希望修复已知 gaps；明确 scope、写入范围、轮数及工具授权，命题／假设变化由用户决定 |
+| `proof-orchestrator`（规划名 `proof-workflow`） | U／已实现（#18） | 单个复杂长期 obligation 的延续工作；其真实内部组合以后续正文为准，**不宣称它原生调用 `proof-writer`／`proof-review`** |
 | Lean premise／lemma search、LSP、Mathlib 规范与 kernel／build 检查 | 专业内部方法／计划（#18），不是独立已安装 Skill | premise 搜索结果是候选，需读 signature；LSP 是快速反馈，kernel／build 才是形式化检查。无 Lean 继续普通推导／证明，形式化标未验证；不安装工具链或引入 Archon runtime |
 
 ## Writing Cycle：从材料或现成稿件开始
@@ -99,7 +99,7 @@ Claim、Citation、Proof（理论内容适用）、Stress 与独立评审是并�
 |---|---|---|
 | `paper-writing` | U／已实现（#25） | 通用完整 W3：plan、draft、figures、compile、适用 audits、独立评审与授权 revision；不是 drafting 薄壳；不自动启动其他 user-invoked Workflow |
 | `ml-paper-writing` | U／计划（#26） | ML 实验报告：seeds、error bars、compute、limitations 等专属方法；复用内部资产，不自动调用 user-invoked W3 |
-| `systems-paper-writing` | U／计划（#27） | Systems 的 design rationale、implementation、end-to-end、microbenchmark、scalability；不与 ML 合并、不自动启动通用 W3 |
+| `systems-paper-writing` | U／已实现（#27） | Systems 的 design rationale、implementation、end-to-end、microbenchmark／ablation、scalability；直接组合内部能力，不与 ML 合并、不自动启动通用 W3；缺扩展性等证据时记缺口而不补造 |
 | `paper-compile-repair` | U／已实现（#22） | 已知编译错误且希望改源码；显式确认范围后修复并复验，与 check-only 分离 |
 | `apply-citation-fixes` | U／已实现（#23） | 已有引用 findings 且希望替换／删除／修正文或 BibTeX；先展示拟修改范围并获授权，与 detect 分离 |
 | `research-improvement` | U／已实现（#28），跨流程可选 | 对方法、代码、全部结果、Claims、草稿、diff、历史 findings 做有界 review／repair／re-review；高权限可写入口，在明确 scope、写入范围、轮数、资源及副作用授权内补分析／改稿，补实验须另行授权并在运行数名额内；承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 方法，不是只读审计，不自动启动 experiment-bridge、paper-writing 或专项修复入口 |

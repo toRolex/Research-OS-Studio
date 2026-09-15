@@ -1,0 +1,5 @@
+interface:
+  display_name: "Systems Paper Writing"
+  short_description: "系统论文：design rationale／alternatives、implementation、end-to-end、microbenchmark／ablation、scalability"
+policy:
+  allow_implicit_invocation: false

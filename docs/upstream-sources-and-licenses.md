@@ -302,6 +302,18 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **未采用 ARIS `paper-write`**：完整阅读后发现其引用规则署名来自 `Imbad0202/academic-research-skills`，该第三方许可未核清（参见「已采用的正文起草能力」），正文起草改用本仓已交付的 `paper-drafting`（#20，Orchestra 来源）。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；原始完整 notice 共置于 `LICENSE` 并随 Skill 安装。新增组合映射与报告模板是 W3 方法的局部适配，运行不依赖本来源文档。
 
+## 已采用的 Systems 专业写作 Workflow
+
+`skills/writing-cycle/systems-paper-writing/` 是独立 user-invoked 的 Systems 专业写作入口：按系统论文专属结构完成规划、图表、起草、真实编译、并列适用审查、独立评审与授权修订，交付候选稿与审查报告后停止。它直接组合已交付的 model-invoked 能力，不调用通用 `paper-writing`（#25）或 ML 入口（#26），也不启动专项修复入口。
+
+- **2026-09-15 采用复核**：通过官方 GitHub API 重新核对下列两个固定 revision、目录树、完整正文与根 MIT 许可；采用固定版本，不声称最新 HEAD。
+- **Orchestra / Claude AI Research Skills Contributors，revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`（主要来源）**：`20-ml-paper-writing/systems-paper-writing/SKILL.md` 与全部五份 `references/{section-blueprints,writing-patterns,checklist,systems-conferences,reviewer-guidelines}.md` 已完整读取。该目录另含 `templates/{osdi2026,nsdi2027,asplos2027,sosp2026}/` venue LaTeX 资产，因含第三方模板许可需逐目录核对，本票**不复制**，与 `paper-plan` 的既有决定一致。采用：逐段蓝图（Abstract 5 句、S1–S7）、design alternatives 与 trade-off、implementation 克制原则、end-to-end／microbenchmark／ablation／scalability、四种写作模式、三处一致规则、page budget、reviewer 判据、常见质疑与 pre-submission checklist。
+- **ARIS / wanshuiyin，revision `0472e530251cdbd3364c33b110063c58f819edd7`（比较后合并）**：`skills/writing-systems-papers/SKILL.md`（该目录仅此文件，184 行）全文读取并与 Orchestra 逐节比较。其 page allocation、5 句摘要与 S1–S7 结构同 Orchestra 实质重复，按「择优／合并」处理，不另发行竞争入口；保留其 `microbenchmark` 评价位、四种 pattern 命名、3 句结论、六维自检与 Academic Integrity 纪律，融入共置资源。
+- **本仓发行单元**：`SKILL.md`、`references/{systems-writing-methods,evaluation-methods,venue-and-reviewer,checklist,composition-map}.md`、`templates/systems-paper-writing-report.md`、`agents/openai.yaml`（`allow_implicit_invocation: false`）。采用方法的逐节写作用局在 `systems-writing-methods.md`；评价面与缺口处理在 `evaluation-methods.md`；venue 与 reviewer 判据在 `venue-and-reviewer.md`；投稿前自检在 `checklist.md`；阶段—能力映射在 `composition-map.md`。
+- **适配与删除**：删除缓存的年度 deadline／页数／模板与 venue LaTeX 资产，改为现场核对当前官方 CFP；删除固定 `mcp__codex` 与 provider 绑定；把上游“Hand off to /paper-write”改为本 Workflow 内授权修订或用户显式转交；删除机器 verdict／state／receipt；`ml-paper-writing` 的 citation verification 由已交付的 `citation-audit` 承接。缺失 scalability／end-to-end 证据时记 `MISSING ... EVIDENCE` 缺口，不伪造、不外推、不自动补实验。
+- **许可**：`LICENSE-Orchestra.txt` 保存完整 MIT 与 `Copyright (c) 2025 Claude AI Research Skills Contributors`；`LICENSE-ARIS.txt` 保存完整 MIT 与 `Copyright (c) 2026 wanshuiyin`。两份 notice 随 Skill 发行；新增资源为两方法的局部适配，运行不依赖上游仓库、中央 runtime 或上游其他 Skill。
+- **验证边界**：实现期以合成场景与静态链接检查核对；未在用户真实 Systems 项目中运行，不构成真实科研验收，也不声称 venue 规则已核验（须用户现场核对当期 CFP）。
+
 ## 已采用的全研究工作有界改进循环
 
 `skills/writing-cycle/research-improvement/` 是跨流程的独立 user-invoked Workflow，对 Claims/草稿、方法与代码、原始结果、当前 diff 与历史 findings 做一次授权内的有界 review → repair → re-review；它是高权限**可写**入口，不是只读审计。2026-09-15 通过官方 GitHub API 重新解析固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`，读取两个上游目录的完整树（`skills/auto-review-loop/` 与 `skills/auto-paper-improvement-loop/` 各自仅有 `SKILL.md`，分别 1137、695 行）、两份完整正文与根 MIT 许可；采用固定版本，不声称为最新 HEAD。同日核对本地 ARIS checkout HEAD `df729a3`：模型名与少量句子不同，以固定 revision 为准，本地内容未混用于采用。
