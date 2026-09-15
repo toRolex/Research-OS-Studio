@@ -1,0 +1,3 @@
+{"_meta":true,"v":1,"id":"calm-owl","type":"session","createdAt":"2026-09-15T18:00:05.494Z","createdBy":"PureFalcon","sessionId":"01a0a639-d8cf-7059-a1c6-47170057703f"}
+{"ts":"2026-09-15T18:00:05.503Z","type":"join","agent":"PureFalcon","channel":"calm-owl"}
+{"ts":"2026-09-15T18:33:57.095Z","type":"edit","agent":"PureFalcon","target":"/tmp/handoff-c.md","channel":"calm-owl"}

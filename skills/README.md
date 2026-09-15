@@ -41,7 +41,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 
 不确定从哪里开始时，显式调用 `ask-research-os`；已知入口可直接点名，无需先 setup 或经过 Router。它接受方向、已有结果或稿件，只在对话中推荐并停止，不写研究材料、不启动推荐任务。
 
-自包含的[完整批准地图](general/ask-research-os/PRODUCT-MAP.md)区分三条主流程、独立 user-invoked 入口、model-invoked 能力及数学／Lean、ML／Systems 专业扩展，同时区分已实现、计划和宿主可用性。计划条目不是当前安装命令，文件安装成功也不代表宿主已加载。Idea Discovery 主入口与 Writing Cycle 的通用、Systems 专业入口已交付；完整 Validation 主入口仍待后续票交付。
+自包含的[完整批准地图](general/ask-research-os/PRODUCT-MAP.md)区分三条主流程、独立 user-invoked 入口、model-invoked 能力及数学／Lean、ML／Systems 专业扩展，同时区分已实现、计划和宿主可用性。计划条目不是当前安装命令，文件安装成功也不代表宿主已加载。Idea Discovery 主入口与 Writing Cycle 的通用、ML、Systems 专业入口已交付；完整 Validation 主入口仍待后续票交付。
 
 在可丢弃项目中可分别用“只有方向”“已有外部结果”“已有稿件”咨询；核对推荐理由、不强制前序流程、计划状态如实说明，以及项目零写入、零自动启动。实现阶段的受限合成模型场景不等于真实科研或宿主交互验收。
 
@@ -181,6 +181,19 @@ Skills CLI 1.5.26 的本票本地安装中，Claude Code / Codex 副本完整；
 
 以上是用户手工验收步骤，不是已完成真实科研验收的声明。宿主须保留 `resubmit-pipeline` 的显式调用策略；文件安装成功不等于宿主已加载或权限已强制执行。
 
+## ML 专业写作与人工验收
+
+`ml-paper-writing` 是独立的 user-invoked ML/AI 专业写作 Workflow：从现成 ML 研究材料（代码、结果、实验日志、配置、已有计划或稿件）完成规划、实验报告核对、图表、起草、真实编译、并列适用审查与授权修订，交付候选稿与报告后停止。它复用 `paper-plan`／`paper-drafting`／`academic-plotting`／`paper-compile`／`paper-claim-audit`／`citation-audit`／`claim-stress-test`／`proof-review` 这批内部资产，保留实验报告、seeds／runs、error bars、compute、limitations 的 ML 专属纪律，但**不自动调用**通用 W3 `paper-writing`，也不启动 `paper-compile-repair`、`apply-citation-fixes`、`rebuttal`、`resubmit-pipeline` 或 `research-improvement`。不分发任何会议模板、style 或示例 PDF；venue 规则以当前官方 edition 现场核对为准。
+
+在可丢弃项目副本中手工验收：
+
+1. **完整路径**：给一个含真实结果、日志、配置和代码的 ML 研究目录。显式调用并核对：规划 Claim—Evidence、实验报告核对（每次比较给出 runs／seeds 数量与不确定性方法、超参与选择、compute、Limitations、失败结果）、图表、真实编译、并列审查与独立评审及有界修订；最终得到候选稿与自然 Markdown 报告。
+2. **报告不完整场景**：拿掉部分 seeds、error bars 或 compute 记录。核对缺失处出现 `[SEED COUNT NEEDED]`／`[COMPUTE NEEDED]` 一类可见缺口，而不是默认值（如“3 seeds”“A100”）；相关 Claim 被收窄或交用户决定，**零实验执行**。
+3. **venue 与模板**：指定一个 venue 年份与 track；核对官方 author guide／checklist 的来源与访问日期、模板冲突的用户决定，以及未指定 venue 时不设默认会议、报告写“合规未核对”。
+4. **分工与越权**：核对 description 与 SKILL.md 第 12 节和 `paper-writing`／`systems-paper-writing`（计划 #27）清楚区分；全程未自动启动其他顶层 Workflow、未安装 LaTeX／GPU 环境、未投稿或发布；需要补实验的 Claim 停在未授权状态。
+
+以上是用户手工验收步骤，不是已完成真实科研验收的声明。宿主须保留 `ml-paper-writing` 的显式调用策略；文件安装成功不等于宿主已加载或权限已强制执行。
+
 ## 研究工作有界改进循环与人工验收
 
 `research-improvement` 由用户显式启动，在一次授权内对研究工作整体做有界 review → repair → re-review：直接读取 Claims/草稿、方法与代码、原始结果、当前 diff 与历史 findings，按批准范围修代码、补分析、改稿，并在另行授权与运行数名额内补实验；轮数、写入范围、资源与副作用上限固定，交付逐轮正文日志后停止。它承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 的方法，但不是只读审计，也不自动启动 `experiment-bridge`、`paper-writing` 或专项修复入口。
@@ -191,6 +204,6 @@ Skills CLI 1.5.26 的本票本地安装中，Claude Code / Codex 副本完整；
 2. **轮数/预算上限**：把轮数设为 1 且预算极小；核对达到上限后停止、报告剩余 findings，不自动续轮或扩预算。
 3. **未授权补实验**：给出一个必须补实验才能解决的 finding 且不授权实验；核对记为 unresolved/blocked、零运行、零外部副作用，并给出最小决策。
 4. **未解决 findings 与可写声明**：混合一个可修与一个不可修的 finding；核对照实列出已解决/未解决、实际写入的文件与验证，不把「未发现阻断问题」写成通过。
-5. **不越权**：给出需要完整新实验或重写的情形；核对只交回用户，不自动启动 `experiment-bridge`、`paper-writing`（计划 #25）、`paper-compile-repair`、`apply-citation-fixes` 或 `proof-repair`。
+5. **不越权**：给出需要完整新实验或重写的情形；核对只交回用户，不自动启动 `experiment-bridge`、`paper-writing`、`ml-paper-writing`、`paper-compile-repair`、`apply-citation-fixes` 或 `proof-repair`。
 
 宿主须保留 `research-improvement` 的显式调用策略；文件安装成功不等于宿主已加载。以上为手工验收步骤，不是已完成真实科研验收的声明。

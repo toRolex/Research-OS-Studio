@@ -18,4 +18,4 @@
 
 被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。审查能力之间并列按需，不由本 Workflow 自动串联成线性通过链。
 
-`paper-writing`（通用 W3，#25）与 `ml-paper-writing`（#26，计划）是并列的 user-invoked 顶层入口，本 Workflow 不调用它们，它们也不调用本 Workflow。`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement` 同样需要用户另行点名，本 Workflow 不启动它们。
+`paper-writing`（通用 W3，#25）与 `ml-paper-writing`（#26）是并列的 user-invoked 顶层入口，本 Workflow 不调用它们，它们也不调用本 Workflow。`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement` 同样需要用户另行点名，本 Workflow 不启动它们。

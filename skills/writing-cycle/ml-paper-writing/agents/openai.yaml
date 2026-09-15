@@ -1,0 +1,5 @@
+interface:
+  display_name: "ML Paper Writing"
+  short_description: "ML 专业写作：实验报告、seeds／error bars／compute／limitations 与 venue 要求"
+policy:
+  allow_implicit_invocation: false
