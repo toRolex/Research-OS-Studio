@@ -17,7 +17,7 @@
 2. 完整枚举所有待删除旧资产（代码、测试、Schema、Ports、Gates、Planning、展示文档）；
 3. 预先核实旧新同名 Skill 映射与发现范围，消除命名冲突与幽灵路径；
 4. 如实记录旧 CI 既有红项状态与切换次序，确保切换后不留永久红灯；
-5. 确立用户未提交内容核对机制与法��� Notice 保留原则；
+5. 确立用户未提交内容核对机制与法律 Notice 保留原则；
 6. 验证候选发行配置与清单可支持原子切换。
 
 **本票只做工程与清单准备，不实际打 tag、不发布 release、不自动 push、不在此提前删除旧工程（删除操作由 #36 原子执行）。**
@@ -72,7 +72,7 @@
 
 | 资产路径 | 包含内容 | 维护要求 |
 | :--- | :--- | :--- |
-| `skills/` | 39 个自包含 Skills（General: 2, Idea Cycle: 7, Validation Cycle: 14, Writing Cycle: 16） | 包含所有共置 `references/`, `templates/`, `agents/openai.yaml`, `LICENSE*`，保持 100% 相对���接可达 |
+| `skills/` | 39 个自包含 Skills（General: 2, Idea Cycle: 7, Validation Cycle: 14, Writing Cycle: 16） | 包含所有共置 `references/`, `templates/`, `agents/openai.yaml`, `LICENSE*`，保持 100% 相对链接可达 |
 | `docs/upstream-sources-and-licenses.md` | 集中记录所有上游来源（ARIS, Orchestra, Matt Pocock, Archon, EurekAgent 等）、Git commit hash、许可证及 attribution | 唯一法律与来源依据，持续维护 |
 | `docs/adr/0005-pure-agent-skills-product.md` | 记录纯 Agent Skills 重构决策的 ADR | 永久保留作为产品架构基准 |
 | `docs/agents/` | `domain.md`, `issue-tracker.md`, `triage-labels.md` | Agent 协作与 issue 处理规范 |
@@ -81,7 +81,7 @@
 | `.github/workflows/release.yml` | 轻量 Release 自动化 Workflow | main 分支唯一 CI/Release 流程 |
 | `package.json`, `package-lock.json`, `.changeset/` | Node.js 与 Changesets 发行配置 | 保证纯 Skills 的版本发布与依赖锁定 |
 | `CLAUDE.md`, `AGENTS.md` | 仓库级 Agent 指令 | 保持纯 Skills 规范一致 |
-| `.gitignore` | 忽略 `node_modules/`, `.venv/`, `.claude/` 等本地与临时目录 | 规范仓库跟踪��界 |
+| `.gitignore` | 忽略 `node_modules/`, `.venv/`, `.claude/` 等本地与临时目录 | 规范仓库跟踪边界 |
 
 ---
 
@@ -94,7 +94,7 @@
 | `core/skills/setup-research-os` | `skills/general/setup-research-os` | User-invoked | 重构为 prompt-driven 初始化，删除工程 tracker 绑定 |
 | `core/skills/research-charter` / `research-gap` / `research-idea` / `research-literature` / `research-novelty` / `research-reflect` | `skills/idea-cycle/idea-discovery`<br>`skills/idea-cycle/research-lit`<br>`skills/idea-cycle/idea-generation`<br>`skills/idea-cycle/creative-thinking-for-research`<br>`skills/idea-cycle/novelty-check`<br>`skills/idea-cycle/idea-review`<br>`skills/idea-cycle/idea-refinement` | 1 User / 6 Model | 取代旧短契约壳，恢复 ARIS/Orchestra 主动文献检索、发散、查新与收敛方法 |
 | `core/skills/design-experiment` / `prepare-experiment` | `skills/validation-cycle/experiment-plan` | User-invoked | 独立规划 hypothesis, baseline, ablation 与预算 |
-| `core/skills/run-experiment` | `skills/validation-cycle/run-experiment`<br>`skills/validation-cycle/experiment-queue` | Model-invoked | 记录成功/失��/超时全量尝试，支持批量队列 |
+| `core/skills/run-experiment` | `skills/validation-cycle/run-experiment`<br>`skills/validation-cycle/experiment-queue` | Model-invoked | 记录成功/失败/超时全量尝试，支持批量队列 |
 | `core/skills/training-health-check` | `skills/validation-cycle/training-health-check` | Model-invoked | 只读健康诊断，建议停止而非越权 kill |
 | `core/skills/analyze-experiment` / `statistical-check` | `skills/validation-cycle/analyze-results` | Model-invoked | 审查不确定性、选择偏差与多重比较，合并去重 |
 | `core/skills/experiment-audit` | `skills/validation-cycle/experiment-audit` | Model-invoked | 独立审查 evaluator 代码与结果真实性 |
@@ -125,7 +125,7 @@
 ### 5.1 旧 CI（`acceptance.yml`）既有红项状态说明
 旧 CI 文件 `.github/workflows/acceptance.yml` 运行 Python 3.12 / UV 驱动的 `tests/e2e/run_suite.py` 与 `tests/e2e/check_release.py`。
 - **历史事实**：自 ADR 0005 确立“纯 Agent Skills 取代专用 Research OS runtime”以来，旧 Python 测试与 Release Gates 已被明确废弃，`check_release.py` 中的门禁处于预期红灯状态（Expected Red）。
-- **非新回归**：该��灯是旧架构被取代的既有状态，不是本次 Skills 迁移产生的回归。
+- **非新回归**：该红灯是旧架构被取代的既有状态，不是本次 Skills 迁移产生的回归。
 - **切换后终态**：在 #36 删除 `acceptance.yml`、旧 `tests/` 和 Python 依赖后，仓库不再执行旧 gate，主分支只保留 `.github/workflows/release.yml`，消除一切永久红灯。
 
 ### 5.2 切换执行次序
