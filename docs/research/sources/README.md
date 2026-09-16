@@ -21,7 +21,7 @@ Issue #24 指定的四份分析材料已从原工作树的 `analysis/` 目录恢
 
 ## 状态真源说明
 
-GitHub Issues 及其原生 parent/blocked-by/status 关系是当前真源。`planning/research-os-wayfinder/MAP.md`、`tracker.json`、tickets 与 resolutions 是早期 local-markdown 历史快照。当前现场存在 T10 `closed` 但 `blocked_by: [T07]` 且 T07 仍 `open` 的矛盾；不改写历史快照，也不将它用于当前阻塞判断。后续实施以 GitHub Issue 状态为准。
+GitHub Issues 及其原生 parent/blocked-by/status 关系是当前真源。本归档形成时的 `planning/research-os-wayfinder/`（MAP.md、tracker.json、tickets、resolutions）是早期 local-markdown 历史快照，已在 #36 原子切换中随旧 Wayfinder 规划系统一并删除，仅存于 Git 历史。当前现场存在 T10 `closed` 但 `blocked_by: [T07]` 且 T07 仍 `open` 的矛盾；不改写历史快照，也不将它用于当前阻塞判断。后续实施以 GitHub Issue 状态为准。
 
 ## Port hard gate
 

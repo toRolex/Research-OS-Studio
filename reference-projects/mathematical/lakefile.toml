@@ -1,7 +1,0 @@
-name = "research_os_mathematical_fixture"
-version = "0.1.0"
-defaultTargets = ["ResearchOSMath"]
-
-[[lean_lib]]
-name = "ResearchOSMath"
-roots = ["ResearchOSMath.Challenge", "ResearchOSMath.Solution"]
