@@ -42,3 +42,7 @@ description: "独立评审现成研究候选：发现逻辑、证据、贡献与
 裁决是建议：**READY FOR USER DECISION**（当前材料未见阻断，仍未科研验证）、**REVISE**（有可修复问题）、**RETHINK**（核心机制存在证据支持的根本问题）、**EVIDENCE GAP**（关键原文/证据缺失）。建议放弃必须给具体 prior work 或明确反证，分数、相似感和生成者排名不够。正文生成完成、模型共识和评审分数均不是科学有效性或用户接受。
 
 完成条件：报告自包含、findings 有定位、所有未解决项和未执行验证清楚可见。只给用户下一步选择，不自动实验、改稿、写论文、发布或启动另一 Workflow。
+
+## 来源
+
+改编自 wanshuiyin / ARIS `skills/research-review/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`（MIT）。保留“独立评审直接读原始材料、生成者自查不能冒充独立裁决”的核心分离。删除 provider/runtime 绑定与自动跨流程推进。MIT 全文见 [LICENSE](LICENSE)。来源与采用细节记录于仓库集中来源文档，该文档是维护信息，不是执行依赖。

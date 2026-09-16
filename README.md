@@ -27,6 +27,8 @@ npx skills@latest add toRolex/Research-OS-Studio --list
 npx skills@latest add toRolex/Research-OS-Studio --all
 ```
 
+> **提示**：npx 安装读取的是 GitHub 远端仓库已发布的内容——本地未推送的改动不会被安装到。验证本地分支可用绝对路径替代（如 `npx skills@latest add /path/to/Research-OS-Studio --all`）。完整宿主兼容性说明见 [Skills 目录总览](skills/README.md)。
+
 > **限定宿主安装**：若仅需面向特定 Agent 宿主（如 Claude Code 或 Codex），可使用 `--agent` 参数：
 > ```bash
 > npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code --agent codex --yes
@@ -116,7 +118,7 @@ Research OS Studio 包含 39 个自包含 Skill，分为 General、Idea Cycle、
       ↓
 /idea-discovery
   ├─ Phase 1: research-lit（主动检索文献、标注已核实/未核实来源）
-  ├─ Phase 2: idea-generation & creative-thinking（多视角发散、认知转换、筛选）
+  ├─ Phase 2: idea-generation & creative-thinking-for-research（多视角发散、认知转换、筛选）
   ├─ Phase 3: novelty-check（检索 closest prior work，精准查新）
   ├─ Phase 4: idea-review（独立 reviewer 直接读文献与候选，指出漏洞）
   └─ Phase 4.5: idea-refinement（固定 Problem Anchor，收敛出最小可行与前沿方案）

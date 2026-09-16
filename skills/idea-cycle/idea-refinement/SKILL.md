@@ -56,3 +56,7 @@ description: "固定 Problem Anchor 细化或改进已有研究候选：把模�
 交付干净的当前最佳 Proposal、逐轮修订报告、完整原始 review、剩余弱点和用户决定。报告链接最终 Proposal，不再复制一份同义最终全文。冲突文件或写入权限缺失时返回内容与问题，不扩大写入范围。
 
 完成条件：两条路线的取舍、约束遵守情况、改进理由和未验证假设明确；未达到可采用状态也交付最佳现有版本并准确标记。所有验证仅为 **1–3 个 Claim 驱动草图**，说明 baseline/ablation、metric、预期方向、反证含义及估算，不实现、不启动 pilot、实验、证明工具或后续主流程。是否另行验证完全交用户决定。
+
+## 来源
+
+改编自 wanshuiyin / ARIS `skills/research-refine/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`（MIT）。保留“固定 Problem Anchor 修订、生成与评价角色分离”的核心分离。删除 provider/runtime 绑定与自动跨流程推进。MIT 全文见 [LICENSE](LICENSE)。来源与采用细节记录于仓库集中来源文档，该文档是维护信息，不是执行依赖。
