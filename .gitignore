@@ -26,8 +26,9 @@ __pycache__/
 /.pytest_cache/
 /.ruff_cache/
 
-# AFK 编排运行现场与派发记录
+# AFK 编排与 agent 运行现场
 /.afk/
+/.pi/
 /docs/afk-dispatch.json
 
 # 一次性发布验收记录
