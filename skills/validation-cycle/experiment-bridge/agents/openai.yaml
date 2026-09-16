@@ -1,0 +1,5 @@
+interface:
+  display_name: "Experiment Bridge"
+  short_description: "已批准计划的一次授权实现、执行、监控与分析审计"
+policy:
+  allow_implicit_invocation: false

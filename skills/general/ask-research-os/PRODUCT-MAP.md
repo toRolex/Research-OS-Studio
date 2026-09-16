@@ -10,7 +10,7 @@
 - **user-invoked（U）**：人类显式选择的 Workflow／独立入口，互不自动启动。
 - **model-invoked（M）**：当前已授权职责中的内部能力，也可由用户点名 standalone；composed 时贡献父报告。M 不等于只读，生成、绘图等写入仍受各自边界约束。Router 本身不调用它们。
 
-状态快照：本票交付时，General 的 `setup-research-os`、`ask-research-os`，Idea Cycle 的 `idea-discovery`、`research-lit`、`idea-generation`、`creative-thinking-for-research`、`novelty-check`、`idea-review`、`idea-refinement`，Validation 计算／实证路径的 `experiment-plan`、`experiment-bridge` 与其真实组合的 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`、`analyze-results`、`experiment-audit`，数学／理论路径的 `formula-derivation`、`proof-writer`、`proof-review`、`proof-repair`、`proof-orchestrator`，以及 Writing Cycle 的 `paper-plan`、`paper-drafting`、`academic-plotting`、`paper-compile`、`paper-compile-repair`、`citation-audit`、`apply-citation-fixes`、`paper-claim-audit`、`claim-stress-test`、总 Workflow `paper-writing`、ML 专业入口 `ml-paper-writing` 与 Systems 专业入口 `systems-paper-writing` 已有正式 Skill 正文。此表是发行说明，不是运行时状态数据库；入口交付、改名或角色变更时维护者同步更新，使用时以可读取的真实安装正文核实关键行为。
+状态快照：本票交付时，General 的 `setup-research-os`、`ask-research-os`，Idea Cycle 的 `idea-discovery`、`research-lit`、`idea-generation`、`creative-thinking-for-research`、`novelty-check`、`idea-review`、`idea-refinement`，Validation 计算／实证路径的 `experiment-plan`、`experiment-bridge`、`result-to-claim` 与其组合调用的 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`、`analyze-results`、`experiment-audit`，数学／理论路径的 `formula-derivation`、`proof-writer`、`proof-review`、`proof-repair`、`proof-orchestrator`，以及 Writing Cycle 的 `paper-plan`、`paper-drafting`、`academic-plotting`、`paper-compile`、`paper-compile-repair`、`citation-audit`、`apply-citation-fixes`、`paper-claim-audit`、`claim-stress-test`、总 Workflow `paper-writing`、ML 专业入口 `ml-paper-writing`、Systems 专业入口 `systems-paper-writing`、`research-improvement`、`rebuttal`、`resubmit-pipeline` 与 `paper-talk` 全部 39 个 Skill 均已有正式正文与自包含共置资源。此表是发行说明，不是运行时状态数据库；入口交付、改名或角色变更时维护者同步更新，使用时以可读取的真实安装正文核实关键行为。
 
 ## 三条主流程
 
@@ -51,7 +51,7 @@
 |---|---|---|
 | `experiment-plan` | U／已实现（#9） | 已有研究问题尚缺可执行计划；明确 hypothesis、baseline、metric、ablation、固定评价面、修改范围、预算和失败含义，只产计划 |
 | `experiment-bridge` | U／已实现（#15） | 已有获批计划，需一次授权完成实现、code review、sanity、正式／批量运行、监控、收集、分析审计与授权 tracker 更新；不要求先用本产品规划。消融仅建议，不自行扩预算／下一轮；不启动独立 `result-to-claim` |
-| `result-to-claim`（Results-to-Claims） | U／计划（#14） | 已有外部或本产品结果，需判断能说什么；区分 Evidence 存在、统计可信度、支持程度与 Claim scope，将部分支持缩窄为可辩护主张。最终采用由用户决定，产出候选 Claim 就停 |
+| `result-to-claim`（Results-to-Claims） | U／已实现（#14） | 已有外部或本产品结果，需判断能说什么；区分 Evidence 存在、统计可信度、支持程度与 Claim scope，将部分支持缩窄为可辩护主张。最终采用由用户决定，产出候选 Claim 就停 |
 
 ### 内部能力与局部点名入口
 
@@ -69,12 +69,12 @@
 
 | 入口／能力 | 角色／状态 | 选择依据与边界 |
 |---|---|---|
-| `formula-derivation` | U／已实现（#16） | 澄清公式链、假设、近似与解释；生成职责，不降格为审计 |
-| `proof-writer` | U／已实现（#16） | 固定命题的证明或明确 gaps；保留失败路线与教训，不把尝试当证明成功 |
+| `formula-derivation` | M／已实现（#16） | 澄清公式链、假设、近似与解释；生成职责，不降格为审计 |
+| `proof-writer` | M／已实现（#16） | 固定命题的证明或明确 gaps；保留失败路线与教训，不把尝试当证明成功 |
 | `proof-review` | M／已实现（#17） | 只读现成证明，直接报告错误／gaps；可用户点名，不改命题、证明或 LaTeX |
 | `proof-repair` | U／已实现（#17） | 用户希望修复已知 gaps；明确 scope、写入范围、轮数及工具授权，命题／假设变化由用户决定 |
 | `proof-orchestrator`（规划名 `proof-workflow`） | U／已实现（#18） | 单个复杂长期 obligation 的延续工作；其真实内部组合以后续正文为准，**不宣称它原生调用 `proof-writer`／`proof-review`** |
-| Lean premise／lemma search、LSP、Mathlib 规范与 kernel／build 检查 | 专业内部方法／计划（#18），不是独立已安装 Skill | premise 搜索结果是候选，需读 signature；LSP 是快速反馈，kernel／build 才是形式化检查。无 Lean 继续普通推导／证明，形式化标未验证；不安装工具链或引入 Archon runtime |
+| Lean premise／lemma search、LSP、Mathlib 规范与 kernel／build 检查 | 专业内部方法（#18，参见 proof-orchestrator 共置 references/lean-methods.md），不是独立已安装 Skill | premise 搜索结果是候选，需读 signature；LSP 是快速反馈，kernel／build 才是形式化检查。无 Lean 继续普通推导／证明，形式化标未验证；不安装工具链或引入 Archon runtime |
 
 ## Writing Cycle：从材料或现成稿件开始
 
@@ -103,16 +103,16 @@ Claim、Citation、Proof（理论内容适用）、Stress 与独立评审是并�
 | `paper-compile-repair` | U／已实现（#22） | 已知编译错误且希望改源码；显式确认范围后修复并复验，与 check-only 分离 |
 | `apply-citation-fixes` | U／已实现（#23） | 已有引用 findings 且希望替换／删除／修正文或 BibTeX；先展示拟修改范围并获授权，与 detect 分离 |
 | `research-improvement` | U／已实现（#28），跨流程可选 | 对方法、代码、全部结果、Claims、草稿、diff、历史 findings 做有界 review／repair／re-review；高权限可写入口，在明确 scope、写入范围、轮数、资源及副作用授权内补分析／改稿，补实验须另行授权并在运行数名额内；承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 方法，不是只读审计，不自动启动 experiment-bridge、paper-writing 或专项修复入口 |
-| `rebuttal` | U／计划（#29） | 现成审稿意见与论文证据；原子化 concern、映射证据、区分可答／待澄清／需补工作；补实验另行授权 |
-| `resubmit-pipeline` | U／计划（#30） | 现成稿件换 venue；新目录适配并保留旧投稿，使用内部检查；不要求先运行本产品写作流程 |
-| Conference Talk（最终名称待定） | U／计划（#31） | 已完成论文到 slides、notes、script；合并或择优 ARIS paper-talk 与 Orchestra presenting-conference-talks，只保留一个入口；审查演讲产物，不是重复审计原论文 |
+| `rebuttal` | U／已实现（#29） | 现成审稿意见与论文证据；原子化 concern、映射证据、区分可答／待澄清／需补工作；补实验另行授权 |
+| `resubmit-pipeline` | U／已实现（#30） | 现成稿件换 venue；新目录适配并保留旧投稿，使用内部检查；不要求先运行本产品写作流程 |
+| `paper-talk`（Conference Talk） | U／已实现（#31） | 已完成论文到 slides、notes、script；合并 ARIS 与 Orchestra 独有方法，只保留一个入口；审查演讲产物，不是重复审计原论文 |
 
 指定 venue 时，对应写作入口应使用最新官方 guidelines／模板，用户模板冲突交给用户决定。Router 只说明此要求，不替用户联网下载模板、编译、改稿或投稿。Rebuttal、Resubmit、Talk 彼此独立；Workflow 完成不等于论文被接受。
 
 ## 按现有材料选切入点
 
 - **只有方向**：想形成完整 Proposal，推荐已实现的 `idea-discovery`；也可先点名候选生成／创意思考做局部构思，或对已选候选单独查新／评审／收敛，而非对空方向捏造 novelty 结论。
-- **已有结果**：先看用户要解释不确定性、审计真实性，还是形成候选 Claim；分别推荐对应内部能力或 `result-to-claim`，均清楚标计划。仅想从结果衍生新方向时才考虑已实现的 `idea-generation`；不因完整 Validation 未实现而强迫重新找 Idea。
-- **已有稿件**：按需要选引用／Claim／Proof／Stress 检查、局部修复、通用／专业写作或独立后续入口；都标明当前计划状态，不自动起草新稿、运行实验或初始化目录。
+- **已有结果**：先看用户要解释不确定性、审计真实性，还是形成候选 Claim；分别推荐对应内部能力或已实现的 `result-to-claim`。仅想从结果衍生新方向时才考虑已实现的 `idea-generation`；不强迫重新找 Idea。
+- **已有稿件**：按需要选引用／Claim／Proof／Stress 检查、局部修复、通用／专业写作或独立后续入口（`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement`）；不自动起草新稿、运行实验或初始化目录。
 
 本地图覆盖批准设计，不承诺未交付入口可用。安装之外的用户自定义或其他作者 Skill 不自动纳入本产品；用户明确询问时，可依据实际可读正文说明差异并标为外部能力，不冒充 Research OS 实现。

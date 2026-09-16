@@ -325,7 +325,7 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **验证边界**：实现期以合成场景与静态链接检查核对；未在用户真实 Systems 项目中运行，不构成真实科研验收，也不声称 venue 规则已核验（须用户现场核对当期 CFP）。
 ## 已采用的 ML 专业写作 Workflow
 
-`skills/writing-cycle/ml-paper-writing/` 是 ML/AI 专业写作的独立 user-invoked Workflow（票 #26），与通用 `paper-writing`（#25）和计划中的 `systems-paper-writing`（#27）并列而不互相启动。2026-09-15 通过官方 GitHub API 重新解析固定 revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`，读取完整目录树与完整正文，并核对仓库根 `LICENSE`；该 revision 解析成功且 GitHub 识别为 MIT，采用固定版本，不声称为最新 HEAD。
+`skills/writing-cycle/ml-paper-writing/` 是 ML/AI 专业写作的独立 user-invoked Workflow（票 #26），与通用 `paper-writing`（#25）和 `systems-paper-writing`（#27）并列而不互相启动。2026-09-15 通过官方 GitHub API 重新解析固定 revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`，读取完整目录树与完整正文，并核对仓库根 `LICENSE`；该 revision 解析成功且 GitHub 识别为 MIT，采用固定版本，不声称为最新 HEAD。
 
 - **来源**：Orchestra Research / AI-Research-SKILLs，`20-ml-paper-writing/ml-paper-writing/`，revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`。共置 `references/` 含 `checklists.md`、`citation-workflow.md`、`reviewer-guidelines.md`、`sources.md`、`writing-guide.md`；`templates/` 含 45 个文件（6 个会议模板目录，含示例 PDF 与 TeX／style／bst）。完整读取 `SKILL.md`（982 行）、`references/checklists.md`（347 行）、`references/reviewer-guidelines.md`（348 行），并核读 `references/writing-guide.md`、`references/citation-workflow.md`、`references/sources.md` 以确认与已交付 `paper-drafting` 的拆分边界。
 - **采用（正文级）**：主动探索研究仓库并先交付完整候选草稿的协作姿态、What／Why／So What 叙事、五部分摘要与逐节结构；实验报告、统计报告、compute、复现、消融、失败结果与 Limitations 的完整要求；ML venue checklist（NeurIPS 16 项形态、ICML Broader Impact／reproducibility、ICLR LLM disclosure、ACL mandatory Limitations／responsible-NLP、通用投稿前清单）与 reviewer 四维／评分校准／常见质疑预防；引用核查、模板处理与作者自查经 `paper-drafting` 复用；并列适用审查与有界修订。

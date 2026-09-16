@@ -1,0 +1,5 @@
+interface:
+  display_name: "Apply Citation Fixes"
+  short_description: "展示引用修复精确 diff 并逐项授权应用与复验"
+policy:
+  allow_implicit_invocation: false

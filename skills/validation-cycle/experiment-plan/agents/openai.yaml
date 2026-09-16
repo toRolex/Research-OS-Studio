@@ -1,0 +1,5 @@
+interface:
+  display_name: "Experiment Plan"
+  short_description: "将研究问题转化为可授权执行的 claim-driven 实验计划"
+policy:
+  allow_implicit_invocation: false

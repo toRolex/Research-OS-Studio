@@ -72,7 +72,7 @@ argument-hint: "[研究材料范围：Claims/草稿/方法代码/原始结果/�
 
 **验证**：正文类修改用 [paper-compile](../paper-compile/SKILL.md) 做 check-only 复核真实 build，或使用项目已有的构建/测试；代码类修改运行项目已有的测试或最小可复现检查；分析类修改按 [轮次方法](references/loop-methods.md) 重新对账数值。记录实际命令、退出码与产物位置，不把「过滤日志后无输出」当成功。证明结构变化按需做重述回归。
 
-本 Workflow 自行执行修复，不自动启动任何 user-invoked 顶层入口（`experiment-bridge`、`paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`result-to-claim`、`rebuttal`、`resubmit-pipeline`、`paper-talk` 等；其中 `paper-writing`（计划 #25）与 `result-to-claim`（计划 #14）尚未交付，其余为已交付入口）；需要它们时把精确问题与范围交回用户另行点名。
+本 Workflow 自行执行修复，不自动启动任何 user-invoked 顶层入口（`experiment-bridge`、`paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`result-to-claim`、`rebuttal`、`resubmit-pipeline`、`paper-talk` 等）；需要它们时把精确问题与范围交回用户另行点名。
 
 **完成条件**：每条已修复项有位置、原文与验证证据（预算中途耗尽而标 `unverified` 的须在报告中写明）；被拒绝或未修复项有理由；写入未越出确认范围；验证结果如实记录。
 

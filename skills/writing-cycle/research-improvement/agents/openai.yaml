@@ -1,0 +1,5 @@
+interface:
+  display_name: "Research Improvement"
+  short_description: "在显式授权的有界循环内对研究工作整体执行 review、repair 与 re-review"
+policy:
+  allow_implicit_invocation: false

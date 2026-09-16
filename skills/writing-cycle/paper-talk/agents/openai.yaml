@@ -1,0 +1,5 @@
+interface:
+  display_name: "Paper Talk"
+  short_description: "从现成论文生成并审查 slides、notes 和讲稿"
+policy:
+  allow_implicit_invocation: false

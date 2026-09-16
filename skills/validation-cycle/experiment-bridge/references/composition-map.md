@@ -11,4 +11,4 @@
 | 结果分析 | [analyze-results](../../analyze-results/SKILL.md)（已有完整结果后） | 描述统计、不确定性、选择偏差与多重比较检查 | 不补实验，不改代码，不启动下游 |
 | 完整性审计 | [experiment-audit](../../experiment-audit/SKILL.md)（默认只输出发现） | protocol conformance 与独立完整性审查、发现分级 | 不修代码，不重跑实验 |
 
-被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。`result-to-claim`（计划 #14）是独立 user-invoked 入口，本 Workflow 不启动它；需要判断能说什么时由用户另行显式调用。
+被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。`result-to-claim`（#14）是独立 user-invoked 入口，本 Workflow 不启动它；需要判断能说什么时由用户另行显式调用。

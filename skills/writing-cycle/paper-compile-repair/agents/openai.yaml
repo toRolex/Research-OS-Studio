@@ -1,0 +1,5 @@
+interface:
+  display_name: "Paper Compile Repair"
+  short_description: "在确认拟 diff 与预算后修复 LaTeX 编译问题并核验 PDF"
+policy:
+  allow_implicit_invocation: false

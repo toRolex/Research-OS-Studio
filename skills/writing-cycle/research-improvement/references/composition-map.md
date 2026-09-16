@@ -23,9 +23,10 @@
 以下均为 user-invoked，只能由用户另行显式调用；`research-improvement` 不自动启动、不代为授权、不据其名称暗示已执行：
 
 - `experiment-bridge`、`experiment-plan`（完整实验计划与执行宏流程）
-- `paper-writing`（完整写作总流程，当前为计划入口 #25）
+- `paper-writing`（通用完整写作总流程 #25）
+- `ml-paper-writing`（ML 专业写作流程 #26）、`systems-paper-writing`（Systems 专业写作流程 #27）
 - `paper-compile-repair`、`apply-citation-fixes`、`proof-repair`（专项修复入口）
-- `result-to-claim`（计划 #14，尚未交付）、`rebuttal`、`resubmit-pipeline`、`paper-talk`
+- `result-to-claim`（#14）、`rebuttal`（#29）、`resubmit-pipeline`（#30）、`paper-talk`（#31）
 - `proof-orchestrator`、`setup-research-os`、`ask-research-os`
 
 需要上述能力时，把精确问题、当前材料定位与建议范围交回用户，由用户另行点名。

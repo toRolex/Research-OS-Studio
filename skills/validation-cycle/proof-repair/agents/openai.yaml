@@ -1,0 +1,5 @@
+interface:
+  display_name: "Proof Repair"
+  short_description: "在用户确认的命题与写入范围内有界修复证明"
+policy:
+  allow_implicit_invocation: false
