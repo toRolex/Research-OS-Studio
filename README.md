@@ -1,206 +1,176 @@
 # Research OS Studio
 
-Research OS Studio 是一套安装到现有科研项目中的 Agent Skills：把研究拆成可追踪的步骤，让 AI 生成候选结果，但把输入、验收和是否继续的决定留给用户。
+遵循 Matt Pocock Skills 理念的纯 Agent Skills 整合套件：直接安装到科研项目中，把研究拆解为人类主导、边界明确的科研工作流，由 AI 在单次授权范围内生成候选方案、代码与草稿，而将研究判断、关键输入、结果验收与推进决策始终保留在用户手中。
 
-## 已交付 Skills：Writing Cycle
+## 核心设计原则
 
-| Skill | 调用方式 | 输入与产物 |
-|---|---|---|
-| [academic-plotting](skills/writing-cycle/academic-plotting/SKILL.md) | 默认 model-invoked；支持用户点名 standalone，也可在当前授权职责内 composed | 从真实数据生成定量图／比较表，从方法说明制作明确标注的示意图；保留可编辑源、数据对应、复现命令与图注。仅用已有环境，缺工具停止；不自动启动写作总流程。 |
+- **纯 Agent Skills**：Skills 即产品本体。无需克隆产品源码、无需构建 Python wheel、无需 UV 运行环境、无需自建专有安装器或 CLI。
+- **三大科研主流程**：涵盖科研全生命周期的核心流程：
+  1. **Idea Discovery（构思与查新）**：从研究方向出发，主动检索文献、多视角生成候选、严格查新、独立评审与收敛，交付清晰 Proposal 后停止。
+  2. **Validation（实验与理论验证）**：计算/实证路径实现有界实验计划、受限执行、健康监控、结果分析、独立审计与 Claim 约束；数学/理论路径完成公式推导、证明起草、只读审查、显式修复与长期证明。
+  3. **Paper Writing and Improvement（论文写作、打磨与衍生）**：从原始研究证据起草正文、制作学术图表、真实编译、并列多维审计（Claim、Citation、Proof、Stress）、独立整篇评审、授权改进循环、Rebuttal 答辩、转投适配与学术演讲。
+- **用户绝对控制与零自动跨流程推进**：顶层 Workflow 之间绝不自动跨阶段推进；内部能力严格限定在单次授权与文件写入范围内；计算与环境所有权始终归用户所有。
+- **Markdown-First**：成果以自然 Markdown、标准 LaTeX、原生代码与数据格式交付，不强制统一 JSON 包装或 SHA-256 摘要协议。
 
-图表 Skill 自带方法资源、模板和许可证，可独立使用。实现期真实绘图场景、静态检查或模型复核均不等于用户科研项目验收。
+---
 
-## 安装
+## 快速开始
 
-需要 Git 和 [uv](https://docs.astral.sh/uv/)。
-
-```bash
-git clone https://github.com/toRolex/Research-OS-Studio.git
-cd Research-OS-Studio
-uv tool install .
-```
-
-然后安装到你的科研项目：
+### 1. 安装 Skills 套件
+在你的科研项目根目录中，使用通用的 [Skills CLI](https://github.com/vercel-labs/skills) 即可完成安装：
 
 ```bash
-research-os setup-research-os --project /你的/科研项目/绝对路径
+# 查看仓库中所有可发现的 Skills 清单
+npx skills@latest add toRolex/Research-OS-Studio --list
+
+# 将整套 Research OS Skills 安装到当前项目
+npx skills@latest add toRolex/Research-OS-Studio --all
 ```
 
-该命令会把 Core、模板以及 Claude Code／Codex 可用的 Skills 写入项目，不会修改项目原有依赖。
+> **限定宿主安装**：若仅需面向特定 Agent 宿主（如 Claude Code 或 Codex），可使用 `--agent` 参数：
+> ```bash
+> npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code --agent codex --yes
+> ```
 
-## 使用
-
-Research OS Studio 按**外循环、内循环、发布循环**组织研究。它们是三个由用户控制的工作阶段，不是自动运行的流水线：每个 workflow 完成后都会停止，只有你确认结果并显式调用下一步，研究才会继续。
-
-### 1. 准备固定输入
-
-安装后的 `templates/` 提供各类 Artifact 模板。以研究问题为例：
-
-```bash
-cd /你的/科研项目/绝对路径
-mkdir -p inputs requests reports
-cp templates/outer/research-charter.input.json inputs/research-question.json
-```
-
-编辑 `inputs/research-question.json`，写入研究问题、边界、成功标准和预算，并确保 `target.path` 与文件实际路径一致：
-
-```json
-{
-  "contract": {"name": "research-os/artifact", "version": "1.1.0"},
-  "target": {"kind": "git", "path": "inputs/research-question.json"},
-  "type": {"name": "research-question", "version": "1.0.0"},
-  "spec": {
-    "question": "要研究的问题",
-    "boundaries": ["明确的研究边界"],
-    "success_criteria": [],
-    "budget": {},
-    "invariants": []
-  }
-}
-```
-
-计算文件的 SHA-256，并把路径与摘要写入 `requests/charter.json`：
-
-```bash
-shasum -a 256 inputs/research-question.json
-```
-
-```json
-{
-  "inputs": [
-    {
-      "path": "inputs/research-question.json",
-      "sha256": "替换为实际的 64 位 SHA-256"
-    }
-  ],
-  "output_path": "charter.json",
-  "report_path": "reports/charter.json"
-}
-```
-
-输入一旦固定就不要原地修改；内容变化时重新计算摘要并创建新的 request。
-
-### 2. 外循环：确定研究方向
-
-外循环把问题逐步收敛成可执行的研究方向：
+### 2. 项目安全初始化（Setup）
+安装完成后，在 Agent 宿主中显式调用 `setup-research-os`（例如在 Claude Code 中输入 `/setup-research-os`）：
 
 ```text
-research-charter
-    ↓
-research-literature
-    ↓
-research-gap
-    ↓
-research-idea
-    ↓
-research-novelty
-    ↓
-research-reflect
+/setup-research-os
 ```
 
-- `research-charter`：固定问题、边界、成功标准和预算。
-- `research-literature`：整理用户提供并固定的文献与引用；不会自行搜索互联网。
-- `research-gap`：从现有证据中识别研究空白，证据不足时明确标记 unsupported。
-- `research-idea`：围绕选定 gap 生成假设、方案和验证方法。
-- `research-novelty`：把 idea 与已有文献进行有边界的比较，不直接宣称创新成立。
-- `research-reflect`：汇总失败、不确定性与下一步选项，由用户决定继续、回退或停止。
+`setup-research-os` 采用安全、对话式的初始化流程（**探索 → 展示发现 → 逐项确认决策 → 展示拟写入完整草稿 → 用户确认后写入 → 校验 → 停止**）：
+- 自动探索项目已有目录与材料，推荐沿用既有结构（若无则推荐 `research/` 工作区）；
+- 优先更新既有 `CLAUDE.md` 或 `AGENTS.md`，不产生重复冲突文件；
+- 仅补齐缺失的基础导航和项目说明，**绝不覆盖**用户既有研究材料；
+- **不配置**用户的 Python、Lean、LaTeX、GPU 或云环境，不创建假数据或假研究结论，不自动启动任何研究流程。
 
-在 Claude Code 中可显式调用：
+### 3. 智能入口导航（Ask）
+如果你不确定当前研究阶段该选用哪个 Skill，可以直接显式调用 `ask-research-os`（例如 `/ask-research-os`）：
 
 ```text
-/research-charter
+/ask-research-os
 ```
 
-也可直接使用 CLI：
+- **只读推荐**：根据你提供的研究方向、现有实验结果或论文草稿，推荐最适合的切入点并解释原因；
+- **零副作用**：只提供咨询与指引，不修改任何文件，不自动启动所推荐的 Workflow；
+- **非强制前置**：已知晓目标 Skill 的用户可直接点名调用，无需每次通过 Router。
 
-```bash
-research-os workflow research-charter \
-  --project "$PWD" \
-  --request requests/charter.json
-```
+---
 
-后续 workflow 使用同一命令形态，只需更换 workflow 名称和 request。前一步输出只是下一步的候选输入，不会被自动接受。
+## 完整 Skill 能力地图（39 个 Skills）
 
-### 3. 内循环：执行和评估实验
+Research OS Studio 包含 39 个自包含 Skill，分为 General、Idea Cycle、Validation Cycle 和 Writing Cycle 四大类：
+- **User-invoked（U，17 个）**：由用户显式点名启动的完整 Workflow 或独立管理入口，互不自动调用；
+- **Model-invoked（M，22 个）**：在当前顶层 Workflow 授权职责内调用的内部能力；用户亦可显式点名作为独立能力（Standalone）使用。
 
-用户从外循环选定研究方向后，可进入计算实验内循环：
+| 分类 | Skill 名称 | 调用方式 | 核心职责与边界 |
+|---|---|---|---|
+| **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | User (U) | 对话式初始化科研工作区与 Agent 指令，展示草稿并确认，不覆盖已有文件，不配置环境 |
+| | [ask-research-os](skills/general/ask-research-os/SKILL.md) | User (U) | 只读入口导航与地图咨询；根据方向/数据/草稿推荐切入点，不写文件不自动执行 |
+| **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | User (U) | 完整 Idea 发现 Workflow：文献检索→候选生成→查新→独立评审→收敛，交付 Proposal 后停止 |
+| | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | Model (M) | 主动检索与文献综合，区分候选/已核实/未核实来源，保留精确出处 |
+| | [idea-generation](skills/idea-cycle/idea-generation/SKILL.md) | Model (M) | 多视角生成候选 Idea，执行去重与硬约束筛选，保留暂存与淘汰理由 |
+| | [creative-thinking-for-research](skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Model (M) | 针对构思瓶颈进行认知转换与正交发散，输出可检验的机理洞见 |
+| | [novelty-check](skills/idea-cycle/novelty-check/SKILL.md) | Model (M) | 针对候选核心 Claim 主动检索 closest prior work，有据查新，不因模糊相似误杀 |
+| | [idea-review](skills/idea-cycle/idea-review/SKILL.md) | Model (M) | 独立评审者直接读取原始文献与候选，输出客观评分、主要弱点与质疑 |
+| | [idea-refinement](skills/idea-cycle/idea-refinement/SKILL.md) | Model (M) | 固定 Problem Anchor，比较最小可行路线与前沿路线，不偷偷换题，输出可执行方案 |
+| **Validation** | [experiment-plan](skills/validation-cycle/experiment-plan/SKILL.md) | User (U) | 从研究问题制定有界实验计划（hypothesis、baseline、metric、ablation、预算），产出后停 |
+| | [experiment-bridge](skills/validation-cycle/experiment-bridge/SKILL.md) | User (U) | 宏实验 Workflow：一次授权内完成实现、sanity、执行、监控、分析与审计，不扩预算 |
+| | [run-experiment](skills/validation-cycle/run-experiment/SKILL.md) | Model (M) | 在批准范围内执行实验代码，保留 baseline 及成功/失败/超时全部 attempts |
+| | [experiment-queue](skills/validation-cycle/experiment-queue/SKILL.md) | Model (M) | 管理批量实验作业队列与调度，跟踪运行状态与资源消耗 |
+| | [monitor-experiment](skills/validation-cycle/monitor-experiment/SKILL.md) | Model (M) | 只读监控运行进程与硬件事实（running/completed/crashed），不做科学推论 |
+| | [training-health-check](skills/validation-cycle/training-health-check/SKILL.md) | Model (M) | 诊断 NaN、发散、OOM、loss 停滞等训练异常，建议停止，不擅自 kill 任务 |
+| | [analyze-results](skills/validation-cycle/analyze-results/SKILL.md) | Model (M) | 分析全样本与失败记录，评估统计不确定性与多重比较，不作单 metric 机械排名 |
+| | [experiment-audit](skills/validation-cycle/experiment-audit/SKILL.md) | Model (M) | 独立审计实验代码、evaluator 与结果真实性，检查 fake ground truth / phantom results |
+| | [result-to-claim](skills/validation-cycle/result-to-claim/SKILL.md) | User (U) | 将实验结果转换为范围受限的候选 Claim，区分证据存在与支持力度，收窄过宽结论 |
+| | [formula-derivation](skills/validation-cycle/formula-derivation/SKILL.md) | Model (M) | 公式链推导、假设/近似说明与不变量推导，保留完整推导步骤与误差界 |
+| | [proof-writer](skills/validation-cycle/proof-writer/SKILL.md) | Model (M) | 针对固定命题起草数学证明，保留失败路线与 gaps，不把未完成尝试当作成功 |
+| | [proof-review](skills/validation-cycle/proof-review/SKILL.md) | Model (M) | 只读审查证明结构、引理依赖与边界情况，报告错误与反例，不改动源码与 LaTeX |
+| | [proof-repair](skills/validation-cycle/proof-repair/SKILL.md) | User (U) | 显式授权的有界证明修复，反例推翻时不擅自修改命题假设，限定轮数与修改范围 |
+| | [proof-orchestrator](skills/validation-cycle/proof-orchestrator/SKILL.md) | User (U) | 长期复杂命题（Single Obligation）续接管理；支持 Lean 形式化辅助，无 Lean 自动降级 |
+| **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | User (U) | 完整通用 W3 写作 Workflow：规划→图表→起草→编译→并列审查→授权修订，产出候选稿后停 |
+| | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | User (U) | ML 专业写作 Workflow：严格遵循实验报告、seeds/runs、error bars、compute、limitations 纪律 |
+| | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | User (U) | Systems 专业写作 Workflow：5 句摘要、设计 alternatives、end-to-end / microbenchmark / scalability |
+| | [paper-plan](skills/writing-cycle/paper-plan/SKILL.md) | Model (M) | 构建 Claim—Evidence 矩阵、论文大纲与叙事结构，防止故事脱离数据 |
+| | [paper-drafting](skills/writing-cycle/paper-drafting/SKILL.md) | Model (M) | 基于现成计划与原始数据起草学术正文，数字与结论全程可追溯 |
+| | [academic-plotting](skills/writing-cycle/academic-plotting/SKILL.md) | Model (M) | 从真实数据生成定量图表，制作标明性质的示意图，保留可复现绘图脚本 |
+| | [paper-compile](skills/writing-cycle/paper-compile/SKILL.md) | Model (M) | 在用户既有 LaTeX 环境中执行真实编译检查，报告构建日志与警告，不修改源文件 |
+| | [paper-compile-repair](skills/writing-cycle/paper-compile-repair/SKILL.md) | User (U) | 显式授权的 LaTeX 编译修复：展示 diff，确认后修复并复验，不掩盖未解决警告 |
+| | [citation-audit](skills/writing-cycle/citation-audit/SKILL.md) | Model (M) | 三维引用审计（身份/元数据/正文语境），报告幻觉引用与错位引用，只读不改 bib |
+| | [apply-citation-fixes](skills/writing-cycle/apply-citation-fixes/SKILL.md) | User (U) | 显式授权应用引用修复：展示精确 diff 后修正正文引用标记或 BibTeX 条目 |
+| | [paper-claim-audit](skills/writing-cycle/paper-claim-audit/SKILL.md) | Model (M) | 全篇数字、比较、配置、表格、caption 及实验覆盖范围的一致性审计 |
+| | [claim-stress-test](skills/writing-cycle/claim-stress-test/SKILL.md) | Model (M) | 构造整篇最强拒稿攻击，对照原材料逐点独立裁决，暴露论证脆弱点 |
+| | [research-improvement](skills/writing-cycle/research-improvement/SKILL.md) | User (U) | 跨流程有界改进循环：对代码、结果、Claims、草稿执行有界 review-repair-rereview |
+| | [rebuttal](skills/writing-cycle/rebuttal/SKILL.md) | User (U) | 审稿意见回复：将意见原子化为 concern，映射证据，区分可答/待澄清/需补工作 |
+| | [resubmit-pipeline](skills/writing-cycle/resubmit-pipeline/SKILL.md) | User (U) | 论文转投适配：新目录适配新 venue 规则与模板，完整保留旧稿与旧构建基线 |
+| | [paper-talk](skills/writing-cycle/paper-talk/SKILL.md) | User (U) | 从论文生成学术演讲 slides、speaker notes 与逐字 script，审查演讲产物 |
 
+---
+
+## 典型科研工作流
+
+### 1. 从研究方向到立项方案（Idea Discovery）
 ```text
-design-experiment
-    ↓
-prepare-experiment
-    ↓
-run-experiment
-    ↓
-analyze-experiment
-    ↓
-assess-result-to-claim
-    └──────────────→ 根据结果重新设计下一轮实验
+用户提出方向/简报
+      ↓
+/idea-discovery
+  ├─ Phase 1: research-lit（主动检索文献、标注已核实/未核实来源）
+  ├─ Phase 2: idea-generation & creative-thinking（多视角发散、认知转换、筛选）
+  ├─ Phase 3: novelty-check（检索 closest prior work，精准查新）
+  ├─ Phase 4: idea-review（独立 reviewer 直接读文献与候选，指出漏洞）
+  └─ Phase 4.5: idea-refinement（固定 Problem Anchor，收敛出最小可行与前沿方案）
+      ↓
+交付 IDEA_DISCOVERY.md 与 RESEARCH_PROPOSAL.md（工作流停止，由用户决定后续步骤）
 ```
 
-- `design-experiment`：固定假设、数据、controls、metrics、判据和预算。
-- `prepare-experiment`：检查环境与命令，建立 attempt ledger，保留准备失败记录。
-- `run-experiment`：按固定设计执行实验，记录实际结果、资源使用和失败现场。
-- `analyze-experiment`：分析固定的 run 与结果文件，不隐式补跑实验。
-- `assess-result-to-claim`：判断结果是否支持指定 Claim，并明确适用范围与条件。
+### 2. 从假设到受约束结论（Validation）
+- **计算/实证研究**：
+  1. 运行 `/experiment-plan`：固定 hypothesis、baseline、评估指标与计算预算；
+  2. 运行 `/experiment-bridge`：在单次授权内执行实验代码，监控运行与训练健康，收集全量 attempts 并进行统计分析与审计；
+  3. 运行 `/result-to-claim`：将实验证据转化为范围收紧的科学 Claim（不夸大泛化范围）。
+- **数学/理论研究**：
+  1. 调用 `formula-derivation` 梳理推导链与近似假设；
+  2. 调用 `proof-writer` 起草证明；
+  3. 调用 `proof-review` 进行只读审查；若有 gap 则显式运行 `/proof-repair`；
+  4. 长期复杂证明可调用 `/proof-orchestrator`（无 Lean 环境普通推导，有 Lean 环境形式化辅助）。
 
-每一轮都产生新的 Artifact。是否修改假设、扩大预算或开始下一轮，必须由用户重新确认；系统不会因结果不理想而自动重试。
+### 3. 论文写作、打磨与后续发布（Writing Cycle）
+- **论文起草与制作**：
+  - 通用论文：运行 `/paper-writing`（规划→起草→学术图表→编译→并列审计→授权修订）；
+  - ML 论文：运行 `/ml-paper-writing`（涵盖 seeds、error bars、compute、limitations 规范）；
+  - Systems 论文：运行 `/systems-paper-writing`（涵盖 design rationale、end-to-end、scalability 规范）。
+- **专项审计与修复**：
+  - 编译问题：`paper-compile` 发现错误 → 显式运行 `/paper-compile-repair` 修复；
+  - 引用问题：`citation-audit` 发现错漏 → 显式运行 `/apply-citation-fixes` 修复；
+  - 全篇审计：运行 `paper-claim-audit` 与 `claim-stress-test` 进行最严苛压力测试。
+- **投后与衍生**：
+  - 收到审稿意见：显式运行 `/rebuttal` 生成受证据约束的答辩回复；
+  - 转投其他会议：显式运行 `/resubmit-pipeline` 适配新模板并保留旧稿；
+  - 学术报告：显式运行 `/paper-talk` 生成高质量 slides 与讲稿。
 
-数学研究可在外循环后走并列路径：先用 `math-proof` 记录普通证明与 proof gap，需要形式化验证时再显式调用 `lean-formalize`。数学路径不是第三个循环。
+---
 
-### 4. 发布循环：冻结可复验成果
+## 边界、安全与用户控制原则
 
-发布循环把用户选定的研究材料整理为不可覆盖的 Publication：
+1. **环境所有权保持在用户端**：
+   Research OS 不会在用户系统中擅自安装或配置 Python、Lean、LaTeX、R、CUDA/GPU 驱动、SSH 密钥或 Slurm 环境。如果某项能力所需工具缺失，Skill 将如实报告缺失项并在受限范围内安全降级，绝不假报成功。
+2. **零自动越权推进**：
+   所有顶层 Workflow（User-invoked）在完成当前职责并交付报告后立即停止。一个顶层工作流绝不会自动触发另一个顶层工作流（例如 Discovery 完成绝不自动跑实验，实验完成绝不自动写论文，写作完成绝不自动投稿）。
+3. **高成本与破坏性操作二次确认**：
+   涉及远程执行、GPU 算力消耗、第三方 API 付费、文件重写或外部发布的行为，必须预先声明修改范围与预算，并获得用户明确确认。
+4. **真实科研验收声明**：
+   本仓库中各 Skill 已经过严格的代码架构审核、静态一致性检查与模拟场景验证。然而，**静态测试与模拟场景审查绝不等于用户在真实科研环境中的端到端体验验收**。详见 [用户手工验收指南](docs/user-acceptance-guide.md)。
 
-```text
-准备 Manuscript、PDF、Evidence 与 Assessments
-    ↓
-stage：固定完整成员集合
-    ↓
-preflight：检查文件摘要、依赖闭合与必需 gates
-    ↓
-用户核对最终 manifest 和 digest
-    ↓
-freeze-publication
-    ↓
-验证冻结包并停止
-```
+---
 
-发布前应保留研究问题、实验设计、运行、分析、Claim／Evidence、评审记录和稿件等实际使用材料。调用：
+## 详细文档索引
 
-```text
-/freeze-publication
-```
+- [用户手工验收指南](docs/user-acceptance-guide.md)：涵盖全流程各票场景的手工验收步骤、测试用例与边界核验
+- [完整产品地图与状态表](skills/general/ask-research-os/PRODUCT-MAP.md)：各 Skill 角色、触发条件、设计边界与交付状态
+- [Skills 目录总览](skills/README.md)：Skills 目录结构、清单与宿主限制说明
+- [上游来源与许可证说明](docs/upstream-sources-and-licenses.md)：所有移植与借鉴上游开源项目（ARIS, Orchestra 等）的详细 Attribution 与 License 信息
 
-workflow 会展示最终 manifest、检查结果和形如以下内容的确认串：
+## 许可证
 
-```text
-FREEZE <publication> SHA256 <final-manifest-sha256>
-```
-
-只有项目中具有 `user` role 的 principal 精确确认本次 digest 后才能冻结。任何文件变化都必须重新 stage、preflight 和确认。冻结只在项目中创建不可覆盖的成果包，不会自动投稿或发布到外部平台。
-
-### 5. 检查结果
-
-每个 workflow 通常写入一个结果 Artifact 和一个 workflow report。运行后检查：
-
-1. 输出是否仍为 `candidate`，内容和边界是否符合预期。
-2. report 的停止原因、预算使用、失败记录和建议是否准确。
-3. 下一步 request 是否引用了正确路径与实际 SHA-256。
-4. 需要 Git 身份的计算 handoff 是否固定了完整 40 位 commit。
-
-可以单独验证 Artifact：
-
-```bash
-research-os validate --project "$PWD" charter.json
-```
-
-验证通过只表示结构、引用和固定关系满足契约，不代表研究结论正确；是否接受并继续始终由用户决定。
-
-## 运行原理
-
-1. `setup-research-os` 将 provider-neutral Skills 投影到当前 Agent 工具可识别的目录。
-2. 每个 workflow 只读取用户明确指定并用 SHA-256 固定的 JSON Artifact。
-3. Agent 负责研究推理，确定性 validator 负责检查结构、引用、预算和文件一致性。
-4. 每个 workflow 按契约产出结果与报告，然后停止；用户验收后才能进入下一步。
-5. Artifact、运行记录和最终 Publication 保存在项目中，可由 Git 追踪和恢复。
+本项目基于 MIT 许可证开源。各 Skill 的共置许可证与上游引用详见 [docs/upstream-sources-and-licenses.md](docs/upstream-sources-and-licenses.md)。

@@ -1,6 +1,6 @@
 # Research OS Skills
 
-在自己的科研项目目录使用通用 [Skills CLI](https://github.com/vercel-labs/skills)；无需安装 Research OS 专用 runtime。
+在自己的科研项目目录使用通用 [Skills CLI](https://github.com/vercel-labs/skills)；无需安装 Research OS 专用 runtime。主使用说明参见 [README.md](../README.md)，全流程手工验收步骤参见 [用户手工验收指南](../docs/user-acceptance-guide.md)。
 
 ```bash
 npx skills@latest add toRolex/Research-OS-Studio --list
