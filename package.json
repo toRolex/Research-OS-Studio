@@ -1,0 +1,20 @@
+{
+  "name": "research-os-studio",
+  "version": "0.1.0",
+  "description": "Provider-neutral, user-controlled research workflow skills suite",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/toRolex/Research-OS-Studio"
+  },
+  "scripts": {
+    "changeset": "changeset",
+    "version": "changeset version"
+  },
+  "devDependencies": {
+    "@changesets/changelog-github": "^0.7.0",
+    "@changesets/cli": "^2.30.0"
+  },
+  "packageManager": "npm@10.9.8"
+}
