@@ -63,7 +63,7 @@ Research OS Studio 将科研过程拆解为边界明确的工作流。AI 在单�
 
 - **纯 Agent Skills**：无需安装独立 CLI、Python 包或后台服务，安装即用。
 - **三大科研阶段**：
-  1. **Idea Cycle（构思与查新）**：文���检索、多视角构思、新颖性核查、独立评审与方案收敛。
+  1. **Idea Cycle（构思与查新）**：文献检索、多视角构思、新颖性核查、独立评审与方案收敛。
   2. **Validation Cycle（实验与理论验证）**：实证路径管理实验计划、执行监控、统计分析与审计；理论路径负责推导记录、证明起草、审查与修复。
   3. **Writing Cycle（论文写作与打磨）**：正文起草、学术绘图、LaTeX 编译检查、引用与结论一致性审计、审稿回复及转投适配。
 - **人在回路**：顶层工作流完成后立即停止，绝不自动跳转到下一阶段（例如查新完成后不会擅自开始跑实验）。
@@ -205,7 +205,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 | | [paper-compile](skills/writing-cycle/paper-compile/SKILL.md) | Model | 调用本地 LaTeX 环境执行编译检查并报告警告 |
 | | [paper-compile-repair](skills/writing-cycle/paper-compile-repair/SKILL.md) | User | 展示 diff 并经确认后修复 LaTeX 编译错误 |
 | | [citation-audit](skills/writing-cycle/citation-audit/SKILL.md) | Model | 检查引用的准确性与上下文匹配度 |
-| | [apply-citation-fixes](skills/writing-cycle/apply-citation-fixes/SKILL.md) | User | 确认后更新 BibTeX 条目或正文引用标 |
+| | [apply-citation-fixes](skills/writing-cycle/apply-citation-fixes/SKILL.md) | User | 确认后更新 BibTeX 条目或正文引用标记 |
 | | [paper-claim-audit](skills/writing-cycle/paper-claim-audit/SKILL.md) | Model | 校验正文数字、图表与原始实验数据的一致性 |
 | | [claim-stress-test](skills/writing-cycle/claim-stress-test/SKILL.md) | Model | 模拟同行评审视角，针对论点薄弱处提出质疑 |
 | | [research-improvement](skills/writing-cycle/research-improvement/SKILL.md) | User | 对代码、论点或草稿进行有限轮次的评审与修改 |
