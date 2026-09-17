@@ -1,9 +1,9 @@
 ---
 name: paper-writing
 description: 从已有研究材料或现成计划起，完成论文规划、图表、起草、真实编译、并列适用的 Claim／Citation／Proof／Stress 审查、独立评审与授权修订，交付候选稿与审查报告后停止。
-argument-hint: "[研究材料／计划／稿件路径] [venue、交付口径、写入范围与轮数]"
 disable-model-invocation: true
 ---
+<!-- argument-hint: "[研究材料／计划／稿件路径] [venue、交付口径、写入范围与轮数]" -->
 
 # Paper Writing：完整 W3 论文流程
 

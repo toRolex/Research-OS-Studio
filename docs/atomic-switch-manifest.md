@@ -87,6 +87,8 @@
 
 ## 4. 旧新 Skill 名称映射与发现范围隔离
 
+> 第 4 节的 Skill 名映射表与发现范围核对是发布时点快照，以 `skills/` 目录树为唯一真源；`scripts/check-skills.py` 在 CI 校验 README 层清单与目录树一致。
+
 ### 4.1 旧 Wrapper Skill vs 新纯 Skill 映射表
 
 | 旧目录位置（`core/skills/` 或 `ports/products/`） | 新纯 Skill 位置（`skills/`） | 角色类型 | 处理说明 |

@@ -1,9 +1,9 @@
 ---
 name: ml-paper-writing
 description: ML/AI 会议论文的专业写作 Workflow（区别于通用 paper-writing 与 Systems 写作）：实验报告、seeds、error bars、compute、limitations 与 ML venue／reviewer 方法；从现成 ML 研究材料到候选稿与报告，不自动补实验或投稿。
-argument-hint: "[ML 研究材料／结果目录／计划／稿件路径] [venue、交付口径、写入范围与轮数]"
 disable-model-invocation: true
 ---
+<!-- argument-hint: "[ML 研究材料／结果目录／计划／稿件路径] [venue、交付口径、写入范围与轮数]" -->
 
 # ML Paper Writing：ML 专业写作 Workflow
 

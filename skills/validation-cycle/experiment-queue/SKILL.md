@@ -1,8 +1,8 @@
 ---
 name: experiment-queue
 description: "把已授权的多作业实验（多 seed、参数网格、teacher→student 阶段依赖）组织为有界批次：读取或生成作业清单，按可用资源与依赖逐波执行，识别 OOM 与停滞并有限重试，保存可恢复的 attempt 状态。用于“批量实验”“跑 grid”“多 seed sweep”或 run-experiment 的批量阶段；不引入常驻 scheduler、不自动扩预算、不隐藏停止/重试，也不接管未授权作业。"
-argument-hint: "[manifest 或 grid 规格；可指定并发上限、重试上限与状态位置]"
 ---
+<!-- argument-hint: "[manifest 或 grid 规格；可指定并发上限、重试上限与状态位置]" -->
 
 # Experiment Queue
 

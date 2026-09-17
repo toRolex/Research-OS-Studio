@@ -1,8 +1,8 @@
 ---
 name: research-lit
 description: 文献综合：从研究主题主动找论文、梳理 related work，或解释用户已有论文。当前授权的文献调查或单篇解释需要来源核实与证据综合时使用；不负责候选生成、候选查新裁决或实验验证。
-argument-hint: "[主题、论文 URL 或材料路径；可指定 sources、时间范围、报告位置或 composed]"
 ---
+<!-- argument-hint: "[主题、论文 URL 或材料路径；可指定 sources、时间范围、报告位置或 composed]" -->
 
 # Research Literature Review
 

@@ -102,7 +102,7 @@ Claim、Citation、Proof（理论内容适用）、Stress 与独立评审是并�
 | `systems-paper-writing` | U／已实现（#27） | Systems 的 design rationale、implementation、end-to-end、microbenchmark／ablation、scalability；直接组合内部能力，不与 ML 合并、不自动启动通用 W3；缺扩展性等证据时记缺口而不补造 |
 | `paper-compile-repair` | U／已实现（#22） | 已知编译错误且希望改源码；显式确认范围后修复并复验，与 check-only 分离 |
 | `apply-citation-fixes` | U／已实现（#23） | 已有引用 findings 且希望替换／删除／修正文或 BibTeX；先展示拟修改范围并获授权，与 detect 分离 |
-| `research-improvement` | U／已实现（#28），跨流程可选 | 对方法、代码、全部结果、Claims、草稿、diff、历史 findings 做有界 review／repair／re-review；高权限可写入口，在明确 scope、写入范围、轮数、资源及副作用授权内补分析／改稿，补实验须另行授权并在运行数名额内；承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 方法，不是只读审计，不自动启动 experiment-bridge、paper-writing 或专项修复入口 |
+| `research-improvement` | U／已实现（#28），跨流程可选（跨流程能力，物理归位于 writing-cycle/） | 对方法、代码、全部结果、Claims、草稿、diff、历史 findings 做有界 review／repair／re-review；高权限可写入口，在明确 scope、写入范围、轮数、资源及副作用授权内补分析／改稿，补实验须另行授权并在运行数名额内；承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 方法，不是只读审计，不自动启动 experiment-bridge、paper-writing 或专项修复入口 |
 | `rebuttal` | U／已实现（#29） | 现成审稿意见与论文证据；原子化 concern、映射证据、区分可答／待澄清／需补工作；补实验另行授权 |
 | `resubmit-pipeline` | U／已实现（#30） | 现成稿件换 venue；新目录适配并保留旧投稿，使用内部检查；不要求先运行本产品写作流程 |
 | `paper-talk`（Conference Talk） | U／已实现（#31） | 已完成论文到 slides、notes、script；合并 ARIS 与 Orchestra 独有方法，只保留一个入口；审查演讲产物，不是重复审计原论文 |

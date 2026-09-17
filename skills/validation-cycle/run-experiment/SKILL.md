@@ -1,8 +1,8 @@
 ---
 name: run-experiment
 description: "在用户已批准的实验计划与本次授权内，实现候选实验代码、独立审查、先运行 sanity、按 baseline-first 执行有界运行，并收集初步结果与全部 attempt 记录。用于“实现并跑实验”“从计划到执行”或 Validation Workflow 的实现执行阶段；不改 hypothesis/metric/预算，不自动分析、审计、转 Claim 或进入下一轮。大批量或多阶段作业交 experiment-queue。"
-argument-hint: "[实验计划、tracker 或 proposal 路径；说明演练/真实执行、可修改范围与资源上限]"
 ---
+<!-- argument-hint: "[实验计划、tracker 或 proposal 路径；说明演练/真实执行、可修改范围与资源上限]" -->
 
 # Run Experiment
 

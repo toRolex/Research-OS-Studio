@@ -1,8 +1,8 @@
 ---
 name: analyze-results
 description: 分析已有完整实验结果并检查统计可信度：清点 baseline 与全部 attempts（含失败与无效记录），报告描述统计与不确定性，检查选择偏差、多重比较与证据缺口，不把排名或单指标胜出当科学结论。用户问“结果怎么样／可信吗”，或已授权的 Validation 职责需要分析已完成结果时使用；不补实验、不改代码、不启动下游。
-argument-hint: "[baseline、结果文件、attempt 记录与待答问题的路径；可指定报告位置]"
 ---
+<!-- argument-hint: "[baseline、结果文件、attempt 记录与待答问题的路径；可指定报告位置]" -->
 
 # Analyze Results
 

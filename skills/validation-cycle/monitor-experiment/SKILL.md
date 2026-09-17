@@ -1,8 +1,8 @@
 ---
 name: monitor-experiment
 description: "只读观测已有实验或训练作业的运行事实（running/completed/crashed/unknown、进度、输出与退出证据）；用户问“跑完了吗/还在跑吗”，或父 Workflow 在授权范围内需要运行状态时使用。只报告观测事实，不判断科研结果、不触发分析、不停止或重启作业。"
-argument-hint: "[运行标识或日志/状态路径；可指定报告位置]"
 ---
+<!-- argument-hint: "[运行标识或日志/状态路径；可指定报告位置]" -->
 
 # Monitor Experiment
 

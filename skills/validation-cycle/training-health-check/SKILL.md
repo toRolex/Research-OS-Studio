@@ -1,8 +1,8 @@
 ---
 name: training-health-check
 description: "只读诊断已有训练观测（loss/梯度记录、训练日志、资源记录）中的 NaN/Inf、发散、OOM、停滞与日志完整性问题，并给出继续、停止调查或补充观测的建议；用户问“训练是否健康/是否异常”，或父 Workflow 在授权范围内需要训练健康诊断时使用。只诊断，不写研究结果、不停止或重启作业、不判断 Claim。"
-argument-hint: "[训练运行标识或日志/指标路径；可指定报告位置与观察窗口]"
 ---
+<!-- argument-hint: "[训练运行标识或日志/指标路径；可指定报告位置与观察窗口]" -->
 
 # Training Health Check
 

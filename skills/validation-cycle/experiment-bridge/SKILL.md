@@ -1,9 +1,9 @@
 ---
 name: experiment-bridge
 description: 从用户已批准的现成实验计划出发，在一次授权内完成实现、代码审查、sanity、正式或批量运行、监控、初步收集、分析审计与 tracker 更新，并给出可选消融建议。
-argument-hint: "[已批准的实验计划/tracker/proposal 路径；说明演练或真实执行、可修改范围与资源上限]"
 disable-model-invocation: true
 ---
+<!-- argument-hint: "[已批准的实验计划/tracker/proposal 路径；说明演练或真实执行、可修改范围与资源上限]" -->
 
 # Experiment Bridge
 

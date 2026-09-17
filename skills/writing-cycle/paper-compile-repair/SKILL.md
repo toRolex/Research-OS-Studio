@@ -1,9 +1,9 @@
 ---
 name: paper-compile-repair
 description: 在逐项确认文件、拟 diff、构建与最多三轮预算后，修复 LaTeX 编译问题并核验新 PDF。
-argument-hint: "[论文目录或入口 .tex]"
 disable-model-invocation: true
 ---
+<!-- argument-hint: "[论文目录或入口 .tex]" -->
 
 # Paper Compile Repair：用户授权的有界修复
 

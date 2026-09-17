@@ -6,8 +6,8 @@ disable-model-invocation: true
 metadata:
   category: validation-cycle
   invocation: user
-argument-hint: "[证明路径或目标] [--deep-fix] [--restatement-check]"
 ---
+<!-- argument-hint: "[证明路径或目标] [--deep-fix] [--restatement-check]" -->
 
 # 证明修复
 
