@@ -15,6 +15,8 @@ __pycache__/
 
 # 本地 Agent / worktree 状态
 /.claude/
+/.agents/
+/.impeccable/
 
 # 本地工具状态与生成物
 /.claude/settings.local.json
