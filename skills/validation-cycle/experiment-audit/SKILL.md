@@ -1,8 +1,8 @@
 ---
 name: experiment-audit
 description: 实验完整性审计：审查协议是否按声明执行，并直接读取 evaluator、真值来源、代码、原始结果与 Claims，核对 fake ground truth、分数归一化、phantom results、遗漏 attempts、代码/结果对应和 scope overclaim。用户要求审计实验是否真实完整，或已授权的 Validation／写作流程在形成 Claim 前需要独立核对时使用；默认只输出发现，不修代码、不重跑实验。
-argument-hint: "[协议、代码、配置、运行日志、原始结果、evaluator/ground truth 与 Claims 的路径；可指定报告位置和审查范围]"
 ---
+<!-- argument-hint: "[协议、代码、配置、运行日志、原始结果、evaluator/ground truth 与 Claims 的路径；可指定报告位置和审查范围]" -->
 
 # Experiment Audit
 

@@ -1,9 +1,9 @@
 ---
 name: resubmit-pipeline
 description: 现成论文换 venue 转投适配；新目录重建投稿材料并完整保留旧稿，冲突取舍与是否投稿由用户决定。
-argument-hint: "[旧投稿目录] [新 venue／输出目录]"
 disable-model-invocation: true
 ---
+<!-- argument-hint: "[旧投稿目录] [新 venue／输出目录]" -->
 
 # Resubmit Pipeline：保留旧稿的转投适配
 

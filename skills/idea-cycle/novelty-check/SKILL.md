@@ -1,8 +1,8 @@
 ---
 name: novelty-check
 description: 查新：对已有候选的核心 Claim 主动检索 closest prior work，判断已覆盖、关键区别或证据缺口。用户问“有没有人做过”，或当前已授权的 Idea Discovery 需要核对候选新颖性时使用；不用于生成新方向或评判实验有效性。
-argument-hint: "[候选描述或原始材料路径；可指定报告位置与检索范围]"
 ---
+<!-- argument-hint: "[候选描述或原始材料路径；可指定报告位置与检索范围]" -->
 
 # Novelty Check
 

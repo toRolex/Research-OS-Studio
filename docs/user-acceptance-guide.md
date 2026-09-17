@@ -284,6 +284,8 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 ## 七、验收汇总检查表
 
+本检查表与正文中逐项的 Skill 名称枚举是发布时点快照，以 `skills/` 目录树为唯一真源；`scripts/check-skills.py` 在 CI 校验 README 层清单与目录树一致。
+
 | 序号 | 验证项 | 预期表现 | 验收判定 |
 |---|---|---|---|
 | 1 | **CLI 清单发现** | `skills add ... --list` 列出全部 39 个 Skill，无遗漏、无重复、无幽灵入口 | [ ] 通过 |

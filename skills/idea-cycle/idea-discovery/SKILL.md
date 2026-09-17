@@ -2,8 +2,8 @@
 name: idea-discovery
 description: "从研究方向走完主动检索、多视角候选、查新、独立评审与固定边界收敛，交付发现报告与 Proposal 后停止。用户显式调用；不运行 pilot、实验计划、Validation 或 Writing。"
 disable-model-invocation: true
-argument-hint: "[研究方向；可附 brief 路径、参考论文、已有材料、入围候选上限、预算与输出位置]"
 ---
+<!-- argument-hint: "[研究方向；可附 brief 路径、参考论文、已有材料、入围候选上限、预算与输出位置]" -->
 
 # Idea Discovery Workflow
 

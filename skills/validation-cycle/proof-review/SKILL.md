@@ -5,8 +5,8 @@ license: MIT
 metadata:
   category: validation-cycle
   invocation: model
-argument-hint: "[证明路径或目标] [--restatement-check]"
 ---
+<!-- argument-hint: "[证明路径或目标] [--restatement-check]" -->
 
 # Proof Review：只读证明审查
 

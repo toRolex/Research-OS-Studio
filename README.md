@@ -62,7 +62,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 
 ## 完整 Skill 能力地图（39 个 Skills）
 
-Research OS Studio 包含 39 个自包含 Skill，分为 General、Idea Cycle、Validation Cycle 和 Writing Cycle 四大类：
+Research OS Studio 包含 39 个自包含 Skill，分为 General、Idea Cycle、Validation Cycle 和 Writing Cycle 四大类。下表是发布时点快照，以 `skills/` 目录树为唯一真源；`scripts/check-skills.py` 在 CI 校验本清单与目录树一致：
 - **User-invoked（U，17 个）**：由用户显式点名启动的完整 Workflow 或独立管理入口，互不自动调用；
 - **Model-invoked（M，22 个）**：在当前顶层 Workflow 授权职责内调用的内部能力；用户亦可显式点名作为独立能力（Standalone）使用。
 
@@ -103,7 +103,7 @@ Research OS Studio 包含 39 个自包含 Skill，分为 General、Idea Cycle、
 | | [apply-citation-fixes](skills/writing-cycle/apply-citation-fixes/SKILL.md) | User (U) | 显式授权应用引用修复：展示精确 diff 后修正正文引用标记或 BibTeX 条目 |
 | | [paper-claim-audit](skills/writing-cycle/paper-claim-audit/SKILL.md) | Model (M) | 全篇数字、比较、配置、表格、caption 及实验覆盖范围的一致性审计 |
 | | [claim-stress-test](skills/writing-cycle/claim-stress-test/SKILL.md) | Model (M) | 构造整篇最强拒稿攻击，对照原材料逐点独立裁决，暴露论证脆弱点 |
-| | [research-improvement](skills/writing-cycle/research-improvement/SKILL.md) | User (U) | 跨流程有界改进循环：对代码、结果、Claims、草稿执行有界 review-repair-rereview |
+| | [research-improvement](skills/writing-cycle/research-improvement/SKILL.md) | User (U) | （跨流程）跨流程有界改进循环：对代码、结果、Claims、草稿执行有界 review-repair-rereview |
 | | [rebuttal](skills/writing-cycle/rebuttal/SKILL.md) | User (U) | 审稿意见回复：将意见原子化为 concern，映射证据，区分可答/待澄清/需补工作 |
 | | [resubmit-pipeline](skills/writing-cycle/resubmit-pipeline/SKILL.md) | User (U) | 论文转投适配：新目录适配新 venue 规则与模板，完整保留旧稿与旧构建基线 |
 | | [paper-talk](skills/writing-cycle/paper-talk/SKILL.md) | User (U) | 从论文生成学术演讲 slides、speaker notes 与逐字 script，审查演讲产物 |

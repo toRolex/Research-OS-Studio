@@ -1,9 +1,9 @@
 ---
 name: systems-paper-writing
 description: 从已有 Systems 研究材料、现成计划或已有稿件出发，按系统论文专属结构（design rationale／alternatives、implementation、end-to-end、microbenchmark／ablation、scalability）完成规划、图表、起草、真实编译、并列适用审查、独立评审与授权修订，交付候选稿与审查报告后停止。
-argument-hint: "[研究材料／计划／稿件路径] [venue、交付口径、写入范围与轮数]"
 disable-model-invocation: true
 ---
+<!-- argument-hint: "[研究材料／计划／稿件路径] [venue、交付口径、写入范围与轮数]" -->
 
 # Systems Paper Writing：系统论文专业写作
 
@@ -170,7 +170,7 @@ venue 专属要求（track、页限、匿名、prescreening／rapid review、art
 
 改编并与两方上游做正文级比较后合并：
 
-- Orchestra Research / Claude AI Research Skills Contributors，`20-ml-paper-writing/systems-paper-writing/`（`SKILL.md` 与 `references/{section-blueprints,writing-patterns,checklist,systems-conferences,reviewer-guidelines}.md`），固定 revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`。MIT，完整 notice 见 [LICENSE-Orchestra.txt](LICENSE-Orchestra.txt)。**作为主要来源**：保留逐段蓝图、design alternatives、implementation、end-to-end／microbenchmark／ablation／scalability、四种写作模式、三处一致规则、page budget、reviewer 判据与 pre-submission checklist。
+- Orchestra Research / Claude AI Research Skills Contributors，上游仓库路径 `20-ml-paper-writing/systems-paper-writing/`（`SKILL.md` 与上游 `references/` 下的 section-blueprints.md、writing-patterns.md、checklist.md、systems-conferences.md、reviewer-guidelines.md；均为上游仓库文件，本仓不持有这些路径），固定 revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`。MIT，完整 notice 见 [LICENSE-Orchestra.txt](LICENSE-Orchestra.txt)。**作为主要来源**：保留逐段蓝图、design alternatives、implementation、end-to-end／microbenchmark／ablation／scalability、四种写作模式、三处一致规则、page budget、reviewer 判据与 pre-submission checklist。
 - wanshuiyin / ARIS，`skills/writing-systems-papers/SKILL.md`（该目录仅 `SKILL.md`），固定 revision `0472e530251cdbd3364c33b110063c58f819edd7`。MIT，完整 notice 见 [LICENSE-ARIS.txt](LICENSE-ARIS.txt)。全文阅读后比较：其 page allocation、5 句摘要、S1–S7 结构与 Orchestra 实质重复，按「择优／合并」处理；保留其四模式命名、`microbenchmark` 评价位、3 句结论、六维自检与 Academic Integrity 纪律，不另发行竞争入口。
 
 适配与删除：删除缓存年度 deadline／页数／模板与 `templates/` 下的 venue LaTeX 资产（第三方模板许可需逐目录核对，不随本 Skill 分发），改为现场核对当前官方 CFP；删除固定 `mcp__codex` 与 provider 绑定；把「Hand off to /paper-write」改为本 Workflow 内的授权修订或用户显式转交；删除机器 verdict／state／receipt；`ml-paper-writing` 的 citation verification 由已交付的 `citation-audit` 承接。方法与来源记录集中写在仓库 `docs/upstream-sources-and-licenses.md`；使用本 Skill 不依赖上游仓库、中央 runtime 或上游其他 Skill。

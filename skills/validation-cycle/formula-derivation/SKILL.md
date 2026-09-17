@@ -1,8 +1,8 @@
 ---
 name: formula-derivation
 description: 推导公式与组织理论主线：当用户需要推导公式、build a theory line、organize assumptions、turn scattered equations into a coherent derivation，或将理论笔记改写为可写进论文的公式文档时使用。适用于推导目标尚未完全固定、主对象仍需选择，或需要完整推导包而非已完成定理证明的场景。
-argument-hint: "[问题目标与现有公式或笔记；可指定输出位置与尝试预算]"
 ---
+<!-- argument-hint: "[问题目标与现有公式或笔记；可指定输出位置与尝试预算]" -->
 
 # Formula Derivation: Research Theory Line Construction
 

@@ -1,15 +1,17 @@
 ---
 name: research-improvement
-description: 在用户显式授权的一次有界循环内对研究工作整体执行 review → repair → re-review：直接读取 Claims、草稿、方法与代码、原始结果、当前 diff 与历史 findings，在批准范围内修代码、补分析、改稿或补实验并复审，保留全过程与未解决 findings 后停止。
+description: 跨流程能力（覆盖 Validation 与 Idea Cycle 产物，物理归位于 writing-cycle/）：在用户显式授权的一次有界循环内对研究工作整体执行 review → repair → re-review：直接读取 Claims、草稿、方法与代码、原始结果、当前 diff 与历史 findings，在批准范围内修代码、补分析、改稿或补实验并复审，保留全过程与未解决 findings 后停止。
 license: MIT
 disable-model-invocation: true
 metadata:
   category: writing-cycle
   invocation: user
-argument-hint: "[研究材料范围：Claims/草稿/方法代码/原始结果/当前 diff/历史 findings] [轮数、写入范围、资源预算与副作用授权]"
 ---
+<!-- argument-hint: "[研究材料范围：Claims/草稿/方法代码/原始结果/当前 diff/历史 findings] [轮数、写入范围、资源预算与副作用授权]" -->
 
 # 研究工作有界改进循环
+
+**跨流程能力**：本 Skill 覆盖 Validation 与 Idea Cycle 的产物（方法与代码、实验结果、Claims、Proposal），只因物理归位约定放在 `writing-cycle/` 下，不归入任何单一主流程。
 
 用户显式启动的高权限 Workflow：在一次确认的授权内，对研究工作整体循环 **review → repair → re-review**，直到策略认可的正面结论或轮数上限。它同时读取并修复研究本体与论文表达——Claims、草稿、方法与代码、原始结果、当前 diff、历史 findings——因此不是只读审计：它会在批准范围内修改代码、补分析、改稿，并在另行授权时补实验。有界：轮数、写入范围、资源与副作用上限固定；没有无限循环，不因重试隐藏地扩大预算，不自动启动其他顶层 Workflow。
 

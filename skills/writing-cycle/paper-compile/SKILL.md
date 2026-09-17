@@ -1,8 +1,8 @@
 ---
 name: paper-compile
 description: 编译检查 LaTeX 论文及投稿 PDF；用户要求编译论文、核验 PDF，或父写作流程进入编译验收时使用。仅检查与诊断，不修改源文件。
-argument-hint: "[论文目录或入口 .tex]"
 ---
+<!-- argument-hint: "[论文目录或入口 .tex]" -->
 
 # Paper Compile：只读编译验收
 

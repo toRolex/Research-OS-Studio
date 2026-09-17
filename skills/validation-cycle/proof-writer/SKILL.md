@@ -1,8 +1,8 @@
 ---
 name: proof-writer
 description: 为固定命题撰写严谨证明：当用户需要证明定理、引理、命题或推论，补全证明，写证明，证明某个命题，补齐缺失步骤、形式化证明草图，或判断所声称证明在给定假设下能否完成时使用；不替代只读证明审查。
-argument-hint: "[定理陈述与假设；可指定输出位置与尝试预算]"
 ---
+<!-- argument-hint: "[定理陈述与假设；可指定输出位置与尝试预算]" -->
 
 # Proof Write: Rigorous Theorem / Lemma Drafting
 

@@ -28,6 +28,8 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 
 目录约定是 `skills/<category>/<skill>/SKILL.md`，资源与 Skill 共置。分类用于导航，不规定调用顺序。
 
+下表是发布时点快照，以 `skills/` 目录树为唯一真源；`scripts/check-skills.py` 在 CI 校验本清单与目录树一致。
+
 | 分类 | 目录 | 当前正式 Skill |
 |---|---|---|
 | General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)、[ask-research-os](general/ask-research-os/SKILL.md)（均 user-invoked） |
@@ -196,7 +198,7 @@ Skills CLI 1.5.26 的本票本地安装中，Claude Code / Codex 副本完整；
 
 ## 研究工作有界改进循环与人工验收
 
-`research-improvement` 由用户显式启动，在一次授权内对研究工作整体做有界 review → repair → re-review：直接读取 Claims/草稿、方法与代码、原始结果、当前 diff 与历史 findings，按批准范围修代码、补分析、改稿，并在另行授权与运行数名额内补实验；轮数、写入范围、资源与副作用上限固定，交付逐轮正文日志后停止。它承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 的方法，但不是只读审计，也不自动启动 `experiment-bridge`、`paper-writing` 或专项修复入口。
+`research-improvement`（跨流程，物理归位于 writing-cycle/）由用户显式启动，在一次授权内对研究工作整体做有界 review → repair → re-review：直接读取 Claims/草稿、方法与代码、原始结果、当前 diff 与历史 findings，按批准范围修代码、补分析、改稿，并在另行授权与运行数名额内补实验；轮数、写入范围、资源与副作用上限固定，交付逐轮正文日志后停止。它承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 的方法，但不是只读审计，也不自动启动 `experiment-bridge`、`paper-writing` 或专项修复入口。
 
 在可丢弃项目副本中手工验收：
 
