@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Check skills integrity
+        run: python3 scripts/check-skills.py
+
       - name: Create Version Pull Request
         uses: changesets/action@v1
         with:
