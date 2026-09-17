@@ -25,7 +25,7 @@
 
 <div align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/workflow-dark.jpg">
+    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/workflow-dark.png">
     <source media="(prefers-color-scheme: light)" srcset="docs/assets/workflow-light.jpg">
     <img alt="Research OS Studio System Architecture Workflow" src="docs/assets/workflow-light.jpg" width="100%">
   </picture>
@@ -47,14 +47,26 @@ Research OS Studio 将科研过程拆解为边界明确的工作流。AI 在单�
 
 ## 目录
 
-- [快速开始](#快速开始)
 - [核心设计原则](#核心设计原则)
-- [39 个 Skill 能力清单](#39-个-skill-能力清单)
+- [快速开始](#快速开始)
 - [典型科研流程](#典型科研流程)
+- [39 个 Skill 能力清单](#39-个-skill-能力清单)
 - [安全与控制原则](#安全与控制原则)
 - [常见问题](#常见问题)
 - [相关文档](#相关文档)
-- [开源协议](#开源协��)
+- [开源协议](#开源协议)
+
+---
+
+## 核心设计原则
+
+- **纯 Agent Skills**：无需安装独立 CLI、Python 包或后台服务，安装即用。
+- **三大科研阶段**：
+  1. **Idea Cycle（构思与查新）**：文���检索、多视角构思、新颖性核查、独立评审与方案收敛。
+  2. **Validation Cycle（实验与理论验证）**：实证路径管理实验计划、执行监控、统计分析与审计；理论路径负责推导记录、证明起草、审查与修复。
+  3. **Writing Cycle（论文写作与打磨）**：正文起草、学术绘图、LaTeX 编译检查、引用与结论一致性审计、审稿回复及转投适配。
+- **人在回路**：顶层工作流完成后立即停止，绝不自动跳转到下一阶段（例如查新完成后不会擅自开始跑实验）。
+- **原生文件格式**：成果直接以 Markdown、LaTeX、脚本和数据文件交付。
 
 ---
 
@@ -91,68 +103,6 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 ```
 
 它会根据你的研究方向或已有材料推荐最合适的技能。该助手只读咨询，不修改文件，也不自动触发任何工作流。如果你已经清楚目标，也可以直接输入对应技能名称调用。
-
----
-
-## 核心设计原则
-
-- **纯 Agent Skills**：无需安装独立 CLI、Python 包或后台服务，安装即用。
-- **三大科研阶段**：
-  1. **Idea Cycle（构思与查新）**：文���检索、多视角构思、新颖性核查、独立评审与方案收敛。
-  2. **Validation Cycle（实验与理论验证）**：实证路径管理实验计划、执行监控、统计分析与审计；理论路径负责推导记录、证明起草、审查与修复。
-  3. **Writing Cycle（论文写作与打磨）**：正文起草、学术绘图、LaTeX 编译检查、引用与结论一致性审计、审稿回复及转投适配。
-- **人在回路**：顶层工作流完成后立即停止，绝不自动跳转到下一阶段（例如查新完成后不会擅自开始跑实验）。
-- **原生文件格式**：成果直接以 Markdown、LaTeX、脚本和数据文件交付。
-
----
-
-## 39 个 Skill 能力清单
-
-全套包含 39 个独立技能。根据触发机制分为两类：
-- **用户显式调用（User, 17 个）**：顶层工作流或管理入口，由用户主动发起。
-- **模型内部调用（Model, 22 个）**：在顶层工作流中按需调用，也可以单独作为单项工具使用。
-
-| 分类 | 技能名称 | 调用方式 | 说明 |
-|---|---|---|---|
-| **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | User | 对话式初始化科研工作区与配置，需确认后写入 |
-| | [ask-research-os](skills/general/ask-research-os/SKILL.md) | User | 只读导航助手，推荐当前阶段适用的技能 |
-| **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | User | 构思查新工作流：文献检索、生成方案、查新、评审并输出 Proposal |
-| | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | Model | 文献检索与综合，标注出处与核实状态 |
-| | [idea-generation](skills/idea-cycle/idea-generation/SKILL.md) | Model | 多视角生成研究候选方案，记录筛选理由 |
-| | [creative-thinking-for-research](skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Model | 构思瓶颈时的认知转换与正交发散 |
-| | [novelty-check](skills/idea-cycle/novelty-check/SKILL.md) | Model | 检索已知工作，核对方案新颖性 |
-| | [idea-review](skills/idea-cycle/idea-review/SKILL.md) | Model | 独立评审视角，指出方案弱点与潜在问题 |
-| | [idea-refinement](skills/idea-cycle/idea-refinement/SKILL.md) | Model | 细化研究方案，输出最小可行路线与拓展路线 |
-| **Validation** | [experiment-plan](skills/validation-cycle/experiment-plan/SKILL.md) | User | 制定包含假设、基线、指标与预算的实验计划 |
-| | [experiment-bridge](skills/validation-cycle/experiment-bridge/SKILL.md) | User | 实验执行工作流：实现、试跑、监控、分析与审计 |
-| | [run-experiment](skills/validation-cycle/run-experiment/SKILL.md) | Model | 在指定范围内执行实验代码并记录运行状态 |
-| | [experiment-queue](skills/validation-cycle/experiment-queue/SKILL.md) | Model | 管理批量实验队列与资源分配 |
-| | [monitor-experiment](skills/validation-cycle/monitor-experiment/SKILL.md) | Model | 监控运行进程与状态，不做额外推论 |
-| | [training-health-check](skills/validation-cycle/training-health-check/SKILL.md) | Model | 诊断 NaN、显存溢出、loss 停滞等训练异常 |
-| | [analyze-results](skills/validation-cycle/analyze-results/SKILL.md) | Model | 统计分析实验结果与不确定性 |
-| | [experiment-audit](skills/validation-cycle/experiment-audit/SKILL.md) | Model | 独立审计代码、评估逻辑与结果真实性 |
-| | [result-to-claim](skills/validation-cycle/result-to-claim/SKILL.md) | User | 根据实验证据收敛并提取科学结论 |
-| | [formula-derivation](skills/validation-cycle/formula-derivation/SKILL.md) | Model | 推导数学公式，记录假设、步骤与误差界限 |
-| | [proof-writer](skills/validation-cycle/proof-writer/SKILL.md) | Model | 起草数学证明，保留未完成的尝试与断点 |
-| | [proof-review](skills/validation-cycle/proof-review/SKILL.md) | Model | 只读审查证明逻辑与边界反例，不修改文件 |
-| | [proof-repair](skills/validation-cycle/proof-repair/SKILL.md) | User | 在授权范围内有针对性地修复证明断点 |
-| | [proof-orchestrator](skills/validation-cycle/proof-orchestrator/SKILL.md) | User | 管理复杂长定理证明，支持 Lean 辅助推导 |
-| **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | User | 通用论文写作工作流：大纲、绘图、起草、编译与审计 |
-| | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | User | 机器学习论文写作，侧重实验设置、随机种子与算力开销记录 |
-| | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | User | 系统方向论文写作，侧重设计权衡与性能评测 |
-| | [paper-plan](skills/writing-cycle/paper-plan/SKILL.md) | Model | 规划论文大纲与 Claim-Evidence 证据对应矩阵 |
-| | [paper-drafting](skills/writing-cycle/paper-drafting/SKILL.md) | Model | 依据实验数据与推导记录起草论文正文 |
-| | [academic-plotting](skills/writing-cycle/academic-plotting/SKILL.md) | Model | 绘制学术图表并保留可复现绘图脚本 |
-| | [paper-compile](skills/writing-cycle/paper-compile/SKILL.md) | Model | 调用本地 LaTeX 环境执行编译检查并报告警告 |
-| | [paper-compile-repair](skills/writing-cycle/paper-compile-repair/SKILL.md) | User | 展示 diff 并经确认后修复 LaTeX 编译错误 |
-| | [citation-audit](skills/writing-cycle/citation-audit/SKILL.md) | Model | 检查引用的准确性与上下文匹配度 |
-| | [apply-citation-fixes](skills/writing-cycle/apply-citation-fixes/SKILL.md) | User | 确认后更新 BibTeX 条目或正文引用标 |
-| | [paper-claim-audit](skills/writing-cycle/paper-claim-audit/SKILL.md) | Model | 校验正文数字、图表与原始实验数据的一致性 |
-| | [claim-stress-test](skills/writing-cycle/claim-stress-test/SKILL.md) | Model | 模拟同行评审视角，针对论点薄弱处提出质疑 |
-| | [research-improvement](skills/writing-cycle/research-improvement/SKILL.md) | User | 对代码、论点或草稿进行有限轮次的评审与修改 |
-| | [rebuttal](skills/writing-cycle/rebuttal/SKILL.md) | User | 梳理审稿意见，建立证据对应并起草回复 |
-| | [resubmit-pipeline](skills/writing-cycle/resubmit-pipeline/SKILL.md) | User | 论文转投适配，在保留旧稿的前提下适配新模板 |
-| | [paper-talk](skills/writing-cycle/paper-talk/SKILL.md) | User | 根据论文生成学术演讲幻灯片大纲与逐字稿 |
 
 ---
 
@@ -211,6 +161,56 @@ npx skills@latest add toRolex/Research-OS-Studio --all
       ↓
 交付论文草稿与配套材料（停止）
 ```
+
+---
+
+## 39 个 Skill 能力清单
+
+全套包含 39 个独立技能。根据触发机制分为两类：
+- **用户显式调用（User, 17 个）**：顶层工作流或管理入口，由用户主动发起。
+- **模型内部调用（Model, 22 个）**：在顶层工作流中按需调用，也可以单独作为单项工具使用。
+
+| 分类 | 技能名称 | 调用方式 | 说明 |
+|---|---|---|---|
+| **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | User | 对话式初始化科研工作区与配置，需确认后写入 |
+| | [ask-research-os](skills/general/ask-research-os/SKILL.md) | User | 只读导航助手，推荐当前阶段适用的技能 |
+| **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | User | 构思查新工作流：文献检索、生成方案、查新、评审并输出 Proposal |
+| | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | Model | 文献检索与综合，标注出处与核实状态 |
+| | [idea-generation](skills/idea-cycle/idea-generation/SKILL.md) | Model | 多视角生成研究候选方案，记录筛选理由 |
+| | [creative-thinking-for-research](skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Model | 构思瓶颈时的认知转换与正交发散 |
+| | [novelty-check](skills/idea-cycle/novelty-check/SKILL.md) | Model | 检索已知工作，核对方案新颖性 |
+| | [idea-review](skills/idea-cycle/idea-review/SKILL.md) | Model | 独立评审视角，指出方案弱点与潜在问题 |
+| | [idea-refinement](skills/idea-cycle/idea-refinement/SKILL.md) | Model | 细化研究方案，输出最小可行路线与拓展路线 |
+| **Validation** | [experiment-plan](skills/validation-cycle/experiment-plan/SKILL.md) | User | 制定包含假设、基线、指标与预算的实验计划 |
+| | [experiment-bridge](skills/validation-cycle/experiment-bridge/SKILL.md) | User | 实验执行工作流：实现、试跑、监控、分析与审计 |
+| | [run-experiment](skills/validation-cycle/run-experiment/SKILL.md) | Model | 在指定范围内执行实验代码并记录运行状态 |
+| | [experiment-queue](skills/validation-cycle/experiment-queue/SKILL.md) | Model | 管理批量实验队列与资源分配 |
+| | [monitor-experiment](skills/validation-cycle/monitor-experiment/SKILL.md) | Model | 监控运行进程与状态，不做额外推论 |
+| | [training-health-check](skills/validation-cycle/training-health-check/SKILL.md) | Model | 诊断 NaN、显存溢出、loss 停滞等训练异常 |
+| | [analyze-results](skills/validation-cycle/analyze-results/SKILL.md) | Model | 统计分析实验结果与不确定性 |
+| | [experiment-audit](skills/validation-cycle/experiment-audit/SKILL.md) | Model | 独立审计代码、评估逻辑与结果真实性 |
+| | [result-to-claim](skills/validation-cycle/result-to-claim/SKILL.md) | User | 根据实验证据收敛并提取科学结论 |
+| | [formula-derivation](skills/validation-cycle/formula-derivation/SKILL.md) | Model | 推导数学公式，记录假设、步骤与误差界限 |
+| | [proof-writer](skills/validation-cycle/proof-writer/SKILL.md) | Model | 起草数学证明，保留未完成的尝试与断点 |
+| | [proof-review](skills/validation-cycle/proof-review/SKILL.md) | Model | 只读审查证明逻辑与边界反例，不修改文件 |
+| | [proof-repair](skills/validation-cycle/proof-repair/SKILL.md) | User | 在授权范围内有针对性地修复证明断点 |
+| | [proof-orchestrator](skills/validation-cycle/proof-orchestrator/SKILL.md) | User | 管理复杂长定理证明，支持 Lean 辅助推导 |
+| **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | User | 通用论文写作工作流：大纲、绘图、起草、编译与审计 |
+| | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | User | 机器学习论文写作，侧重实验设置、随机种子与算力开销记录 |
+| | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | User | 系统方向论文写作，侧重设计权衡与性能评测 |
+| | [paper-plan](skills/writing-cycle/paper-plan/SKILL.md) | Model | 规划论文大纲与 Claim-Evidence 证据对应矩阵 |
+| | [paper-drafting](skills/writing-cycle/paper-drafting/SKILL.md) | Model | 依据实验数据与推导记录起草论文正文 |
+| | [academic-plotting](skills/writing-cycle/academic-plotting/SKILL.md) | Model | 绘制学术图表并保留可复现绘图脚本 |
+| | [paper-compile](skills/writing-cycle/paper-compile/SKILL.md) | Model | 调用本地 LaTeX 环境执行编译检查并报告警告 |
+| | [paper-compile-repair](skills/writing-cycle/paper-compile-repair/SKILL.md) | User | 展示 diff 并经确认后修复 LaTeX 编译错误 |
+| | [citation-audit](skills/writing-cycle/citation-audit/SKILL.md) | Model | 检查引用的准确性与上下文匹配度 |
+| | [apply-citation-fixes](skills/writing-cycle/apply-citation-fixes/SKILL.md) | User | 确认后更新 BibTeX 条目或正文引用标 |
+| | [paper-claim-audit](skills/writing-cycle/paper-claim-audit/SKILL.md) | Model | 校验正文数字、图表与原始实验数据的一致性 |
+| | [claim-stress-test](skills/writing-cycle/claim-stress-test/SKILL.md) | Model | 模拟同行评审视角，针对论点薄弱处提出质疑 |
+| | [research-improvement](skills/writing-cycle/research-improvement/SKILL.md) | User | 对代码、论点或草稿进行有限轮次的评审与修改 |
+| | [rebuttal](skills/writing-cycle/rebuttal/SKILL.md) | User | 梳理审稿意见，建立证据对应并起草回复 |
+| | [resubmit-pipeline](skills/writing-cycle/resubmit-pipeline/SKILL.md) | User | 论文转投适配，在保留旧稿的前提下适配新模板 |
+| | [paper-talk](skills/writing-cycle/paper-talk/SKILL.md) | User | 根据论文生成学术演讲幻灯片大纲与逐字稿 |
 
 ---
 
