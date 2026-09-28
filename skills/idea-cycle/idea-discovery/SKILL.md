@@ -1,13 +1,13 @@
 ---
 name: idea-discovery
-description: "从研究方向走完主动检索、多视角候选、查新、独立评审与固定边界收敛，交付发现报告与 Proposal 后停止。用户显式调用；不运行 pilot、实验计划、Validation 或 Writing。"
+description: "从研究方向走完主动检索、多视角候选、查新、独立评审与固定边界收敛，交付发现报告与 Proposal。"
 disable-model-invocation: true
 ---
 <!-- argument-hint: "[研究方向；可附 brief 路径、参考论文、已有材料、入围候选上限、预算与输出位置]" -->
 
 # Idea Discovery Workflow
 
-用户显式调用的顶层 Workflow：在一次授权内组合已交付的 Idea Cycle 内部能力，走完 ARIS Discovery 主链，交付 **`IDEA_DISCOVERY.md`** 与 **`RESEARCH_PROPOSAL.md`** 后停止。不运行 pilot，不制定实验计划，不进入 Validation 或 Writing。Orchestra 构思框架通过已交付的 `idea-generation` 与 `creative-thinking-for-research` 进入候选发散，不另造薄弱流程。
+用户显式调用的顶层 Workflow：在一次授权内组合已交付的 Idea Cycle 内部能力，走完 ARIS Discovery 主链，交付 **`IDEA_DISCOVERY.md`** 与 **`RESEARCH_PROPOSAL.md`**。
 
 ## 调用与授权
 
@@ -17,7 +17,7 @@ disable-model-invocation: true
 - **输出**：默认 `IDEA_DISCOVERY.md`（单一权威发现报告）与 `RESEARCH_PROPOSAL.md`（最终 Proposal）。路径由用户确认；目的文件已存在时先展示差异并保留原件。
 - **写入范围**：仅本次获准的报告与 Proposal 路径。研究材料、原始候选、文献、代码、数据只读。默认不写统一 JSON、状态记录、门控输出、HTML、manifest 或来源认证材料。
 - **资源范围**：只使用宿主已有且本次授权的能力。公开检索不授权上传未公开材料、付费服务、新凭据、远程写入或安装科研环境；缺工具时如实降级并保留缺口。
-- **停止条件**：Proposal 交付即停止。不启动 pilot、`experiment-plan`、Validation、Writing 或其他顶层 Workflow；是否继续完全由用户决定。
+- **停止条件**：Proposal 交付即停止。pilot、`experiment-plan`、Validation、Writing 或其他顶层 Workflow 由用户另行点名；是否继续完全由用户决定。
 
 **完成条件**：方向、材料实际读到范围、非目标、约束、总预算、输出路径与检查点策略均已明确，或逐项标为缺口；未知项不被默认值填满。
 
@@ -36,55 +36,33 @@ disable-model-invocation: true
 
 ## Phase 1：文献 Landscape（组合 `research-lit`）
 
-以方向、已有材料与 brief 调用 `research-lit`，传 `composed: <IDEA_DISCOVERY.md>#文献 Landscape`，由它执行实际检索、来源核实与综合。
+以方向、已有材料与 brief 调用 `research-lit`，传 `composed: <IDEA_DISCOVERY.md>#文献 Landscape`。
 
-- 保留它的候选／已核实／未核实标签、阅读深度、检索日志与覆盖缺口；未核实材料不承载无保留结论。
-- 有检索能力时必须有真实查询，不能接受空 queries 计划。无可用检索能力时按 supplied-material synthesis 继续，把覆盖范围限定为已供材料。
-- 无任何可用证据时，接收覆盖／缺口报告并**停止本阶段的综合**，不推断“无文献存在”。
-
-**完成条件**：每个请求的来源都有实际结果；landscape 每条结论可追溯到已读材料或标为推断；覆盖缺口与未执行检索显式列出。
+**完成条件**：该章节已合入，或缺口已按 [组合说明](references/composition-notes.md) 记录；每个请求的来源都有实际结果；landscape 每条结论可追溯到已读材料或标为推断；覆盖缺口与未执行检索显式列出。
 
 ## Phase 2：候选生成与筛选（组合 `idea-generation`）
 
-把同一组原材料、Phase 1 landscape 与固定边界交给 `idea-generation`，传 `composed: <IDEA_DISCOVERY.md>#候选池与筛选`。保留其 fan-out 与筛选方法。
+把同一组原材料、Phase 1 landscape 与固定边界交给 `idea-generation`，传 `composed: <IDEA_DISCOVERY.md>#候选池与筛选`。
 
-- 宿主与授权允许时按视角并行 fan-out；否则顺序执行并如实标注“单上下文顺序生成”，不声称独立模型。
-- 卡住时可在生成职责内使用已安装的 `creative-thinking-for-research`（Orchestra 认知方法）；未安装时五视角与共置框架仍可完成本轮，不自动安装。
-- 保留完整原始候选池与每个候选的去向（保留／合并／暂存）及具体理由；只有已知事实违反用户硬约束才暂存，不用“不够有趣”“已经有人做过”淘汰。
-- 按用户候选上限挑出进入查新的非重复可行池；排序只用用户指定的客观字段，不暗示科学价值排名。
-
-**完成条件**：每个已选视角都有候选或具名缺口；每个原始候选都有去向与依据；非重复可行池已交给 Phase 3，生成者未作独立评审。
+**完成条件**：`#候选池与筛选` 已合入；每个已选视角都有候选或具名缺口；每个原始候选都有去向与依据；非重复可行池已交给 Phase 3。
 
 ## Phase 3：逐候选查新（组合 `novelty-check`）
 
-对进入查新的每个候选调用 `novelty-check`，传 `composed: <IDEA_DISCOVERY.md>#查新结论`；授权与宿主允许时可并行。它直接读原始候选而非生成者摘要，围绕核心 Claim 主动检索 closest prior work。
+对进入查新的每个候选调用 `novelty-check`，传 `composed: <IDEA_DISCOVERY.md>#查新结论`。
 
-- 保留 Claim → 具体位置 → 重叠 → 关键区别 → 未知 的比较、来源核实与检索日志。
-- 裁决为 PROCEED／PROCEED WITH CAUTION／ABANDON／EVIDENCE GAP；**ABANDON 必须点名具体已发表工作**，不因模糊相似误杀。
-- 有独立复核能力时按 `novelty-check` 的 Phase C 做一次只读独立核实；否则标 **single-agent assessment; independent verification not performed**。
-- 被近邻覆盖的候选如实淘汰并保留理由；EVIDENCE GAP 给出最小补证动作，不永久 inconclusive。
-
-**完成条件**：每个入围候选都有 closest-work 比较或具名证据缺口；检索日志区分已尝试／成功／不可用；裁决与依据可追溯。
+**完成条件**：`#查新结论` 已合入；每个入围候选都有 closest-work 比较或具名证据缺口；检索日志区分已尝试／成功／不可用；裁决与依据可追溯。
 
 ## Phase 4：独立评审（组合 `idea-review`）
 
-把存活的原始候选、原始文献与查新材料交给 `idea-review`，传 `composed: <IDEA_DISCOVERY.md>#独立评审`。评审者直接从原始材料形成裁决，生成者自查、回顾性 reflection 或生成者排名都不能替代。
+把存活的原始候选、原始文献与查新材料交给 `idea-review`，传 `composed: <IDEA_DISCOVERY.md>#独立评审`。
 
-- 无独立评审者或原文不可达时，标 **REVIEW UNAVAILABLE / EVIDENCE GAP**，交付已完成部分并停止裁决；不伪造评审返回。
-- 保留 findings 的原文定位、逐轮回应、裁决依据、条件性 Claim 矩阵与未解决问题；裁决只是建议。
-
-**完成条件**：有实际评审返回及原文定位，或 REVIEW UNAVAILABLE 被明确记录；未解决问题未被共识抹去。
+**完成条件**：`#独立评审` 已合入；有实际评审返回及原文定位，或 REVIEW UNAVAILABLE 被明确记录；未解决问题未被共识抹去。
 
 ## Phase 4.5：固定边界收敛（组合 `idea-refinement`）
 
 把存活候选、逐字 Problem Anchor、原始材料与 Phase 4 findings 交给 `idea-refinement`，明确授权它写入 `RESEARCH_PROPOSAL.md`，并传 `composed: <IDEA_DISCOVERY.md>#收敛与 Proposal`。
 
-- Anchor 逐字保留；改变问题、目标人群、成功标准或预算视为 drift，回到用户决定，不偷偷换题。
-- 比较最小可行与前沿路线，给出选用与舍弃理由；最多五轮“修订—独立复核”，无进展或预算耗尽即停。
-- **不制定实验计划与 tracker**；1–3 个 Claim 驱动验证草图只保留在 Proposal 内，且明确未执行。
-- 报告只链接最终 Proposal，不复制其同义全文；逐轮修订记录并入 `#收敛与 Proposal` 章节。
-
-**完成条件**：`RESEARCH_PROPOSAL.md` 已写入获准路径，Anchor 每轮保留、双路线取舍与未解决弱点可查；未启动任何实验。
+**完成条件**：`RESEARCH_PROPOSAL.md` 已写入获准路径，`#收敛与 Proposal` 已合入；Anchor 每轮保留、双路线取舍与未解决弱点可查。
 
 ## Phase 5：交付报告并停止
 
@@ -92,22 +70,8 @@ disable-model-invocation: true
 
 按 [报告模板](templates/discovery-report.md) 补全；确认每个章节存在或已标缺口，然后报告实际路径、失败的写入、未启动项（pilot、`experiment-plan`、Validation、Writing）与待用户决定事项。
 
-**完成条件**：`IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 存在于获准路径或如实报告写入失败；报告只建议下一步，不自动启动另一顶层 Workflow。交付后停止。
+**完成条件**：`IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 存在于获准路径或如实报告写入失败；报告只建议下一步。交付后按上方停止条件停下。
 
 ## 组合与降级
 
-阶段到内部能力、canonical 章节的对照与缺口降级见共置 [组合说明](references/composition-notes.md)。要点：
-
-- 各内部能力只在本阶段职责内工作，支持 standalone／composed；路径存在本身不是 composed 信号，必须显式传 `composed:`。
-- 任一能力缺失或返回不可用时，按 `references/composition-notes.md` 的降级规则保留缺口并停止该类型工作，不用生成者自查或模型共识顶替。
-
-## 禁止事项
-
-- 不运行 pilot、不设 GPU／时长／轮数 pilot 常量、不调用 `experiment-plan`、不产出实验计划或 tracker。
-- 不启动 Validation、Writing、`run-experiment`、`experiment-bridge` 或其他顶层 Workflow。
-- 不写统一 JSON、状态机记录、门控脚本输出、HTML 渲染、manifest、SHA/digest/receipt 或来源认证材料。
-- 不覆盖研究材料与已有报告，不安装科研环境，不上传未公开材料，不做付费或远程写入、投稿、发布或 Git push。
-
-## 来源
-
-主链改编自 ARIS／wanshuiyin `skills/idea-discovery/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`：保留 Phase 0 brief、Phase 0.5 参考论文、Phase 1–4.5 组合顺序、逐候选查新、独立评审、固定 Problem Anchor 收敛、单一权威交付物与阶段性淘汰记录；删除 pilot 与 GPU 预算、`AUTO_PROCEED` 自动推进、实验计划、`run_state`/证据门、HTML 渲染、provider/MCP 与跨主流程调用。Orchestra 构思框架经已交付的 `idea-generation`、`creative-thinking-for-research` 进入发散。版权与完整许可见 [ARIS MIT](LICENSE)；来源版本、作者与采用范围集中记录于仓库来源说明，使用本 Skill 无需访问上游或产品仓库。
+阶段到内部能力、canonical 章节的对照与缺口降级只见 [组合说明](references/composition-notes.md)。

@@ -1,6 +1,6 @@
 ---
 name: paper-drafting
-description: 从现成论文计划和原始 Claims、Evidence、结果起草完整正文或指定章节；在授权写作职责内供 Workflow 调用，也支持用户点名单独起草。不负责论文总流程、重新规划研究、绘图、编译、独立审计或转投。
+description: 从计划写全文或指定节：依据现成计划和原始 Claims、Evidence、结果起草候选正文。供已授权 Workflow 调用，也支持用户点名。
 ---
 
 # Paper drafting
@@ -74,7 +74,3 @@ description: 从现成论文计划和原始 Claims、Evidence、结果起草完�
 - 检查分别标明作者静态自查、模型检查、真实编译／科研验证。未执行的检查写“未执行”；仅有源文件不能声称 PDF 编译成功、页数合规或投稿就绪。
 
 **完成条件**：每项检查有结果／不适用理由／未完成原因，未解决项随候选稿可见交付，然后停止。不要自动开启总写作 Workflow、实验、绘图、编译、审计、改进循环、转投或投稿；不发布、不 push、不宣布接受或科研质量已通过。
-
-## 来源
-
-从 Orchestra Research 的 `ml-paper-writing` 拆出局部起草方法；不是其完整 ML 写作 Workflow。随包 [LICENSE](LICENSE) 保留 MIT notice；[sources.md](references/sources.md) 保留方法 attribution。运行无需访问本产品仓库中央文档。

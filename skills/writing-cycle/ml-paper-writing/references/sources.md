@@ -1,6 +1,8 @@
 # ML paper-writing method attribution
 
-This Skill adapts the independently MIT-licensed Orchestra Research `ml-paper-writing` material at revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`:
+许可证与方法出处。不是操作步骤。
+
+This Skill adapts the independently MIT-licensed Orchestra Research `ml-paper-writing` material:
 
 - Repository: <https://github.com/Orchestra-Research/AI-Research-SKILLs>
 - Original directory: `20-ml-paper-writing/ml-paper-writing/`

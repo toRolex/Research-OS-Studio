@@ -67,9 +67,9 @@ disable-model-invocation: true
 
 完整性疑虑压低上限：`experiment-audit` 报告或自查发现 fake ground truth、phantom results、代码与结果不对应或 scope overclaim 时，该 Claim 不得记 `supported`，按其性质改判或降级，并在报告中标注受完整性限制。整体置信度低（证据薄弱、独立审查不可用或分歧未解）时按不确定处理，不采用为 supported。
 
-缩窄规则与评价类型上限（`real_gt`／`synthetic_proxy`／`simulation_only` 等对应什么 Claim 天花板）见 [判定细则](references/claim-judgment.md)。每个判定附反证／缺口：不支持或限制该 Claim 的失败记录、负结果、未测范围与最小补证动作；补实验本身不在本 Skill 内。
+缩窄规则、评价类型上限与反证清单见 [判定细则](references/claim-judgment.md)。
 
-**完成条件**：每个待判定 Claim 都有结论、支持范围、缩窄候选（如需）、反证与缺口；最终采用仍由用户决定。
+**完成条件**：每个 Claim 套用了评价类型上限，或类型标为 `unknown`。未套用上限不得记 `supported`。需要缩窄时，缩窄候选、反证与缺口已写出。最终采用仍由用户决定。
 
 ## Phase 4: 独立复核
 
@@ -77,7 +77,7 @@ disable-model-invocation: true
 
 无独立审查者或超出授权时，标注输出 **single-agent assessment; independent verification not performed**。不冒充第二审查者，不反复寻求更有利的结论。
 
-**完成条件**：实际回复已被考虑并保留，或缺失的独立验证已明确记录。
+**完成条件**：每条分歧都有保留或改判；无独立审查者或超出授权时标明 single-agent。
 
 ## Phase 5: 报告与停止
 
@@ -93,7 +93,3 @@ disable-model-invocation: true
 - 存在性判定驱动门槛、不断言支持：机械核对只能否决无证据引用，不能确立任何 Claim。
 - 低置信度按不确定处理：材料不足、审查不可用或分歧未解时记 `unknown`／`needs-narrowing`，不因“没有反证”升级。
 - 报告数字永远可被更原始的材料推翻：核对链是账本 → 原始输出 → 派生统计 → Claim，逆向回溯，顺向不升级。
-
-## 来源
-
-改编自 wanshuiyin / ARIS `skills/result-to-claim/SKILL.md`（MIT，`Copyright (c) 2026 wanshuiyin`；采用 revision `0472e530251cdbd3364c33b110063c58f819edd7`，当日 HEAD 一致；该目录仅此文件，无共置资源）。保留存在性与支持判断分离、三档 verdict、"单点阳性不支撑一般 Claim" 的范围诚实、完整性疑虑降级与 verdict 记录；统计与完整性检查口径复用本仓 `analyze-results`（不确定性、选择偏差、多重比较）与 `experiment-audit`（fake ground truth、phantom results、scope overclaim、评价类型）的方法。删除固定审查后端与模型路由、固定实验跟踪／远程日志来源、上游跟踪目录与 helper 脚本、机器 JSON verdict、wiki 边／pipeline 路由、自动消融与跨 Workflow 推进。完整 MIT notice 见 [LICENSE](LICENSE)。来源版本、作者与复制范围集中记录于仓库来源说明；使用本 Skill 无需访问产品仓库或上游。

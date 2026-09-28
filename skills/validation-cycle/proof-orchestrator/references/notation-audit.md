@@ -2,7 +2,7 @@
 
 正确性检查后、完成 `<本轮目录>/report.md` 前使用。用户问符号、输出以定理为主，或某一步含至少五个非标准符号时，完整执行。阈值是表达编辑标准，不是数学定律；确实降低总复杂度的超阈值记号可保留，但须逐项解释。
 
-正确性分类见[证明审计准则](proof-audit-rubric.md)，记录格式见[审计输出约定](audit-output-contract.md)，本地及回传分支见[提示模板](dispatch-prompts.md)。
+问题分类以 proof-review 的数学审查规则为准；本目录检查见 [证明审计准则](proof-audit-rubric.md)，记录格式见[审计输出约定](audit-output-contract.md)，本地及回传分支见[提示模板](dispatch-prompts.md)。
 
 ## 必需清单
 

@@ -2,7 +2,7 @@
 
 用于 `<本轮目录>/audit.md`；用户结论写入自然 Markdown 的 `report.md`。聊天版可更短，但保留相同判决和问题语义。以下字段描述证据，不是运行状态机；本轮只覆盖一个有界 obligation，不给出科研验收结论。
 
-分类、严重度及检查依据见[证明审计准则](proof-audit-rubric.md)；独立性核验见[独立意见](independent-review.md)；触发符号检查时附[固定七行计分表](notation-audit.md)。
+问题分类、严重度与双轴取值以 proof-review 的数学审查规则为准，本文件不重列。本地检查见 [证明审计准则](proof-audit-rubric.md)；独立性核验见 [独立意见](independent-review.md)；触发符号检查时附 [固定七行计分表](notation-audit.md)。
 
 ## Markdown 完整内容
 
@@ -62,9 +62,9 @@ Reviewer model: <经核实的实际模型；未知写 unknown>
 ### I<n>：<短标题>
 
 - Severity: FATAL | CRITICAL | MAJOR | MINOR
-- Category: <17 类分类标签之一>
-- Status: INVALID | UNJUSTIFIED | UNDERSTATED | OVERSTATED | UNCLEAR
-- Impact: GLOBAL | LOCAL | COSMETIC
+- Category: <proof-review 数学审查规则中的分类>
+- Status: <该规则中的 proof status>
+- Impact: <该规则中的 impact>
 - Location: <文件:行号或章节/明确步骤>
 - Claimed step: <证明声称什么>
 - Problem: <为什么推不出>
@@ -96,4 +96,4 @@ Reviewer model: <经核实的实际模型；未知写 unknown>
 
 ## 完成条件
 
-命题边界、全部子目标、九项检查、判决依据、严重问题字段、反例及风险齐全；自查与独立意见清楚分开；未完成工作如实标注。本地结果直接依本约定写 `report.md`，仅在收到外部答案时读取[提示模板](dispatch-prompts.md)第 6 节回传证明审计与编辑提示。报告说明当前结论、证据、缺口和可选下一步，不把流程完成包装成证明成功。
+命题边界、全部子目标、九项检查、判决依据、严重问题字段、反例及风险齐全；自查与独立意见清楚分开；未完成工作如实标注。本地结果直接依本约定写 `report.md`，仅在收到外部答案时读取 [回传审计与编辑](prompts/return-audit.md)。报告说明当前结论、证据、缺口和可选下一步，不把流程完成包装成证明成功。

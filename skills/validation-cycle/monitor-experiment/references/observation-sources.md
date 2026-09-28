@@ -4,17 +4,9 @@ Where run facts come from, and how to read them without taking control. Use only
 surface types this project actually has; do not install a tool or assume a provider
 just to create one. Every action here is a read.
 
-## Match the surface to the fact
+## Surface types
 
-| Surface | Typical read | Establishes |
-|---|---|---|
-| Live process | `ps -o pid,etime,cmd -p <pid>`, process table query, container/pod list | `running` |
-| Terminal multiplexer | `screen -ls`, `tmux ls`, capture-pane / hardcopy (read the copy) | `running`, log tail |
-| Redirected stream | `nohup.out`, `*.stdout`, `*.stderr`, framework log file | progress, fatal errors |
-| Scheduler / queue | Slurm `squeue`/`sacct`, PBS/SGE `qstat`, LSF `bjobs`, Kubernetes pod status/logs, cloud job status | `running`/terminal state, exit code |
-| Status / heartbeat file | state or progress file written by the job | `running`, progress counters |
-| Exit record | launcher-captured `$?`, `*.exit`, scheduler exit state, job completion marker | `completed` / `crashed` |
-| Artifact directory | `ls -l` of expected output paths and their modification times | output present or absent |
+只用项目里实际存在的表面类型：live process、terminal multiplexer、redirected stream、scheduler / queue、status / heartbeat file、exit record、artifact directory。无退出记录时的判读留在 [Monitor Experiment](../SKILL.md) 的判读规则。
 
 Read the job's own format before matching text: frameworks name steps, epochs and errors
 differently. The same surface can be stale — a log stops advancing when the job dies — so

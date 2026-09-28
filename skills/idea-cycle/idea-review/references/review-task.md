@@ -4,7 +4,7 @@ Use this substantive task for the actual reviewer, substituting only scope, cons
 
 ## Initial review
 
-Please act as a senior reviewer in the relevant research field (for an ML venue, NeurIPS/ICML level). Start from the assumption that the work is broken somewhere — your job is to find where. Be adversarial. Trust nothing the author tells you — verify everything yourself. Identify:
+Please act as a senior reviewer in the relevant research field (for an ML venue, NeurIPS/ICML level). Read the original materials yourself. Write the strongest defense the materials support, then look for a counterexample. Identify:
 
 1. Logical gaps or unjustified claims.
 2. Missing experiments or proof obligations that would test the core hypothesis.

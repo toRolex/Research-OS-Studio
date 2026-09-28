@@ -1,6 +1,6 @@
 ---
 name: monitor-experiment
-description: "只读观测已有实验或训练作业的运行事实（running/completed/crashed/unknown、进度、输出与退出证据）；用户问“跑完了吗/还在跑吗”，或父 Workflow 在授权范围内需要运行状态时使用。只报告观测事实，不判断科研结果、不触发分析、不停止或重启作业。"
+description: 只读观测已有实验或训练作业的运行事实（running/completed/crashed/unknown、进度、输出与退出证据）。用户问“跑完了吗/还在跑吗”，或父 Workflow 在授权范围内需要运行状态时使用。
 ---
 <!-- argument-hint: "[运行标识或日志/状态路径；可指定报告位置]" -->
 
@@ -61,11 +61,7 @@ Output a readable Markdown run-status record using [the report template](templat
 ## Interpretation rules
 
 - A run fact is not a research fact: `completed` describes the job, not the result.
-- Absence of evidence is not evidence: an empty tail, a missing log or a vanished process stays `unknown` unless the job itself recorded a terminal fact.
+- 无退出记录即 `unknown`：空 tail、缺日志或进程消失，在作业自己记下终态之前保持 `unknown`。
 - Prefer the most direct evidence: the job's own exit record or completion marker over elapsed time or file presence.
 - Report raw observed numbers; comparison and quality judgment belong to analysis and audit capabilities the user invokes separately.
 - Reading is not controlling: report a broken-looking run as a fact and leave stop/restart/retry to the user.
-
-## 来源
-
-改编自 wanshuiyin / ARIS `skills/monitor-experiment/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`（MIT）。保留“监控只等待外部事实、只自判机器可查完成、绝不重跑质量裁决”的核心分离。删除 `/loop`/CronCreate 自调度、固定 SSH/screen/vast.ai/Modal 供应商、Feishu 通知、W&B 强制读取、成本提醒与结果比较／下一步建议。MIT 全文见 [LICENSE](LICENSE)。来源与采用细节记录于仓库集中来源文档，该文档是维护信息，不是执行依赖。

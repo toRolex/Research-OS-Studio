@@ -1,6 +1,6 @@
 ---
 name: research-improvement
-description: 跨流程能力（覆盖 Validation 与 Idea Cycle 产物，物理归位于 writing-cycle/）：在用户显式授权的一次有界循环内对研究工作整体执行 review → repair → re-review：直接读取 Claims、草稿、方法与代码、原始结果、当前 diff 与历史 findings，在批准范围内修代码、补分析、改稿或补实验并复审，保留全过程与未解决 findings 后停止。
+description: 在用户显式授权的一次有界循环内，对研究工作整体做 review → repair → re-review。直接读取 Claims、草稿、方法与代码、原始结果、当前 diff 与历史 findings；在批准范围内修代码、补分析、改稿或补实验并复审，保留全过程与未解决 findings 后停止。跨 Validation 与 Idea Cycle 产物，物理归位于 writing-cycle/。
 license: MIT
 disable-model-invocation: true
 metadata:
@@ -13,7 +13,7 @@ metadata:
 
 **跨流程能力**：本 Skill 覆盖 Validation 与 Idea Cycle 的产物（方法与代码、实验结果、Claims、Proposal），只因物理归位约定放在 `writing-cycle/` 下，不归入任何单一主流程。
 
-用户显式启动的高权限 Workflow：在一次确认的授权内，对研究工作整体循环 **review → repair → re-review**，直到策略认可的正面结论或轮数上限。它同时读取并修复研究本体与论文表达——Claims、草稿、方法与代码、原始结果、当前 diff、历史 findings——因此不是只读审计：它会在批准范围内修改代码、补分析、改稿，并在另行授权时补实验。有界：轮数、写入范围、资源与副作用上限固定；没有无限循环，不因重试隐藏地扩大预算，不自动启动其他顶层 Workflow。
+用户显式启动的高权限 Workflow：在一次确认的授权内，对研究工作整体循环 **review → repair → re-review**。它同时读取并修复研究本体与论文表达——Claims、草稿、方法与代码、原始结果、当前 diff、历史 findings——因此不是只读审计：它会在批准范围内修改代码、补分析、改稿，并在另行授权时补实验。有界：轮数、写入范围、资源与副作用上限固定；没有无限循环，不因重试隐藏地扩大预算，不自动启动其他顶层 Workflow。
 
 本 Skill 承接 W3 的 `auto-paper-improvement-loop`（论文 review → fix → recompile）与 W2 的 `auto-review-loop`（研究 review → implement → re-review）两条上游方法：保留 fresh reviewer、直接读原文、逐轮修复与完整留存原始回应；删除固定 provider/MCP、reviewer 私有线程记忆、机器 JSON 状态、自证式停止与跨 Workflow 自动推进。方法细节见 [轮次方法](references/loop-methods.md)，内部能力组合见 [组合映射](references/composition-map.md)。
 
@@ -59,7 +59,7 @@ metadata:
 
 **组合只读能力**（在本次授权职责内，按其自身边界工作）：数字与配置—[paper-claim-audit](../paper-claim-audit/SKILL.md)、引用—[citation-audit](../citation-audit/SKILL.md)、整篇拒稿论证—[claim-stress-test](../claim-stress-test/SKILL.md)、证明—[proof-review](../../validation-cycle/proof-review/SKILL.md)、实验完整性—[experiment-audit](../../validation-cycle/experiment-audit/SKILL.md)、统计—[analyze-results](../../validation-cycle/analyze-results/SKILL.md)。它们只报告、不修文件，发现并入本轮 finding 列表。
 
-**完成条件**：本轮每条 finding 可定位到原始材料，且 reviewer 原话已保留；未执行独立审查时已如实标注；没有用执行者摘要代替原文。
+**完成条件**：授权范围内每个适用专项审计已并入 finding，或写明未跑原因。
 
 ## 4. 有界修复
 
@@ -74,7 +74,7 @@ metadata:
 
 **验证**：正文类修改用 [paper-compile](../paper-compile/SKILL.md) 做 check-only 复核真实 build，或使用项目已有的构建/测试；代码类修改运行项目已有的测试或最小可复现检查；分析类修改按 [轮次方法](references/loop-methods.md) 重新对账数值。记录实际命令、退出码与产物位置，不把「过滤日志后无输出」当成功。证明结构变化按需做重述回归。
 
-本 Workflow 自行执行修复，不自动启动任何 user-invoked 顶层入口（`experiment-bridge`、`paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`result-to-claim`、`rebuttal`、`resubmit-pipeline`、`paper-talk` 等）；需要它们时把精确问题与范围交回用户另行点名。
+本 Workflow 自行执行修复。专项入口由用户另行点名；名单只在 [组合映射](references/composition-map.md)。
 
 **完成条件**：每条已修复项有位置、原文与验证证据（预算中途耗尽而标 `unverified` 的须在报告中写明）；被拒绝或未修复项有理由；写入未越出确认范围；验证结果如实记录。
 
@@ -82,7 +82,7 @@ metadata:
 
 默认不补实验。未获补实验授权时，把需要新证据的 finding 记为 **unresolved/blocked**，说明理由与最小决策，不运行任何任务；该 finding 不中断本轮其余范围内的修复与验证，并在第 7 节交付——只有它成为任何正面结论的唯一路径、或用户要求时，才按第 6 节提前停止。
 
-获得授权且确认了本次运行数名额后，才在名额内组合 [run-experiment](../../validation-cycle/run-experiment/SKILL.md)（单次或少量）、[experiment-queue](../../validation-cycle/experiment-queue/SKILL.md)（多作业批次）、[monitor-experiment](../../validation-cycle/monitor-experiment/SKILL.md) 与 [training-health-check](../../validation-cycle/training-health-check/SKILL.md)：保留 baseline 与全部 attempt（成功、失败、无效、超时），**运行数名额按 attempt 计数，失败、无效与超时同样占名额**，名额用完即停。这里「运行」指产生新数据／新结果或占用付费、远程、GPU 资源的执行；仅对既有原始结果做复算、重绘或统计重算属第 4 节的分析类修复，不占名额。`experiment-bridge` 是用户显式调用的顶层 Workflow，本 Workflow 不启动它；需要完整新实验计划时交回用户。
+获得授权且确认了本次运行数名额后，才在名额内组合 [run-experiment](../../validation-cycle/run-experiment/SKILL.md)（单次或少量）、[experiment-queue](../../validation-cycle/experiment-queue/SKILL.md)（多作业批次）、[monitor-experiment](../../validation-cycle/monitor-experiment/SKILL.md) 与 [training-health-check](../../validation-cycle/training-health-check/SKILL.md)：保留 baseline 与全部 attempt（成功、失败、无效、超时），**运行数名额按 attempt 计数，失败、无效与超时同样占名额**，名额用完即停。这里「运行」指产生新数据／新结果或占用付费、远程、GPU 资源的执行；仅对既有原始结果做复算、重绘或统计重算属第 4 节的分析类修复，不占名额。需要完整新实验计划时交回用户另行点名。
 
 **完成条件**：每次运行都可回溯到本次确认；未授权项有明确去向且零副作用；没有隐藏的远程或付费动作，也没有自动下一轮。
 
@@ -119,9 +119,3 @@ metadata:
 用 [改进循环日志](templates/improvement-log.md) 组织正文报告（自然 Markdown，不是机器 schema）：授权与范围、基线、逐轮原始审查回应（逐字）、findings 与修复位置、验证证据、资源与副作用、未解决项、停止原因。默认在对话返回完整草稿；落盘只写用户授权的位置，不预填空目录或状态文件。
 
 **完成条件**：报告与实际读取、修改的材料一一对应；轮次、预算与未解决项可核对；输出后停止。
-
-## 来源与适配
-
-改编自 wanshuiyin / ARIS 的 `skills/auto-review-loop/SKILL.md` 与 `skills/auto-paper-improvement-loop/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`（两个目录均仅有 `SKILL.md`，无共置 references/templates/assets）。上游仓库 MIT 许可，完整 notice 见 [LICENSE](LICENSE)，采用边界记录在仓库 `docs/upstream-sources-and-licenses.md`；使用本 Skill 不依赖上游仓库、中央 runtime 或其其他 Skill。
-
-保留：有界 review → repair → re-review 循环、fresh reviewer 与逐轮重新审查、reviewer 直接读取 primary artifacts、分数/verdict/最小修复的裁决结构、完整原始回应留存、claim 双向校准与叙事缺陷修复、重编译验证与重述回归、原始快照保留与分数轨迹。适配：删除 `AUTO_PROCEED` 自动推进、Codex/MCP 固定 provider 与 threadId 记忆、`REVIEW_STATE.json`/`ACQUITTAL_LOG.jsonl`/SHA/trace/receipt、`render-html`/通知/`result-to-claim` 自动调用、无限循环与自证式 acquittal、固定 reviewer 模型与 `codex exec` 后端、跨 Workflow 自动 handoff；改为显式授权门（scope/写入范围/轮数/预算/副作用/停止条件）、有界修复、未授权补实验的显式处理、被拒绝编辑的日志与停止后不自动续轮。

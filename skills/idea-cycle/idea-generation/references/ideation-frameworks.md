@@ -1,6 +1,20 @@
 # Operational ideation frameworks
 
-Adapted from Orchestra brainstorming-research-ideas, preserving all ten framework workflows, examples and self-checks. Use the selection guide below to choose the relevant branch, then read that complete numbered framework.
+Adapted from Orchestra brainstorming-research-ideas, preserving all ten framework workflows, examples and self-checks. Pick 2–3 rows from the selection table, then read only those numbered frameworks.
+
+## Framework Selection Guide
+
+Not sure which framework to start with? Use this decision guide:
+
+| Your Situation | Start With |
+|---------------|------------|
+| "I don't know what area to work in" | Tension Hunting (F3) → What Changed (F5) |
+| "I have a vague area but no specific idea" | Abstraction Ladder (F2) → Failure Analysis (F6) |
+| "I have an idea but I'm not sure it's good" | Explain-It Test (F10) → Simplicity Test (F7) |
+| "I have a good idea but need a fresh angle" | Cross-Pollination (F4) → Stakeholder Rotation (F8) |
+| "I want to combine existing work into something new" | Composition/Decomposition (F9) |
+| "I found a cool technique and want to apply it" | Problem-First Check (F1) → Stakeholder Rotation (F8) |
+| "I want to challenge conventional wisdom" | Failure Analysis (F6) → Simplicity Test (F7) |
 
 **Scope of every framework:** build, compare, test, validate and re-run mean *describe a candidate verification plan*, not execute it. Statements about novelty, importance and publishability are questions/annotations, never a generator's elimination or acceptance authority. Examples illustrate heuristics rather than establish historical priority.
 
@@ -269,22 +283,6 @@ Retain the original integrated sequence as a generating aid within the main Skil
 2. Annotate: apply the Explain-It, Problem-First, Simplicity, Stakeholder and Feasibility checks to every candidate. Record unclear pitches, missing beneficiaries, unjustified complexity and uncertain resources. Only confirmed hard-constraint violations may leave the current feasible pool; every original card remains in the report.
 3. Sharpen each retained card, not a self-selected winner: two-sentence pitch (F10), core tension (F3), abstraction level (F2), three possible discriminating tests, strongest objection and response, and a smallest pilot *design* within known resources. No pilot is run here.
 4. Completion: each candidate has a pitch, problem/beneficiary, mechanism, uncertainty, test design, effort estimate and strongest objection, or an explicit missing item. Handoff the complete pool for separate assessment; the researcher makes the final adoption decision.
-
-## Framework Selection Guide
-
-Not sure which framework to start with? Use this decision guide:
-
-| Your Situation | Start With |
-|---------------|------------|
-| "I don't know what area to work in" | Tension Hunting (F3) → What Changed (F5) |
-| "I have a vague area but no specific idea" | Abstraction Ladder (F2) → Failure Analysis (F6) |
-| "I have an idea but I'm not sure it's good" | Explain-It Test (F10) → Simplicity Test (F7) |
-| "I have a good idea but need a fresh angle" | Cross-Pollination (F4) → Stakeholder Rotation (F8) |
-| "I want to combine existing work into something new" | Composition/Decomposition (F9) |
-| "I found a cool technique and want to apply it" | Problem-First Check (F1) → Stakeholder Rotation (F8) |
-| "I want to challenge conventional wisdom" | Failure Analysis (F6) → Simplicity Test (F7) |
-
----
 
 ## Common Pitfalls in Research Ideation
 

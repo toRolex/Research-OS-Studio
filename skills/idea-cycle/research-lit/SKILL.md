@@ -1,6 +1,6 @@
 ---
 name: research-lit
-description: 文献综合：从研究主题主动找论文、梳理 related work，或解释用户已有论文。当前授权的文献调查或单篇解释需要来源核实与证据综合时使用；不负责候选生成、候选查新裁决或实验验证。
+description: 文献综合：从研究主题主动找论文、梳理 related work，或解释用户已有论文。当前授权的文献调查或单篇解释需要来源核实与证据综合时使用。
 ---
 <!-- argument-hint: "[主题、论文 URL 或材料路径；可指定 sources、时间范围、报告位置或 composed]" -->
 
@@ -17,7 +17,7 @@ Search and analyze research papers, find related work, and summarize key ideas f
 - **Budget:** honor caller limits. Otherwise at most 12 search requests, 20 local papers screened (first three pages), 8 papers for deeper reading, one citation-following level, and one targeted follow-up pass. Each query sent to each source, pagination and retry consumes a request; direct identity/content retrieval stays within the selected paper set. Allow at most one retry per failed retrieval, then retain the gap. Reaching a limit stops new work of that type (search, local screening, deeper reading or citation following), not report delivery. Mark remaining work of that type budget-exhausted; finish status labeling, extraction and synthesis from already acquired material without adding evidence beyond the limits. A larger survey needs a specific extension, not a loop.
 - **Output and writes:** standalone returns a Markdown report in chat unless a destination is authorized. Explicit `composed: <canonical-report-path>` returns a Literature Landscape section to the caller; write only that section if explicitly delegated. A report existing on disk is not a composed signal; explicit standalone overrides composed. Neither mode expands write permission. Save PDFs, bibliography snippets or notes only to authorized destinations; preserve existing files and ask on conflicts. Do not update project memory, reference-manager collections or a wiki merely because they exist.
 
-**Complete when:** question, boundaries, source selection, budget, output mode and permitted writes are explicit; otherwise return the missing decision.
+**完成条件**：问题、边界、来源选择、预算、输出模式与允许写入均已写明；否则返回缺失决定并停止。
 
 ## Step 0: Search existing materials
 
@@ -27,7 +27,7 @@ For a reference manager, notes vault or local collection, follow [existing-mater
 
 Build a “papers you already have” starting set. De-duplicate confirmed matches across sources while preserving each location, annotations and exact version read. A filename match is a screening hint, not proof of identical content. If no local library was found, say which locations were checked; do not imply reference-manager coverage.
 
-**Complete when:** every requested existing-material source has an actual outcome, and each relevant supplied paper/note is represented or explicitly outside the screening budget.
+**完成条件**：每个被请求的已有材料来源都有实际结果；每份相关论文或笔记已纳入，或明确超出筛选预算。
 
 ## Step 1: Search externally
 
@@ -39,15 +39,15 @@ Skip external retrieval only when the source scope excludes it, the user request
 4. Merge results with the existing-material set. Match arXiv ID, DOI, then normalized title plus authors/year; preserve unresolved near-matches rather than merging by title alone. A published edition may supply citation metadata while the preprint supplies accessible text: keep both version labels and do not silently attribute one version's results to the other.
 5. Rank for reading by the stated relevance criteria. Perform one targeted follow-up for gaps, competing approaches, relevant references/citing work and recent developments, within the remaining budget. Retain candidates outside the reading set with their exclusion or deferral reason.
 
-**Complete when:** all requested sources have outcomes and the candidate set is linked to actual retrievals. If no source yielded usable content, return a coverage/gap report and stop before substantive synthesis. If search is unavailable but supplied materials are readable, continue as **supplied-material synthesis; external coverage unassessed**, preserving any unverified references. Never infer “no literature exists” from failed or empty retrieval.
+**完成条件**：每个被请求来源都有结果，候选集连到实际检索。若无来源给出可用内容，返回覆盖／缺口报告并在实质综合前停止。 If search is unavailable but supplied materials are readable, continue as **supplied-material synthesis; external coverage unassessed**, preserving any unverified references. Never infer “no literature exists” from failed or empty retrieval.
 
 ## Step 1.5: Verify every candidate
 
-Before analysis, apply [source verification](references/source-verification.md) to every candidate. This is an identity and evidence check, not a central script gate. Unknown metadata remains unknown; model memory and search snippets cannot promote a reference.
+Before analysis, apply [source verification](../source-verification.md) to every candidate. This is an identity and evidence check, not a central script gate. Unknown metadata remains unknown; model memory and search snippets cannot promote a reference.
 
 Retain all candidates in the report, including unverified and pending ones. Identity verification and reading depth are separate columns: a real paper can be unread; reading an uploaded excerpt need not establish its external identity. If repeated identity mismatches suggest unreliable discovery, flag that source and use the bounded follow-up for narrower queries. Access failures alone are not hallucinations.
 
-**Complete when:** every candidate is labeled candidate, verified or unverified with a concrete basis/reason, and every source used substantively has an exact reading scope. Unattempted verification remains candidate, not verified.
+**完成条件**：每个候选标为 candidate、verified 或 unverified，并带具体依据；每份实质使用的来源有精确阅读范围。未尝试验证保持 candidate，不升级为 verified。
 
 ## Step 2: Analyze each paper
 
@@ -65,7 +65,7 @@ Start with title/abstract/introduction for triage, then inspect the method, resu
 
 Per-paper extraction is independent breadth: when available and authorized, assign papers or small batches to read-only subagents. Supply original accessible sources, question, extraction fields and current verification labels. Workers return paper-keyed notes and locators, preserve all statuses, and never modify shared files or decide scientific acceptance. Otherwise perform the same extraction sequentially, without claiming independent review. The executor reconciles notes against source passages; identity confirmation or model agreement does not validate results.
 
-**Complete when:** every candidate has an extraction or explicit missing/deferred fields, and every load-bearing result has a source locator and a reading-depth qualification.
+**完成条件**：每个候选有提取结果，或显式列出缺失／延后字段；每个承重结果有来源定位与阅读深度限定。
 
 ## Step 3: Synthesize
 
@@ -75,7 +75,7 @@ Per-paper extraction is independent breadth: when available and authorized, assi
 - If research notes exist, incorporate the user's insights with attribution distinct from authors' claims and the executor's interpretation.
 - Tie each substantive synthesis statement to paper keys and inspected locators. Separate supported conclusions, author-reported claims and unresolved questions. Unverified material may be discussed as such, but cannot anchor an unqualified field-level conclusion.
 
-**Complete when:** every theme, agreement/disagreement and proposed gap is traceable to the inspected set or explicitly marked as an inference/evidence gap; no new Idea, experiment or research acceptance is generated.
+**完成条件**：每个主题、一致／分歧与提出的缺口都能追溯到已读集合，或明确标为推断／证据缺口；没有产生新 Idea、实验或研究接受结论。
 
 ## Step 4: Report
 
@@ -83,12 +83,12 @@ Use [the report template](templates/literature-report.md): structured literature
 
 If requested and retrievable, include a BibTeX snippet from the reference manager, publisher or trusted metadata source. Check identity, author list, year, venue and edition; leave unresolved entries outside a ready-to-use bibliography. This does not authorize editing the manuscript's bibliography.
 
-**Complete when:** the requested report/parent section contains all candidates and traceable conclusions, actual coverage and unperformed work. A literature landscape is not proof of novelty, correctness or publication readiness.
+**完成条件**：所要求的报告或父章节含全部候选、可追溯结论、实际覆盖与未做工作。文献 landscape 不是新颖性、正确性或可投稿的证明。
 
 ## Step 5: Save if requested, then stop
 
 Write only the previously authorized report/section and optional materials. For requested downloads, use [saving materials](references/source-methods.md#saving-materials); downloads default off. Report actual saved paths and any failures. When a destination changed or conflicts with existing work, preserve it and return the proposed content for confirmation.
 
-**Complete when:** authorized outputs are delivered or their write failures are reported. Stop. Do not start idea-generation, novelty-check, Validation, writing, wiki ingest or another Workflow; the caller/user decides the next action.
+**完成条件**：授权输出已交付，或写入失败已报告。然后停止。下一步由调用者或用户决定：不启动 idea-generation、novelty-check、Validation、写作、wiki 摄入或其他 Workflow。
 
 Adapted from ARIS by wanshuiyin; bundled [MIT license](LICENSE). Upstream revision and adoption details live in the repository's source document for maintenance, not as an execution dependency.

@@ -1,239 +1,90 @@
 ---
 name: proof-writer
-description: 为固定命题撰写严谨证明：当用户需要证明定理、引理、命题或推论，补全证明，写证明，证明某个命题，补齐缺失步骤、形式化证明草图，或判断所声称证明在给定假设下能否完成时使用；不替代只读证明审查。
+description: 撰写固定命题的证明。用于证明定理、补全证明，或把草图写成证明。
 ---
-<!-- argument-hint: "[定理陈述与假设；可指定输出位置与尝试预算]" -->
+<!-- argument-hint: "[命题与假设；可指定输出位置与尝试预算]" -->
 
-# Proof Write: Rigorous Theorem / Lemma Drafting
+# 撰写证明
 
-Write a mathematically honest proof package, not a polished fake proof.
+每个非平凡蕴含写明所用规则和侧条件。
 
-## Invocation, Authorization, and Completion
+## 授权
 
-This is a model-invoked generation Skill, also available when a user explicitly names it. In **standalone** mode, produce the proof package at the agreed project path. In **composed** mode, contribute the same complete content to the caller's designated report section; do not create a second canonical report.
+model-invoked。开始前从请求里取：精确命题、允许的本地材料、输出路径或报告段落、尝试预算。缺省文件名不是覆盖许可。先读目标；无关内容和已有尝试保留；冲突先问。只改约定的研究材料。
 
-Before Step 1, establish the exact claim, allowed local inputs, output path or section, and attempt budget from the request. If writing is not authorized, return the package in chat. A default filename is a suggestion, not permission to overwrite. Read existing destinations, preserve unrelated material and prior attempts, and ask before resolving conflicting edits. Only the agreed research-material destination may be changed; project instructions, environment, and unrelated files remain untouched.
+用用户给出的有限预算；没给就一条策略，至多再试一条，然后报告剩下的阻塞。量词、假设或范围有歧义，先澄清再证。原命题和假设在包里逐字冻结。更弱命题或新增假设是单独标注的提案：只有明确授权才证那个变体，其状态不算原命题已证。内部归一化必须在冻结假设下可证明等价。
 
-Use the user's finite budget; otherwise attempt one proof strategy and at most one alternative route, then report remaining blockers. Clarify ambiguities affecting quantifiers, assumptions, or scope before proving. Freeze the original claim and assumptions verbatim in the package. A weaker claim or added assumption is a separately labeled proposal: only explicit authorization permits proving that variant, and its status never counts as proof of the original claim. Internal normalization must be demonstrably equivalent under the frozen assumptions.
+普通 Markdown 数学就够。读不到的材料如实标出。数值例子、自查和模型一致都不是证明。
 
-Ordinary Markdown mathematics is sufficient. Lean, symbolic tools, network access, paid resources, and environment setup are not prerequisites or actions of this Skill. Use only available authorized local reading/writing capabilities; report unavailable inputs or capabilities instead of pretending to have checked them. Numerical examples, self-checks, and model agreement are not mathematical proof or formal verification.
+包结构、Goal、STATUS 和三种输出模式见 [proof package](templates/proof-package.md)。
 
-Completion means every nontrivial implication has a justification, or an explicit gap, and the final package records status and remaining risks. Return the actual destination (or chat-only result), original claim versus authorized variant, checks performed and checks not performed, then stop. Do not automatically invoke formula-derivation or another Workflow, and do not automatically start a separate review, repair, or long-running proof process.
+## 步骤
 
-## Constants
+### Step 1：提取
 
-- DEFAULT_PROOF_DOC = `PROOF_PACKAGE.md` in project root
-- STATUS = `PROVABLE AS STATED | PROVABLE AFTER WEAKENING / EXTRA ASSUMPTION | NOT CURRENTLY JUSTIFIED`
+目标文件按这个顺序：
 
-## Context: $ARGUMENTS
+1. 用户给出的路径
+2. 请求已经指向的证明草稿
+3. 项目根目录的 `PROOF_PACKAGE.md`
 
-## Goal
+读取该文件（若存在）以及请求点名的笔记。一次记下，每项带来源或标成缺口：精确命题、假设、符号、草图或部分证明、草稿依赖的邻近引理、用户要的写法（若有）。符号或假设有歧义时，先写下采用的解释。不改写用户命题。
 
-Produce exactly one of:
-1. a complete proof of the original claim
-2. a corrected claim plus a proof of the corrected claim
-3. a blockage report explaining why the claim is not currently justified
+**完成条件**：目标已按优先级确定；点名材料已读或列为未读；上面各项都有出处或缺口。
 
-## Inputs
+### Step 2：规范化
 
-Extract and normalize:
-- exact theorem / lemma / proposition / corollary statement
-- explicit assumptions
-- notation and definitions
-- any user-provided proof sketch, partial proof, or intended strategy
-- nearby lemmas or claims in local notes, appendix files, or theorem drafts if the request points to them
-- desired output style if specified: concise, appendix-ready, or full-detail
+只用 Step 1 的记录。假设和结论分开，列出命题里的每个符号。标出隐含假设、未定义符号、范围歧义，以及草图覆盖的是全命题还是更弱变体。把假设、已推得的事实、启发式和猜想分开。改过的陈述在授权前保持为提案。为了好写而用的更强归一化，标成证明装置，不替换原命题。
 
-If notation or assumptions are ambiguous, state the exact interpretation you are using before proving anything.
+**完成条件**：原命题与假设逐字冻结；隐含假设、未定义符号和范围歧义已列出；草图覆盖范围已标明。
 
-## Workflow
+### Step 3：四项是否成立
 
-### Step 1: Gather Proof Context
-Determine the target proof file with this priority:
-1. a file path explicitly specified by the user
-2. a proof draft already referenced in local notes or theorem files
-3. `PROOF_PACKAGE.md` in project root as the default target
+每一项写下成立、反例，或缺口：
 
-Read the relevant local context:
-- the chosen target proof file, if it already exists
-- theorem notes, appendix drafts, or files explicitly mentioned by the user
+- 结论是否由已列假设推出
+- 引用定理是否用在其条件内
+- 命题是否强于现有论证
+- 是否有反例、边界或量词失败
 
-Extract:
-- exact claim
-- assumptions
-- notation
-- proof sketch or partial proof
-- nearby lemmas that the draft may depend on
+未检查的一项不得进入 Step 5 的肯定 STATUS。缺的是缺口，不是一段补上的证明。不为了能写下去而加重假设或收窄命题。
 
-### Step 2: Normalize the Claim
-Restate:
-- the exact claim being proved
-- all assumptions, separately from conclusions
-- all symbols used in the claim
+**完成条件**：四项各有成立、反例或缺口。
 
-Identify:
-- hidden assumptions
-- undefined notation
-- scope ambiguities
-- whether the available sketch proves the full claim or only a weaker variant
+### Step 4：依赖图
 
-Preserve the user's original theorem statement; any changed statement remains a separately labeled proposal until explicitly authorized.
-If you use a stronger normalization or cleaner internal formulation only to make the proof easier, keep that as an internal proof device rather than silently replacing the original claim.
+选定策略，例如直接、反证、归纳、构造、归约到已知结果、耦合或概率论证、优化不等式链。
 
-### Step 3: Feasibility Triage
-Before writing a proof, record a **tentative** feasibility classification, not a proof-success verdict. Select exactly one final status only after Step 6; a positive final status requires the complete argument, with no unresolved load-bearing gap:
-- `PROVABLE AS STATED`
-- `PROVABLE AFTER WEAKENING / EXTRA ASSUMPTION`
-- `NOT CURRENTLY JUSTIFIED`
+依赖图写出：主命题、需要的中间引理、将引用的定理或不等式、每个非平凡步骤用到的假设、必须分开处理的边界。实质性步骤独立成引理。
 
-Check explicitly:
-- does the conclusion actually follow from the listed assumptions?
-- is any cited theorem being used outside its conditions?
-- is the claim stronger than what the available argument supports?
-- is there an obvious counterexample, boundary case, or quantifier failure?
+**完成条件**：上列各项都在图里；实质性步骤已独立成引理。
 
-If the claim is not provable as stated, do NOT fabricate a proof.
-Do NOT silently strengthen assumptions or narrow the theorem's scope just to make the proof work.
+### Step 5：按模式写出
 
-### Step 4: Build a Dependency Map
-Choose a proof strategy, for example:
-- direct
-- contradiction
-- induction
-- construction
-- reduction to a known result
-- coupling / probabilistic argument
-- optimization inequality chaining
+只在这里选一种写法：
 
-Then write a dependency map:
-- main claim
-- required intermediate lemmas
-- named theorems or inequalities that will be cited
-- which assumptions each nontrivial step depends on
-- boundary cases that must be handled separately
+- 没有写入授权：完整包留在对话里，不建文件。
+- composed 且已授权：只改调用者指定的报告段落，不另建一份主报告。
+- standalone 且已授权：写入约定文件；先读已有文件，只改相关段落，保留先前尝试。
 
-If one step is substantial, isolate it as a lemma instead of burying it in one sentence.
+不另选路径，也不在这里扩大授权。论文章节和附录 `.tex` 只有在授权目标就是该文件时才写。嵌入时只调标题层级。
 
-### Step 5: Write the Proof Document
-Keep the delivery mode and authorization established before Step 1:
-- No write authorization: return the full package in chat; create no files.
-- Composed with write authorization: update only the caller-designated report section, preserve everything else, and do not create a second canonical report.
-- Standalone with write authorization: write to the agreed file; read existing files first, update only the relevant claim section, preserve prior attempts, and avoid duplicated content.
+按 [proof package](templates/proof-package.md) 填写。文首规则：每个非平凡蕴含写明规则和侧条件。每个常数和符号先定义再用。量词顺序写明。退化与边界写明，或写明为何排除。引用标准事实时写出名称，以及此处为何满足它的假设。行内数学用 `$...$`，展示用 `$$...$$`。看起来更强的等价归一化标成证明装置，原命题另留。
 
-The default filename only suggests a destination; do not reselect paths or expand authorization here. The full package structure below applies equally to chat and report sections; adjust heading levels when embedding into an existing report.
+**完成条件**：包已按模板交付，或写明未写入的原因；肯定 STATUS 只在 Step 3 四项都已检查且论证完整时使用。
 
-Do NOT write directly into paper sections or appendix `.tex` files unless the user explicitly asks for that target.
+### Step 6：核对后停止
 
-The proof package must include:
-- exact claim
-- explicit assumptions
-- proof status
-- announced strategy
-- dependency map
-- numbered major steps
-- justification for every nontrivial implication
+核对：
 
-Mathematical rigor requirements:
-- never use "clearly", "obviously", "it can be shown", "by standard arguments", or "similarly" to hide a gap
-- define every constant and symbol before use
-- check quantifier order carefully
-- handle degenerate and boundary cases explicitly, or state why they are excluded
-- if invoking a standard fact, state its name and why its assumptions are satisfied here
-- use `$...$` for inline math and `$$...$$` for display equations
-- never write math in plain text
-- if the proof uses an equivalent normalization that is stronger in appearance than the user's original theorem statement, label it explicitly as a proof device and keep the original claim separate
+- 写出的命题就是实际证明的命题
+- 用到的每条假设都已写出
+- 每个非平凡蕴含有理由，或有显式缺口
+- 每个不等式方向正确
+- 每条引用在所述假设下适用
+- 边界已处理或明确排除
+- 没有藏着未证引理
 
-### Step 6: Final Verification
-Before finishing the target proof file, verify:
-- the theorem statement exactly matches what was actually shown
-- every assumption used is stated
-- every nontrivial implication is justified
-- every inequality direction is correct
-- every cited result is applicable under the stated assumptions
-- edge cases are handled or explicitly excluded
-- no hidden dependence on an unproved lemma remains
+承重步骤仍无理由时，按包模板把原命题降为未证，并写阻塞，不凑成一篇证明。
 
-If a key step still cannot be justified, downgrade the status and write a blockage report instead of forcing a proof.
-
-## Required File Structure
-
-Write the target proof file using this structure:
-
-```md
-# Proof Package
-
-## Claim
-[exact statement]
-
-## Status
-[Select one exact STATUS value; attach separate statuses to original and authorized variant.]
-
-## Assumptions
-- ...
-
-## Notation
-- ...
-
-## Proof Strategy
-[chosen approach and why]
-
-## Dependency Map
-1. Main claim depends on ...
-2. Lemma A depends on ...
-3. Step k uses ...
-
-## Proof
-Step 1. ...
-Step 2. ...
-...
-[Only for a complete proof of the stated claim: Therefore the claim follows. ∎]
-[Otherwise: stop at the last justified step and identify the gap; do not add a completion marker.]
-
-## Corrections or Missing Assumptions
-- [only if needed]
-
-## Proof Gaps, Failed Routes, and Lessons
-- Gap: exact unresolved implication or lemma, assumptions needed, and consequence for the original claim; write `none identified` only when justified.
-- Failed route: actual strategy attempted, precise failure point and reason; if none, say `none attempted` rather than inventing a history.
-- Reusable lesson: a concrete future check, including its scope of applicability.
-- Proposed next action: missing lemma, evidence, or user decision; not an automatic retry or repair.
-
-## Open Risks
-- [remaining fragile points, if any]
-```
-
-## Output Modes
-
-### If the claim is provable as stated
-Write the full file structure above with a complete proof.
-
-### If the original claim is too strong
-Keep the original claim's status `NOT CURRENTLY JUSTIFIED`; distinguish a demonstrated counterexample (false as stated) from an incomplete attempt (unresolved, not a claim of falsity). Propose corrections without changing the fixed target. Only if the user explicitly authorizes a variant, write:
-- why the original statement is not justified
-- the corrected claim
-- the minimal extra assumption if one exists
-- a proof of the corrected claim
-
-### If the proof cannot be completed honestly
-Write:
-- `Status: NOT CURRENTLY JUSTIFIED`
-- the exact blocker: missing lemma, invalid implication, hidden assumption, or counterexample direction
-- what extra assumption, lemma, or derivation would be needed to finish the proof
-- a corrected weaker statement if one is available
-
-## Chat Response
-
-After writing the target proof file, respond briefly with:
-- status
-- whether the original claim survived unchanged
-- what file was updated
-
-## Key Rules
-
-- Never fabricate a missing proof step.
-- Prefer proposing a weaker claim over overclaiming; developing it requires explicit authorization.
-- Separate assumptions, derived facts, heuristics, and conjectures.
-- Preserve the user's original theorem statement unless you explicitly mark a corrected claim or an internal normalization.
-- If the statement is false as written, say so explicitly and give a counterexample or repaired statement.
-- If uncertainty remains, mark it explicitly in `Open Risks`; do not hide it inside polished prose.
-- Correctness matters more than brevity.
+**完成条件**：每个非平凡蕴含有论证或显式缺口，包里有 STATUS 和剩余风险。回复写明实际落点（或仅对话）、原命题与已授权变体、已做和未做的检查。然后停止：不自动调用 `formula-derivation`、审查、修复或长期证明。

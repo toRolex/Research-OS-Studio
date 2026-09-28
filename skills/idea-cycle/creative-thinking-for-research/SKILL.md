@@ -1,6 +1,6 @@
 ---
 name: creative-thinking-for-research
-description: 研究构思卡在单一表述、表面类比或二选一时，运用 bisociation、结构映射、约束变换与辩证综合产生新的可检验视角。用于认知转换或为候选生成提供原始洞见；不负责候选池筛选、独立评审或实验执行。
+description: 单一表述、表面类比、假二分。用 bisociation、结构映射、约束变换与辩证综合产生新的可检验视角。用于认知转换，或为候选生成提供原始洞见。
 ---
 
 # Creative Thinking for Research
@@ -13,13 +13,13 @@ description: 研究构思卡在单一表述、表面类比或二选一时，运�
 
 默认输出在对话中；仅在本次明确授权具体文件时写入一个 Markdown 洞见报告。原材料只读，现有文件冲突先询问。composed 必须由调用者明确指定 canonical report 和负责章节，只返回供其合入的内容，不并行写共享报告；不从文件存在推断 composed。
 
-默认仅本地阅读和有界推理，一轮选 2–3 个框架，每框架至多两个洞见。需要更深探索时，用户可明确授权完整八框架的四阶段 protocol。时长是推理分配建议，不是后台定时器。
+默认仅本地阅读和有界推理，一轮选 2–3 个框架，每框架至多两个洞见。需要更深探索时，用户可明确授权 [完整 protocol](references/creative-frameworks.md#combining-frameworks-a-creative-thinking-protocol)。时长是推理分配建议，不是后台定时器。
 
 **完成条件**：原问题、材料范围、硬约束、输出方式和本轮框架预算明确；未知领域事实列为未知。
 
 ## 2. 选择认知操作
 
-按阻塞类型读取 [框架索引与完整方法](references/creative-frameworks.md)，实际执行选中框架的每一步及自查项，保留操作痕迹而非只贴方法名：
+按阻塞类型读取 [框架索引](references/creative-frameworks.md#index)，再读选中框架。实际执行选中框架的每一步及自查项，保留操作痕迹而非只贴方法名：
 
 | 阻塞 | 读取的框架 | 必须留下的操作痕迹 |
 |---|---|---|
@@ -57,6 +57,4 @@ Standalone 返回洞见报告或写入授权文件；composed 返回本次洞见
 
 报告明确：这是本轮候选生成，尚无独立查新/质量评审，也未运行验证。预算耗尽、缺资料或需要换题授权时返回已有结果并停止，不进入无限探索、实验或写作。最终科研采用由用户决定。
 
-## 来源
-
-八框架改编自 Orchestra `21-research-ideation/creative-thinking-for-research/SKILL.md`，版权与完整许可见 [MIT](LICENSE-Orchestra.txt)。保留完整方法，修正无证据的示例断言与自动 handoff；版本、作者与采用范围集中记录于仓库来源说明。所有执行所需资源与本 Skill 共置。
+**完成条件**：洞见已返回或授权文件已写，且未自动启动 idea-generation。

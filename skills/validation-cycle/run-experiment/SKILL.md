@@ -1,6 +1,6 @@
 ---
 name: run-experiment
-description: "在用户已批准的实验计划与本次授权内，实现候选实验代码、独立审查、先运行 sanity、按 baseline-first 执行有界运行，并收集初步结果与全部 attempt 记录。用于“实现并跑实验”“从计划到执行”或 Validation Workflow 的实现执行阶段；不改 hypothesis/metric/预算，不自动分析、审计、转 Claim 或进入下一轮。大批量或多阶段作业交 experiment-queue。"
+description: 已授权计划内的实现、审查、sanity、有界运行。用户说“实现并跑实验”，或 Validation Workflow 的实现执行阶段使用。
 ---
 <!-- argument-hint: "[实验计划、tracker 或 proposal 路径；说明演练/真实执行、可修改范围与资源上限]" -->
 
@@ -8,7 +8,7 @@ description: "在用户已批准的实验计划与本次授权内，实现候选
 
 把用户已批准的现成计划落实为一次有界的实现、代码审查、sanity、执行与初步结果收集。这是 model-invoked 的内部执行能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。报告交付后停止；不进入分析、审计、Results-to-Claims、写作或下一轮。
 
-上游 ARIS `run-experiment` 与 `experiment-bridge` 的主顺序是：读取计划 → 实现代码 → review → sanity → deploy → collect。本 Skill 保留这条研究方法，但把自动 deploy 改为执行前确认，把固定 provider、运行队列、无限重试和跨 Workflow handoff 改为当前项目中的自然文件与用户可见步骤。
+方法主顺序是：读取计划 → 实现代码 → review → sanity → 执行前确认 → collect。保留这条顺序；执行前确认替代自动 deploy，固定 provider、运行队列、无限重试和跨 Workflow handoff 改为当前项目中的自然文件与用户可见步骤。
 
 ## 1. 角色、输入与授权门
 
@@ -22,16 +22,7 @@ description: "在用户已批准的实验计划与本次授权内，实现候选
 
 ### 授权门
 
-在任何代码写入、环境变更、实验启动、付费调用、远程写入或高成本执行前，列出并让用户确认：
-
-- 本次目标、Problem Anchor、hypothesis、Claim、metric、baseline、数据 split 和不变量；
-- 允许修改的文件/目录、允许新增的实验脚本和输出位置；
-- 预计运行数、并发数、时间/GPU/CPU/存储预算、seed 与停止阈值；
-- 是否只做演练（dry-run/mock/no-op）还是允许真实执行；
-- 付费 API/GPU、远程机器、SSH/Slurm/云服务、远程写入和凭据使用是否逐项获批；
-- 何时建议停止、谁可以停止/重启、失败后是否允许修复并再次尝试。
-
-缺少确认时可以继续只读解析并形成执行草案，但必须停在授权门。默认不安装 Python/GPU/SSH/Slurm/云工具，不修改用户环境，不申请新凭据，不上传私有材料，不提交、push、发布或启动外部服务。
+确认项、运行名额与停止／恢复的差额在 [experiment-bridge 第 1、4、7 节](../experiment-bridge/SKILL.md)。本文件执行该确认：缺少确认时只读解析并形成执行草案，停在授权门。默认不安装 Python/GPU/SSH/Slurm/云工具，不修改用户环境，不申请新凭据，不上传私有材料，不提交、push、发布或启动外部服务。
 
 **完成条件**：本次目标、输入、写入清单、资源上限、执行模式、停止条件和未决问题均可逐项核对；不存在用默认硬件、默认数据或默认预算填空。
 
@@ -39,7 +30,7 @@ description: "在用户已批准的实验计划与本次授权内，实现候选
 
 读取原始计划，不只读取摘要。提取并原样记录：
 
-- 里程碑和顺序：sanity → baseline → main method → decisive ablations → polish；
+- 里程碑和顺序：演练检查 → sanity → baseline → main method → decisive ablations → polish。消融是否执行以 bridge 第 4 节为准：未列入本次确认的运行清单则不跑。
 - 每个 block 的 dataset/split/task、比较系统、指标、超参数、seed、成功标准和失败解释；
 - primary/supporting claims、anti-claim 和最低可信证据；
 - 方法细节、可修改范围、不可修改范围、数据与算力约束；
@@ -49,6 +40,8 @@ description: "在用户已批准的实验计划与本次授权内，实现候选
 先做一次范围清单，标出计划未声明的输入、估算和歧义。若 plan 与 proposal 冲突，保留出处，询问用户选择；不擅自改题、改 metric 或把可选实验变成必跑。
 
 **完成条件**：里程碑顺序、每 block 输入与判据、可改/不可改范围、must/nice 及已有结果均已列出；plan 与 proposal 冲突已保留出处待用户选择；未声明项已标歧义。
+
+## 3. 实现边界与结果落盘
 
 先检查项目中已有实现、数据加载器、训练/评估入口、固定 split 和日志格式。复用可用代码，避免重复实现。对每个计划内 milestone 执行以下检查：
 
@@ -96,7 +89,7 @@ Sanity 的通过不是科学 Claim 的通过；sanity 失败也不是允许自�
 2. **Sanity**：经确认后执行最小验证；
 3. **Baseline-first**：先运行计划指定的 strongest baseline，保留其原始结果、配置和失败记录；
 4. **Main method**：只有 baseline 结果或明确失败原因已记录，并且用户仍确认，才运行主方法；
-5. **Decisive ablations**：仅运行计划中支持 Claim 的消融；
+5. **Decisive ablations**：是否执行以 [experiment-bridge 第 4 节](../experiment-bridge/SKILL.md) 为准；未列入本次确认的运行清单则不跑；
 6. **Polish**：稳健性、定性图和 appendix 实验只在剩余预算与用户确认下执行。
 
 Baseline 失败时：记录失败事实及日志，判断是环境/实现/数据问题还是 baseline 本身不可运行；不把失败 baseline 当作主方法优势，也不自动跳过。需要改变 baseline、预算、split、评估器或实现范围时，回到授权门。
@@ -109,7 +102,7 @@ Baseline 失败时：记录失败事实及日志，判断是环境/实现/数据
 
 按计划的 milestone 顺序执行。可使用项目已有脚本、宿主已提供的终端/作业工具和用户明确指定的远程能力；这些工具只是执行手段，不成为本产品 runtime。
 
-**批量路由**：单次或少量作业（约 ≤5）在本 Skill 内逐项执行。当某 milestone 声明 ≥10 个作业、多 seed 网格或阶段依赖时，把该 milestone 交给 [experiment-queue](../experiment-queue/SKILL.md) 组织为有界批次；本 Skill 仍负责实现、审查、sanity 口径和结果收集。6–9 个作业按并发上限、状态可见性和用户偏好决定走哪条路。
+**批量路由**：与 [experiment-bridge 第 4 节](../experiment-bridge/SKILL.md) 同一条。作业数 ≤5，或并发上限与逐作业状态在本 Skill 内可见：逐项执行。作业数 ≥10、多 seed 网格或阶段依赖：交给 [experiment-queue](../experiment-queue/SKILL.md)。6–9：并发上限或逐作业状态不可见就走 queue，否则留在本 Skill。本 Skill 仍负责实现、审查、sanity 口径和结果收集。
 
 - 小批量可逐项或按已确认并发执行；大批量先给出分批草案和每批预算，等用户确认后继续。
 - 运行中只观察事实：running、completed、crashed、timed out、OOM、NaN、日志缺失和资源消耗。监控不作科学结论，不自动触发 analysis 或下一 Workflow。
@@ -139,16 +132,8 @@ Baseline 失败时：记录失败事实及日志，判断是环境/实现/数据
 
 ## 8. 停止条件与失败恢复
 
-以下任一情况发生即停止当前职责并报告：输入计划不足且无法补齐、授权未确认、写入范围冲突、evaluator/ground truth 不可核实、预算耗尽、连续失败超过批准的修复轮数、资源或外部副作用超出确认范围、用户要求停止、或所有计划内 milestone 已完成。
-
-失败恢复按以下顺序进行：读取主要错误产物 → 分类失败 → 在批准的修复范围内提出一个最小修复 → 展示变化与预估代价 → 重新获得执行确认 → 重新运行对应 attempt。修复只针对当前失败，不删除计划、用户代码、已有数据或历史结果。若同一失败在批准的 patch/reimplement 上限内仍复现，停止并把每次尝试、错误和需要用户决策的最小问题列出。
+停止条件与运行名额、修复轮数的差额在 [experiment-bridge 第 4、7 节](../experiment-bridge/SKILL.md)。本文件的恢复顺序：读取主要错误产物 → 分类失败 → 在批准的修复范围内提出一个最小修复 → 展示变化与预估代价 → 重新获得执行确认 → 重新运行对应 attempt。修复只针对当前失败，不删除计划、用户代码、已有数据或历史结果。同一失败达到确认的修复轮数仍复现时，停止并列出每次尝试与最小决策问题。
 
 本 Skill 的交付物是报告和可审查的自然格式产物，不是自动 Workflow 调度。用户决定是否接受结果、修改计划、另行分析/审计或停止研究。不自动启动 monitor、analysis、experiment-audit、Results-to-Claims、Paper Writing 或其他顶层 Workflow。
 
 **完成条件**：每个未完成/失败项都有状态、原始证据和最小下一步；没有遗留的未授权运行或隐藏副作用；停止后不再自动行动。
-
-## 来源与适配
-
-改编自 wanshuiyin / ARIS `skills/run-experiment/SKILL.md` 与 `skills/experiment-bridge/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。上游仓库 MIT 许可，完整 notice 见 [LICENSE](LICENSE)，采用边界记录在仓库 `docs/upstream-sources-and-licenses.md`；使用本 Skill 不依赖上游仓库、中央 runtime 或其其他 Skill。
-
-保留：计划解析、按 milestone 实现、代码 review、sanity-first、按规模选择执行方式、baseline-first、结果收集与 handoff 报告。适配：删除 provider/MCP/Codex 固定绑定（Vast.ai/Modal/serverless-modal）、自动部署、无限调试/自动重试、自动 ablation/下一 Workflow、统一输出协议和运行队列；补充候选/evaluator 隔离、真实 ground truth、执行前确认、资源与副作用授权、停止/重启控制、完整失败历史、演练/真实验收区分，并把大批量作业转交 experiment-queue。

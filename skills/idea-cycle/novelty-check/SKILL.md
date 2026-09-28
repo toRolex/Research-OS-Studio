@@ -1,6 +1,6 @@
 ---
 name: novelty-check
-description: 查新：对已有候选的核心 Claim 主动检索 closest prior work，判断已覆盖、关键区别或证据缺口。用户问“有没有人做过”，或当前已授权的 Idea Discovery 需要核对候选新颖性时使用；不用于生成新方向或评判实验有效性。
+description: 查新：对已有候选的核心 Claim 主动检索 closest prior work，判断已覆盖、关键区别或证据缺口。用户问“有没有人做过”时使用。
 ---
 <!-- argument-hint: "[候选描述或原始材料路径；可指定报告位置与检索范围]" -->
 
@@ -14,8 +14,10 @@ Check whether a proposed method/idea has already been done in the literature. Ju
 - **Inputs:** candidate description or source paths; core Claim and problem/setting; known references; search cutoff and any confidentiality/resource limits. Read existing project instructions and workspace navigation if present. Setup, a particular directory, and any research runtime are not prerequisites.
 - **Resolve before work:** identify the candidate, cutoff (today unless specified), allowed public search terms, and output mode. If the actual claimed contribution is missing or contradictory, ask one focused question and stop; do not invent it. Keep the user's problem and Claim unchanged.
 - **Resources:** use already available, authorized read/search tools. Follow host-specific tool routing. Public lookup does not authorize uploading private drafts, paying for services, installing tools, using new credentials, or remote writes. Request permission for any such escalation; denial ends that action. If search/full text is unavailable, retain the failed lookup and report the precise limitation rather than pretend the check ran.
-- **Writes:** standalone returns the report in chat unless a destination is authorized; composed contributes only the novelty section of the caller's named canonical report (or returns the section for the caller to insert). Save fetched materials and reviewer input/output only in the authorized evidence location; otherwise retain URLs, inspected passages and responses in the report/chat. Reuse existing material without overwriting it; ask on file or section conflicts. Do not edit proposals, source Claims, code, datasets or experiment plans.
+- **Writes:** standalone returns the report in chat unless a destination is authorized; composed contributes only the novelty section of the caller's named canonical report (or returns the section for the caller to insert). Save fetched materials and reviewer input/output only in the authorized evidence location; otherwise retain URLs, inspected passages and responses in the report/chat. Reuse existing material without overwriting it; ask on file or section conflicts. Leave proposals, source Claims, code, datasets and experiment plans unchanged.
 - **Budget:** use the caller's bounded search budget. Otherwise allow at most 24 search requests, 8 papers for decisive reading, and citation-following depth 1. Three distinct query formulations per Claim are counted across sources, not repeated automatically on every source; a query sent to two sources consumes two requests. Do one initial pass, then one targeted follow-up for closest-paper citations, recent work and decisive gaps. Stop at the first exhausted limit, retaining unexamined candidates and any resulting evidence gaps; request a specific extension rather than looping.
+
+**完成条件**：候选、截止日、允许的公开检索词、输出模式与预算上限可逐项核对；贡献缺失或矛盾时已提出一个聚焦问题并停止。
 
 ## Phase A: Extract Key Claims
 
@@ -36,7 +38,7 @@ For EACH core claim, search across available, relevant sources within the budget
 1. **Web and scholarly search:** use specific technical terms from the claim. Try at least three formulations: mechanism terminology, problem/setting terminology, and synonyms or adjacent-field names. Search arXiv, scholarly indexes and primary venue/publisher collections where available. Record queries, sources, dates, filters and failures. If a source is unavailable, state which coverage is lost.
 2. **Known paper collections:** check relevant conferences/journals and preprints through the cutoff. Include an unfiltered historical search so older prior art is not hidden by recency filters; check the six months ending at the cutoff on arXiv for relevant fields (or the equivalent active preprint source). Verify actual version dates: a paper's early identifier does not make its later revision eligible as historical evidence. Record date-filter parameters and any limitations rather than treating date keywords as a reliable filter. Report concurrent work and separate preprint dates from publication dates.
 3. **Read potentially overlapping work:** first read the abstract and related work to triage, then inspect the actual method, assumptions, result/theorem, experiments and limitations that decide overlap. Follow relevant citations and citing work during the targeted follow-up. Read appendices or supplements when a decisive claim relies on them.
-4. **Verify before judging:** use [source verification](references/source-verification.md) for every prior-work entry. Identity confirmation and content support are separate. Preserve candidates that could not be verified, labeled with the failure or missing material. Search hits are leads, not evidence of full reading.
+4. **Verify before judging:** use [source verification](../source-verification.md) for every prior-work entry, on the closest-prior branch. Identity confirmation and content support are separate.
 5. **Compare:** for each closest work, map Claim → specific section/page/equation/table → overlap → key difference → remaining unknown. Test whether supposedly different terminology denotes the same mechanism. Compare both method and experimental setting; do not infer absence from an abstract's silence.
 
 **Complete when:** each Claim has a supported closest-work comparison or a named evidence gap; the search log distinguishes attempted, successful and unavailable coverage and states what was actually read.
@@ -50,6 +52,15 @@ Ask: “Is this method novel? What is the closest prior work? What is the delta?
 If an independent reviewer is unavailable or outside authorization, label the output **single-agent assessment; independent verification not performed**. This limits review assurance, not the ability to make a source-supported judgment. Do not impersonate a second reviewer or repeatedly seek a more favorable verdict.
 
 **Complete when:** the actual response has been considered and retained, or the missing independent verification is explicitly recorded.
+
+## Interpretation rules
+
+Apply these before the verdict block. The verbatim block below is the only copy that goes into the briefing.
+
+- Two failures waste months equally: a false novelty claim, and a viable idea abandoned because the territory has neighbors. Be honest in both directions — and when an idea clears the check, say so plainly.
+- Novelty can live in the combination or the finding even when every individual claim rates LOW — judge the idea, not each claim in isolation. Known parts arranged to reveal something unknown can be novel; identify the specific unknown rather than assume the combination is new.
+- “Applying X to Y” earns novelty by what the application reveals — a non-obvious interaction, failure mode, or insight. Judge the revelation, not the template.
+- Check both the method AND the experimental setting for novelty. If the method is not novel but the FINDING would be, say so explicitly. A proposed finding remains unproven until supported outside this check.
 
 ### The verdict limits
 
@@ -92,13 +103,6 @@ Output a readable Markdown report using [the report template](templates/novelty-
 - Explain the key differentiator and what a reviewer would cite as prior work. A numeric novelty score is optional only if requested; it never substitutes for the comparison. If used, anchor 5/10 to a defensible delta with clear neighbors and reserve 1–3 for results a named published paper already contains.
 - Suggested positioning is one honest, verifiable delta sentence, not a rewritten topic. Distinguish a proposed finding from a demonstrated result.
 
-**Complete when:** the report contains original Claim scope, search coverage, concrete sources and reading status, evidence-located comparisons, a calibrated recommendation, unresolved gaps and review limitations. Then stop. The user decides whether to retain, revise or abandon the candidate; this skill neither changes the topic nor starts experiments, refinement or another Workflow.
-
-## Interpretation rules
-
-- Two failures waste months equally: a false novelty claim, and a viable idea abandoned because the territory has neighbors. Be honest in both directions — and when an idea clears the check, say so plainly.
-- Novelty can live in the combination or the finding even when every individual claim rates LOW — judge the idea, not each claim in isolation. Known parts arranged to reveal something unknown can be novel; identify the specific unknown rather than assume the combination is new.
-- “Applying X to Y” earns novelty by what the application reveals — a non-obvious interaction, failure mode, or insight. Judge the revelation, not the template.
-- Check both the method AND the experimental setting for novelty. If the method is not novel but the FINDING would be, say so explicitly. A proposed finding remains unproven until supported outside this check.
+**完成条件**：报告含原始 Claim 范围、检索覆盖、具体来源与阅读状态、可定位比较、校准后的建议、未决缺口与复核限制。然后停止。用户决定保留、修订或放弃候选；本 Skill 不改题，不启动实验、细化或其他 Workflow。
 
 Adapted from ARIS by wanshuiyin; bundled [MIT license](LICENSE). Source revision and adoption details are recorded in the repository's centralized source document; that document is maintenance information, not an execution dependency.

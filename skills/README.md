@@ -171,7 +171,7 @@ Skills CLI 1.5.26 的本票本地安装中，Claude Code / Codex 副本完整；
 
 ## Resubmit 转投适配与人工验收
 
-限定宿主（Claude Code／Codex）安装中，canonical 副本与安装副本逐字节一致；`--list` 共 25 个 Skill，含本票 `resubmit-pipeline`。Eve 副本与真实科研验收未做，不声明 Eve 兼容或端到端通过。
+限定宿主（Claude Code／Codex）安装中，canonical 副本与安装副本逐字节一致；`--list` 共 39 个 Skill，含 `resubmit-pipeline`。Eve 副本与真实科研验收未做，不声明 Eve 兼容或端到端通过。
 
 显式调用 `resubmit-pipeline`，提供旧投稿目录、目标 venue 与新目录；不要求先运行 setup 或写作流程，不先创建目录。
 
@@ -192,7 +192,7 @@ Skills CLI 1.5.26 的本票本地安装中，Claude Code / Codex 副本完整；
 1. **完整路径**：给一个含真实结果、日志、配置和代码的 ML 研究目录。显式调用并核对：规划 Claim—Evidence、实验报告核对（每次比较给出 runs／seeds 数量与不确定性方法、超参与选择、compute、Limitations、失败结果）、图表、真实编译、并列审查与独立评审及有界修订；最终得到候选稿与自然 Markdown 报告。
 2. **报告不完整场景**：拿掉部分 seeds、error bars 或 compute 记录。核对缺失处出现 `[SEED COUNT NEEDED]`／`[COMPUTE NEEDED]` 一类可见缺口，而不是默认值（如“3 seeds”“A100”）；相关 Claim 被收窄或交用户决定，**零实验执行**。
 3. **venue 与模板**：指定一个 venue 年份与 track；核对官方 author guide／checklist 的来源与访问日期、模板冲突的用户决定，以及未指定 venue 时不设默认会议、报告写“合规未核对”。
-4. **分工与越权**：核对 description 与 SKILL.md 第 12 节和 `paper-writing`／`systems-paper-writing`（#27）清楚区分；全程未自动启动其他顶层 Workflow、未安装 LaTeX／GPU 环境、未投稿或发布；需要补实验的 Claim 停在未授权状态。
+4. **分工与越权**：核对 description 与 SKILL.md 第 4 节和 `paper-writing`／`systems-paper-writing`（#27）清楚区分；全程未自动启动其他顶层 Workflow、未安装 LaTeX／GPU 环境、未投稿或发布；需要补实验的 Claim 停在未授权状态。
 
 以上是用户手工验收步骤，不是已完成真实科研验收的声明。宿主须保留 `ml-paper-writing` 的显式调用策略；文件安装成功不等于宿主已加载或权限已强制执行。
 

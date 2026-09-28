@@ -1,6 +1,6 @@
 ---
 name: training-health-check
-description: "只读诊断已有训练观测（loss/梯度记录、训练日志、资源记录）中的 NaN/Inf、发散、OOM、停滞与日志完整性问题，并给出继续、停止调查或补充观测的建议；用户问“训练是否健康/是否异常”，或父 Workflow 在授权范围内需要训练健康诊断时使用。只诊断，不写研究结果、不停止或重启作业、不判断 Claim。"
+description: 只读诊断已有训练观测中的 NaN/Inf、发散、OOM、停滞与日志完整性，并给出继续、停止调查或补充观测的建议。用户问“训练是否健康/是否异常”，或父 Workflow 在授权范围内需要训练健康诊断时使用。
 ---
 <!-- argument-hint: "[训练运行标识或日志/指标路径；可指定报告位置与观察窗口]" -->
 
@@ -18,19 +18,13 @@ description: "只读诊断已有训练观测（loss/梯度记录、训练日志�
 - **Cadence:** diagnose once per invocation, then stop. Do not create schedules, loops, cron jobs or background pollers, and do not decide to be re-invoked. An early or under-observed run is reported as `insufficient observation`; the user or an authorized parent Workflow decides whether to observe again later with more data.
 - **Budget:** one bounded diagnostic pass per invocation, bounded by the named or available window. Read the relevant window or tail rather than entire large logs. Stop at the window boundary or when the observed signals suffice to classify; retain the unexamined range as a stated limit.
 
+**完成条件**：运行、待查信号与观察窗口已确定，或已提出一个聚焦问题并停止；写入范围限于健康记录。只有运行状态、没有训练观测时，结果是 `insufficient observation`。
+
 ## Phase 1: Establish observations and their completeness
 
-Read [health signals](references/health-signals.md) now. List every observation surface actually available for this run, with its locator and the range it covers. Then check whether the observations are usable at all:
+先读 [health signals](references/health-signals.md) 的目录。列出本 run 实际有的每个观测面、定位与覆盖范围，并标 **sufficient**／**partial**／**missing**。五条充分性检查以该目录为准。partial 或 missing 不能把该 run 标成健康。
 
-- The surface exists, is non-empty, and is readable in its stated encoding.
-- Step/epoch or timestamp numbering is contiguous, or the gaps are identified.
-- Records are not truncated mid-entry; the tail is a real last record, not a partial write.
-- Expected evaluation or checkpoint entries appear where the run's own format says they should.
-- Timestamps advance and their recency is meaningful for the run's expected cadence.
-
-Classify observation adequacy: **sufficient** (enough contiguous history to judge the checked signals), **partial** (usable but with named gaps), or **missing** (no usable training observation). Missing or partial observations can never certify the run healthy.
-
-**Complete when:** every surface has a locator, coverage and adequacy label, and every gap is stated.
+**完成条件**：每个观测面都有定位、覆盖范围与充分性标签，每个缺口已写明。
 
 ## Phase 2: Check each signal
 
@@ -43,7 +37,7 @@ For each signal in the catalog — NaN/Inf, divergence, OOM, stagnation, log com
 
 Optional secondary signals (loss spikes, exploding/vanishing gradient, LR-schedule deviation) may be reported when the observations actually carry them. Process liveness and idle resources belong to `monitor-experiment`, not here.
 
-**Complete when:** each catalog signal is classified with its evidence and window, or explicitly marked as not observable in the available data.
+**完成条件**：目录中每个信号都有分类、证据与窗口，或明确标为现有数据不可观测。
 
 ## Phase 3: Diagnose
 
@@ -54,7 +48,7 @@ Give one diagnosis, bounded by the observed window:
 - **insufficient observation** — the observations are missing or too short/gappy to judge; list exactly what is needed.
 - **indeterminate** — surfaces conflict or the data is too ambiguous to classify.
 
-**Complete when:** the diagnosis names the signals checked, the window, the evidence and the residual uncertainty.
+**完成条件**：诊断点名已查信号、窗口、证据与剩余不确定性。
 
 ## Phase 4: Recommend — advice only
 
@@ -67,13 +61,13 @@ Pair the diagnosis with a recommendation the user can act on:
 
 State plainly that stopping, killing, restarting or requeueing the job is the user's action; this skill performs none. Record the evidence the user should preserve (log window, run identifier, observed values) so the decision is not lost when the job ends.
 
-**Complete when:** every recommendation maps to a diagnosis and says what evidence would change it.
+**完成条件**：每条建议对应一条诊断，并写明何种证据会改变它。
 
 ## Phase 5: Report and stop
 
 Output a readable Markdown report using [the health report template](templates/health-report.md). The template organizes the diagnosis; it is not a machine schema. Keep raw observations separate from the diagnosis so the user can re-judge.
 
-**Complete when:** the report contains the observation surfaces and adequacy, per-signal findings with locators and windows, the diagnosis, the recommendation and its limits. Then stop. The user or parent Workflow decides whether to stop, restart, analyze results or write them up; this skill neither controls the job nor produces research results.
+**完成条件**：报告含观测面与充分性、逐信号发现（定位与窗口）、诊断、建议及其限制。然后停止。用户或父 Workflow 决定是否停止、重启、分析结果或写进论文；本 Skill 不控制作业，也不产出研究结果。
 
 ## Interpretation rules
 
@@ -83,7 +77,3 @@ Output a readable Markdown report using [the health report template](templates/h
 - A plateau or a spike is labeled with its window and uncertainty; when the window is too short, say `insufficient observation` rather than guessing.
 - Default thresholds in the catalog are starting points the user may override for the run; state any threshold used.
 - This skill reads and recommends only: no stop, restart, retry, requeue, or training-code edit.
-
-## 来源
-
-改编自 wanshuiyin / ARIS `skills/training-check/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`（MIT）。保留 NaN/Inf、发散、停滞的可检查信号、多 checkpoint 趋势优先于单点噪声以及观察间隔自适应思想；从同 revision 的 `skills/experiment-bridge/SKILL.md` W&B 调用点与训练检查的进程／质量分层补充 OOM 与日志完整性。按父 spec 重写为只诊断：删除 CronCreate 自调度、Codex MCP 裁决、`tools/watchdog.py` 分层、固定 model/W&B 依赖和“kill training”动作，输出改为建议，停止／重启由用户执行。MIT 全文见 [LICENSE](LICENSE)。来源与采用细节记录于仓库集中来源文档，该文档是维护信息，不是执行依赖。

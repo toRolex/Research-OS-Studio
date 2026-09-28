@@ -6,13 +6,9 @@ Adapted from ARIS idea-creator: complete landscape operations and substantive ge
 
 Map the research area to understand what exists and where the gaps are.
 
-1. **Scan local paper library first**: Check `papers/` and `literature/` in the project directory for existing PDFs. Read the relevant methods, results and limitations of supplied papers (record any unread sections) to build a baseline understanding before searching online. This avoids re-discovering what the user already knows.
+1. **Read the supplied materials first**: methods, results and limitations of the papers the user named (record any unread sections). This avoids re-discovering what the user already knows.
 
-2. **Optional authorized literature expansion** using an available host search tool (otherwise stay within the supplied material set):
-   - Top venues in the last 2 years (NeurIPS, ICML, ICLR, ACL, EMNLP, etc.)
-   - Recent arXiv preprints (last 6 months)
-   - Use 5+ different query formulations
-   - Read abstracts and introductions of the top 10-15 papers
+2. **Optional authorized literature expansion**: only by calling an already authorized `research-lit`. Otherwise stay within the supplied material set. Do not invent a venue list, query count, or top-N reading quota here.
 
 3. **Build a landscape map**:
    - Group papers by sub-direction / approach
@@ -20,12 +16,7 @@ Map the research area to understand what exists and where the gaps are.
    - Note recurring limitations mentioned in "Future Work" sections
    - Flag any open problems explicitly stated by multiple papers
 
-4. **Identify structural gaps**:
-   - Methods that work in domain A but haven't been tried in domain B
-   - Contradictory findings between papers (opportunity for resolution)
-   - Assumptions that everyone makes but nobody has tested
-   - Scaling regimes that haven't been explored
-   - Diagnostic questions that nobody has asked
+Structural gaps are the five lenses in the main Skill, §3. Do not restate them here.
 
 ## Generation prompt
 

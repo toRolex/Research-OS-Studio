@@ -1,6 +1,6 @@
 ---
 name: claim-stress-test
-description: "Claim stress test：为整篇论文构造最强拒稿论点，再由另一 fresh reviewer 对照原稿逐点裁决；用于 headline 与正文范围不符、理论假设/证据缺口压力测试及 rebuttal 准备。只交付攻击、裁决和建议，不替代数字、引用或证明专项审查。"
+description: "整篇最强拒稿论证：整篇论证是否站得住。"
 ---
 
 # Claim Stress Test — 最强拒稿论点与独立裁决
@@ -9,13 +9,11 @@ description: "Claim stress test：为整篇论文构造最强拒稿论点，再�
 
 ## 调用与边界
 
-默认 model-invoked，也可由用户点名 standalone。适用于稳定稿件的最坏情况审查、camera-ready 前检查或 rebuttal 准备；不要求已跑标准评分评审。
+默认 model-invoked，也可由用户点名。范围是整篇论证是否站得住：稳定稿件的最坏情况审查、camera-ready 前检查或 rebuttal 准备；不要求已跑标准评分评审。
 
-- **standalone**：输入整篇当前稿件和原始支撑材料位置，输出独立 Markdown 报告；建议名 `CLAIM_STRESS_TEST.md`，沿用项目审查位置。
-- **composed**：父 Workflow 传原文件路径、客观审查范围、预算及报告目标；返回完整攻击、逐点裁决和报告段落，由父 Workflow 纳入 canonical report。不新建重复报告，不继承父流程的评价、历史修复清单或写稿权限。
-- **写入**：只写本次授权的报告目标。目标未定时询问，或在回复中交付完整报告；替换已有报告须确认，否则另存。稿件、证明、代码、数据及引用文件保持只读。
-- **资源**：使用现有读取与 fresh reviewer 能力；额外费用、材料外发/外部服务必须在授权内。不安装环境、运行实验、编译或修改研究内容。
-- **并列适用**：Claim 核对数字/配置/实验报告；Citation 核对引用；Proof 核对证明；Stress 检验整篇拒稿论证。它们不自动串联，本 Skill 不将其他审计的 PASS 当作前提，也不自动调用其他审计或修复 Workflow。
+standalone 交付独立 Markdown 报告，composed 把完整攻击、逐点裁决和报告段落交父 Workflow 的 canonical report；只写本次授权的报告，稿件与支撑材料只读。建议名 `CLAIM_STRESS_TEST.md`，沿用项目审查位置。目标未定时询问，或在回复中交付；替换已有报告须确认，否则另存。composed 不新建重复报告，不继承父流程的评价、历史修复清单或写稿权限。
+
+使用现有读取与 fresh reviewer 能力；额外费用、材料外发/外部服务必须在授权内。不安装环境、运行实验、编译或修改研究内容。其他专项审计由用户另行点名；不把它们的 PASS 当作本次前提。
 
 ## 执行
 

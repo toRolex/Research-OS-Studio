@@ -78,7 +78,3 @@ disable-model-invocation: true
 ## 8. Stop
 
 告知工作区导航位置，说明用户以后可以直接编辑这些 Markdown 文档；重复运行只补缺，不要求重置项目。到此停止。用户自行决定是否以及何时开始 Idea Discovery、Validation 或 Paper Writing and Improvement；不安装、执行或自动启动它们。
-
-## 来源
-
-改编自 Matt Pocock 的 `setup-matt-pocock-skills`，保留探索、逐问、完整草稿确认、指令文件优先级和原位更新方法；科研工作区取代工程 tracker/triage 配置。随发行保留 [MIT 许可](LICENSE)。

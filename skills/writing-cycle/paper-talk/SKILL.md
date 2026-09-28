@@ -96,7 +96,3 @@ disable-model-invocation: true
 填写 [最终报告](templates/talk-report.md)：实际文件路径、源材料范围、主讲/预留计时、内容审查、视觉/导出、独立性、问题及未做项。报告和过程记录都使用可读 Markdown；保全检查用原文/文件直接比较，不生成 SHA、digest、receipt、统一 JSON 或隐藏状态协议。建议真人按 script 排练、与同事 dry run、测试投影字体/录像备份；建议本身不执行外部动作。
 
 **停止条件**：已生成材料及报告已返回或写入；缺资料、授权冲突、预算到限、拒绝操作时也交付当前进度与恢复条件后停止。无统一“conference-ready”认证，不宣称科研正确性、会议接受或真实用户体验已验收；不自动发布、上传、投稿、push 或启动任何后续 Workflow。
-
-## 来源
-
-合并 ARIS `paper-talk` 的准备、逐页精修、演讲产物审计方法及其 `paper-slides`、`slides-polish`、`paper-claim-audit`、`citation-audit` 的当前演讲职责；合并 Orchestra `presenting-conference-talks` 的完整叙事结构、Systems 方法与双格式模板。所有运行所需方法随上述 references/templates 共置，不依赖其他 Skill 安装或中央工具。许可见 [ARIS MIT](LICENSE-ARIS.txt) 和 [Orchestra MIT](LICENSE-Orchestra.txt)。作者、revision 与适配范围在仓库来源文档集中记录。

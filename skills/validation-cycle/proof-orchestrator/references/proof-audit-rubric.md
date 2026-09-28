@@ -2,32 +2,7 @@
 
 定位当前单一 obligation 的精确证明及依赖后使用。检查范围包括支撑它的定理、引理、命题和证明，不扩展成整篇研究验收。[独立意见](independent-review.md)使用同一准则；自查与外部意见分别按[审计输出约定](audit-output-contract.md)记录。
 
-## 问题分类：17 类
-
-- `UNJUSTIFIED_ASSERTION`：步骤缺少证明或引用结果。
-- `UNPROVEN_SUBCLAIM`：“显然”“标准”的步骤隐藏了非平凡引理。
-- `QUANTIFIER_ERROR`：全称/存在量词次序错误，缺少充分小参数的作用域，或隐藏依赖。
-- `IMPLICATION_REVERSAL`：把单向蕴含当成等价。
-- `CASE_INCOMPLETE`：漏掉边界、退化、零值、奇异或非唯一情况。
-- `CIRCULAR_DEPENDENCY`：证明使用目标定理或其下游推论。
-- `ILLEGAL_INTERCHANGE`：无条件交换极限、期望、导数、积分、上确界或下确界。
-- `MISSING_DOMINATION`：使用 DCT、Leibniz 或积分号下求导，却没有控制函数。
-- `INTEGRABILITY_GAP`：使用未假设或未证明有限的矩、范数或期望。
-- `REGULARITY_GAP`：未经支持使用连续、可微、凸性、紧性、可测或 Lipschitz 性。
-- `STOCHASTIC_MODE_CONFUSION`：未经证明在几乎处处、依概率、期望、高概率或 Lp 之间转换。
-- `HIDDEN_ASSUMPTION`：依赖命题未声明的条件。
-- `INSUFFICIENT_ASSUMPTION`：所列前提不足以支持结论。
-- `DIMENSION_TRACKING`：常数或速率隐藏维数、时域、样本量、分量数或其他参数依赖。
-- `NORMALIZATION_MISMATCH`：缩放、坐标约定或记号不一致。
-- `SCOPE_OVERCLAIM`：结论超出证明支持范围。
-- `REFERENCE_MISMATCH`：未验证引用结果的前提。
-
-## 严重度：4 级
-
-- `FATAL`：命题为假或被反驳，主定理或核心依赖失效。
-- `CRITICAL`：全局证明子目标无依据，或局部陈述无效。
-- `MAJOR`：局部证明子目标无依据，或全局结论需削弱结论/加强假设。
-- `MINOR`：不改变数学的记号、表述或记录问题。
+问题分类、严重度、双轴、定理侧条件与反例是否成立，只以 proof-review 的 [数学审查规则](../../proof-review/references/review-rules.md) 为准。本文件不另列一套。
 
 ## 九项强制检查
 
@@ -45,31 +20,4 @@
 
 完成条件：每个检查对应具体位置、依据或显式缺口；每个必要子目标明确已证明、引用且前提核对、未解决或不适用。不能把完成检查等同于证明成立。
 
-## 常见附加条件
-
-- **DCT**：逐点几乎处处收敛，以及可积控制函数。
-- **MCT**：单调非负序列或函数列。
-- **Fubini**：乘积可测性与绝对可积性。
-- **Tonelli**：乘积可测性与非负性。
-- **Leibniz 法则**：可微及导数受控，或适用版本的特定条件。
-- **Jensen**：正确方向的凸性或凹性及可积性。
-- **Cauchy–Schwarz**：有效的内积或范数空间以及有限二阶矩。
-- **Taylor 展开**：说明可微阶数及明确余项控制。
-- **WLOG**：可逆变换或不变的问题类。
-
-上述是检查线索，不替代实际引用版本的完整假设。
-
-## 反例纪律
-
-只有代数核验后才写 `counterexample found`；否则写 `counterexample candidate`，说明还需核对什么。核验须确认反例满足原假设并确实违反结论。
-
-保留以下尝试方向：
-
-- 降到一维；
-- 令矩阵奇异、对角、秩一或单位矩阵；
-- 令权重为零、接近零或相等；
-- 制造参数重叠或不可辨识；
-- 选择两点分布、重尾分布或边界分布；
-- 令隐藏常数随本应一致的参数增长。
-
-完成条件：记录尝试、代数验证或候选剩余检查；未找到反例不等于证明。符号层面的后续编辑见[符号审计](notation-audit.md)。
+侧条件与反例尝试按上面的 proof-review 规则。未代数核实的反例只能叫候选。未找到反例不等于证明。符号层面的后续编辑见 [记号审查](notation-audit.md)。

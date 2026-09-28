@@ -1,22 +1,12 @@
 ---
 name: experiment-audit
-description: 实验完整性审计：审查协议是否按声明执行，并直接读取 evaluator、真值来源、代码、原始结果与 Claims，核对 fake ground truth、分数归一化、phantom results、遗漏 attempts、代码/结果对应和 scope overclaim。用户要求审计实验是否真实完整，或已授权的 Validation／写作流程在形成 Claim 前需要独立核对时使用；默认只输出发现，不修代码、不重跑实验。
+description: 实验完整性审计。用户要求审计实验是否真实完整，或已授权的 Validation／写作流程在形成 Claim 前需要独立核对时使用。
 ---
 <!-- argument-hint: "[协议、代码、配置、运行日志、原始结果、evaluator/ground truth 与 Claims 的路径；可指定报告位置和审查范围]" -->
 
 # Experiment Audit
 
 独立的、只读的实验完整性审查：判断**报告的实验是否真实、完整、可核对，以及是否按预先声明的协议执行**。它不执行实验，不修代码，不产生新结果。
-
-需要它，是因为优化型 agent 会产生看似成功却不可核对的实验。本 Skill 专门检查这些失败模式：
-
-- **fake ground truth**：用模型自身输出生成"参考答案"，再报告高一致率作为性能；
-- **score normalization**：用被评模型自身输出的最大/最小/均值作分母，得到 0.99+ 的分数；
-- **phantom results**：引用不存在的文件、从未被调用的函数，或与文件不符的数字；
-- **insufficient scope**：把两个场景的 pilot 写成一节 comprehensive evaluation；
-- **incomplete attempts**：只保留 winner，隐藏失败、超时、崩溃、被排除的运行。
-
-它们通常不是有意造假，而是缺少完整性约束的失败模式；审计增加这个约束。
 
 ## 核心原则：执行者只收集路径，独立审查者判定
 
@@ -73,16 +63,16 @@ description: 实验完整性审计：审查协议是否按声明执行，并直�
 
 ### 3. Independent experiment integrity：直接读 primary artifacts
 
-不先接受 evaluator 或执行者的结论，沿 A–F 逐项从原始材料重建事实。每项的具体判断问题见 [完整性检查细则](references/integrity-checks.md)；以下只列检查面：
+不先接受 evaluator 或执行者的结论，沿 A–F 从原始材料重建事实。判断问题与单项 FAIL／WARN 见 [完整性检查细则](references/integrity-checks.md)。检查面：
 
-- **A. Ground truth provenance**：evaluator 读取的是数据集提供的真值，还是从模型输出、同一生成链、测试答案泄漏或报告摘要中重建的参考答案；派生真值是否明确标为 proxy evaluation；是否优先使用该 benchmark 的官方 eval 脚本。
-- **B. Score normalization**：是否有 metric 除以被评对象自身输出的 max/min/mean；是否同时报告 raw score；是否出现可疑地接近 1.0 或 100% 的分数。
-- **C. Result existence 与数字对应**：每个声称的结果是否有对应文件；文件里是否存在该 metric key；报告数字是否与文件一致；如使用实验 tracker，状态是否为 DONE 而非 TODO/IN_PROGRESS，无 tracker 时记 `unknown` 不虚构。没有对应原始输出、只有报告数字、只有"成功"标记或与运行时间/配置不符的，标为 `phantom result` 候选。
-- **D. Dead code**：每个 metric 函数是否真的在评价管线中被调用，其输出是否出现在结果文件中。
-- **E. Scope**：实际测试了多少 scene/dataset/configuration、每个配置多少 seed/run；报告是否使用 "comprehensive"、"extensive"、"robust" 等词，实际范围是否支撑这些声明。
-- **F. Evaluation type**：把每个评价归类为 `real_gt`（数据集真值）、`synthetic_proxy`（模型生成参考）、`self_supervised_proxy`（设计上无 GT）、`simulation_only`（模拟环境）、`human_eval` 或 `unknown`（材料不足）。
-- **尝试完整性**：枚举成功、失败、超时、崩溃、无效、取消、重试和预算耗尽的所有 attempt，检查是否覆盖完整时间范围和输出位置，是否存在 winner-only 汇总、覆盖旧结果、重用 attempt 名称、静默排除失败或只报告最佳 seed/检查点。
-- **代码—运行对应**：将声称的代码版本与日志、输出及运行记录对应；代码存在不能证明它被运行，记录该类断裂。
+- **A.** Ground truth provenance
+- **B.** Score normalization
+- **C.** Result existence 与数字对应
+- **D.** Dead code
+- **E.** Scope
+- **F.** Evaluation type
+- **尝试完整性**
+- **代码—运行对应**
 
 在**不运行新实验**的前提下，用已存在的原始输出和透明计算步骤核对派生统计、聚合、排序、不确定性与图表；不能从材料完成重算时保留 `unknown`，不以模型心算或报告数字代替结果。
 
@@ -113,7 +103,7 @@ description: 实验完整性审计：审查协议是否按声明执行，并直�
 
 每个发现包含：严重级别、证据类别（protocol conformance 或 independent integrity）、具体材料定位、观察事实、受影响的结果/Claim、为何影响审查、保守结论及需要用户另行授权的最小补救。不输出综合分数或用"整体质量"掩盖分项发现。
 
-**完成条件**：每个发现都绑定实际读到的 primary artifact 或明确缺失项；两条证据线均有独立结论，且没有把模型判断、文件存在或 Workflow 完成当作科研真实性。
+**完成条件**：每个发现都写明信号来源，并绑定实际读到的 primary artifact 或明确缺失项；两条证据线均有独立结论。
 
 ### 5. 报告与判定
 
@@ -133,8 +123,4 @@ description: 实验完整性审计：审查协议是否按声明执行，并直�
 - **FAIL**：已提供的材料明确违反协议或完整性约束，存在至少一个 `blocker`/`major`。
 - **BLOCKED**：关键材料缺失或不可读，无法完成范围内的独立审查；不得因没有发现而写 PASS。
 
-Standalone 在对话或用户指定文件返回；composed 只贡献调用者指定 canonical report 的审计章节，不创建重复报告。报告结束后停止，并如实列出未运行、未修复、未修改和未启动的事项。
-
-## 来源
-
-改编自 ARIS `skills/experiment-audit/SKILL.md`（wanshuiyin，MIT），保留执行者收集路径、独立审查者判定、A–F 检查、结果存在性与数字对应、发现分级与如实标注口径；仅 clean-room 借鉴 EurekAgent 公布的 evaluator 隔离思想，未复制其源码、Skill 文本、grader、容器、runtime 或 hooks。许可见 [MIT](LICENSE)。来源版本、作者与复制范围集中记录于仓库来源说明；使用本 Skill 无需访问产品仓库或上游。
+**完成条件**：审查范围、两条证据线、发现分级，以及整体 PASS／FAIL／BLOCKED 都已写出。齐了才停。Standalone 在对话或用户指定文件返回；composed 只贡献调用者指定 canonical report 的审计章节。

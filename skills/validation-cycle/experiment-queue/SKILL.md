@@ -1,26 +1,14 @@
 ---
 name: experiment-queue
-description: "把已授权的多作业实验（多 seed、参数网格、teacher→student 阶段依赖）组织为有界批次：读取或生成作业清单，按可用资源与依赖逐波执行，识别 OOM 与停滞并有限重试，保存可恢复的 attempt 状态。用于“批量实验”“跑 grid”“多 seed sweep”或 run-experiment 的批量阶段；不引入常驻 scheduler、不自动扩预算、不隐藏停止/重试，也不接管未授权作业。"
+description: 把已授权的多作业实验组织为有界批次。用于“批量实验”“跑 grid”“多 seed sweep”，或 run-experiment 的批量阶段。
 ---
 <!-- argument-hint: "[manifest 或 grid 规格；可指定并发上限、重试上限与状态位置]" -->
 
 # Experiment Queue
 
-当单个 [run-experiment](../run-experiment/SKILL.md) 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞清理、状态可恢复。这是 model-invoked 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停止在汇总报告，不自动分析、审计或进入下一轮。
+当单个 [run-experiment](../run-experiment/SKILL.md) 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞清理、状态可恢复。这是 model-invoked 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停在汇总报告。
 
-上游 ARIS `experiment-queue` 用远端常驻 Python scheduler 管理 screen 作业。本 Skill 保留其作业清单、波次依赖、OOM 重试、停滞清理和恢复方法，但删除常驻 daemon、无限轮询、provider 绑定和隐藏调度：编排以用户可读的清单、状态表和日志保存，控制权留在用户手中。
-
-## 何时使用
-
-用于：
-
-- ≥10 个作业需要按有限并发分批；
-- 多 seed sweep（如 21 seeds × 12 cells）；
-- 波次转换（先跑 wave 1，等待，再跑 wave 2）；
-- teacher→student 链（teacher 完成后才允许 student）；
-- 易 OOM 的配置需要有限重试或换资源。
-
-不用于：单次或少量作业（用 [run-experiment](../run-experiment/SKILL.md)）、需要人工逐步检查的实验、或尚未获得执行授权的作业。不使用嵌套轮询包裹本 Skill 的批次进度——那会重复调度时钟并与波次逻辑竞争；直接读取状态表获取进度。
+与 run-experiment 的分工见 [experiment-bridge 第 4 节](../experiment-bridge/SKILL.md)。进度读状态表，不另开调度时钟。
 
 ## 1. 授权与资源门
 
@@ -130,9 +118,3 @@ Grid 规格按笛卡尔积展开为明确作业；阶段模板在展开时把变
 汇总只报告编排与运行事实。是否接受结果、如何解释指标、是否补实验或进入分析/审计/Results-to-Claims，由用户或父 Workflow 决定；本 Skill 不自动调用它们，也不自动开启下一批。
 
 **完成条件**：汇总反映完整 attempt history 和真实资源消耗；所有 `stuck`/被阻塞项都有证据与下一步；交付后停止。
-
-## 来源与适配
-
-改编自 wanshuiyin / ARIS `skills/experiment-queue/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。上游仓库 MIT 许可，完整 notice 见 [LICENSE](LICENSE)，采用边界记录在仓库 `docs/upstream-sources-and-licenses.md`；使用本 Skill 不依赖上游仓库、中央 runtime 或其其他 Skill。
-
-保留：作业清单与 grid 展开、precondition 预检、按资源与依赖的波次调度、OOM 有限重试、停滞清理、预期输出完成判定、状态持久化与 resume、完整 attempt 汇总。适配：删除常驻 `queue_manager.py` scheduler、nohup/screen/SSH/conda/provider 固定绑定、60s 无限轮询、`os.execv` shim 和自动调用分析；改为纯 Markdown 的清单 + 状态表 + 宿主已有执行工具，控制与重试显式可见，并把 precondition / 存在性判定留作人工可核对项。上游 `scripts/` 中的调度实现不作为本产品 runtime 复制。

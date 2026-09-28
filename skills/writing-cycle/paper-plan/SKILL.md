@@ -1,6 +1,6 @@
 ---
 name: paper-plan
-description: 从已有研究材料规划论文的 Claim—Evidence、叙事、章节、图表与引用；用于“论文规划”“写大纲”或 paper outline。支持用户点名单独使用，或在已授权父调用内贡献计划章节；不负责正文起草、实验执行或投稿。
+description: 规划：从已有研究材料形成 Claim—Evidence、叙事、章节、图表与引用计划。支持用户点名，或在已授权父调用内贡献计划章节。
 ---
 
 # Paper Plan：证据先行的论文规划
@@ -47,7 +47,7 @@ description: 从已有研究材料规划论文的 Claim—Evidence、叙事、�
 
 ## 4. 收敛一句话贡献，再规划章节
 
-读 [叙事方法](references/narrative-framing.md)，用矩阵支持的范围陈述一句话贡献，明确 What / Why（证据）/ So What。向用户展示 proposed framing；用户已指定或父调用已确认则沿用。多个实质不同 framing、换题或改变主张范围时请用户决定；其余可随计划展示待确认，不冒称已获采用。
+用矩阵支持的范围陈述一句话贡献，明确 What / Why（证据）/ So What。范例只在需要对照时读 [narrative-framing.md](references/narrative-framing.md) 的对应小节，不把整份 249 行当必读。向用户展示 proposed framing；用户已指定或父调用已确认则沿用。多个实质不同 framing、换题或改变主张范围时请用户决定；其余可随计划展示待确认，不冒称已获采用。
 
 读 [章节与图表方法](references/section-planning.md)，选择 empirical/diagnostic、theory、method 或合适的其他结构。Systems 内容另读 [段落蓝图](references/systems-blueprints.md) 和 [四种结构模式](references/systems-patterns.md)。另读的这两份只是本规划内读取的参考资料，不调用 ML/Systems 顶层写作入口。
 

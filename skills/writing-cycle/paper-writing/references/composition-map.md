@@ -14,4 +14,6 @@
 | 整篇拒稿论证 | [claim-stress-test](../../claim-stress-test/SKILL.md) | 最强拒稿攻击、独立裁决与严重度 | 不自封最终结论，不自动改稿 |
 | 独立整篇评审与授权 revision | 本 Workflow 自身（fresh-context 独立 reviewer） | 分级评审、修订清单、逐项改动、复编译与轮次记录 | 不改命题／假设／结论范围，不越出授权写入范围，不无限循环 |
 
-被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。审查能力之间并列按需，不由本 Workflow 自动串联成线性通过链。`paper-compile-repair`、`apply-citation-fixes`、`proof-repair` 是独立 user-invoked 修复入口，各自需要用户另行点名与逐项授权，本 Workflow 不启动它们。跨研究有界改进循环（票 #28）也是独立 user-invoked 顶层 Workflow，本 Workflow 不启动、不重复其入口。
+被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。审查能力之间并列按需，不由本 Workflow 自动串联成线性通过链。
+
+审查输入：按被调用的 audit skill 自己的输入契约读，不在编排器里另定输入范围。`paper-compile-repair`、`apply-citation-fixes`、`proof-repair` 是独立 user-invoked 修复入口，各自需要用户另行点名与逐项授权，本 Workflow 不启动它们。跨研究有界改进循环（票 #28）也是独立 user-invoked 顶层 Workflow，本 Workflow 不启动、不重复其入口。

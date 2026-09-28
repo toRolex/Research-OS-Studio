@@ -1,6 +1,6 @@
 # Anchored Method Development
 
-Read all of this reference when building or revising a proposal. These are method-design instructions, not permission to implement or execute experiments. Use the project materials and the read/search budget agreed in SKILL.md; unavailable evidence remains a named gap. ML-specific items are conditional: for other domains, state the corresponding representation, assumptions, procedure and proof or empirical test; mark irrelevant training/frontier items not applicable with reasons.
+Building a proposal reads Step 1.1–1.5 only. The revision checks below are read only during a revision step. These are method-design instructions, not permission to implement or execute experiments. Use the project materials and the read/search budget agreed in SKILL.md; unavailable evidence remains a named gap. ML-specific items are conditional: for other domains, state the corresponding representation, assumptions, procedure and proof or empirical test; mark irrelevant training/frontier items not applicable with reasons.
 
 Use the fixed Problem Anchor established in [SKILL.md](../SKILL.md), step 1. Its drift and user-decision boundary is governed by step 4; this reference develops the mechanism within that boundary.
 

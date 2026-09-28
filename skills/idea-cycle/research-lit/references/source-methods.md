@@ -27,7 +27,7 @@ Completion: the user's processed understanding is represented with its note loca
 
 ### Local papers
 
-1. Prefer an explicit user library, then a library recorded in project instructions/navigation; otherwise inspect project `papers/` and `literature/` if present. Do not scan unrelated home directories.
+1. Prefer an explicit user library, then a library recorded in project instructions. If neither exists, record the locations checked. Do not scan unrelated home directories.
 2. Compare candidates against library/index results. Identifiers establish duplicates; filenames only prioritize screening.
 3. Prioritize filename relevance and first-page content; screen up to 20 relevant papers unless the caller set another bound.
 4. Read the first three pages for title, authors, year, core contribution and direct/tangential relevance. Record shorter, unreadable or scanned documents accurately; use an existing authorized reader/OCR capability, not an installation step.

@@ -1,6 +1,6 @@
 ---
 name: idea-generation
-description: 从现成文献、研究笔记或已有结果生成多视角候选 Idea，并去重、按明确资源约束筛选。用于需要多个研究方向及完整筛选记录时；不是独立 Idea 评审、查新结论或实验执行。
+description: 多视角候选。从现成文献、研究笔记或已有结果生成候选 Idea，并去重、按明确资源约束筛选。要候选池加筛选记录时使用。
 ---
 
 # 多视角候选 Idea
@@ -22,7 +22,7 @@ description: 从现成文献、研究笔记或已有结果生成多视角候选 
 
 ## 2. 从材料建立 landscape
 
-按 [生成方法](references/generation-methods.md#landscape-from-existing-materials) 梳理方法分组、反复出现的局限、矛盾、未经检验的假设和已有失败路线。先读本地相关材料；仅在本次已有检索授权且宿主能力可用时补充搜索，否则将覆盖范围限定为本组材料。
+按 [生成方法](references/generation-methods.md#landscape-from-existing-materials) 梳理方法分组、反复出现的局限、矛盾、未经检验的假设和已有失败路线。先读用户指定材料。需要补检索时只调用已授权的 `research-lit`；否则将覆盖范围限定为本组材料。
 
 每条信息区分：材料中的观察、作者解释、生成者推测、尚未核实的相关工作。引用给出实际读到的路径/标题及页码或章节；未核实来源保留标记，不凭记忆编造 DOI、作者或查新判断。
 
@@ -40,15 +40,15 @@ description: 从现成文献、研究笔记或已有结果生成多视角候选 
 | scaling-regime | 极小/极大规模或不同预算下何时失效？ |
 | diagnostic | 什么诊断能区分竞争解释，包括有价值的负结果？ |
 
-先读取 [组合生成方法](references/ideation-frameworks.md#bounded-diverge--annotate--handoff)：每个视角从选择表挑 2–3 个框架，完成其发散步骤；对每张卡执行 Explain-It、Problem-First、Simplicity、Stakeholder、Feasibility 自查，只记录疑问而不裁决。再使用 [完整生成提示](references/generation-methods.md#generation-prompt)；每个视角返回 1–2 张 [候选卡](templates/candidate-report.md)，合计目标 8–10 个，不为凑数复制问题。若用户给定更小预算，按预算缩小并记录未覆盖视角。
+按 [组合生成方法](references/ideation-frameworks.md#bounded-diverge--annotate--handoff) 发散并自查：每个视角从文件顶选择表挑 2–3 个框架，只读这几个框架并完成其步骤；对每张卡执行 Explain-It、Problem-First、Simplicity、Stakeholder、Feasibility 自查，只记录疑问而不裁决。再使用 [完整生成提示](references/generation-methods.md#generation-prompt)；每个视角返回 1–2 张 [候选卡](templates/candidate-report.md)，合计目标 8–10 个，不为凑数复制问题。若用户给定更小预算，按预算缩小并记录未覆盖视角。
 
 - 宿主支持且当前授权允许子代理：每视角一个只读生成者，并行返回文本；子代理不写共享报告、不筛掉其他人的候选、不扮演评审者。
 - 无子代理：顺序执行同样的视角并标注“单上下文顺序生成”；不声称独立模型或 fresh context，也不降低后续独立评审边界。
-- 卡住时，按 [操作框架选择表](references/ideation-frameworks.md#framework-selection-guide) 选择 2–3 个完整框架，保留它们产生的中间推导。需要认知转换而非项目级整理时，可在当前生成职责内使用已安装的 `creative-thinking-for-research`；未安装时现有五视角和本 Skill 共置框架仍可完成本轮，不自动安装或扩大调用。
+- 卡住时，仍从该选择表另挑 2–3 个框架，只读选中的框架，保留中间推导。需要认知转换而非项目级整理时，可在当前生成职责内使用已安装的 `creative-thinking-for-research`；未安装时现有五视角和本 Skill 共置框架仍可完成本轮，不自动安装或扩大调用。
 
-每张卡先写 2–4 步白话方法，再给清晰问题、核心 Claim（待检验假说）、最小可行验证及反证条件。正、负、无结论分别意味着什么；数学候选给命题、假设、证明路线或最小反例，而不是硬套 GPU 实验。估计成本与证据分开，猜测成本标为估计。
+卡片字段只填 [候选卡](templates/candidate-report.md)。
 
-**完成条件**：每个已选视角都有候选或缺口说明；每张卡完成五项生成自查、两句话 pitch、核心张力/抽象层级、三个可选判别测试及最小测试选择（无法给出时写具体缺口）。所有原始候选、材料依据、生成视角及风险可追溯，尚未按“好坏”删选。
+**完成条件**：每个已选视角都有候选或缺口说明；模板必填项已填或标缺口。所有原始候选、材料依据、生成视角及风险可追溯，尚未按“好坏”删选。
 
 ## 4. 合并与客观筛选
 
@@ -68,10 +68,6 @@ description: 从现成文献、研究笔记或已有结果生成多视角候选 
 
 - **Standalone**：在对话中输出，或写入用户本次指定的一个 Markdown 报告。不创建统一 JSON、隐藏状态或额外副本。
 - **Composed**：只有调用者明确给出 canonical report 及本次负责的章节，才返回该章节供调用者合入；默认不直接写共享报告、不另生重复报告。路径存在本身不触发 composed；参数冲突先问。
-- **评审 handoff**：给出全部原材料位置、读到的范围、原始与合并后候选、筛选依据及未知项。idea-review 是另一个独立评审职责，不由任何生成者兼任；本 Skill 不自动调用评审或顶层 Workflow。回顾性 reflection 只记录生成过程教训，不能替代 idea-review，也不能产生新颖/已验证/可发表结论。
+- **评审 handoff**：给出全部原材料位置、读到的范围、原始与合并后候选、筛选依据及未知项。idea-review 是另一个独立评审职责，生成者只交付候选与 handoff。回顾性 reflection 只记录生成过程教训，不能替代 idea-review，也不能产生新颖/已验证/可发表结论。
 
-**停止条件**：报告已返回或授权写入已完成；说明未做查新裁决、独立科研评审及真实实验。若用户想继续，列出需要的材料或下一职责建议并停止，不自动启动 Validation 或写论文。缺资料、授权冲突、预算耗尽时交付已有候选及缺口，不无限再生成。
-
-## 来源
-
-改编自 ARIS `skills/idea-creator/SKILL.md` 的生成部分及 Orchestra `21-research-ideation/brainstorming-research-ideas/SKILL.md` 的十个框架。保留的完整方法位于上述共置 references；许可见 [ARIS MIT](LICENSE-ARIS.txt) 与 [Orchestra MIT](LICENSE-Orchestra.txt)。来源版本、作者与复制范围集中记录于仓库来源说明；使用本 Skill 无需访问产品仓库或上游。
+**停止条件**：报告已返回或授权写入已完成；说明未做查新裁决、独立科研评审及真实实验。若用户想继续，列出需要的材料或下一职责建议后停下；Validation 与写论文由用户另行点名。缺资料、授权冲突、预算耗尽时交付已有候选及缺口。

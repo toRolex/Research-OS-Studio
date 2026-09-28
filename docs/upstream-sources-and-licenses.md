@@ -371,33 +371,33 @@ Archon 旧报告还把 `hgraph/` 与 `subagents/compile.py` 作为可复制路�
 
 全部 39 个 Skill 已经过 `writing-for-agents` 标准跨 Skill 审核，依据 commit `04e1fb2`（#33 全量跨 Skill 审核与修复）及其在 39 个 Skill 上的实际落地。审核覆盖：触发条件、description 竞争、调用角色、输入、输出、写入范围、调用关系、停止条件、progressive disclosure、幽灵依赖、成熟方法保真度（spec 决策 46/47）。
 
-本表是审核留痕证据，满足 spec 决策 46/47 的记录要求。本表是法律与维护信息，不是 port gate 或运行时数据库（决策 16、US-108 口径）。其中 `idea-cycle` 的 `creative-thinking-for-research`、`idea-discovery`、`idea-generation`、`idea-review`、`idea-refinement` 五个 Skill 的正文未单独设 `## 来源` 段，其来源与采用明细即本表对应行与上文各「已采用的…」章节；其余无正文来源段的 Skill 同理以本表行与上文对应章节为 attribution 记录。
+本表是审核留痕证据，满足 spec 决策 46/47 的记录要求。本表是法律与维护信息，不是 port gate 或运行时数据库（决策 16、US-108 口径）。2026-09-28 整改：全部 39 个 Skill 的正文已不再携带 `## 来源`／`## 来源与适配` 段——上游 revision、SHA、保留与适配记录是维护信息，对 agent 执行是 no-op；本文件是其唯一权威位置，即本表行与上文各「已采用的…」章节。共置 `references/sources.md` 与 `LICENSE*` 只保留署名与许可见证，revision 以本文件为准。
 
 | Skill 路径 | 审核结果 | 正文 attribution 状态 |
 |---|---|---|
 | `skills/general/ask-research-os/` | 通过并修复（04e1fb2） | 记录于此表 |
-| `skills/general/setup-research-os/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/idea-cycle/creative-thinking-for-research/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/idea-cycle/idea-discovery/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/idea-cycle/idea-generation/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/idea-cycle/idea-refinement/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/idea-cycle/idea-review/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
+| `skills/general/setup-research-os/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/idea-cycle/creative-thinking-for-research/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/idea-cycle/idea-discovery/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/idea-cycle/idea-generation/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/idea-cycle/idea-refinement/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/idea-cycle/idea-review/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/idea-cycle/novelty-check/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/idea-cycle/research-lit/` | 通过并修复（04e1fb2） | 记录于此表 |
-| `skills/validation-cycle/analyze-results/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/validation-cycle/experiment-audit/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/validation-cycle/experiment-bridge/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/validation-cycle/experiment-plan/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/validation-cycle/experiment-queue/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
+| `skills/validation-cycle/analyze-results/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/validation-cycle/experiment-audit/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/validation-cycle/experiment-bridge/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/validation-cycle/experiment-plan/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/validation-cycle/experiment-queue/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/formula-derivation/` | 通过并修复（04e1fb2） | 记录于此表 |
-| `skills/validation-cycle/monitor-experiment/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
+| `skills/validation-cycle/monitor-experiment/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/proof-orchestrator/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/proof-repair/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/proof-review/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/proof-writer/` | 通过并修复（04e1fb2） | 记录于此表 |
-| `skills/validation-cycle/result-to-claim/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/validation-cycle/run-experiment/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/validation-cycle/training-health-check/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
+| `skills/validation-cycle/result-to-claim/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/validation-cycle/run-experiment/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/validation-cycle/training-health-check/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/writing-cycle/academic-plotting/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/writing-cycle/apply-citation-fixes/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/writing-cycle/citation-audit/` | 通过并修复（04e1fb2） | 记录于此表 |
@@ -406,11 +406,11 @@ Archon 旧报告还把 `hgraph/` 与 `subagents/compile.py` 作为可复制路�
 | `skills/writing-cycle/paper-claim-audit/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/writing-cycle/paper-compile/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/writing-cycle/paper-compile-repair/` | 通过并修复（04e1fb2） | 记录于此表 |
-| `skills/writing-cycle/paper-drafting/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
+| `skills/writing-cycle/paper-drafting/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/writing-cycle/paper-plan/` | 通过并修复（04e1fb2） | 记录于此表 |
-| `skills/writing-cycle/paper-talk/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/writing-cycle/paper-writing/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/writing-cycle/rebuttal/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/writing-cycle/research-improvement/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/writing-cycle/resubmit-pipeline/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
-| `skills/writing-cycle/systems-paper-writing/` | 通过并修复（04e1fb2） | 正文 ## 来源 段 |
+| `skills/writing-cycle/paper-talk/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/writing-cycle/paper-writing/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/writing-cycle/rebuttal/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/writing-cycle/research-improvement/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/writing-cycle/resubmit-pipeline/` | 通过并修复（04e1fb2） | 记录于此表 |
+| `skills/writing-cycle/systems-paper-writing/` | 通过并修复（04e1fb2） | 记录于此表 |

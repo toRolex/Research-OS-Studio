@@ -1,6 +1,6 @@
 ---
 name: formula-derivation
-description: 推导公式与组织理论主线：当用户需要推导公式、build a theory line、organize assumptions、turn scattered equations into a coherent derivation，或将理论笔记改写为可写进论文的公式文档时使用。适用于推导目标尚未完全固定、主对象仍需选择，或需要完整推导包而非已完成定理证明的场景。
+description: 推导公式并组织理论主线。对象或假设未固定、需要完整推导包时使用。
 ---
 <!-- argument-hint: "[问题目标与现有公式或笔记；可指定输出位置与尝试预算]" -->
 
@@ -34,27 +34,18 @@ Produce exactly one of:
 2. a reframed derivation package with corrected object / assumptions / scope
 3. a blocker report explaining why the current notes cannot yet support a coherent derivation
 
-## Inputs
+## Step classification
 
-Extract and normalize:
-- the target phenomenon, formula, relation, or theory line
-- the intended role of the derivation:
-  - exact identity / algebra
-  - proposition / local theorem
-  - approximation
-  - mechanism interpretation
-- explicit assumptions
-- notation and definitions
-- any user-provided formula chain, sketch, messy notes, or current draft
-- nearby local theory files if the request points to them
-- desired output style if specified:
-  - internal alignment note
-  - paper-style theory draft
-  - blocker report
+每个非平凡步只标一类。类别转换处单独标记。解释性段落不写成已证。
 
-If the target, object, notation, or assumptions are ambiguous, state the exact interpretation you are using before deriving anything.
+- **identity**：精确代数改写
+- **proposition**：带条件的命题
+- **approximation**：模型简化或替代量
+- **interpretation**：公式的文字含义
 
 ## Workflow
+
+授权门通过后，按 Step 1–8 顺序做。每步的完成条件满足才进入下一步。
 
 ### Step 1: Gather Derivation Context
 Determine the target derivation file with this priority:
@@ -66,13 +57,9 @@ Read the relevant local context:
 - the chosen target derivation file, if it already exists
 - any local theory notes, formula drafts, appendix notes, or files explicitly mentioned by the user
 
-Extract:
-- target formula / theory goal
-- current formula chain
-- assumptions
-- notation
-- known blockers
-- desired output mode
+Extract: target formula / theory goal, current formula chain, assumptions, notation, known blockers, desired output mode (internal alignment note / paper-style theory draft / blocker report). 目标、对象、符号或假设有歧义时，先写明所用解释再推导。
+
+**完成条件**：目标文件已按优先级确定；相关笔记已读或列为未读；上述各项均有出处或标为缺口，没有用默认对象填空。
 
 ### Step 2: Freeze the Target
 State explicitly:
@@ -85,6 +72,8 @@ State explicitly:
 - what the derivation is expected to output in the end
 
 Do not start symbolic manipulation before this is fixed.
+
+**完成条件**：原始目标逐字保留；立即目标是 identity／proposition／approximation／interpretation 之一；期望产出已写明。未固定则停止，不开始符号操作。
 
 ### Step 3: Choose the Invariant Object
 Identify the single quantity or conceptual object that should organize the derivation.
@@ -103,6 +92,8 @@ If the current notes start from a narrower quantity, decide explicitly whether i
 
 Do not let a convenient proxy silently replace the actual conceptual object.
 
+**完成条件**：一个不变对象已点名，并标为 top-level／proxy／local slice／approximation；替代对象只能作为单独标注的变体提案。
+
 ### Step 4: Normalize Assumptions and Notation
 Restate:
 - all assumptions
@@ -119,15 +110,12 @@ Identify:
 Preserve the user's original notation unless a cleanup is necessary for coherence.
 If you adopt a cleaner internal formulation, keep that as a derivation device rather than silently replacing the user's target.
 
-### Step 5: Classify the Derivation Steps
-For every nontrivial step, determine whether it is:
-- **identity**: exact algebraic reformulation
-- **proposition**: a claim requiring conditions
-- **approximation**: model simplification or surrogate
-- **interpretation**: prose-level meaning of a formula
+**完成条件**：每个假设与符号都有出处；隐含假设、未定义符号与范围歧义已列出；精确步与近似混用处已标记。
 
-Never merge these categories without signaling the transition.
-If one part is only interpretive, do not present it as if it were mathematically proved.
+### Step 5: Classify the Derivation Steps
+按 [Step classification](#step-classification) 给每个非平凡步分类。
+
+**完成条件**：每个非平凡步都有一类，类别转换处已单独标记。
 
 ### Step 6: Build a Derivation Map
 Choose a derivation strategy, for example:
@@ -147,6 +135,8 @@ Then write a derivation map:
 If the derivation needs a decomposition, derive it from the chosen global quantity.
 Do not make a split appear magically from one local variable itself.
 
+**完成条件**：推导图列出目标、中间步、每步用到的假设、近似进入点与特例／一般情形分歧；分解能追溯到不变对象。
+
 ### Step 7: Write the Derivation Document
 Keep the delivery mode and authorization established before Step 1:
 - No write authorization: return the full package in chat; create no files.
@@ -157,25 +147,9 @@ The default filename only suggests a destination; do not reselect paths or expan
 
 Do NOT write directly into paper sections or appendix `.tex` files unless the user explicitly asks for that target.
 
-The derivation package must include:
-- target
-- status
-- invariant object
-- assumptions
-- notation
-- derivation strategy
-- derivation map
-- main derivation steps
-- remarks / interpretations
-- boundaries and non-claims
+写入只发生在授权门已允许的目的地。按 [derivation package](templates/derivation-package.md) 填节。
 
-Writing rules:
-- do not hide gaps with words like "clearly", "obviously", or "similarly"
-- define every symbol before use
-- mark approximations explicitly
-- separate derivation body from remarks
-- if the true object is dynamic or state dependent but a simpler slice is analyzed, say so explicitly
-- if a formula line is only heuristic, label it honestly
+**完成条件**：模板各节已填，或未写入原因已记录；每个缺口、失败路线与开放风险都在包内。
 
 ### Step 8: Final Verification
 Treat status as tentative until this check is complete. Any unresolved load-bearing gap or unsupported approximation requires `NOT YET COHERENT`, even when the rest of the exposition reads smoothly. Apply this rule separately to the original target and each explicitly authorized variant; a coherent variant cannot upgrade the original target.
@@ -191,93 +165,15 @@ Before finishing the target derivation file, verify:
 
 If the derivation still lacks a coherent object, stable assumptions, or an honest path from premises to result, downgrade the status and write a blocker report instead of forcing a clean story.
 
-## Required File Structure
+**完成条件**：原始目标与每个已授权变体各有一个 STATUS；承重缺口或无支持近似使原始目标为 `NOT YET COHERENT`；检查项逐条有结果或未完成原因。然后停止：不自动调用 `proof-writer`、审查或修复。
 
-Write the target derivation file using this structure:
+## Package and output modes
 
-```md
-# Derivation Package
-
-## Target
-[what is being derived or explained]
-
-## Status
-[Select one exact STATUS value; attach separate statuses to original and authorized variant.]
-
-## Invariant Object
-[top-level quantity organizing the derivation]
-
-## Assumptions
-- ...
-
-## Notation
-- ...
-
-## Derivation Strategy
-[chosen route and why]
-
-## Derivation Map
-1. Target depends on ...
-2. Intermediate step A uses ...
-3. Approximation enters at ...
-
-## Main Derivation
-Step 1. ...
-Step 2. ...
-...
-
-## Remarks and Interpretation
-- ...
-
-## Boundaries and Non-Claims
-- ...
-
-## Proof Gaps, Failed Routes, and Lessons
-- Gap: exact unresolved step, assumptions it needs, and consequence for the target; write `none identified` only when justified.
-- Failed route: actual approach attempted, where and why it stopped; if none, say `none attempted` rather than inventing a history.
-- Reusable lesson: what to check or avoid next time, with the assumptions under which it applies.
-- Proposed next action: missing input or intermediate derivation, for the user to decide; not an automatic retry.
-
-## Open Risks
-- ...
-```
-
-## Output Modes
-
-### If the derivation is coherent as stated
-Write the full structure above with a clean derivation package.
-
-### If the notes are close but not coherent yet
-Keep the original target's status `NOT YET COHERENT` and propose the needed change. Only if the user explicitly authorizes a variant, write:
-- the exact mismatch
-- the corrected invariant object, assumption, or scope
-- the reframed derivation package
-
-### If the derivation cannot be made coherent honestly
-Write:
-- `Status: NOT YET COHERENT`
-- the exact blocker:
-  - missing object
-  - unstable assumptions
-  - notation conflict
-  - unsupported approximation
-  - theorem-level claim without enough conditions
-- what extra assumption, reframe, or intermediate derivation would be needed
+Write the package with [derivation package](templates/derivation-package.md). The same skeleton applies to chat, an authorized file, and a composed report section; adjust heading levels when embedding. Output-mode branches in that template decide which sections are filled versus left as an explicit blocker. A default filename is a suggestion, not a new write grant.
 
 ## Relationship to `proof-writer`
 
-Use `formula-derivation` when the user says things like:
-- “我不知道怎么起这条推导主线”
-- “这个公式到底该从哪个量出发”
-- “帮我把理论搭顺”
-- “把说明文档变成可写进论文的公式文档”
-- “这几段公式之间逻辑不通”
-
-Use `proof-writer` only after:
-- the exact claim is fixed
-- the assumptions are stable
-- the notation is settled
-- and the task is now to prove or refute that claim rigorously
+对象或假设未固定时留在本 Skill。对象、假设与记号都已固定、任务是严格证明或反驳该命题时，用 `proof-writer`。
 
 ## Chat Response
 
