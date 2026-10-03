@@ -39,3 +39,13 @@
 冲突：`skills/general/research-os/SKILL.md`、`skills/general/research-os/references/PRODUCT-MAP.md`、`docs/user-acceptance-guide.md`。路由表保留全部 14 行：route-only、idea-discovery、experiment-plan、experiment-bridge、paper-writing general / ml / systems、proof、rebuttal、resubmit、paper-talk、improvement、pickup、custom。未交付名单改为「无」。级联示例补上 experiment-plan 与 experiment-bridge。PRODUCT-MAP 同时保留 #42 的本批授权和 #45 的 proof / improvement / pickup。验收指南保留叶门与「报告本身不是停点」，并写明默认算力政策不是本批授权。`README.md`、`docs/README-en.md`、`skills/README.md` 自动合并，#45 的交接段还在。checker 仍是 `scripts/check-skills.py`，没有第二个 checker。
 
 #42 行为轨迹没有在这次合并重跑，也不算集成后已验。范围只以分支 notes 为准：`/tmp/ros42-cases/{missing,expired,scope,exact,cumul,concur,retry,unknown,delete,loop}`，宿主 `pi --session … -p`，工具 read/write/edit/bash，模型 cliproxy/grok-4.7 thinking off。拒绝场景无 `results/out.txt`。exact 与 loop 有本地 `printf` 产物 `ok`。loop 两笔 completed 对上 2 USD / 0.2 cpu-core-hour / 2 planned-run，第三笔 refused 且无 started_at；默认政策仍为 0；`results/run.csv` 保持 `seed result v1`。这证明授权门，不是 experiment-bridge 全阶段科研质量，也不是叶 skill 正文被改过。
+
+## #46 合入
+
+`--no-ff` 合入 `v2/ticket-46` `af35875`。两侧祖先都是 `97f185e`，无冲突。不 squash，不 push，不开 PR，不关票，不打 tag，不动原 main。
+
+合入 7 个文件：14 行发布路由、产品入口旧停止承诺 sweep、三宿主串行降级标记。仍只有 `scripts/check-skills.py`，没有第二个 checker。
+
+`docs/v2-release-acceptance.md` 的失败结论原文保留，不因本次静态全绿改成通过。Codex 只读优先不作为通过。pi 串行降级未读叶正文。#38–#45 行为未在本 tip 重跑。未打 `v2.0.0`。
+
+合并后：`uv run python scripts/check-skills.py` 为 OK，39 个 Skill，U 38 / M 1。`uv run python -m unittest discover -s scripts` 41 通过；`discover -s tests` 9 通过。合计 50，与验收文档记的组合数一致。静态全绿不改写失败格。
