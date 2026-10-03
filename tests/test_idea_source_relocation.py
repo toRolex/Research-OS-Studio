@@ -19,7 +19,7 @@ class IdeaSourceRelocation(unittest.TestCase):
                 self.assertEqual(len(targets), 1)
                 target = (leaf / targets[0].split("#")[0]).resolve()
                 self.assertTrue(target.is_file(), f"Installed {name}: missing {targets[0]}")
-                self.assertTrue(target.is_relative_to(leaf), "Resource must be self-contained")
+                self.assertTrue(target.is_relative_to(leaf.resolve()), "Resource must be self-contained")
 
 
 if __name__ == "__main__":

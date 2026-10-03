@@ -20,6 +20,11 @@
 - 默认sticky续接research-lit真实read暴露安装路径bug：`../source-verification.md`仅仓库category共有、flat副本不存在；宿主如实记录ENOENT。先写Seam B mechanical flat-copy回归，research-lit/novelty-check两subtest红（evidence/source-relocation.red.txt）。只把原共用正文逐字复制到两个skill references，并改两个链接；绿及checker OK。不改科研逻辑，保留仓库共有文件兼容旧外部链接。
 - 默认工具三writing门实测已停且未写；批准后后台真实CLI继续，toy原始fixture stdlib通过UV实际执行，输入不可写。
 - fresh方法/专项审查要求由主宿主write prompt及新pi session，不由验收代理生成。
+- 三写作完整稿均真实生成编译：general 4页、ML 4页、systems 5页；PGFPlots/TikZ现有工具替代缺失matplotlib，无安装。计划与claim/citation已fresh审查，真正独立attack→judge继续，原始反馈可几十KB，耗时不能用自审替代。
+- rebuttal真实ACI论文+内部toy concern 7卡；真实strategy门→批准→strict/rich→fresh压力反馈 needs revision，主宿主核实并修coverage/miscoverage、非嵌套定理假设/窗口等；wording门再次停→确认后495词粘贴版与Candidate字节相同，不外发。
+- talk真实ACI三材料+9逻辑页/12物理页Beamer已编译，3次构建预算到顶，fresh七维审查继续；不得用编译成功称内容安全。
+- resubmit冻结宿主真实general候选6文件为old-submission，只读SHA基线；现有官方acmart.cls及官方GET README，raw样例失败按已装官方sample回退，新稿真实编译报abstract顺序错误。宿主偷偷在scratch“诊断”改源码且awk丢abstract，随后自己核实纠正并标无效PDF，原2次额度已用；后续单独显式paper-compile-repair精确diff门+新增1次CPU构建授权，不能把scratch成功当新稿成功。过程失误与预算保留。
+- 首次flat复制回归绿日志其实第二断言因mac /tmp→/private/tmp未resolve仍红；完整复测暴露后修`leaf.resolve()`，真正17+41全绿。保留红/原失败日志不抹去。
 
 ## Deviations
 
