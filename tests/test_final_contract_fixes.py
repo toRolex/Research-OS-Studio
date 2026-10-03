@@ -52,7 +52,7 @@ class FinalContracts(unittest.TestCase):
 
     def test_dot_cascade_is_not_blanket_exemption(self):
         rel = "skills/general/research-os/playbooks/improvement.md"
-        for target in ("./references/MISSING.md", "../references/MISSING.md"):
+        for target in ("./references/MISSING.md", "../references/MISSING.md", "./references/batch-authorization.md"):
             self.assertTrue(NS["backtick_cascade_problems"](rel, "读 `" + target + "`。", ROOT, NS["tracked"]))
         self.assertFalse(NS["backtick_cascade_problems"](rel, "项目配置示例 `.agents/research-os-models.md`。", ROOT, NS["tracked"]))
         self.assertFalse(NS["backtick_cascade_problems"](rel, "读 `../references/batch-authorization.md`。", ROOT, NS["tracked"]))
