@@ -3,7 +3,7 @@
 ## 执行基线与结论口径
 
 - 本地 `integration/research-os-v2` 起点 `af43cc8`，对 `v2/accept-remediation` 精确 tip `fa9065226cc955d74e88f6c972da5e7da13c8edf` 执行 `merge --no-ff`；合并执行 tip **`5efd2daffc68612def5e4660defb68db5a7780e3`**。无冲突，原始验收失败保留。
-- 当前tip独立组合回归已结束：host包45 CLI记录中43完整真实模型终态、1部分timeout、1误slash空调用；gate包8完整场＋1同session澄清。旧失败、纠正与空调用不冒充通过。#41–45原AC均达标且已关闭。最终UV在 `eaa76f07f9488e26a11af58894c65c80e4e88041` 又实际跑68通过；后续仅验收文档/归档/notes变更，不改变产品skills或checker。
+- 历史组合回归已结束：host包45 CLI记录中43完整真实模型终态、1部分timeout、1误slash空调用；gate包8完整场＋1同session澄清。旧失败、纠正与空调用不冒充通过。#38–45已关闭。历史UV在 `eaa76f07f9488e26a11af58894c65c80e4e88041` 实跑68通过；后续最终review六项合同修复与独立补漏已另行验证，不能再声称checker/skills未变。
 - 完整读四份报告、#37/#41–46原票（含评论）、维护者approved共享合同。批次计量与低消耗fixture按票面验收，不把TOY证明成真实学术贡献。
 - 科研 **REVISE / WARN**、审计 **FAIL** 经按门纠错或预算到顶停止，不自动成为流程AC失败；也不冒充科研正确性PASS。真人投影、真实发表与学术结论不属于这些票明确AC的，不追加为无限关票阻碍。
 - 最新diff只影响入口逐字清单、Idea中性handoff/原反馈内联、ML累计build、talk严重修订及版本绑定。未受影响的完整科研流程采用固定证据，受影响边界在当前tip重跑。后续若仅doc/checker/验收归档变更，不以此从零重复全部科研长输出。
@@ -28,18 +28,26 @@
 5. UV实跑 `uv run python scripts/check-skills.py`（39/U38/M1）、`uv run python -m unittest discover -s tests -v`（23）、`uv run python -m unittest discover -s scripts -p 'test*.py' -v`（45）：**68通过**，不是仅默认discover可能漏suite。
 6. doc sweep TDD小fix `ecdddab`：两真实旧句副本RED两subtest，保留合法叶停止正例；既有checker literal补两条、README中英各一行GREEN8/8，两Python主动LSP0、diff --check通过，无新validator。该commit不改变产品skills，回归执行5efd2da仍核当前同字节skills。
 
-## #46 逐AC与精确剩余
+## 最终review与有限代表验收收口
+
+- 最终两轴review六项修复见 [修复证据](acceptance/v2-final-contract-fixes.md)；合并 `1e67d82` 后独立检查见 [final-independent-verify](acceptance/v2-final-contract-independent-verify.md)。12种损坏副本反例及显式相对路径错base遗漏已TDD闭合，最小补漏提交 `d426eb6`；报告归档提交 `bc08199137d2a29a83f361a9f15659a8fab34dc3`。
+- 真实 expired-retest：实读时钟、0job/项目零变化；valid-retest：真实exit7失败与exit0成功均占attempt，2/2后拒第三。两fresh reviewer与implementer真实model/thinking/session核实；TOY当前产物有限PASS、完整历史纪律FAIL，不能互相替代。
+- [merged-host-smoke](acceptance/v2-merged-host-smoke.md)：三宿主39×270安装810文件同字节；四次真实调用均exit0、过期拒绝、0科研job/项目零变化。pi真fresh成功；Claude首失败保留，唯一retry恢复11primary直读/角色但首次清单仍非严格连续逐字PASS；Codex fresh EPERM，明确 independent review not performed，不改沙箱/凭据制造成功。
+- 本轮收口在 `bc08199` 实跑 `uv run python scripts/check-skills.py` **39/U38/M1**；`uv run python -m unittest discover -s tests -v` **29**；`uv run python -m unittest discover -s scripts -p 'test*.py' -v` **45**，合计 **74通过**；`git diff --check` / `git diff HEAD --check`通过。收口仅改release文档/notes，不重复科研实验、不重复安装树manifest，也不新建验证层。
+- 用户/主agent明确接受上述有限代表范围并批准本地annotated **v2.0.0**；旧临时禁tag解除，仅本地，不移动既有tag。此文档提交为tag目标；提交后创建并核对tag，再按 #46 → #37 顺序评论/关闭和回查。精确commit/tag/comment/线上状态以实际执行回查为准，不把计划冒充成功。
+
+## #46 逐AC与收口判定
 
 | 原票AC | 本轮判定 |
 |---|---|
-| 1 前票验收证据齐备并汇总本票评论 | 前票证据达标，已有进度评论汇总。#38–40此前关闭；#41–45本轮关闭。**完整最终新host/gate归档指针评论未送达：GitHub EOF，有界重试仍失败。** 最终正文已准备于 `/tmp/ros-v2-release-issues/final-context.md`，需补写本票评论；不冒充已在线送达。 |
+| 1 前票验收证据齐备并汇总本票评论 | 前票证据达标，#38–45 CLOSED本轮GraphQL实核。历史EOF总结已恢复送达#46评论 `5969836047` / #37评论 `5969835754`；#40/#45补强评论见独立复验报告。本轮最终commit/tag和有限范围摘要在创建tag后补送。 |
 | 2 Seam B场景全部跑过且输入/预期/允许禁止副作用/tool留证 | 有限代表覆盖达标。14具体playbook、四路由边界、sticky/newtask、可逆与叶门、授权完整旧矩阵＋当前受影响组合、外发/删覆、setup、串行/亲核均有真实证据。不是每宿主×每叶全笛卡尔积重演，也不是全部过程纪律零偏差。 |
 | 3 三宿主限定安装字段＋直接点名/级联 | 有限代表达标。810文件/39各份字段，三宿主原生直接proof-review、叶级联plan/自然串行、只读冲突/重匹配工具轨迹。 |
-| 4 单命令静态/链接/清单零豁免 | 达标。checker39/U38M1，tests23＋scripts45＝68全绿；损坏引用/路由/角色/额度/门/旧承诺反例均在实际suite。 |
+| 4 单命令静态/链接/清单零豁免 | 达标。最终checker39/U38M1，tests29＋scripts45＝74全绿；损坏引用/路由/角色/额度/门/旧承诺与最终review六项反例均在实际suite。静态不代替行为。 |
 | 5 breaking公告/迁移最终核对 | 达标。中英顶部公告、旧ask删除/route-only迁移；pi原生 `/skill:name` 映射真实；两旧无条件stop句TDD清理。 |
-| 6 v2.0.0 tag | **未满足：未打tag，用户本轮明确禁止。** 不伪标完成。 |
+| 6 v2.0.0 tag | 用户已批准本地annotated tag，目标为本收口文档commit；先核不存在，若既有tag冲突则停、不移动。提交后实建/核查，未push、不等同GitHub Release。 |
 
-按原票范围，**精确未满足：#46-1最终组合归档/commit完整汇总评论补送；#46-6 tag**。最终评论因GitHub EOF有界重试仍失败，tag本轮用户禁止。#37/#46继续OPEN。不是继续缺泛泛科研raw、学术PASS、真实会议/投影、人类终验或再重演全部长产物。
+按原票合理范围，**有限代表验收已完成，主/用户接受已披露宿主局限**；最终动作是本地文档commit/tag、#46最终汇总close、#37汇总close与回查，不继续增加泛泛科研raw、学术PASS、真实会议/投影、人类终验或重演全部长产物。GitHub EOF仅最多3次有界恢复，不造送达/关闭成功。
 
 ### 必须披露但不无限追加为关票条件
 
@@ -50,10 +58,10 @@
 
 ## 可发布判断与动作边界
 
-**可交最终release review的候选：是。无条件已发布/所有宿主永远安全：否。** 票面1–5有限代表证据充分；科研REVISE/WARN及审计FAIL按门闭环/有界停属于正确交付。额外纪律局限明示供最终review采纳，不用不相关未来人验无限阻塞。
+**有限代表release验收完成并获准本地v2.0.0收口：是。无条件远程已发布/全纪律PASS/所有宿主永远安全：否。** 科研REVISE/WARN与审计FAIL按门闭环/有界停属于流程结果，历史UV/存储超限、读取/清单与fresh不可用等失败不追认。最终review当前受影响合同已修且独立复核；未受影响流程继承固定证据，不扩大科研实验或manifest。
 
-已按独立原AC评论并关闭 **#41/#42/#43/#44/#45**；当时GraphQL回查全部CLOSED。#37/#46仍OPEN；已送达context评论 `5968914862` / `5968915099`。最终补指针请求遇EOF，随后REST回查/预检及无代理尝试同EOF，停止不无限重试；不确认最后请求成功。准备的最终正文在 `/tmp/ros-v2-release-issues/final-context.md`。
+#38–45已实际CLOSED；#37/#46在本轮写动作前OPEN。历史EOF保留，上述恢复评论已实送。本轮按批准创建本地annotated tag并闭合两票，最终状态由执行后GraphQL回查确认；本文不先填虚构评论ID/最终hash。
 
-本轮不tag、不push、不PR、不关闭#37/#46，不改main/全局。所有commit/归档仍本地，不能把相对路径当在线原始证据。
+不push、不PR、不删除worktree、不改main/全局。main固定 `837d1e86b18f1f753964d51d18a64e069011209a`。所有commit/归档/tag仍本地，不能把相对路径当在线原始证据或声称远程已发布。
 
 实施因果见 `.agents/notes/v2-merge-remediation-release-implementation-notes.md`。
