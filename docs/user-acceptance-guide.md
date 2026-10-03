@@ -188,7 +188,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     3. 已入账消耗加上仍在跑的预留，再加本次最坏消耗；恰好等于上限可以跑；未知消耗不按 0 释放；
     4. run_count_basis 为 planned-run；每个 attempt 都扣费用和算力，失败、超时、无效也入账；
     5. 删除或覆盖既有实验结果前另停，额度足够也不自动删；
-    6. 获准后 research-log 的次数、费用、算力与授权对得上；产出后停止，**绝不自动进入 Paper Writing**。
+    6. 获准后 research-log 的次数、费用、算力与授权对得上。本次调用没有写明进入写作时，不打开 paper-writing。用户在同一次调用里写明跨阶段并给出边界时，编排可以继续；投稿和上传仍停在外发之前。
   - **证据**：行为场景看真实宿主的工具轨迹。静态检查只证明路由和引用，不证明停在作业前。
 
 ### 2. 数学与理论研究路径
@@ -314,3 +314,5 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 | 9 | **ML/Systems 专业规范** | ml 不经通用入口，seeds/compute 缺口保持可见；systems 不经通用入口，缺扩展性保持 `MISSING SCALABILITY EVIDENCE` | [ ] 通过 |
 | 10 | **审稿、转投、演讲** | `/research-os` 进入 rebuttal、resubmit、paper-talk；策略、措辞、范围、改动、授权、大纲与外发仍停；旧稿保留，三产物是 slides、notes、script | [ ] 通过 |
 | 11 | **工具缺失与边界** | 缺失外部环境（LaTeX/Lean/GPU）如实报告并降级，不假报成功，不自装环境 | [ ] 通过 |
+| 12 | **组合门** | 只读优先于执行词；可逆步骤不停；外发、删覆盖、批次越界、叶审批点停在副作用前 | [ ] 通过 |
+| 13 | **三宿主与串行** | pi / Claude Code / Codex 限定安装副本保留显式调用字段；无子代理时编排者按 playbook 顺序自己做 | [ ] 通过 |
