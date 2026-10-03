@@ -546,6 +546,60 @@ def legacy_router_problems(files: dict[str, str]) -> list[str]:
     return found
 
 
+REQUIRED_RELEASE_ROUTES = (
+    ("route-only", "—", "yes"),
+    ("idea-discovery", "—", "no"),
+    ("experiment-plan", "—", "no"),
+    ("experiment-bridge", "—", "no"),
+    ("paper-writing", "general", "no"),
+    ("paper-writing", "ml", "no"),
+    ("paper-writing", "systems", "no"),
+    ("proof", "—", "no"),
+    ("rebuttal", "—", "no"),
+    ("resubmit", "—", "no"),
+    ("paper-talk", "—", "no"),
+    ("improvement", "—", "no"),
+    ("pickup", "—", "no"),
+    ("custom", "—", "no"),
+)
+STALE_PROMISE_SNIPPETS = (
+    "完成后立即停止，绝不自动跳转",
+    "No Automatic Chaining",
+)
+HOST_FALLBACK_MARKERS = ("pi", "Claude Code", "Codex", "串行")
+
+
+def release_route_problems(rows: list[dict[str, str]]) -> list[str]:
+    """14 个已交付 playbook 必须成套，只读约束与合同一致。"""
+    found: list[str] = []
+    actual = {(row["路线"], row["变体"], row["只读约束"]) for row in rows}
+    for route, variant, readonly in REQUIRED_RELEASE_ROUTES:
+        if (route, variant, readonly) not in actual:
+            found.append(f"发布路由缺或只读约束不符：{route}/{variant}/{readonly}")
+    return found
+
+
+def stale_promise_problems(files: dict[str, str]) -> list[str]:
+    """产品文档不得把「交付后绝不进入下一阶段」写成现行门语义。"""
+    found: list[str] = []
+    for rel, text in files.items():
+        for snippet in STALE_PROMISE_SNIPPETS:
+            if snippet in text:
+                found.append(f"{rel}: 残留旧停止承诺：{snippet}")
+    return found
+
+
+def host_fallback_problems(text: str) -> list[str]:
+    """宿主映射必须点名三宿主，并写明无子代理时串行执行。"""
+    found: list[str] = []
+    for marker in HOST_FALLBACK_MARKERS:
+        if marker not in text:
+            found.append(f"宿主映射缺 {marker}")
+    if "无该工具时由编排者串行执行" not in text and "没有时，编排者按 playbook 顺序自己执行" not in text:
+        found.append("宿主映射未写无子代理时的串行降级")
+    return found
+
+
 def is_exempt(target: str, line: str) -> bool:
     if re.fullmatch(r"\{[^}]*\}", target):
         return True
@@ -619,6 +673,10 @@ if research_os.exists():
         err(f"skills/general/research-os/SKILL.md: {problem}")
     for problem in paper_writing_route_problems(route_rows, ROOT):
         err(f"skills/general/research-os/SKILL.md: {problem}")
+    for problem in release_route_problems(route_rows):
+        err(f"skills/general/research-os/SKILL.md: {problem}")
+    for problem in host_fallback_problems(research_os.read_text(encoding="utf-8")):
+        err(f"skills/general/research-os/SKILL.md: {problem}")
     HINTS.extend(route_hints)
 
 for md in md_files:
@@ -640,6 +698,8 @@ legacy_files = {
     if (ROOT / rel).exists()
 }
 for problem in legacy_router_problems(legacy_files):
+    err(problem)
+for problem in stale_promise_problems(legacy_files):
     err(problem)
 
 
