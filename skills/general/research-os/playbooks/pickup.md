@@ -14,7 +14,7 @@
 
 - **批准**：`user_confirmation`、`confirmed_at`、`confirmation_basis`，以及交接里的命题、写入路径、轮数。没有确认记录就保持未批准。
 - **授权**：`scope`、`cost_limit`、`currency`、`compute_limit`、`compute_unit`、`run_limit`、`run_count_basis`、`per_attempt_cost_limit`、`per_attempt_compute_limit`、`concurrency_limit`、`retry_limit`、`valid_for_hours`、`valid_until`。缺字段、单位或写着未指定时，该项不是运行许可。`valid_until` 不是带时区的时间，或早于本次读取时刻，则授权已过期。
-- **作业**：`batch_id`、`run_id`、`attempt_id`、`started_at`、`finished_at`、`result_status`、`artifact_paths`、`actual_consumption`、`worst_case_estimate`。`actual_consumption` 为 unknown 时不按 0 释放。运行中的预留仍占额度。
+- **作业**：`batch_id`、`run_id`、`attempt_id`、`started_at`、`finished_at`、`result_status`、`artifact_paths`、`actual_consumption`、`worst_case_estimate`、`authorization_status`。`actual_consumption` 为 unknown 时不按 0 释放。运行中的预留仍占额度。`authorization_status` 只记录日志里的原文，不把过期批次改成有效。
 
 无法核实并发或单编排者是否仍在写账时停止，不另造 runtime。
 
