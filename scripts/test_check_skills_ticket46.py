@@ -61,6 +61,36 @@ class ReleaseGate(unittest.TestCase):
         problems = mod.stale_promise_problems(files)
         self.assertEqual(len(problems), 2)
 
+    def test_real_readme_stale_promises_are_red(self):
+        mod = load()
+        cases = (
+            (
+                "README.md",
+                "2. **",
+                "2. **流程不自动串联**：顶层工作流交付产物后立即结束，不会自动触发后续流程。",
+            ),
+            (
+                "docs/README-en.md",
+                "- **Human in the Loop**:",
+                "- **Human in the Loop**: Top-level workflows stop upon completion and never transition to subsequent stages without explicit instruction.",
+            ),
+        )
+        for name, prefix, stale_line in cases:
+            with self.subTest(document=name):
+                text = (ROOT / name).read_text(encoding="utf-8")
+                current_line = next(line for line in text.splitlines() if line.startswith(prefix))
+                damaged = text.replace(current_line, stale_line, 1)
+                problems = mod.stale_promise_problems({name: damaged})
+                self.assertTrue(any(item.startswith(f"{name}:") for item in problems))
+
+    def test_leaf_delivery_stops_remain_valid(self):
+        mod = load()
+        files = {
+            "README.md": "交付 IDEA_DISCOVERY.md 与 RESEARCH_PROPOSAL.md 后停止\n交付实验审计与 Claim 报告（停止）",
+            "docs/README-en.md": "Deliver IDEA_DISCOVERY.md and RESEARCH_PROPOSAL.md, then stop\nDelivers a candidate manuscript and audit report (stops)",
+        }
+        self.assertEqual(mod.stale_promise_problems(files), [])
+
     def test_current_docs_have_no_stale_stop_promise(self):
         mod = load()
         names = (

@@ -565,6 +565,8 @@ REQUIRED_RELEASE_ROUTES = (
 STALE_PROMISE_SNIPPETS = (
     "完成后立即停止，绝不自动跳转",
     "No Automatic Chaining",
+    "顶层工作流交付产物后立即结束，不会自动触发后续流程",
+    "Top-level workflows stop upon completion and never transition to subsequent stages without explicit instruction",
 )
 HOST_FALLBACK_MARKERS = ("pi", "Claude Code", "Codex", "串行")
 

@@ -97,7 +97,7 @@ Saved handoffs use three routes and no new state machine: `proof` resumes one fi
   1. **Idea Cycle**: Literature search, multi-angle ideation, novelty verification, independent review, and proposal convergence.
   2. **Validation Cycle**: Empirical track handles experiment planning, monitoring, statistical analysis, and audits; theoretical track covers derivations, proof drafting, review, and repairs.
   3. **Writing Cycle**: Paper drafting, academic plotting, LaTeX compilation checks, citation and claim consistency audits, rebuttal preparation, and venue adaptation.
-- **Human in the Loop**: Top-level workflows stop upon completion and never transition to subsequent stages without explicit instruction.
+- **Human in the Loop**: A route starts only from an explicit invocation. Reversible steps run without interruption and are shown afterwards. Three gate types stop before the side effect: irreversible actions (external sends, deleting or overwriting existing experiment data), a missing or exceeded batch grant, and a leaf skill's own approval point. A single invocation can continue across stages when the user explicitly authorizes that boundary; without it, the orchestrator does not start the next top-level workflow.
 - **Native File Formats**: Outputs deliverables directly as Markdown, LaTeX, scripts, and data files.
 
 ---
