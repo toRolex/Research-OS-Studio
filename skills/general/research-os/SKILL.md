@@ -21,9 +21,11 @@ Gates: none
 | 路线 | 变体 | 触发词 | 适用条件 | 只读约束 | playbook |
 |---|---|---|---|---|---|
 | route-only | — | 我该从哪开始、该用哪个、只看推荐、推荐入口、不要执行 | 用户只要入口或下一步建议 | yes | [route-only](playbooks/route-only.md) |
+| experiment-plan | — | 设计实验、写实验计划、做实验方案 | 已有研究问题，要的是有界计划而不是开跑 | no | [experiment-plan](playbooks/experiment-plan.md) |
+| experiment-bridge | — | 跑完这个实验并分析、按计划跑实验、实验桥接 | 已有计划或 tracker，要在本批授权内做完并分析 | no | [experiment-bridge](playbooks/experiment-bridge.md) |
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
 
-已命名、文件未交付，本票不建路由行：idea-discovery、experiment-plan、experiment-bridge、paper-writing（general / ml / systems）、proof、rebuttal、resubmit、paper-talk、improvement、pickup。对应 playbook 由后续票与路由行一起加入。
+已命名、文件未交付，本票不建路由行：idea-discovery、paper-writing（general / ml / systems）、proof、rebuttal、resubmit、paper-talk、improvement、pickup。对应 playbook 由后续票与路由行一起加入。
 
 ## 只读优先
 
@@ -37,7 +39,7 @@ Gates: none
 
 ## 算力
 
-工作区 `compute-policy.md` 是默认政策，不是本批运行许可。未配置时范围未指定，费用、算力和运行数都是 0，有效期 0 小时。启动执行前由持有该路线的 playbook 核对授权；route-only 与未批准的 custom 不消耗额度。
+工作区 `compute-policy.md` 是默认政策，不是本批运行许可。未配置时范围未指定，费用、算力和运行数都是 0，有效期 0 小时。experiment-plan 与 experiment-bridge 按 [batch-authorization.md](references/batch-authorization.md) 核对已记入研究日志的本批授权；route-only 与未批准的 custom 不消耗额度。
 
 ## 宿主映射
 
