@@ -1,6 +1,7 @@
 ---
 name: research-lit
 description: 文献综合：从研究主题主动找论文、梳理 related work，或解释用户已有论文。当前授权的文献调查或单篇解释需要来源核实与证据综合时使用。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[主题、论文 URL 或材料路径；可指定 sources、时间范围、报告位置或 composed]" -->
 
@@ -9,6 +10,7 @@ description: 文献综合：从研究主题主动找论文、梳理 related work
 Search and analyze research papers, find related work, and summarize key ideas for the user's research topic. Preserve the difference between a discovery lead, a verified identity, and evidence supporting a conclusion.
 
 ## Scope and authorization
+Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#scope-and-authorization
 
 - **Role:** model-invoked internal capability within the caller's current literature responsibility; users may explicitly invoke it standalone. Neither role authorizes another top-level Workflow.
 - **Inputs:** topic/question or existing papers/notes; research context and relevance criteria; requested sources, date/language boundaries, confidentiality restrictions and resource budget. Read project instructions and workspace navigation if present. Setup and a particular directory layout are not prerequisites.

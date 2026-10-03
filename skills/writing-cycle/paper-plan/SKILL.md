@@ -1,6 +1,7 @@
 ---
 name: paper-plan
 description: 规划：从已有研究材料形成 Claim—Evidence、叙事、章节、图表与引用计划。支持用户点名，或在已授权父调用内贡献计划章节。
+disable-model-invocation: true
 ---
 
 # Paper Plan：证据先行的论文规划
@@ -8,6 +9,7 @@ description: 规划：从已有研究材料形成 Claim—Evidence、叙事、�
 从用户自己的研究材料形成可供写作者使用的计划。默认 model-invoked，也支持用户点名；无须先运行 setup、Idea Discovery 或 Validation，无须采用固定文件名。
 
 ## 1. 确定材料与权限
+Gate: write-authorization | before=plan-write | approval=explicit-user | source=SKILL.md#1-确定材料与权限
 
 读取当前项目指令和用户指定材料位置；已有导航只用于找文件。接受实验结果、全部成功/失败记录、代码与配置、表格、图像、推导、证明、访谈/观察、文献、笔记、审稿意见及现有草稿，保持自然格式。已有 Claims 文件是候选入口，不因文件名或旧审查标签而视为已验证；摘要仅用于导航，关键主张回到原始材料。
 
@@ -46,6 +48,7 @@ description: 规划：从已有研究材料形成 Claim—Evidence、叙事、�
 **完成条件**：venue 要求有当前官方依据或未核实标记；冲突与待决事项可见；style 分支成功/不可读/用户取消均有准确记录。
 
 ## 4. 收敛一句话贡献，再规划章节
+Gate: framing-confirm | before=framing | approval=explicit-user | source=SKILL.md#4-收敛一句话贡献再规划章节
 
 用矩阵支持的范围陈述一句话贡献，明确 What / Why（证据）/ So What。范例只在需要对照时读 [narrative-framing.md](references/narrative-framing.md) 的对应小节，不把整份 249 行当必读。向用户展示 proposed framing；用户已指定或父调用已确认则沿用。多个实质不同 framing、换题或改变主张范围时请用户决定；其余可随计划展示待确认，不冒称已获采用。
 

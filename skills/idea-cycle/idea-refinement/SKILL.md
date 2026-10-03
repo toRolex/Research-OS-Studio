@@ -1,6 +1,7 @@
 ---
 name: idea-refinement
 description: "固定 Problem Anchor 细化或改进已有研究候选：把模糊路线或独立评审 findings 转成具体、有界、可验证的 Proposal，并比较最小可行与前沿方案。用于已授权的 Idea Discovery 内部修订或用户点名打磨方法。"
+disable-model-invocation: true
 ---
 
 # Idea Refinement
@@ -10,6 +11,7 @@ description: "固定 Problem Anchor 细化或改进已有研究候选：把模�
 目标是 **problem → focused method → minimal validation sketch**。最小充分机制优先；前沿技术是机制选择，不是装饰。
 
 ## 1. 固定边界与 Problem Anchor
+Gate: anchor-clarify | before=anchor-change | approval=explicit-user | source=SKILL.md#1-固定边界与-problem-anchor
 
 读取用户原问题、原始候选、原始文献、已有 review 和查新材料。默认只读用户提供的本地材料；确认需要新增的来源范围、检索预算、独立评审资源、修订轮数和输出路径。最多五轮“修订—独立复核”，用户可缩小或明确另定上限；无进展或达到任一预算即停，不按评分追逐无限循环。
 

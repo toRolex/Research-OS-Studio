@@ -1,6 +1,7 @@
 ---
 name: idea-review
 description: "独立评审现成研究候选：发现逻辑、证据、贡献与可行性弱点；初评，或在已授权候选修订后复核问题是否解决。用于 Idea Discovery 内部评审或用户点名审查 Idea。"
+disable-model-invocation: true
 ---
 
 # Idea Review
@@ -8,6 +9,7 @@ description: "独立评审现成研究候选：发现逻辑、证据、贡献与
 默认 model-invoked Internal Skill，也支持用户点名 standalone。生成覆盖只说明探索了哪些候选；独立裁决必须由未参与该候选生成或修订的评审者从原始材料形成。
 
 ## 1. 确定材料与授权
+Gate: scope-clarify | before=review-start | approval=explicit-user | source=SKILL.md#1-确定材料与授权
 
 读取用户目标、原始候选全文、已有 Problem Anchor、原始文献及候选引用的代码、数据、负面结果；已有查新/生成报告只作导航。候选无 Anchor 时记录用户问题、瓶颈、非目标、约束与成功条件；关键含义不明先问，保持研究问题不变。
 

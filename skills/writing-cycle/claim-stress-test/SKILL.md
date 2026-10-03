@@ -1,6 +1,7 @@
 ---
 name: claim-stress-test
 description: "整篇最强拒稿论证：整篇论证是否站得住。"
+disable-model-invocation: true
 ---
 
 # Claim Stress Test — 最强拒稿论点与独立裁决
@@ -8,6 +9,7 @@ description: "整篇最强拒稿论证：整篇论证是否站得住。"
 普通评分评审会把多个 MAJOR 弱点平铺；这里强制攻击者押注一条最有杀伤力的拒稿论证，再由独立裁决者确认哪些指控在当前原稿中站得住。重点是 headline、假设、证明义务与证据的整体关系，不是重复一份平衡弱点列表。攻击很尖锐不等于指控已成立。
 
 ## 调用与边界
+Gate: report-target | before=report-write | approval=explicit-user | source=SKILL.md#调用与边界
 
 默认 model-invoked，也可由用户点名。范围是整篇论证是否站得住：稳定稿件的最坏情况审查、camera-ready 前检查或 rebuttal 准备；不要求已跑标准评分评审。
 

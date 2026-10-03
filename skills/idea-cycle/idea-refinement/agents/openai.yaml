@@ -1,0 +1,5 @@
+interface:
+  display_name: "idea-refinement"
+  short_description: "固定 Problem Anchor 细化或改进已有研究候选：把模糊路线或独立评审 findings 转成具体、有界、可验证的 Proposal，并比较最小可行与前沿方案。用于已授权"
+policy:
+  allow_implicit_invocation: false

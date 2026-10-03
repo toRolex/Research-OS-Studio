@@ -18,6 +18,7 @@ metadata:
 本 Skill 承接 W3 的 `auto-paper-improvement-loop`（论文 review → fix → recompile）与 W2 的 `auto-review-loop`（研究 review → implement → re-review）两条上游方法：保留 fresh reviewer、直接读原文、逐轮修复与完整留存原始回应；删除固定 provider/MCP、reviewer 私有线程记忆、机器 JSON 状态、自证式停止与跨 Workflow 自动推进。方法细节见 [轮次方法](references/loop-methods.md)，内部能力组合见 [组合映射](references/composition-map.md)。
 
 ## 1. 调用、角色与授权门
+Gate: loop-authorization | before=repair-write | approval=explicit-user | source=SKILL.md#1-调用角色与授权门
 
 - **User**：拥有研究目标、材料、预算、环境与外部副作用的最终决定权。用户确认 scope、写入范围、最大轮数、资源预算、副作用与停止条件，并可随时要求停止或改变轮次授权。
 - **本 Workflow**：持有循环、审查调度与修复执行。在当前授权内读取原始材料、实施修复、复审并交付正文报告；交付后停止。
@@ -79,6 +80,7 @@ metadata:
 **完成条件**：每条已修复项有位置、原文与验证证据（预算中途耗尽而标 `unverified` 的须在报告中写明）；被拒绝或未修复项有理由；写入未越出确认范围；验证结果如实记录。
 
 ## 5. 授权内的补实验
+Gate: experiment-topup | before=experiment-run | approval=explicit-user | source=SKILL.md#5-授权内的补实验
 
 默认不补实验。未获补实验授权时，把需要新证据的 finding 记为 **unresolved/blocked**，说明理由与最小决策，不运行任何任务；该 finding 不中断本轮其余范围内的修复与验证，并在第 7 节交付——只有它成为任何正面结论的唯一路径、或用户要求时，才按第 6 节提前停止。
 

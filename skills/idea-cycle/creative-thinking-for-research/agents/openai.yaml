@@ -1,0 +1,5 @@
+interface:
+  display_name: "creative-thinking-for-research"
+  short_description: "单一表述、表面类比、假二分。用 bisociation、结构映射、约束变换与辩证综合产生新的可检验视角。用于认知转换，或为候选生成提供原始洞见。"
+policy:
+  allow_implicit_invocation: false
