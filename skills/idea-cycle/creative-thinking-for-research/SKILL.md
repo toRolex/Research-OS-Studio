@@ -1,13 +1,15 @@
 ---
 name: creative-thinking-for-research
 description: 单一表述、表面类比、假二分。用 bisociation、结构映射、约束变换与辩证综合产生新的可检验视角。用于认知转换，或为候选生成提供原始洞见。
+disable-model-invocation: true
 ---
 
 # Creative Thinking for Research
 
-默认 model-invoked 的认知方法能力，用户可单独点名；被当前已授权 Idea 构思职责组合调用时，只贡献洞见。保留 Orchestra 八个框架的操作步骤、示例及自查表，不把“通过两句话测试”当科学质量验收。
+显式调用或已授权正文级联 的认知方法能力，用户可单独点名；被当前已授权 Idea 构思职责组合调用时，只贡献洞见。保留 Orchestra 八个框架的操作步骤、示例及自查表，不把“通过两句话测试”当科学质量验收。
 
 ## 1. 读取问题与授权
+Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#1-读取问题与授权
 
 读取指定原材料（文献、笔记、方法、已有结果或粘贴文字），固定用户的问题、非目标和本次范围。不要求先运行任何文献入口或 setup。没有可读材料时请求材料并停止；只有摘要时标明范围，不假装读过全文。
 

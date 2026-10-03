@@ -10,4 +10,8 @@
 
 ### Domain docs
 
-采用单上下文布局：根目录 `CONTEXT.md` 与 `docs/adr/`。详见 `docs/agents/domain.md`。
+采用单上下文布局：根目录 `GLOSSARY.md` 与 `docs/adr/`。详见 `docs/agents/domain.md`。
+
+### Implementation notes
+
+实现决策与因果记录存放在 `.agents/notes/`，记录决策、取舍与偏离，供下一次尝试学习。

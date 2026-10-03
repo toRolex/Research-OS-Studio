@@ -1,0 +1,5 @@
+interface:
+  display_name: "paper-drafting"
+  short_description: "从计划写全文或指定节：依据现成计划和原始 Claims、Evidence、结果起草候选正文。供已授权 Workflow 调用，也支持用户点名。"
+policy:
+  allow_implicit_invocation: false

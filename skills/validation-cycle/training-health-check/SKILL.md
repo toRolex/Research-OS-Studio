@@ -1,6 +1,7 @@
 ---
 name: training-health-check
 description: 只读诊断已有训练观测中的 NaN/Inf、发散、OOM、停滞与日志完整性，并给出继续、停止调查或补充观测的建议。用户问“训练是否健康/是否异常”，或父 Workflow 在授权范围内需要训练健康诊断时使用。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[训练运行标识或日志/指标路径；可指定报告位置与观察窗口]" -->
 
@@ -9,8 +10,9 @@ description: 只读诊断已有训练观测中的 NaN/Inf、发散、OOM、停�
 从固定观测诊断训练是否出现 NaN/Inf、发散、OOM、停滞和日志完整性问题，并给出**建议**。它回答“训练过程是否健康”，不回答“实验是否支持 Claim”。作业控制权始终在用户手中。
 
 ## Scope and authorization
+Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#scope-and-authorization
 
-- **Role:** model-invoked internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. This skill reads observations and diagnoses. It never stops, kills, restarts, retries, requeues, pauses or reconfigures a job, and never edits training code, configuration, data or checkpoints.
+- **Role:** explicitly invoked or path-cascaded internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. This skill reads observations and diagnoses. It never stops, kills, restarts, retries, requeues, pauses or reconfigures a job, and never edits training code, configuration, data or checkpoints.
 - **Inputs:** existing training observations — loss/gradient/metric records, training logs (stdout/stderr), resource or scheduler records, and the user's stated window and expected schedule when given. Observations may be a file, a directory of logs, or text the user pasted. A specific tracking service, GPU scheduler, framework or live session is not a prerequisite.
 - **Resolve before work:** identify the run, the signal(s) to check, and the observation window. If the target or the log location is ambiguous, ask one focused question and stop. If only a run-status fact is available, that is a monitor fact, not a health diagnosis: without training observations the result is `insufficient observation`.
 - **Resources:** use already available, authorized read tools, following host-specific tool routing. Only non-mutating reads and queries. Do not install tools, open credentials, pay for services, or write to remote systems. If a required observation is unavailable, record the gap; do not fabricate a value or substitute an unrelated run.

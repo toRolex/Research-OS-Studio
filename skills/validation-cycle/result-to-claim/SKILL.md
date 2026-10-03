@@ -9,6 +9,7 @@ disable-model-invocation: true
 把已有结果变成**范围受限的候选主张**，而不是把数字变成结论。它回答"这些结果能说什么、不能说什么、还缺什么"，产出候选 Claim 后即停止；采不采用由用户决定。
 
 ## 调用与授权
+Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#调用与授权
 
 这是 **user-invoked Workflow**：用户显式要求"结果能支持什么 Claim"时使用。模型不自动启动它；本 Skill 也不启动其他 user-invoked Workflow。输入可以是外部现成结果，不要求先运行本产品的实验、分析或审计。
 

@@ -1,0 +1,5 @@
+interface:
+  display_name: "training-health-check"
+  short_description: "只读诊断已有训练观测中的 NaN/Inf、发散、OOM、停滞与日志完整性，并给出继续、停止调查或补充观测的建议。用户问“训练是否健康/是否异常”，或父 Workflow 在授权范围"
+policy:
+  allow_implicit_invocation: false

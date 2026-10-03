@@ -1,0 +1,5 @@
+interface:
+  display_name: "run-experiment"
+  short_description: "已授权计划内的实现、审查、sanity、有界运行。用户说“实现并跑实验”，或 Validation Workflow 的实现执行阶段使用。"
+policy:
+  allow_implicit_invocation: false

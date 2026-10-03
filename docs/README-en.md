@@ -19,16 +19,14 @@
   </p>
 </div>
 
+> **Breaking (v2):** the old read-only entry `ask-research-os` has been removed. There is no compatibility period. To ask where to start, use `/research-os` route-only (for example `/research-os 我该从哪开始`). It recommends a next step and does not start work, use the network, or write files.
+
 ---
 
 ## Architecture and Workflow
 
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/workflow-dark.jpg">
-    <source media="(prefers-color-scheme: light)" srcset="assets/workflow-light.jpg">
-    <img alt="Research OS Studio System Architecture Workflow" src="assets/workflow-light.jpg" width="100%">
-  </picture>
+  <img alt="Independent research entries with authorization gates and candidate outputs" src="assets/workflow-v2.svg" width="100%">
 </div>
 
 ---
@@ -66,7 +64,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 
 ### 2. Workspace Setup
 
-After installation, run the setup command in your Agent:
+After installation, use your host's native invocation. All `/name` examples here are logical skill names, not universal commands: pi uses `/skill:name` (setup: `/skill:setup-research-os`; entry: `/skill:research-os where should I start`), Claude Code uses `/name`, and Codex uses `$name` or explicitly names the installed skill. Plain `/name` text in pi does not guarantee that a hidden explicit-only skill is loaded.
 
 ```bash
 /setup-research-os
@@ -76,13 +74,15 @@ This command inspects your existing project structure and suggests configuration
 
 ### 3. Choose a Skill
 
-If you are unsure which skill fits your current stage, ask the router assistant:
+If you are unsure which skill fits your current stage, ask the unified entry and keep the request read-only:
 
 ```bash
-/ask-research-os
+/research-os where should I start
 ```
 
-It recommends the appropriate skill based on your research topic or existing drafts. This assistant operates in read-only mode, modifies no files, and never triggers workflows automatically. If you already know which skill to use, you can invoke it directly by name.
+That selects route-only. It recommends a skill from your topic or existing materials, modifies no files, does not use the network, and never starts a workflow. The old entry `ask-research-os` has been removed. If you already know the skill, invoke it directly, or let `/research-os` open the matching playbook. Designing an experiment uses experiment-plan; running an approved plan through analysis uses experiment-bridge. Both require the batch grant in the research log. The default policy written by setup is not permission to run.
+
+Saved handoffs use three routes and no new state machine: `proof` resumes one fixed obligation, `improvement` runs the bounded review → repair → re-review loop, and `pickup` re-reads the saved handoff, `compute-policy.md`, and `research-log.md`. An expired authorization stays expired.
 
 ---
 
@@ -93,58 +93,58 @@ It recommends the appropriate skill based on your research topic or existing dra
   1. **Idea Cycle**: Literature search, multi-angle ideation, novelty verification, independent review, and proposal convergence.
   2. **Validation Cycle**: Empirical track handles experiment planning, monitoring, statistical analysis, and audits; theoretical track covers derivations, proof drafting, review, and repairs.
   3. **Writing Cycle**: Paper drafting, academic plotting, LaTeX compilation checks, citation and claim consistency audits, rebuttal preparation, and venue adaptation.
-- **Human in the Loop**: Top-level workflows stop upon completion and never transition to subsequent stages without explicit instruction.
+- **Human in the Loop**: A route starts only from an explicit invocation. Reversible steps run without interruption and are shown afterwards. Three gate types stop before the side effect: irreversible actions (external sends, deleting or overwriting existing experiment data), a missing or exceeded batch grant, and a leaf skill's own approval point. A single invocation can continue across stages when the user explicitly authorizes that boundary; without it, the orchestrator does not start the next top-level workflow.
 - **Native File Formats**: Outputs deliverables directly as Markdown, LaTeX, scripts, and data files.
 
 ---
 
 ## 39 Skills Inventory
 
-The suite contains 39 standalone skills organized by trigger type:
-- **User-invoked (User, 17 skills)**: Top-level workflows or administrative entry points initiated by the user.
-- **Model-invoked (Model, 22 skills)**: Specialized internal capabilities called within top-level workflows or run individually.
+The suite contains 39 standalone skills. Invocation is explicit except for setup:
+- **Explicit except setup**: the user names the skill, or a parent playbook reads it by path. The model does not trigger it from the description.
+- **`setup-research-os`**: the one skill a model may suggest. Confirming each live model and the full draft still comes before any write.
 
 | Category | Skill Name | Invocation | Description |
 |---|---|---|---|
-| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | User | Interactive workspace initialization with explicit confirmation |
-| | [ask-research-os](../skills/general/ask-research-os/SKILL.md) | User | Read-only guide recommending skills for your current stage |
-| **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | User | Full ideation workflow: literature search, ideation, novelty check, review, proposal |
-| | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Model | Literature search and synthesis with source verification |
-| | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Model | Multi-angle research candidate generation with filtering logs |
-| | [creative-thinking-for-research](../skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Model | Cognitive shifts and orthogonal exploration for ideation bottlenecks |
-| | [novelty-check](../skills/idea-cycle/novelty-check/SKILL.md) | Model | Search closest prior work to verify proposal novelty |
-| | [idea-review](../skills/idea-cycle/idea-review/SKILL.md) | Model | Independent reviewer perspective identifying proposal weaknesses |
-| | [idea-refinement](../skills/idea-cycle/idea-refinement/SKILL.md) | Model | Refines proposals into minimal viable and frontier routes |
-| **Validation** | [experiment-plan](../skills/validation-cycle/experiment-plan/SKILL.md) | User | Creates bounded experiment plans with hypotheses, baselines, and budgets |
-| | [experiment-bridge](../skills/validation-cycle/experiment-bridge/SKILL.md) | User | Full experiment workflow: implementation, test runs, monitoring, analysis, audit |
-| | [run-experiment](../skills/validation-cycle/run-experiment/SKILL.md) | Model | Executes experiment code within approved scope and tracks status |
-| | [experiment-queue](../skills/validation-cycle/experiment-queue/SKILL.md) | Model | Manages batch experiment queues and resource allocation |
-| | [monitor-experiment](../skills/validation-cycle/monitor-experiment/SKILL.md) | Model | Monitors running processes and hardware state without inference |
-| | [training-health-check](../skills/validation-cycle/training-health-check/SKILL.md) | Model | Diagnoses training issues such as NaNs, OOMs, or stalled loss |
-| | [analyze-results](../skills/validation-cycle/analyze-results/SKILL.md) | Model | Evaluates statistical distributions and uncertainty across runs |
-| | [experiment-audit](../skills/validation-cycle/experiment-audit/SKILL.md) | Model | Audits code logic, evaluation metrics, and result authenticity |
-| | [result-to-claim](../skills/validation-cycle/result-to-claim/SKILL.md) | User | Extracts bounded scientific claims supported by empirical data |
-| | [formula-derivation](../skills/validation-cycle/formula-derivation/SKILL.md) | Model | Mathematical derivations recording assumptions, steps, and error bounds |
-| | [proof-writer](../skills/validation-cycle/proof-writer/SKILL.md) | Model | Drafts formal proofs while tracking incomplete attempts and gaps |
-| | [proof-review](../skills/validation-cycle/proof-review/SKILL.md) | Model | Read-only check for proof structure, lemmas, and counterexamples |
-| | [proof-repair](../skills/validation-cycle/proof-repair/SKILL.md) | User | Targeted repair of proof gaps within authorized scope |
-| | [proof-orchestrator](../skills/validation-cycle/proof-orchestrator/SKILL.md) | User | Manages long-horizon proofs with optional Lean formalization |
-| **Writing Cycle** | [paper-writing](../skills/writing-cycle/paper-writing/SKILL.md) | User | General paper writing workflow: planning, plotting, drafting, compiling, auditing |
-| | [ml-paper-writing](../skills/writing-cycle/ml-paper-writing/SKILL.md) | User | ML paper writing covering seeds, error bars, compute, and limitations |
-| | [systems-paper-writing](../skills/writing-cycle/systems-paper-writing/SKILL.md) | User | Systems paper writing covering design alternatives and benchmarks |
-| | [paper-plan](../skills/writing-cycle/paper-plan/SKILL.md) | Model | Outlines paper structure and builds Claim-Evidence matrices |
-| | [paper-drafting](../skills/writing-cycle/paper-drafting/SKILL.md) | Model | Drafts academic manuscripts grounded in experimental data |
-| | [academic-plotting](../skills/writing-cycle/academic-plotting/SKILL.md) | Model | Generates academic figures with reproducible plotting scripts |
-| | [paper-compile](../skills/writing-cycle/paper-compile/SKILL.md) | Model | Runs build checks against your local LaTeX toolchain |
-| | [paper-compile-repair](../skills/writing-cycle/paper-compile-repair/SKILL.md) | User | Fixes LaTeX compilation errors after showing a diff for confirmation |
-| | [citation-audit](../skills/writing-cycle/citation-audit/SKILL.md) | Model | Audits citation identity, metadata, and in-text context accuracy |
-| | [apply-citation-fixes](../skills/writing-cycle/apply-citation-fixes/SKILL.md) | User | Updates BibTeX entries or in-text citation keys upon confirmation |
-| | [paper-claim-audit](../skills/writing-cycle/paper-claim-audit/SKILL.md) | Model | Verifies consistency between manuscript claims and underlying data |
-| | [claim-stress-test](../skills/writing-cycle/claim-stress-test/SKILL.md) | Model | Simulates critical reviewer perspectives to challenge weak points |
-| | [research-improvement](../skills/writing-cycle/research-improvement/SKILL.md) | User | Multi-stage review and repair loops for code, claims, and drafts |
-| | [rebuttal](../skills/writing-cycle/rebuttal/SKILL.md) | User | Breaks reviewer comments into distinct concerns and drafts responses |
-| | [resubmit-pipeline](../skills/writing-cycle/resubmit-pipeline/SKILL.md) | User | Adapts manuscripts to new conference templates while preserving history |
-| | [paper-talk](../skills/writing-cycle/paper-talk/SKILL.md) | User | Generates presentation slide outlines and scripts from the paper |
+| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Confirm live session models, eight roles, a zero-grant policy, and workspace seeds; a suggestion is not write authorization |
+| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; route-only is read-only; experiment-plan and experiment-bridge are delivered and bill a batch grant |
+| **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Full ideation workflow: literature search, ideation, novelty check, review, proposal |
+| | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
+| | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Explicit | Multi-angle research candidate generation with filtering logs |
+| | [creative-thinking-for-research](../skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Explicit | Cognitive shifts and orthogonal exploration for ideation bottlenecks |
+| | [novelty-check](../skills/idea-cycle/novelty-check/SKILL.md) | Explicit | Search closest prior work to verify proposal novelty |
+| | [idea-review](../skills/idea-cycle/idea-review/SKILL.md) | Explicit | Independent reviewer perspective identifying proposal weaknesses |
+| | [idea-refinement](../skills/idea-cycle/idea-refinement/SKILL.md) | Explicit | Refines proposals into minimal viable and frontier routes |
+| **Validation** | [experiment-plan](../skills/validation-cycle/experiment-plan/SKILL.md) | Explicit | Creates bounded experiment plans with hypotheses, baselines, and budgets |
+| | [experiment-bridge](../skills/validation-cycle/experiment-bridge/SKILL.md) | Explicit | Full experiment workflow: implementation, test runs, monitoring, analysis, audit |
+| | [run-experiment](../skills/validation-cycle/run-experiment/SKILL.md) | Explicit | Executes experiment code within approved scope and tracks status |
+| | [experiment-queue](../skills/validation-cycle/experiment-queue/SKILL.md) | Explicit | Manages batch experiment queues and resource allocation |
+| | [monitor-experiment](../skills/validation-cycle/monitor-experiment/SKILL.md) | Explicit | Monitors running processes and hardware state without inference |
+| | [training-health-check](../skills/validation-cycle/training-health-check/SKILL.md) | Explicit | Diagnoses training issues such as NaNs, OOMs, or stalled loss |
+| | [analyze-results](../skills/validation-cycle/analyze-results/SKILL.md) | Explicit | Evaluates statistical distributions and uncertainty across runs |
+| | [experiment-audit](../skills/validation-cycle/experiment-audit/SKILL.md) | Explicit | Audits code logic, evaluation metrics, and result authenticity |
+| | [result-to-claim](../skills/validation-cycle/result-to-claim/SKILL.md) | Explicit | Extracts bounded scientific claims supported by empirical data |
+| | [formula-derivation](../skills/validation-cycle/formula-derivation/SKILL.md) | Explicit | Mathematical derivations recording assumptions, steps, and error bounds |
+| | [proof-writer](../skills/validation-cycle/proof-writer/SKILL.md) | Explicit | Drafts formal proofs while tracking incomplete attempts and gaps |
+| | [proof-review](../skills/validation-cycle/proof-review/SKILL.md) | Explicit | Read-only check for proof structure, lemmas, and counterexamples |
+| | [proof-repair](../skills/validation-cycle/proof-repair/SKILL.md) | Explicit | Targeted repair of proof gaps within authorized scope |
+| | [proof-orchestrator](../skills/validation-cycle/proof-orchestrator/SKILL.md) | Explicit | Manages long-horizon proofs with optional Lean formalization |
+| **Writing Cycle** | [paper-writing](../skills/writing-cycle/paper-writing/SKILL.md) | Explicit | `/research-os` paper-writing / general: planning, plotting, drafting, a real compile, and parallel audits; the leaf keeps its own authorization gate |
+| | [ml-paper-writing](../skills/writing-cycle/ml-paper-writing/SKILL.md) | Explicit | paper-writing / ml: ML materials skip the general entry; seeds, error bars, compute, limitations |
+| | [systems-paper-writing](../skills/writing-cycle/systems-paper-writing/SKILL.md) | Explicit | paper-writing / systems: systems materials skip the general entry; design rationale, end-to-end, scalability |
+| | [paper-plan](../skills/writing-cycle/paper-plan/SKILL.md) | Explicit | Outlines paper structure and builds Claim-Evidence matrices |
+| | [paper-drafting](../skills/writing-cycle/paper-drafting/SKILL.md) | Explicit | Drafts academic manuscripts grounded in experimental data |
+| | [academic-plotting](../skills/writing-cycle/academic-plotting/SKILL.md) | Explicit | Generates academic figures with reproducible plotting scripts |
+| | [paper-compile](../skills/writing-cycle/paper-compile/SKILL.md) | Explicit | Runs build checks against your local LaTeX toolchain |
+| | [paper-compile-repair](../skills/writing-cycle/paper-compile-repair/SKILL.md) | Explicit | Fixes LaTeX compilation errors after showing a diff for confirmation |
+| | [citation-audit](../skills/writing-cycle/citation-audit/SKILL.md) | Explicit | Audits citation identity, metadata, and in-text context accuracy |
+| | [apply-citation-fixes](../skills/writing-cycle/apply-citation-fixes/SKILL.md) | Explicit | Updates BibTeX entries or in-text citation keys upon confirmation |
+| | [paper-claim-audit](../skills/writing-cycle/paper-claim-audit/SKILL.md) | Explicit | Verifies consistency between manuscript claims and underlying data |
+| | [claim-stress-test](../skills/writing-cycle/claim-stress-test/SKILL.md) | Explicit | Simulates critical reviewer perspectives to challenge weak points |
+| | [research-improvement](../skills/writing-cycle/research-improvement/SKILL.md) | Explicit | Multi-stage review and repair loops for code, claims, and drafts |
+| | [rebuttal](../skills/writing-cycle/rebuttal/SKILL.md) | Explicit | Breaks reviewer comments into distinct concerns and drafts responses |
+| | [resubmit-pipeline](../skills/writing-cycle/resubmit-pipeline/SKILL.md) | Explicit | Adapts manuscripts to new conference templates while preserving history |
+| | [paper-talk](../skills/writing-cycle/paper-talk/SKILL.md) | Explicit | Generates presentation slide outlines and scripts from the paper |
 
 ---
 
@@ -152,17 +152,22 @@ The suite contains 39 standalone skills organized by trigger type:
 
 ### 1. Idea Discovery
 ```text
-Provide research direction
+Provide a research direction
       ↓
-/idea-discovery
+/research-os I have a direction and no idea
+      ↓
+playbook idea-discovery
+  Stop after each phase unless the user writes "一次走完" and a budget
   ├─ Search literature and track citations (research-lit)
-  ├─ Generate candidate ideas (idea-generation & creative-thinking)
+  ├─ Generate candidate ideas (idea-generation; creative-thinking if stuck)
   ├─ Search prior work and check novelty (novelty-check)
   ├─ Review and identify weaknesses (idea-review)
   └─ Refine and converge route (idea-refinement)
       ↓
-Delivers RESEARCH_PROPOSAL.md (Stops, awaiting user decision)
+Deliver IDEA_DISCOVERY.md and RESEARCH_PROPOSAL.md, then stop
 ```
+
+Leaf output-path, stage-checkpoint, review-scope, and problem-anchor gates stay in force. The next turn stays on this route; `new task` rematches. `/idea-discovery` remains the direct leaf entry.
 
 ### 2. Validation
 ```text
@@ -185,23 +190,18 @@ Delivers audit & claim report       Delivers complete proof logs
 ```text
 Provide data or theoretical findings
       ↓
-Manuscript Drafting
-  ├─ General papers: /paper-writing
-  ├─ Machine learning: /ml-paper-writing
-  └��� Systems: /systems-paper-writing
+/research-os matches paper-writing from the materials
+  ├─ General: general → paper-writing
+  ├─ Machine learning: ml → ml-paper-writing (not via general)
+  └─ Systems design: systems → systems-paper-writing (not via general)
       ↓
-Targeted Audits and Real Compilation
-  ├─ LaTeX compilation checks & fixes (paper-compile / /paper-compile-repair)
-  ├─ Citation verification & fixes (citation-audit / /apply-citation-fixes)
-  ├─ Full manuscript data consistency (paper-claim-audit)
-  └─ Reviewer stress tests (claim-stress-test)
+The leaf skill keeps its authorization gate before planning, figures, drafting, and a real compile
+Parallel audits: paper-claim-audit, citation-audit, claim-stress-test
+Proof manuscripts also read proof-review
       ↓
-Post-submission and Derivatives
-  ├─ Rebuttal response: /rebuttal
-  ├─ Venue adaptation: /resubmit-pipeline
-  └─ Academic talk: /paper-talk
-      ↓
-Delivers manuscript & auxiliary materials (Stops)
+Delivers a candidate manuscript and audit report (stops)
+Submission and upload are outside this route
+paper-compile-repair and apply-citation-fixes stay separately invoked
 ```
 
 ---
@@ -209,7 +209,7 @@ Delivers manuscript & auxiliary materials (Stops)
 ## Safety and Control Principles
 
 1. **No System Alterations**: The suite does not install or modify Python, Lean, LaTeX, CUDA drivers, or cloud credentials. It reports missing tools and adapts cleanly.
-2. **No Automatic Chaining**: Top-level workflows stop after delivering their artifacts. They do not trigger subsequent stages without user direction.
+2. **Explicit route, gated side effects**: A route starts only from an explicit invocation. Reversible steps run and are shown afterwards. External sends, deleting or overwriting existing experiment data, a batch grant that is missing or exceeded, and a leaf skill's own approval point stop before the side effect. A single invocation can continue across stages only when the user states that boundary. Without it, the orchestrator does not start the next top-level workflow.
 3. **Prior Confirmation**: Operations that involve heavy computation, file rewriting, or paid APIs require explicit user confirmation.
 
 ---
@@ -227,7 +227,7 @@ A: Any client supporting the Agent Skills format is compatible, including Claude
 ## Documentation
 
 - [User Acceptance Guide](user-acceptance-guide.md): Manual acceptance steps and boundary checks
-- [Product Map](../skills/general/ask-research-os/PRODUCT-MAP.md): Skill definitions and boundaries
+- [Product Map](../skills/general/research-os/references/PRODUCT-MAP.md): Skill definitions and boundaries
 - [Skills Directory](../skills/README.md): Structure and compatibility guide
 - [Upstream Sources and Licenses](upstream-sources-and-licenses.md): Third-party attribution and licenses
 

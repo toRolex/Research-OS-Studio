@@ -1,6 +1,7 @@
 ---
 name: monitor-experiment
 description: 只读观测已有实验或训练作业的运行事实（running/completed/crashed/unknown、进度、输出与退出证据）。用户问“跑完了吗/还在跑吗”，或父 Workflow 在授权范围内需要运行状态时使用。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[运行标识或日志/状态路径；可指定报告位置]" -->
 
@@ -9,8 +10,9 @@ description: 只读观测已有实验或训练作业的运行事实（running/co
 从现有作业与观测报告**运行事实**：作业是 running、completed、crashed 还是 unknown，以及可核对的进度与输出证据。它回答“现在发生了什么”，不回答“结果好不好”。
 
 ## Scope and authorization
+Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#scope-and-authorization
 
-- **Role:** model-invoked internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. This skill is read-only: it observes existing processes, logs and artifacts. It never stops, kills, restarts, retries, pauses or reconfigures a job, and never starts a new one. A parent Workflow is a caller, not permission to control jobs.
+- **Role:** explicitly invoked or path-cascaded internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. This skill is read-only: it observes existing processes, logs and artifacts. It never stops, kills, restarts, retries, pauses or reconfigures a job, and never starts a new one. A parent Workflow is a caller, not permission to control jobs.
 - **Inputs:** a run identifier or the locations of existing observation surfaces (log files, scheduler/status output, stdout/stderr, exit-code records, heartbeat/progress files, artifact directories). Read existing project instructions and workspace navigation if present. Setup, a particular directory layout, a specific provider, a GPU scheduler or any research runtime is not a prerequisite.
 - **Resolve before work:** identify exactly which run is observed and which surfaces actually exist. If the target is ambiguous, ask one focused question and stop; do not guess from a directory listing. If a named surface is unreadable, record it as an observation gap instead of substituting an unrelated one.
 - **Resources:** use already available, authorized read tools, following host-specific tool routing. Issue only non-mutating operations (list, tail, read, status/query). Do not install tools, open new credentials, pay for services, or write to remote systems. If access is denied, report the exact gap and stop; do not escalate.
