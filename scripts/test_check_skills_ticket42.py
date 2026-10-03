@@ -62,6 +62,8 @@ class ValidationRoutes(unittest.TestCase):
         self.assertIn("原始证据", grant)
         self.assertIn("部分覆盖不代表完整实耗", grant)
         self.assertIn("未核实份额继续保留最坏预留", grant)
+        self.assertIn("审查 session 指针、临时解析文件", grant)
+        self.assertIn("只落入已批准写域", grant)
 
     def test_leaf_skills_unchanged_by_contract_pointer(self):
         bridge = (PLAYBOOKS / "experiment-bridge.md").read_text(encoding="utf-8")
