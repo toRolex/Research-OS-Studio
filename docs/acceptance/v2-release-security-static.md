@@ -56,3 +56,25 @@ git diff --check
 scratch：`/tmp/ros-v2-release-security/`。基线日志 `checker.txt`、`tests.txt`、`scripts-tests.txt`；最终 `checker-final.txt`、`tests-final.txt`、`scripts-tests-final.txt`、`final-tip.txt`；安全侧 `archive-summary.json`、`validation-supplement.json`、`manifest-result.json`、`candidates-all.json`、`decoded-scan-summary.json`。这些是验收侧本地证据，不是产品协议。独立因果 notes：`.agents/notes/v2-release-security-static-implementation-notes.md`。
 
 本 agent 只写本报告与独立 notes；未 commit、未 gh、未改共用 report，未执行清洗/发布/关票。后续新包或代码变更需由主 agent 再做有界末验。
+
+## 新组合包末验：gate（独立追加）
+
+收到主 agent 的最终 hash 稳定通知后，执行 tip `eaa76f07f9488e26a11af58894c65c80e4e88041`，只在新 `/tmp/ros-v2-release-security/new-packs/` 检查，不覆盖旧提取。
+
+- `evidence/v2-release-gate-combinations.tar.gz`：**12,544,022 bytes**；SHA-256 **`2291c39cbe506db6fa90c11e684e5047d9300ebd813d35496d5942e6cbb3efc1`**，扫描前后相同。
+- 577常规文件、35,203,600原字节全scan；4PDF文本、104JSON/JSONL内110,656解码字符串按全部凭据规则scan。成员路径、重复、特殊类型、软硬链接均0。
+- `ros-v2-release-gates/evidence/SHA256SUMS.json` 为576项字典，每项包含SHA与bytes；逐payload路径containment后实际核**576/576 SHA+bytes双匹配**。payload共35,108,790bytes；missing/mismatch/unlisted均0，唯一自列豁免manifest本身。初次扫描器不支持这一manifest形态，随后实际核并扩展scratch脚本；没有把unsupported算通过。
+- 5规则候选均false positive：`evidence/issue-37.cached.json` 原字节1处与解码1处为旧auth存在性探测说明；formula-derivation正文144–146行3处为写入许可后的动作动词。**真实敏感0，无清洗。** 未输出候选值。
+- 日志：`new-gate-scan.txt`、`new-packs/gate-manifest-result.json` 与无值候选metadata。此追加不重跑tests；最后产品全suite由主 agent 执行。
+
+## 新宿主包末验：host（独立追加）
+
+主 agent 授权开始并随后确认包已最终稳定；执行 tip仍 `eaa76f07f9488e26a11af58894c65c80e4e88041`。新提取以archive hash命名，不覆盖gate或旧归档。
+
+- `evidence/v2-release-host-regression.tar.gz`：**15,807,902 bytes**；SHA-256 **`d80e120694d7623533e253798550a43d8b61b6eea78592a5df388a2063a4cadc`**，开始/完成/晚核三次相同。
+- 928常规文件、**57,045,065原字节**全scan；456JSON/JSONL内**341,503解码字符串**按全部规则scan，无PDF。成员路径、重复、特殊类型、软硬链接均0。
+- `ros-v2-release-hosts/evidence/SHA256SUMS.json`：927条payload SHA+bytes实际双核**927/927匹配**；missing/mismatch/unlisted全0，manifest本身是唯一自列豁免。
+- 11 credential-assignment候选全部false positive：archive.py:17两处扫描正则；experiment-plan/claude/stdout.jsonl及对应host-session两份相同科研预算授权叙述，各raw+decoded合4处；input-37.json旧auth存在性说明raw+decoded共2处；formula正文144–146行3处动作动词。**真实敏感0，不清洗，不打印值。**
+- 日志：`new-host-scan.txt`、`new-packs/v2-release-host-regression-summary.json`、`new-packs/v2-release-host-regression-candidates.json`。独立安全末验不把归档完整性转成所有45次CLI行为都成功；空斜杠调用与timeout等行为失败仍由宿主报告原样记录。
+
+两新包共1,505常规文件、92,248,665原字节；新manifest合计1,503 payload全部SHA+bytes匹配。追加仅报告/notes，无新tests/runtime/validator；最终全suite/提交由主 agent处理。

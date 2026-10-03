@@ -20,6 +20,14 @@
 - 补scan1211 JSON/JSONL、78004转义string，无新增高置信度private key/provider key/JWT/userinfo/Basic候选。扫描程序仅scratch一次性审查，不进入仓库或产品。
 - 最终报告：docs/acceptance/v2-release-security-static.md；不commit/gh/动共用report/清洗。
 
+## 新包末验
+
+- 按主agent稳定通知在eaa76f0扫描gate包，只新scratch子目录。577常规文件35,203,600bytes、4PDF、104JSON/110656解码字符串，所有类别扫描；hash前后一致。
+- gate manifest不是原包的path→digest，而是576项path→{sha256,bytes}：初脚本unsupported如实保留；读shape后独立实际SHA+bytes双核576/576，coverage0缺漏，随后扩兼容scratch脚本。没有为了跑通改包/产品validator。
+- gate5候选为旧扫描auth存在性说明（raw/decoded两命中）与formula正文动作三命中，真敏感0；已通知主并追加独立报告。
+- 主授权host开始，后确认最终稳定；eaa76f0执行新hash命名提取，928常规57,045,065bytes+456JSON/341503decoded全部类别扫描；manifest927/927SHA+bytes双核通过、coverage0缺漏。11assignment FP（regex2、科学预算许可raw/decoded4、旧auth说明2、formula动作3），真敏感0。前后晚核hash均d80e...cadc。不清洗、不重跑suite，不把archive安全等同45CLI全行为成功。
+- 两新包末验报告/notes收口，主自行commit/最终suite。
+
 ## Deviations
 
 - `astral-sh/uv` skill 不在当前可用列表；没有改全局或安装，继续用已有 UV。

@@ -31,6 +31,14 @@
 - security中间已实核新增898manifest/真凭据0；ecdddab UV tests23+scripts45=68，精确stage日志读到。基于此先gh预检后 `gh issue close --comment` 顺序5票全成功（评论含local未push/逐AC/toy/旧失败与过程偏差），#41–45已CLOSED。
 - #37/#46进度context评论分别 `5968914862` / `5968915099`，注明hosts/gates组合正在末验、首route清单/虚报仍待唯一有界重测。一次合并GraphQL回查7状态cost1，remaining4971/resetAt2026-10-03T12:25:04Z，#37/#46 OPEN。gh预检仍core/graphql5000但与GraphQL实监不同，不据此称零消耗。
 - 已知GitHub写动作：5次close（各带评论，gh内部请求数未监不能杜撰REST精确耗费）、2次context comment。未tag/push/PR/关#37/#46。
+- 原archive安全独立报告与notes提交 `885e5e4`，四包5753regular/约546MB原字节、148初筛falsepositive/已脱敏、28PDF与JSON转义补scan，真secret0；新45MiB898payload全部match，无清洗无需改hash。
+- 当前门组合8+同session唯一ML澄清均exit0/stop/agent_end；budget missing/failed累计/unknown预留、两pickup真实旧五件、ML终止后build拒/外发、talk严重项及唯一获准候选write→read。报告/577文件12MiB归档commit `eaa76f0`。ML首与talk诊断合理route-only不假称执行级联，ML追加澄清/获准talk审查候选分别真实证明执行分支；不重新从零科研。
+- 主完整read门报告/notes/部分final核范围，独立安全末验门包577regular35,203,600bytes、576manifest hash+size match、4PDF104JSON转义scan真secret0，SHA2291c39c...efc1前后稳定。
+- hosts组合机械核初用所有assistant散句字符串包含，主要求single首次清单块核编号/子列表，不能散句累计冒充逐字清单；初索引只认英文todolist又误判Codex中文“级联清单”，原first含step1块真六句齐，不假红。已启动唯一额外清单重跑仍原样保留，185.75s真实叶/resources/6句终态。route-only Claude/Codex首失败已实际有界重跑全文/逐字达标；Codex direct裸Python/Claude newtask漏正文原失败保留，针对重跑不改产品去追模型。
+- hosts全部45CLI结束：43完整真实exit0模型、1pickup部分timeout、1slash空调用；pickup唯一208.51s35tools/stop/mismatch203.81s0变化重测，setup轻回归完成。当前“冲突”副本实际已修后一致，本轮仅旧物保留/路径门，不假称又跑修改冲突；原79轮真冲突固定证据可继承。
+- host父51tools/285s实际读canonical4716行、原批准/反馈、当前稿/CSV/build2/7PNG/PDF绑定，UV Decimal50.625/90/39.375核，未新build/fresh。810安装+612fixture+global SHA/mtime同。15,807,902bytes/928file包SHAd80e...cadc，927manifest双核match；安全独立末验928regular/57,045,065bytes456JSON解码真secret0。两新包1503payload全SHA+bytes同，无清洗hash不变。
+- 主在eaa76f0又实跑checker39/tests23/scripts45=68全部exit0，日志/tmp/ros-v2-release-final，diff --check过；后仅docs/archive/notes，产品skills树f673b96d不变，不谎称模型在最终docscommit从零重演。
+- #46原AC1–5有限代表覆盖达标；AC6tag用户禁止未满足，#37/#46继续OPEN。Codex direct重跑review-rules截断未补是具体额外资源纪律局限，不把入口验证泛化全叶正确；Claude最后gap解释质量局限单列。可交release review候选，不称已发布/所有宿主永远安全，后续若人要求补该单场资源严谨性，只补这一场而非全部科研。
 
 ## Deviations
 
