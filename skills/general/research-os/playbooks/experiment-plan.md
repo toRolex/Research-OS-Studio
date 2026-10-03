@@ -6,6 +6,16 @@
 
 已有问题、Proposal 或稳定方法，用户要的是计划而不是执行。材料只够写计划时走这里；用户要的是「跑完并分析」时回到入口重匹配 experiment-bridge。
 
+## 阶段角色
+
+Role: orchestrator
+
+本批确认与写账。
+
+Role: analyst
+
+计划、指标与对照设计。
+
 ## 步骤
 
 1. 读 `skills/validation-cycle/experiment-plan/SKILL.md` 全文，并读它点名的 references 与 templates。计划内容、阶段和产出以该正文为准。不在这里重写科研流程。

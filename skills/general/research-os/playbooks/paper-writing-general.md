@@ -2,6 +2,24 @@
 
 用户要写论文，材料不是机器学习实验，也不是以系统设计与实现为核心贡献。打开本变体。只读意图仍走 route-only。
 
+## 阶段角色
+
+Role: orchestrator
+
+授权与亲核。
+
+Role: writer
+
+规划、起草、图表与报告。
+
+Role: implementer
+
+获准构建。
+
+Role: reviewer
+
+fresh 数字、引用、论证与证明审查。
+
 ## 步骤
 
 1. 读 `skills/writing-cycle/paper-writing/SKILL.md` 全文，并按它执行。写入、图表、源码、文献、报告或付费调用之前，停在该文件的授权门。授权未确认时只做只读解析。
