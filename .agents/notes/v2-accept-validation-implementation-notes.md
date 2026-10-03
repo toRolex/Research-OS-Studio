@@ -22,3 +22,8 @@
 - 初轮proof宿主声称cross-family，实际上父子都glm；独立上下文是真的，跨家族不是真的。原证据保留；proof-retest只准same-family/fresh-session，必要UV整数核对也已另明确授权，避免初轮违背不运行数值程序。
 - 初轮pickup有效真实读取旧五件套，写round-2，但自行写root脚本和错误的外侧报告路径，继而rm清理。未删除用户数据（仅本轮toy临时文件）仍违反本批写域/清理门。T45新增合同测试通过unittest discover先红1项；pickup补每次绝对路径/副产物核实、不以误写修正授权rm。绿4项。pickup-retest明确不运行脚本/不清理，仍必须真正新目录续接。
 - Harness `inspect.py`遮蔽标准库inspect导致pickup初次runner失败，改名trace_inspect.py；保留失败stderr后重跑（未启动宿主/未产生科学结果）。没有据此宣布环境不可恢复。
+- 最终bridge全阶段已出分析/报告/fresh审计PASS，0/2/0 MAE，3/3 planned-run、0USD、meter2.415e-05 cpu-core-hour，38证据核对通过（code review含只读bash，非仅read；审计仅read）。末核两根目录session指针不在原scope，不能忽略：再加T42断言红，补sidecar/cache也是写入只准批准目录，绿4项。commit30dced1。
+- 新bridge-accounting-pickup真实消费已满账，无新作业/reviewer，只获当前用户许可保留原指针、日志追加、新核算报告；明确不追溯抹平原越界。为真正消除完整场景残留，另外新授权bridge-scope-final，明确两session指针与计量覆盖、有限时长和存储，三新CPU作业+两个fresh审查全链重跑，不拿pickup核算替代。
+- 当前静态两轮merge确认integration仍67a04ff，checker39 / scripts43 + tests16=59，全绿。notes/report不直接修改共同release矩阵。
+- bridge-scope-final最终真实全阶段完成。fresh审计FAIL：一项误算baseline（|1−1|算1），宿主UV核原文驳回；另一项main台账转录真错，宿主保留错行追加raw meter正确值并闭账/报告。2次审查配额用尽，无第三审查，不改原FAIL为PASS。主会话agent_end已到，最终CPU2.0308888888888884e-05、3/3、0USD、精确写域/冻结物/无缓存/无删除通过，17项scope检查绿；总体38项证据检查绿。
+- 原始全量归档22MB提交`docs/acceptance/evidence/v2-accept-validation.tar.gz`，SHA705edc4c2496713e578a6b18b364ec7ec542e84ebcabc3b8b3505f401d940cd7。初轮不合规Python空命令probe也保留（最终scope宿主曾直接python3 -c空字符串，不产生科研计算；不得删除此工具轨迹或声称所有被测会话绝对UV合规）。本实现/harness全部Python确实UV。
