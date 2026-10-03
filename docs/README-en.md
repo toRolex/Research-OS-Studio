@@ -213,7 +213,7 @@ paper-compile-repair and apply-citation-fixes stay separately invoked
 ## Safety and Control Principles
 
 1. **No System Alterations**: The suite does not install or modify Python, Lean, LaTeX, CUDA drivers, or cloud credentials. It reports missing tools and adapts cleanly.
-2. **No Automatic Chaining**: Top-level workflows stop after delivering their artifacts. They do not trigger subsequent stages without user direction.
+2. **Explicit route, gated side effects**: A route starts only from an explicit invocation. Reversible steps run and are shown afterwards. External sends, deleting or overwriting existing experiment data, a batch grant that is missing or exceeded, and a leaf skill's own approval point stop before the side effect. A single invocation can continue across stages only when the user states that boundary. Without it, the orchestrator does not start the next top-level workflow.
 3. **Prior Confirmation**: Operations that involve heavy computation, file rewriting, or paid APIs require explicit user confirmation.
 
 ---
