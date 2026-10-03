@@ -74,8 +74,8 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     - 展示草稿后输入拒绝，核验项目保持零修改；
     - 在展示草稿与确认写入的间隙，模拟外部新建或修改目标文件（如外部新增了 `CLAUDE.md`），核验 setup 立即停止整批写入，重新扫描并要求重新确认。
 
-### 2. `research-os` route-only（#38 只读入口导航）
-旧入口 `ask-research-os` 已删除。`/research-os` 的 route-only 是只读出口，帮助用户在 39 个 Skill 中选择切入点。
+### 2. `research-os` 入口（#38 只读导航，#45 交接恢复）
+旧入口 `ask-research-os` 已删除。`/research-os` 的 route-only 是只读出口，帮助用户在已发行 Skill 中选择切入点。已保存的交接走 proof、improvement、pickup，不从零重跑。
 
 - **场景 2.1：从不同科研起点咨询**
   - **操作**：分别输入三种常见起点向 `/research-os` 提问，并保持只读意图：
@@ -88,6 +88,14 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     2. 全程**零文件写入**、**零修改**；
     3. **绝不自动启动**所推荐的任何 Workflow；
     4. 明确指出用户可直接点名运行目标 Skill，无需每次通过 Router。
+
+- **场景 2.3：proof / improvement / pickup（#45）**
+  - **操作**：在可丢弃目录保存一轮证明交接或一份改进日志，再开新会话调用 `/research-os` pickup，并给出这些路径以及真实的 `compute-policy.md`、`research-log.md`。
+  - **核验**：
+    1. 回复列出实际读过的文件，已批准与未批准边界与这些原文一致；
+    2. `valid_until` 已过期时不继续跑作业，也不改写过期时间；
+    3. 日志里的失败或未知消耗不被当成 0；
+    4. 证明路线不改固定命题；改进路线停在确认的轮数和写入范围；叶 skill 自己的授权门仍然有效。
 
 ---
 
@@ -197,7 +205,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     2. **反例推翻原则**：若命题被已确认的反例推翻，严禁在未经用户允许的情况下擅自修改命题或暗中添加条件，必须停止并提示用户重新审视命题；
     3. 修复后调用内部复审，未通过则如实标记未解决。
 - **`proof-orchestrator`（#18 长期复杂证明管理与可选 Lean）**
-  - **操作**：针对单个复杂长期义务（Single Obligation），调用 `/proof-orchestrator`。
+  - **操作**：针对单个复杂长期义务（Single Obligation），调用 `/proof-orchestrator`，或经 `/research-os` proof 进入。新会话恢复时走 pickup。
   - **核验**：
     1. 在新目录中记录继承状态与尝试历史，不污染旧轮次；
     2. **无 Lean 环境降级**：无 Lean 工具链时，正常执行普通数学推导，并显式标注“未执行 Lean 形式化验证”，绝不强行安装工具链；
@@ -243,7 +251,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     1. 严格遵循系统顶会结构规范：5 句摘要法、Introduction 突出问题与 Gap、Design 详细论述架构与替代方案权衡（Alternatives/Trade-offs）、Evaluation 区分 End-to-End、Microbenchmark 与 Scalability；
     2. **缺失证据处理**：若缺少扩展性实验，显式标记 `MISSING SCALABILITY EVIDENCE` 并收窄主张，绝不擅自脑补外推曲线。
 - **`research-improvement`（#28 全研究有界改进循环）**
-  - **操作**：显式调用 `/research-improvement`，设定修改范围与最大轮数（如 2 轮）。
+  - **操作**：显式调用 `/research-improvement`，或经 `/research-os` improvement 进入，设定修改范围与最大轮数（如 2 轮）。已保存日志的新会话走 pickup。
   - **核验**：
     1. 跨流程直接读取 Claims、代码、结果、当前 diff 与历史 findings；
     2. 在批准范围内修复代码、补充统计分析、修改草稿；

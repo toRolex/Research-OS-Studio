@@ -20,4 +20,4 @@
 
 到此结束。不创建、不修改、不调用任何 Workflow、model-invoked 能力或子代理。不联网检索，不批准费用、远程写入、运行作业、投稿、发布或安装。用户要求推荐后直接执行时，交完推荐并停止，由用户另行显式调用目标入口。
 
-只有用户问会话延续时，才读 `PHASE-BOUNDARIES.md`。该文件不在本发行；没有它时直接说明，不创建。
+只有用户问会话延续时，才读 `skills/general/research-os/PHASE-BOUNDARIES.md`。读完五个选项后停在推荐；要恢复已保存交接时，改走 `skills/general/research-os/playbooks/pickup.md`，不在本只读出口写交接文件。

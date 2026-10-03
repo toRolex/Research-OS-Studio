@@ -86,6 +86,8 @@ If you are unsure which skill fits your current stage, ask the unified entry and
 
 That selects route-only. It recommends a skill from your topic or existing materials, modifies no files, does not use the network, and never starts a workflow. The old entry `ask-research-os` has been removed. If you already know the skill, invoke it directly, or let `/research-os` open the matching playbook.
 
+Saved handoffs use three routes and no new state machine: `proof` resumes one fixed obligation, `improvement` runs the bounded review → repair → re-review loop, and `pickup` re-reads the saved handoff, `compute-policy.md`, and `research-log.md`. An expired authorization stays expired.
+
 ---
 
 ## Core Design Principles

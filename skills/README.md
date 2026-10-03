@@ -43,6 +43,12 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 
 不确定从哪里开始时，显式调用 `/research-os` 并说明只要推荐。旧入口 `ask-research-os` 已删除，改用 `/research-os` 的 route-only。已知入口仍可直接点名，无需先 setup。route-only 接受方向、已有结果或稿件，只在对话中推荐并停止，不写研究材料、不联网、不启动推荐任务。
 
+已保存交接用 `/research-os` 的三条路线，不另建状态机：
+
+- **proof**：续接一个固定命题。读上一轮证明目录，新目录只处理本轮 obligation。命题、审查和修复仍由 proof-writer、proof-review、proof-repair、proof-orchestrator 自己的门约束。
+- **improvement**：对已有 Claims、代码、结果和 findings 做有界 review → repair → re-review。轮数、写入范围和补实验名额以 research-improvement 的授权门为准。
+- **pickup**：新会话打开已保存交接、`compute-policy.md` 和 `research-log.md`，重查已批准与未批准边界。过期授权不续期，未知消耗不按 0 释放。
+
 自包含的[完整批准地图](general/research-os/references/PRODUCT-MAP.md)区分三条主流程、独立 user-invoked 入口、model-invoked 能力及数学／Lean、ML／Systems 专业扩展，同时区分已实现、计划和宿主可用性。计划条目不是当前安装命令，文件安装成功也不代表宿主已加载。Idea Discovery、Validation 与 Writing Cycle 的主入口及通用、ML、Systems 专业入口均已交付。
 
 在可丢弃项目中可分别用“只有方向”“已有外部结果”“已有稿件”咨询；核对推荐理由、不强制前序流程、计划状态如实说明，以及项目零写入、零自动启动。实现阶段的受限合成模型场景不等于真实科研或宿主交互验收。
@@ -89,7 +95,7 @@ setup 先探索现有项目，推荐沿用已有工作区；只有不存在时�
 
 ## 长期证明与人工验收
 
-显式调用 `proof-orchestrator`，指定一个 obligation、旧轮次材料（若有）、新输出目录及有限预算。它保留本地完整尝试、自查与表达整理；卡住后可准备最小手动交接包，然后停止。不是 Proof Writer／Review／Repair 的自动调用链，也不自动进入论文流程。Lean 搜索、反馈与构建只是[共置可选方法](validation-cycle/proof-orchestrator/references/lean-methods.md)，没有 Lean 仍可进行普通证明。
+显式调用 `proof-orchestrator`，或经 `/research-os` 的 proof 路线进入。指定一个 obligation、旧轮次材料（若有）、新输出目录及有限预算。它保留本地完整尝试、自查与表达整理；卡住后可准备最小手动交接包，然后停止。不是 Proof Writer／Review／Repair 的自动调用链，也不自动进入论文流程。新会话要恢复该交接时走 pickup，先重读这些文件，不从零重跑。Lean 搜索、反馈与构建只是[共置可选方法](validation-cycle/proof-orchestrator/references/lean-methods.md)，没有 Lean 仍可进行普通证明。
 
 在可丢弃的项目副本中核对：
 

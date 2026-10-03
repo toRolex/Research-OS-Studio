@@ -21,9 +21,12 @@ Gates: none
 | 路线 | 变体 | 触发词 | 适用条件 | 只读约束 | playbook |
 |---|---|---|---|---|---|
 | route-only | — | 我该从哪开始、该用哪个、只看推荐、推荐入口、不要执行 | 用户只要入口或下一步建议 | yes | [route-only](playbooks/route-only.md) |
+| proof | — | 续证明、接上一轮证明、证明交接、固定命题 | 已有固定命题或上一轮证明材料，要续接该 obligation | no | [proof](playbooks/proof.md) |
+| improvement | — | 整体改进、有界循环、review 后修复再审 | 用户要在固定轮数和写入范围内改进已有研究整体 | no | [improvement](playbooks/improvement.md) |
+| pickup | — | 接上次会话、从交接恢复、新会话续接 | 已保存交接、批准或作业记录，要在新会话恢复 | no | [pickup](playbooks/pickup.md) |
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
 
-已命名、文件未交付，本票不建路由行：idea-discovery、experiment-plan、experiment-bridge、paper-writing（general / ml / systems）、proof、rebuttal、resubmit、paper-talk、improvement、pickup。对应 playbook 由后续票与路由行一起加入。
+已命名、文件未交付，本票不建路由行：idea-discovery、experiment-plan、experiment-bridge、paper-writing（general / ml / systems）、rebuttal、resubmit、paper-talk。对应 playbook 由后续票与路由行一起加入。
 
 ## 只读优先
 
@@ -53,4 +56,4 @@ Gates: none
 
 ## 级联
 
-命中已交付 playbook 后，逐字采用其步骤。步骤里的反引号路径和 Markdown 链接都要读全文，例如 `references/PRODUCT-MAP.md`。不把未读文件说成已执行。
+命中已交付 playbook 后，逐字采用其步骤。步骤里的反引号路径和 Markdown 链接都要读全文，例如 `references/PRODUCT-MAP.md`、`skills/general/research-os/playbooks/proof.md`、`skills/general/research-os/playbooks/improvement.md`、`skills/general/research-os/playbooks/pickup.md`。不把未读文件说成已执行。
