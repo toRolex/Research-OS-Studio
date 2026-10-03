@@ -14,7 +14,6 @@ import argparse
 import math
 import re
 import subprocess
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -66,19 +65,14 @@ LOG_EXTRAS = (
     "result_status",
     "artifact_paths",
 )
-# 本票只登记 setup。其他 skill 尚未写出门声明时不要求；写出后必须落在此处。
+# setup、入口、叶基线分别登记；全部复用 gate_problems。
 GATE_BASELINE = {
     "setup-research-os": {"model-confirm", "write-confirm"},
 }
-GATE_RE = re.compile(
-    r"^Gate:\s*([A-Za-z0-9-]+)\s*\|\s*before=([A-Za-z0-9-]+)\s*\|\s*"
-    r"approval=([A-Za-z0-9-]+)\s*\|\s*source=(\S+)\s*$"
-)
 GATES_NONE_RE = re.compile(r"^Gates:\s*none\s*$")
 ROLE_LINE_RE = re.compile(r"^([a-z]+):\s*(\S+)\s*\|\s*([A-Za-z0-9]+)\s*$")
 ROLE_REF_RE = re.compile(r"Role:\s*([A-Za-z0-9_-]+)")
 FIELD_RE = re.compile(r"^-\s*([a-z_]+):\s*(.*?)\s*$")
-ANCHOR_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$")
 
 # 已知豁免：上游路径描述的 brace 展开行文（systems-paper-writing 来源段），
 # 行内已注明"上游仓库路径"，本仓不持有这些文件。
@@ -458,51 +452,86 @@ def backtick_cascade_problems(rel: str, text: str, root: Path, tracked: set[str]
     return found
 
 
-def gate_problems(name: str, skill_dir: Path, text: str, expected: frozenset[str]) -> list[str]:
+def heading_anchors(text: str) -> set[str]:
+    found: set[str] = set()
+    for line in text.splitlines():
+        match = re.match(r"^#{1,6}\s+(.+?)\s*$", line)
+        if not match:
+            continue
+        title = match.group(1).strip()
+        found.add(title)
+        slug = re.sub(r"[^\w\u4e00-\u9fff\- ]+", "", title.lower())
+        slug = re.sub(r"\s+", "-", slug).strip("-")
+        found.add(slug)
+    return found
+
+
+def gate_problems(
+    name: str, skill_dir: Path, text: str, expected: frozenset[str],
+    tracked_paths: set[str] | None = None,
+) -> list[str]:
+    """共同门校验；仓库扫描额外要求来源追踪，外部合同不依赖本仓索引。"""
     found: list[str] = []
-    if re.search(r"^Gates:\s*none\s*$", text, re.M):
-        if expected:
-            found.append(f"{name}: 写成 Gates: none，但基线要求 {sorted(expected)}")
-        return found
-    matches = GATE_RE.findall(text)
-    if not matches:
-        found.append(f"{name}: 缺 Gates: none 或 Gate 声明")
-        return found
-    ids = [item[0] for item in matches]
-    for gate_id in ids:
-        if ids.count(gate_id) > 1:
-            found.append(f"{name}: 门 ID 重复：{gate_id}")
-            break
-    actual = set(ids)
-    for gate_id in sorted(expected - actual):
-        found.append(f"{name}: 缺门声明 {gate_id}")
-    for gate_id in sorted(actual - expected):
-        found.append(f"{name}: 多余门声明 {gate_id}")
-    for gate_id, _before, _approval, source in matches:
-        if "#" not in source:
+    ids: list[str] = []
+    none_count = 0
+    for lineno, line in enumerate(text.splitlines(), 1):
+        line = line.strip()
+        if GATES_NONE_RE.fullmatch(line):
+            none_count += 1
+            continue
+        if not line.startswith(("Gate:", "Gates:")):
+            continue
+        match = GATE_RE.fullmatch(line)
+        if not match:
+            found.append(f"{name}:{lineno}: 门声明格式错误")
+            continue
+        gate_id, before, approval, source = match.groups()
+        ids.append(gate_id)
+        if not re.fullmatch(r"[a-z0-9-]+", before) or approval != "explicit-user":
+            found.append(f"{name}:{lineno}: 门声明格式错误，approval 必须是 explicit-user")
+        source_path, separator, anchor = source.partition("#")
+        if not separator or not anchor:
             found.append(f"{name}: 门 {gate_id} 的 source 缺锚点")
             continue
-        path_part, anchor = source.split("#", 1)
-        if path_part.startswith(("/", "http://", "https://")) or ".." in Path(path_part).parts:
-            found.append(f"{name}: 门 {gate_id} 的 source 越出 skill：{path_part}")
+        if source_path != "SKILL.md" and not source_path.startswith("references/"):
+            found.append(f"{name}: 门 {gate_id} 的 source 越出当前 skill：{source_path}")
             continue
-        target = (skill_dir / path_part).resolve()
+        target = (skill_dir / source_path).resolve()
         try:
-            target.relative_to(skill_dir.resolve())
+            inside = target.relative_to(skill_dir.resolve())
+            if inside.as_posix() != "SKILL.md" and (not inside.parts or inside.parts[0] != "references"):
+                raise ValueError
         except ValueError:
-            found.append(f"{name}: 门 {gate_id} 的 source 越出 skill：{path_part}")
+            found.append(f"{name}: 门 {gate_id} 的 source 越出当前 skill：{source_path}")
             continue
         if not target.is_file():
-            found.append(f"{name}: 门 {gate_id} 的 source 不存在：{path_part}")
+            found.append(f"{name}: 门 {gate_id} 的 source 不存在：{source_path}")
             continue
-        body = target.read_text(encoding="utf-8")
-        if path_part == "SKILL.md":
-            parts = body.split("---", 2)
-            if body.startswith("---") and len(parts) == 3:
-                body = parts[2]
-        headings = re.findall(r"^#+\s+(.+?)\s*$", body, re.M)
-        if anchor not in headings:
+        if tracked_paths is not None:
+            try:
+                rel_target = target.relative_to(ROOT.resolve()).as_posix()
+            except ValueError:
+                rel_target = ""
+            if rel_target not in tracked_paths:
+                found.append(f"{name}: 门声明来源未追踪：{source_path}")
+        if anchor not in heading_anchors(target.read_text(encoding="utf-8")):
             found.append(f"{name}: 门 {gate_id} 的锚点不存在：{anchor}")
+    if none_count > 1:
+        found.append(f"{name}: Gates: none 重复")
+    if none_count and ids:
+        found.append(f"{name}: none 与具体门不能并存")
+    if not none_count and not ids:
+        found.append(f"{name}: 整节删，缺 Gates: none 或 Gate 声明")
+    if none_count and expected:
+        found.append(f"{name}: 全部→none，基线要求 {sorted(expected)}")
+    for gate_id in sorted(set(ids)):
+        if ids.count(gate_id) > 1:
+            found.append(f"{name}: 重复门 {gate_id}")
+    actual = set(ids)
+    for gate_id in sorted(expected - actual):
+        found.append(f"{name}: 缺失门 {gate_id}")
+    for gate_id in sorted(actual - expected):
+        found.append(f"{name}: 多余门 {gate_id}")
     return found
 
 
@@ -577,7 +606,7 @@ for skill_name, rel, skill_dir, skill_text, user_invoked, yaml_text in skill_bod
             err(f"{rel}: {problem}")
     if skill_name not in EXPECTED_GATES:
         continue
-    for problem in gate_problems(skill_name, skill_dir, skill_text, EXPECTED_GATES[skill_name]):
+    for problem in gate_problems(skill_name, skill_dir, skill_text, EXPECTED_GATES[skill_name], tracked):
         err(f"{rel}: {problem}")
 
 research_os = SKILLS / "general" / "research-os" / "SKILL.md"
@@ -662,23 +691,8 @@ GATE_SKIP = {
     "skills/general/setup-research-os/SKILL.md",
     "skills/general/research-os/SKILL.md",
 }
-GATE_LINE = re.compile(
-    r"^Gate: ([a-z0-9-]+) \| before=([a-z0-9-]+) \| approval=explicit-user \| source=((?:SKILL\.md|references/[A-Za-z0-9_./-]+\.md)#(\S+))$"
-)
 
 
-def heading_anchors(text: str) -> set[str]:
-    found: set[str] = set()
-    for line in text.splitlines():
-        match = re.match(r"^#{1,6}\s+(.+?)\s*$", line)
-        if not match:
-            continue
-        title = match.group(1).strip()
-        found.add(title)
-        slug = re.sub(r"[^\w\u4e00-\u9fff\- ]+", "", title.lower())
-        slug = re.sub(r"\s+", "-", slug).strip("-")
-        found.add(slug)
-    return found
 
 
 for sf in skill_files:
@@ -688,47 +702,8 @@ for sf in skill_files:
             err(f"{rel}: 缺少门声明基线")
         continue
     body = sf.read_text(encoding="utf-8").split("---", 2)[-1]
-    expected = LEAF_EXPECTED_GATES[rel]
-    none_count = 0
-    seen: list[str] = []
-    for lineno, line in enumerate(body.splitlines(), 1):
-        stripped = line.strip()
-        if stripped == "Gates: none":
-            none_count += 1
-            continue
-        if not stripped.startswith("Gate:") and not stripped.startswith("Gates:"):
-            continue
-        match = GATE_LINE.match(stripped)
-        if not match:
-            err(f"{rel}:{lineno}: 门声明格式错误: {stripped}")
-            continue
-        gate_id, source_path, fragment = match.group(1), match.group(3).split("#", 1)[0], match.group(4)
-        target = (sf.parent / source_path).resolve()
-        try:
-            rel_target = target.relative_to(ROOT.resolve()).as_posix()
-        except ValueError:
-            err(f"{rel}:{lineno}: 门声明来源越出仓库: {stripped}")
-            continue
-        if rel_target not in tracked or not target.is_file():
-            err(f"{rel}:{lineno}: 门声明来源不存在: {source_path}")
-            continue
-        if fragment not in heading_anchors(target.read_text(encoding="utf-8")):
-            err(f"{rel}:{lineno}: 门声明锚点无效: {stripped}")
-            continue
-        seen.append(gate_id)
-    if none_count > 1:
-        err(f"{rel}: Gates: none 重复")
-    if none_count and seen:
-        err(f"{rel}: Gates: none 与 Gate 行不能并存")
-    duplicates = sorted({gate_id for gate_id in seen if seen.count(gate_id) > 1})
-    if duplicates:
-        err(f"{rel}: 门声明重复: {', '.join(duplicates)}")
-    if expected == set():
-        if none_count != 1 or seen:
-            err(f"{rel}: 基线为 none，实际 Gate={seen} none={none_count}")
-    elif set(seen) != expected or none_count:
-        err(f"{rel}: 门声明与基线不一致，期望 {sorted(expected)}，实际 {seen}")
-
+    for problem in gate_problems(sf.parent.name, sf.parent, body, frozenset(LEAF_EXPECTED_GATES[rel]), tracked):
+        err(f"{rel}: {problem}")
 
 
 def parse_fields(text: str) -> dict[str, list[str]]:
@@ -841,12 +816,19 @@ def check_policy(path: Path) -> dict[str, list[str]]:
     per_costs = numbers.get("per_attempt_cost_limit", [])
     if costs and per_costs and max(per_costs) > min(costs):
         err(f"{path}: 单次超过累计上限")
-    computes = numbers.get("compute_limit", [])
-    per_computes = numbers.get("per_attempt_compute_limit", [])
-    if computes and per_computes and sum(per_computes) > sum(computes) and len(computes) == len(per_computes):
-        for index, (limit, per_attempt) in enumerate(zip(computes, per_computes, strict=True)):
-            if per_attempt > limit:
-                err(f"{path}: 第 {index + 1} 行单次超过累计上限")
+    units = fields.get("compute_unit", [])
+    if len(units) != len(set(units)):
+        err(f"{path}: compute_unit 重复，异构额度必须按不同单位分行")
+    if len(fields.get("compute_limit", [])) != len(fields.get("per_attempt_compute_limit", [])):
+        err(f"{path}: compute_limit 与 per_attempt_compute_limit 必须按单位逐行配对")
+    # 使用原字段位置，非法数值不能让后续单位错位；CPU/GPU 从不求和。
+    for index, (raw_limit, raw_per) in enumerate(zip(
+        fields.get("compute_limit", []), fields.get("per_attempt_compute_limit", []), strict=False
+    )):
+        limit, per_attempt = finite_number(raw_limit), finite_number(raw_per)
+        if limit is not None and per_attempt is not None and per_attempt > limit:
+            unit = units[index] if index < len(units) else "无单位"
+            err(f"{path}: 第 {index + 1} 行 {unit} 单次超过累计上限")
     return fields
 
 
@@ -864,68 +846,22 @@ def check_log(path: Path, policy_fields: dict[str, list[str]]) -> None:
                 err(f"{path}: 日志未复用政策字段 {key}")
 
 
-def anchors_in(path: Path) -> set[str]:
-    found = set()
-    if not path.is_file():
-        return found
-    for line in path.read_text(encoding="utf-8").splitlines():
-        match = ANCHOR_RE.match(line.strip())
-        if match:
-            found.add(match.group(1).replace(" ", "-"))
-    return found
-
-
 def check_gates(skill_dir: Path, skill_name: str) -> None:
     expected = GATE_BASELINE.get(skill_name)
+    if expected is None:
+        expected = EXPECTED_GATES.get(skill_name)
+    if expected is None:
+        expected = LEAF_EXPECTED_GATES.get(f"skills/{skill_dir.parent.name}/{skill_name}/SKILL.md")
+    if expected is None:
+        err(f"{skill_name}: 门声明不在已审阅基线")
+        return
     skill_file = skill_dir / "SKILL.md"
     if not skill_file.is_file():
         err(f"{skill_name}: SKILL.md 不存在")
         return
-    found: list[str] = []
-    none_lines = 0
-    for lineno, line in enumerate(skill_file.read_text(encoding="utf-8").splitlines(), 1):
-        stripped = line.strip()
-        if GATES_NONE_RE.match(stripped):
-            none_lines += 1
-            continue
-        match = GATE_RE.match(stripped)
-        if stripped.startswith(("Gate:", "Gates:")) and match is None and none_lines == 0:
-            err(f"{skill_name}:{lineno}: 门声明格式错误")
-            continue
-        if not match:
-            continue
-        gate_id, _before, approval, source = match.groups()
-        if approval != "explicit-user":
-            err(f"{skill_name}:{lineno}: approval 必须是 explicit-user")
-        if not source.startswith("SKILL.md#") and not source.startswith("references/"):
-            err(f"{skill_name}:{lineno}: source 越出当前 skill")
-        source_path, _, anchor = source.partition("#")
-        target = skill_dir / source_path
-        if anchor not in anchors_in(target):
-            err(f"{skill_name}:{lineno}: 坏 source {source}")
-        found.append(gate_id)
-    duplicates = sorted({gate for gate in found if found.count(gate) > 1})
-    if duplicates:
-        err(f"{skill_name}: 重复门 {', '.join(duplicates)}")
-    if none_lines and found:
-        err(f"{skill_name}: none 与具体门不能并存")
-    if expected is None:
-        if found or none_lines:
-            err(f"{skill_name}: 门声明不在已审阅基线")
-        return
-    actual = set(found)
-    if none_lines:
-        actual = set()
-        if expected:
-            err(f"{skill_name}: 全部→none，基线要求 {', '.join(sorted(expected))}")
-    missing = sorted(expected - actual)
-    extra = sorted(actual - expected)
-    if missing:
-        err(f"{skill_name}: 缺失门 {', '.join(missing)}")
-    if extra:
-        err(f"{skill_name}: 多余门 {', '.join(extra)}")
-    if not found and not none_lines and expected:
-        err(f"{skill_name}: 整节删，基线要求 {', '.join(sorted(expected))}")
+    body = skill_file.read_text(encoding="utf-8").split("---", 2)[-1]
+    for problem in gate_problems(skill_name, skill_dir, body, frozenset(expected)):
+        err(problem)
 
 
 def run_contract(args: argparse.Namespace) -> None:
@@ -969,9 +905,11 @@ def parse_args() -> argparse.Namespace:
 
 def run_builtin_contract() -> None:
     setup_dir = SKILLS / "general" / "setup-research-os"
-    check_role_file(
+    roles = check_role_file(
         setup_dir / "templates" / "research-os-models.md", "research-os-models.md"
     )
+    check_role_refs([path for path in md_files if path.relative_to(ROOT).as_posix() in tracked
+                     and path.is_relative_to(SKILLS)], roles)
     check_policy(setup_dir / "templates" / "compute-policy.md")
     check_log(setup_dir / "templates" / "research-log.md", {})
     check_gates(SKILLS / "general" / "setup-research-os", "setup-research-os")

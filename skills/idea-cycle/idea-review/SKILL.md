@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Idea Review
 
-默认 model-invoked Internal Skill，也支持用户点名 standalone。生成覆盖只说明探索了哪些候选；独立裁决必须由未参与该候选生成或修订的评审者从原始材料形成。
+显式调用或已授权正文级联 Internal Skill，也支持用户点名 standalone。生成覆盖只说明探索了哪些候选；独立裁决必须由未参与该候选生成或修订的评审者从原始材料形成。
 
 ## 1. 确定材料与授权
 Gate: scope-clarify | before=review-start | approval=explicit-user | source=SKILL.md#1-确定材料与授权

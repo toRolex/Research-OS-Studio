@@ -18,7 +18,7 @@ disable-model-invocation: true
 ## 角色与边界
 Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#角色与边界
 
-- **角色**：默认是当前 Validation 或写作职责内的 model-invoked discipline；用户也可点名 standalone。父 Workflow 的调用是 caller，不是启动其他 Workflow 的许可。
+- **角色**：默认是当前 Validation 或写作职责内的 显式调用或已授权正文级联 discipline；用户也可点名 standalone。父 Workflow 的调用是 caller，不是启动其他 Workflow 的许可。
 - **输入**：用户明确给出的 protocol/计划、代码与配置、数据说明、每次 attempt 的日志和输出、分析材料、evaluator/ground truth、候选 Claims 及其声明范围。优先读原始文件和实际生成物；摘要、截图、表格或二手报告只能作为待核对线索。
 - **解决范围**：先列出本次实际可读的材料、研究问题、实验单元、协议版本、尝试范围和 Claim scope。材料缺失、相互矛盾或无法区分版本时标为 `unknown`/`blocked`，不凭路径、文件名、时间或叙述推断。
 - **资源**：仅使用已有且获授权的读取、解析和比较能力。缺少运行环境、依赖、远程存储或付费服务时报告缺口；不安装环境、不上传私有材料、不扩大资源授权。

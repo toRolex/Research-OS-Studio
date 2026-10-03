@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Paper drafting
 
-将用户已有的计划写成受原始证据约束的候选正文。默认 model-invoked 的局部能力；用户可直接点名使用。与 `paper-writing` 总 Workflow 独立分工（另票交付）：本能力既不代替它，也不自动启动它。无需运行 setup 或其他前序 Skill。
+将用户已有的计划写成受原始证据约束的候选正文。显式调用或已授权正文级联 的局部能力；用户可直接点名使用。与 `paper-writing` 总 Workflow 独立分工（另票交付）：本能力既不代替它，也不自动启动它。无需运行 setup 或其他前序 Skill。
 
 ## 1. 确认本次边界
 Gate: boundary-confirm | before=draft-write | approval=explicit-user | source=SKILL.md#1-确认本次边界

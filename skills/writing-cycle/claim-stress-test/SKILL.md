@@ -11,7 +11,7 @@ disable-model-invocation: true
 ## 调用与边界
 Gate: report-target | before=report-write | approval=explicit-user | source=SKILL.md#调用与边界
 
-默认 model-invoked，也可由用户点名。范围是整篇论证是否站得住：稳定稿件的最坏情况审查、camera-ready 前检查或 rebuttal 准备；不要求已跑标准评分评审。
+显式调用或已授权正文级联，也可由用户点名。范围是整篇论证是否站得住：稳定稿件的最坏情况审查、camera-ready 前检查或 rebuttal 准备；不要求已跑标准评分评审。
 
 standalone 交付独立 Markdown 报告，composed 把完整攻击、逐点裁决和报告段落交父 Workflow 的 canonical report；只写本次授权的报告，稿件与支撑材料只读。建议名 `CLAIM_STRESS_TEST.md`，沿用项目审查位置。目标未定时询问，或在回复中交付；替换已有报告须确认，否则另存。composed 不新建重复报告，不继承父流程的评价、历史修复清单或写稿权限。
 
