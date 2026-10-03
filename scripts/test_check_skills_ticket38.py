@@ -266,5 +266,56 @@ class Invocation(unittest.TestCase):
         self.assertTrue(mod.invocation_value_problems("x", True, "interface: {}\n"))
 
 
+IDEA_SKILLS = (
+    "skills/idea-cycle/idea-discovery/SKILL.md",
+    "skills/idea-cycle/research-lit/SKILL.md",
+    "skills/idea-cycle/idea-generation/SKILL.md",
+    "skills/idea-cycle/creative-thinking-for-research/SKILL.md",
+    "skills/idea-cycle/novelty-check/SKILL.md",
+    "skills/idea-cycle/idea-review/SKILL.md",
+    "skills/idea-cycle/idea-refinement/SKILL.md",
+)
+
+
+class IdeaDiscoveryRoute(unittest.TestCase):
+    def test_route_row_and_playbook_cascade(self):
+        mod = load()
+        text = (ROOT / "skills/general/research-os/SKILL.md").read_text(encoding="utf-8")
+        rows, parse_errors = mod.parse_route_table(text)
+        self.assertEqual(parse_errors, [])
+        matched = [row for row in rows if row["路线"] == "idea-discovery"]
+        self.assertEqual(len(matched), 1)
+        self.assertEqual(matched[0]["只读约束"], "no")
+        problems, _hints = mod.route_table_problems(rows, ROOT / "skills/general/research-os")
+        self.assertEqual(problems, [])
+        playbook = ROOT / "skills/general/research-os/playbooks/idea-discovery.md"
+        body = playbook.read_text(encoding="utf-8")
+        for rel in IDEA_SKILLS:
+            self.assertIn(f"`{rel}`", body)
+            self.assertTrue((ROOT / rel).is_file())
+        self.assertIn("一次走完", body)
+        self.assertIn("new task", body)
+        tracked = set(IDEA_SKILLS) | {"skills/general/research-os/playbooks/idea-discovery.md"}
+        clean = mod.backtick_cascade_problems(
+            "skills/general/research-os/playbooks/idea-discovery.md",
+            body,
+            ROOT,
+            tracked | {p.relative_to(ROOT).as_posix() for p in ROOT.rglob("*.md") if ".git" not in p.parts},
+        )
+        self.assertEqual(clean, [])
+
+    def test_damaged_skill_path_fails(self):
+        mod = load()
+        rel = "skills/general/research-os/playbooks/idea-discovery.md"
+        damaged = "读 `skills/idea-cycle/idea-discovery/SKILL.md` 与 `skills/idea-cycle/missing-leaf/SKILL.md`。\n"
+        tracked = {
+            rel,
+            "skills/idea-cycle/idea-discovery/SKILL.md",
+        }
+        problems = mod.backtick_cascade_problems(rel, damaged, ROOT, tracked)
+        self.assertTrue(any("missing-leaf" in p for p in problems))
+        self.assertFalse(any("idea-discovery/SKILL.md" in p and "missing" not in p for p in problems))
+
+
 if __name__ == "__main__":
     unittest.main()

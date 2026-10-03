@@ -123,13 +123,15 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
   2. **固定问题锚点**：Refinement 在修改方案时，必须严格保留原始 **Problem Anchor**（研究核心问题），防止在迭代过程中“偷偷换题”；
   3. **双路线取舍**：对比最小可行验证路线（MVP）与前沿进阶路线（Frontier），给出权衡依据。
 
-### 5. `idea-discovery`（#8 完整 Idea 发现 Workflow）
-- **操作**：显式调用 `/idea-discovery`，输入研究方向 brief。
+### 5. `idea-discovery` 路线（#41；叶 Workflow 为 #8）
+- **操作**：对 `/research-os` 说「我有方向，没有 idea」，并给出研究方向 brief。不要只把这句话当成推荐请求。
 - **核验**：
-  1. 完整串联 Phase 0（读取 brief）→ Phase 1（文献检索）→ Phase 2（候选生成）→ Phase 3（查新）→ Phase 4（独立评审）→ Phase 4.5（锚点收敛）；
-  2. 默认在各 Phase 间停下等待用户确认（除非获得显式“一次走完”授权）；
-  3. 最终在工作区交付单一 `IDEA_DISCOVERY.md` 发现报告与 `RESEARCH_PROPOSAL.md` 研究方案；
-  4. **越权防御**：交付后立即停止，**绝不自动运行 pilot 代码、绝不自动创建实验计划、绝不自动跨入 Validation 流程**。
+  1. 命中路线 `idea-discovery`，按 playbook 读完叶 skill 全文后执行 Phase 0 → 文献 → 候选 → 查新 → 独立评审 → 固定边界收敛；
+  2. 默认每个阶段在叶上的 `stage-checkpoint` 停下。用户在本次调用写明「一次走完」并给出预算时，阶段之间连续执行；输出路径、评审范围、问题锚点仍停；
+  3. 交付单一 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止，不运行 pilot，不创建实验计划，不进入 Validation；
+  4. **粘性**：下一句「继续」或「看下一阶段」仍走本路线；
+  5. **new task**：用户说 new task 后，例如「new task 我该从哪开始」，回到入口重匹配，只读请求进 route-only。
+- 直接点名 `/idea-discovery` 仍走叶入口，不经过本路由行。
 
 ---
 
@@ -233,19 +235,20 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 ### 2. 完整写作 Workflow 与专业扩展
 
-- **`paper-writing`（#25 通用 W3 写作 Workflow）**
-  - **操作**：显式调用 `/paper-writing`，提供完整研究材料。
-  - **核验**：有序执行规划→图表→起草→编译检查→并列审计→独立整篇评审→授权修订；交付候选稿与审查报告后立即停止，**绝不自动提交投稿，绝不自动补跑实验**。
-- **`ml-paper-writing`（#26 ML 专业写作 Workflow）**
-  - **操作**：显式调用 `/ml-paper-writing`。
+- **`/research-os` 的 paper-writing（#43，三变体仍用既有叶 skill）**
+  - **操作**：在可丢弃副本里分别给出通用材料、机器学习实验材料、系统设计与实现材料，显式调用 `/research-os` 并要求写论文。
   - **核验**：
-    1. 严格执行 ML/AI 领域实验报告规范：每次对比必须明确 random seeds 数量、runs 统计不确定性（error bars）、超参调优范围、算力消耗（compute budget）、复现性与独立的 Limitations 章节；
-    2. 发现数据缺失时，正文显式标注 `[SEED COUNT NEEDED]` 或 `[COMPUTE NEEDED]` 等可见缺口，**严禁用默认值掩盖，绝不自动调用外部环境补跑实验**。
-- **`systems-paper-writing`（#27 Systems 专业写作 Workflow）**
-  - **操作**：显式调用 `/systems-paper-writing`。
+    1. general 只打开 `paper-writing`；ml 只打开 `ml-paper-writing`；systems 只打开 `systems-paper-writing`。专业材料不读通用入口。
+    2. 授权确认前停在叶 skill 的授权门，零写入。确认后按该叶的 composition-map 走规划、图表、起草、真实编译，以及 claim、citation、stress；含证明时才读 `proof-review`。
+    3. 交付候选稿与审查报告后停止。投稿与上传不发生。`paper-compile-repair` 与 `apply-citation-fixes` 仍须另行点名。
+- **`ml-paper-writing`（#26，paper-writing / ml 的叶合同）**
   - **核验**：
-    1. 严格遵循系统顶会结构规范：5 句摘要法、Introduction 突出问题与 Gap、Design 详细论述架构与替代方案权衡（Alternatives/Trade-offs）、Evaluation 区分 End-to-End、Microbenchmark 与 Scalability；
-    2. **缺失证据处理**：若缺少扩展性实验，显式标记 `MISSING SCALABILITY EVIDENCE` 并收窄主张，绝不擅自脑补外推曲线。
+    1. 每次对比写明 seeds、runs、error bars、超参与选择、compute、复现与 Limitations；
+    2. 缺失处保留 `[SEED COUNT NEEDED]` 或 `[COMPUTE NEEDED]`，不用默认值填空，不补跑实验。
+- **`systems-paper-writing`（#27，paper-writing / systems 的叶合同）**
+  - **核验**：
+    1. 章节按叶 skill 的系统写作方法：摘要、Gap、alternatives、end-to-end、microbenchmark／ablation、scalability；
+    2. 缺少扩展性实验时保留 `MISSING SCALABILITY EVIDENCE`，不外推曲线。
 - **`research-improvement`（#28 全研究有界改进循环）**
   - **操作**：显式调用 `/research-improvement`，设定修改范围与最大轮数（如 2 轮）。
   - **核验**：
@@ -299,7 +302,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 | 5 | **实验执行有界** | `experiment-bridge` 严格限制在批准预算和文件范围内，保留全部 attempts 历史 | [ ] 通过 |
 | 6 | **结果审计与 Claim** | `experiment-audit` 独立查作弊/幻觉；`result-to-claim` 收窄不确定结论 | [ ] 通过 |
 | 7 | **数学证明与修复** | `proof-review` 只读报告；`proof-repair` 遇反例不擅改命题，无 Lean 安全降级 | [ ] 通过 |
-| 8 | **论文写作与编译** | `paper-writing` 闭环交付候选稿后停止；编译与引用修复均需显式授权 diff | [ ] 通过 |
-| 9 | **ML/Systems 专业规范** | ML 强制 seeds/compute 纪律；Systems 强制 5 句摘要/alternatives/scalability | [ ] 通过 |
+| 8 | **论文写作与编译** | `/research-os` paper-writing 三变体各自走本专业入口，授权前零写入，交付候选稿与审查报告后停止；编译修复与引用修复仍须另行点名 | [ ] 通过 |
+| 9 | **ML/Systems 专业规范** | ml 不经通用入口，seeds/compute 缺口保持可见；systems 不经通用入口，缺扩展性保持 `MISSING SCALABILITY EVIDENCE` | [ ] 通过 |
 | 10 | **W4-W6 独立后续** | `rebuttal`、`resubmit-pipeline`、`paper-talk` 独立可用，互不自动串联 | [ ] 通过 |
 | 11 | **工具缺失与边界** | 缺失外部环境（LaTeX/Lean/GPU）如实报告并降级，不假报成功，不自装环境 | [ ] 通过 |

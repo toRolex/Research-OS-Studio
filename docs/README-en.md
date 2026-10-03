@@ -131,9 +131,9 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 | | [proof-review](../skills/validation-cycle/proof-review/SKILL.md) | Explicit | Read-only check for proof structure, lemmas, and counterexamples |
 | | [proof-repair](../skills/validation-cycle/proof-repair/SKILL.md) | Explicit | Targeted repair of proof gaps within authorized scope |
 | | [proof-orchestrator](../skills/validation-cycle/proof-orchestrator/SKILL.md) | Explicit | Manages long-horizon proofs with optional Lean formalization |
-| **Writing Cycle** | [paper-writing](../skills/writing-cycle/paper-writing/SKILL.md) | Explicit | General paper writing workflow: planning, plotting, drafting, compiling, auditing |
-| | [ml-paper-writing](../skills/writing-cycle/ml-paper-writing/SKILL.md) | Explicit | ML paper writing covering seeds, error bars, compute, and limitations |
-| | [systems-paper-writing](../skills/writing-cycle/systems-paper-writing/SKILL.md) | Explicit | Systems paper writing covering design alternatives and benchmarks |
+| **Writing Cycle** | [paper-writing](../skills/writing-cycle/paper-writing/SKILL.md) | Explicit | `/research-os` paper-writing / general: planning, plotting, drafting, a real compile, and parallel audits; the leaf keeps its own authorization gate |
+| | [ml-paper-writing](../skills/writing-cycle/ml-paper-writing/SKILL.md) | Explicit | paper-writing / ml: ML materials skip the general entry; seeds, error bars, compute, limitations |
+| | [systems-paper-writing](../skills/writing-cycle/systems-paper-writing/SKILL.md) | Explicit | paper-writing / systems: systems materials skip the general entry; design rationale, end-to-end, scalability |
 | | [paper-plan](../skills/writing-cycle/paper-plan/SKILL.md) | Explicit | Outlines paper structure and builds Claim-Evidence matrices |
 | | [paper-drafting](../skills/writing-cycle/paper-drafting/SKILL.md) | Explicit | Drafts academic manuscripts grounded in experimental data |
 | | [academic-plotting](../skills/writing-cycle/academic-plotting/SKILL.md) | Explicit | Generates academic figures with reproducible plotting scripts |
@@ -154,17 +154,22 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 
 ### 1. Idea Discovery
 ```text
-Provide research direction
+Provide a research direction
       ↓
-/idea-discovery
+/research-os I have a direction and no idea
+      ↓
+playbook idea-discovery
+  Stop after each phase unless the user writes "一次走完" and a budget
   ├─ Search literature and track citations (research-lit)
-  ├─ Generate candidate ideas (idea-generation & creative-thinking)
+  ├─ Generate candidate ideas (idea-generation; creative-thinking if stuck)
   ├─ Search prior work and check novelty (novelty-check)
   ├─ Review and identify weaknesses (idea-review)
   └─ Refine and converge route (idea-refinement)
       ↓
-Delivers RESEARCH_PROPOSAL.md (Stops, awaiting user decision)
+Deliver IDEA_DISCOVERY.md and RESEARCH_PROPOSAL.md, then stop
 ```
+
+Leaf output-path, stage-checkpoint, review-scope, and problem-anchor gates stay in force. The next turn stays on this route; `new task` rematches. `/idea-discovery` remains the direct leaf entry.
 
 ### 2. Validation
 ```text
@@ -187,23 +192,18 @@ Delivers audit & claim report       Delivers complete proof logs
 ```text
 Provide data or theoretical findings
       ↓
-Manuscript Drafting
-  ├─ General papers: /paper-writing
-  ├─ Machine learning: /ml-paper-writing
-  └��� Systems: /systems-paper-writing
+/research-os matches paper-writing from the materials
+  ├─ General: general → paper-writing
+  ├─ Machine learning: ml → ml-paper-writing (not via general)
+  └─ Systems design: systems → systems-paper-writing (not via general)
       ↓
-Targeted Audits and Real Compilation
-  ├─ LaTeX compilation checks & fixes (paper-compile / /paper-compile-repair)
-  ├─ Citation verification & fixes (citation-audit / /apply-citation-fixes)
-  ├─ Full manuscript data consistency (paper-claim-audit)
-  └─ Reviewer stress tests (claim-stress-test)
+The leaf skill keeps its authorization gate before planning, figures, drafting, and a real compile
+Parallel audits: paper-claim-audit, citation-audit, claim-stress-test
+Proof manuscripts also read proof-review
       ↓
-Post-submission and Derivatives
-  ├─ Rebuttal response: /rebuttal
-  ├─ Venue adaptation: /resubmit-pipeline
-  └─ Academic talk: /paper-talk
-      ↓
-Delivers manuscript & auxiliary materials (Stops)
+Delivers a candidate manuscript and audit report (stops)
+Submission and upload are outside this route
+paper-compile-repair and apply-citation-fixes stay separately invoked
 ```
 
 ---
