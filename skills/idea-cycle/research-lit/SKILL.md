@@ -45,7 +45,7 @@ Skip external retrieval only when the source scope excludes it, the user request
 
 ## Step 1.5: Verify every candidate
 
-Before analysis, apply [source verification](../source-verification.md) to every candidate. This is an identity and evidence check, not a central script gate. Unknown metadata remains unknown; model memory and search snippets cannot promote a reference.
+Before analysis, apply [source verification](references/source-verification.md) to every candidate. This is an identity and evidence check, not a central script gate. Unknown metadata remains unknown; model memory and search snippets cannot promote a reference.
 
 Retain all candidates in the report, including unverified and pending ones. Identity verification and reading depth are separate columns: a real paper can be unread; reading an uploaded excerpt need not establish its external identity. If repeated identity mismatches suggest unreliable discovery, flag that source and use the bounded follow-up for narrower queries. Access failures alone are not hallucinations.
 
