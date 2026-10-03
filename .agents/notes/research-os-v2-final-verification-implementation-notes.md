@@ -40,3 +40,11 @@
 
 - 已先加载 rate-limit skill/preflight。读取 #37–#46 用单次 GraphQL（需合并 10 端点），cost 1，remaining 4999；全部 OPEN。后续评论选 gh api REST comments endpoint 顺序写，每票只一次；单票数据有 REST endpoint，10 次 POST 消耗可计，不需要 gh issue comment 的额外 issue node 查询。失败即报告停止不无限重试。
 - worktree/分支与外部 /tmp 原始证据仍保留；代码提交后可清理测试缓存，但未 push 的唯一提交及未归档行为证据不宜清除。没有执行清理。
+
+## GitHub 实际交付
+
+集成实现/验证 commit `27e32a2d715da13f4a888e32f989b187b6356901` 已在 #37–#46 各评论一次，10 次 REST POST 全成功，无重试。各评论给该 commit + 本票 notes/最终 notes/acceptance 相对路径，明确未 push、实现/静态完成不等于 AC 全过；未附 file://。后续单次 GraphQL 回查 10 票全部 OPEN（cost 1，remaining 4998，resetAt 2026-10-03T07:35:58Z）。
+
+评论 ID（仓库 toRolex/Research-OS-Studio）：#37 5966436830；#38 5966436959；#39 5966437087；#40 5966437209；#41 5966437374；#42 5966437499；#43 5966437624；#44 5966437749；#45 5966437860；#46 5966438004。访问形式为 https://github.com/toRolex/Research-OS-Studio/issues/<票号>#issuecomment-<ID>。
+
+预算：本任务已知 10 次 REST 写、2 次 GraphQL（cost 共 2）和 3 次 rate_limit 预检。最终 rate_limit 返回 core remaining 5000 / reset 1791013236、graphql remaining 5000 / reset 1791013236，与自监控 GraphQL remaining 4998/resetAt 不一致；保留两份实测，不据 5000 宣称零消耗。本轮未启动付费科研作业或新的模型行为验收。后续仅补此日志提交，不改实现。
