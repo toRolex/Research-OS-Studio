@@ -43,6 +43,15 @@
 - 最终#37/#46补context请求前rate预检正常5000，`gh issue comment 37` GraphQL EOF，后REST查询两票comments及rate预检均EOF；一次清代理直连预检也EOF。共3有界恢复尝试后停，不假称评论已送达，不继续网络循环。两原进度context先前已真实送达；最终正文保存 `/tmp/ros-v2-release-issues/final-context.md`。
 - 因此当前精确余AC还有#46-1完整最终归档/commit汇总评论补送（不是前票证据缺失）及#46-6 tag。不需要科研长输出重演。前票close成功和当时GraphQL状态回查有实证，不因本末EOF重写其状态。
 
+## 最终步骤8 closure（本地发布边界）
+
+- 本轮起点 `bc08199137d2a29a83f361a9f15659a8fab34dc3`，integration工作树干净；main仍 `837d1e86b18f1f753964d51d18a64e069011209a`。完整读最终release、independent-verify、merged-host-smoke、六项修复报告及原#37/#46正文，#38–45本轮GraphQL实核全部CLOSED。
+- 用户/主agent接受披露局限的有限代表验收，解除此前临时禁tag，明确授权本地 `git tag -a v2.0.0 <本收口commit>`；不移动已有tag，不push/PR，不删worktree，不改main/全局。创建前两次读refs/tags均无v2.0.0；若最终创建时出现同名冲突，停报告而非强制覆盖。
+- 最终实跑UV checker39/U38/M1、tests29＋scripts45＝74全绿，两diff check通过。只更新release汇总/本notes；最终合同六项＋dot错base已TDD闭合，受影响宿主轻验已归档。不重复科研实验、不扩manifest，不把静态当行为、不追认历史UV/存储/清单/fresh失败为全纪律PASS。
+- 本轮rate预检REST/GraphQL均remaining5000/reset epoch1791041030；读取10票选GraphQL合并最小字段（REST需10请求），实际cost1/remaining4999/resetAt2026-10-03T15:24:11Z。随后按REST向#46发最终静态/行为/commit/tag/局限/本地未push评论并close，再#37摘要并close；最终合并回查37–46全部CLOSED。所有写动作和最终commit/tag/状态由执行结果确认，不在提交前伪填成功。
+- 提交策略按本轮明确Git命令授权：文档commit在integration，annotated tag目标精确该commit；最终HEAD/tag target/worktree/main核对。若EOF只最多3有界恢复，先读确认实际写入，不能盲重发造成重复或伪报关闭。
+
 ## Deviations
 
 - 无新增产品runtime/validator。扫描、manifest与trace机械检查只属于验收侧，不作为科研产品协议。
+- 历史不tag/不关37与46仅适用于前批；本轮用户明确新授权取代，不回写历史记录。
