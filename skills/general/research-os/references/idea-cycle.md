@@ -1,6 +1,6 @@
 # Idea Cycle
 
-状态词见 [PRODUCT-MAP.md](../PRODUCT-MAP.md)。目标是找 Idea、形成 Proposal，或点名 Discovery 内部能力时阅读。
+状态词见 [PRODUCT-MAP.md](PRODUCT-MAP.md)。目标是找 Idea、形成 Proposal，或点名 Discovery 内部能力时阅读。
 
 | 能力 | 角色／状态 | 适用输入与职责 |
 |---|---|---|

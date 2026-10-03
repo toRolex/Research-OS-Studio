@@ -1,6 +1,6 @@
 # Validation
 
-状态词见 [PRODUCT-MAP.md](../PRODUCT-MAP.md)。目标是计划、跑实验、解释结果、形成候选 Claim，或走数学／理论证明时阅读。
+状态词见 [PRODUCT-MAP.md](PRODUCT-MAP.md)。目标是计划、跑实验、解释结果、形成候选 Claim，或走数学／理论证明时阅读。
 
 ## 计算／实证
 

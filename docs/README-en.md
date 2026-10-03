@@ -19,6 +19,8 @@
   </p>
 </div>
 
+> **Breaking (v2):** the old read-only entry `ask-research-os` has been removed. There is no compatibility period. To ask where to start, use `/research-os` route-only (for example `/research-os 我该从哪开始`). It recommends a next step and does not start work, use the network, or write files.
+
 ---
 
 ## Architecture and Workflow
@@ -76,13 +78,13 @@ This command inspects your existing project structure and suggests configuration
 
 ### 3. Choose a Skill
 
-If you are unsure which skill fits your current stage, ask the router assistant:
+If you are unsure which skill fits your current stage, ask the unified entry and keep the request read-only:
 
 ```bash
-/ask-research-os
+/research-os where should I start
 ```
 
-It recommends the appropriate skill based on your research topic or existing drafts. This assistant operates in read-only mode, modifies no files, and never triggers workflows automatically. If you already know which skill to use, you can invoke it directly by name.
+That selects route-only. It recommends a skill from your topic or existing materials, modifies no files, does not use the network, and never starts a workflow. The old entry `ask-research-os` has been removed. If you already know the skill, invoke it directly, or let `/research-os` open the matching playbook.
 
 ---
 
@@ -107,7 +109,7 @@ The suite contains 39 standalone skills organized by trigger type:
 | Category | Skill Name | Invocation | Description |
 |---|---|---|---|
 | **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | User | Interactive workspace initialization with explicit confirmation |
-| | [ask-research-os](../skills/general/ask-research-os/SKILL.md) | User | Read-only guide recommending skills for your current stage |
+| | [research-os](../skills/general/research-os/SKILL.md) | User | Unified orchestrator; read-only requests use route-only and have no side effects |
 | **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | User | Full ideation workflow: literature search, ideation, novelty check, review, proposal |
 | | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Model | Literature search and synthesis with source verification |
 | | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Model | Multi-angle research candidate generation with filtering logs |
@@ -227,7 +229,7 @@ A: Any client supporting the Agent Skills format is compatible, including Claude
 ## Documentation
 
 - [User Acceptance Guide](user-acceptance-guide.md): Manual acceptance steps and boundary checks
-- [Product Map](../skills/general/ask-research-os/PRODUCT-MAP.md): Skill definitions and boundaries
+- [Product Map](../skills/general/research-os/references/PRODUCT-MAP.md): Skill definitions and boundaries
 - [Skills Directory](../skills/README.md): Structure and compatibility guide
 - [Upstream Sources and Licenses](upstream-sources-and-licenses.md): Third-party attribution and licenses
 

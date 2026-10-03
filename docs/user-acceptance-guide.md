@@ -74,11 +74,11 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     - 展示草稿后输入拒绝，核验项目保持零修改；
     - 在展示草稿与确认写入的间隙，模拟外部新建或修改目标文件（如外部新增了 `CLAUDE.md`），核验 setup 立即停止整批写入，重新扫描并要求重新确认。
 
-### 2. `ask-research-os`（#32 只读入口导航与地图咨询）
-`ask-research-os` 是纯只读 Router，帮助用户在 39 个 Skill 中选择切入点。
+### 2. `research-os` route-only（#38 只读入口导航）
+旧入口 `ask-research-os` 已删除。`/research-os` 的 route-only 是只读出口，帮助用户在 39 个 Skill 中选择切入点。
 
 - **场景 2.1：从不同科研起点咨询**
-  - **操作**：分别输入三种常见起点向 `/ask-research-os` 提问：
+  - **操作**：分别输入三种常见起点向 `/research-os` 提问，并保持只读意图：
     1. “我只有一个模糊的研究想法，想找文献并形成方案” → 应推荐 `idea-discovery` 或 `research-lit`；
     2. “我已有实验代码和跑出来的 CSV 数据，想知道能得出什么结论” → 应推荐 `analyze-results`、`experiment-audit` 或 `result-to-claim`；
     3. “我已有初稿，但投 NeurIPS 需要检查实验报告和算力说明” → 应推荐 `ml-paper-writing` 或专项审计。
@@ -290,7 +290,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 |---|---|---|---|
 | 1 | **CLI 清单发现** | `skills add ... --list` 列出全部 39 个 Skill，无遗漏、无重复、无幽灵入口 | [ ] 通过 |
 | 2 | **Setup 不覆盖** | `setup-research-os` 遇到既有材料零覆盖，遇到冲突展示 diff，拒绝则零改动 | [ ] 通过 |
-| 3 | **Ask 只读导航** | `ask-research-os` 推荐切入点，零文件写入，不自动触发任何工作流 | [ ] 通过 |
+| 3 | **route-only 只读导航** | `/research-os` 在只读意图下推荐切入点，零文件写入、零联网、不自动触发任何工作流 | [ ] 通过 |
 | 4 | **Discovery 真实查新** | `idea-discovery` 执行真实检索与查新，独立评审，交付 Proposal 后停止 | [ ] 通过 |
 | 5 | **实验执行有界** | `experiment-bridge` 严格限制在批准预算和文件范围内，保留全部 attempts 历史 | [ ] 通过 |
 | 6 | **结果审计与 Claim** | `experiment-audit` 独立查作弊/幻觉；`result-to-claim` 收窄不确定结论 | [ ] 通过 |

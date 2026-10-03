@@ -39,7 +39,7 @@ mindmap
   root((Research OS Studio))
     General
       setup-research-os
-      ask-research-os
+      research-os
     Idea Cycle
       idea-discovery
       research-lit
