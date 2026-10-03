@@ -160,9 +160,17 @@ playbook idea-discovery
 并列审查：paper-claim-audit、citation-audit、claim-stress-test
 证明稿件才读 proof-review
       ↓
-交付候选稿与审查报告（停止）
-投稿、上传不在本路线
+交付候选稿与审查报告
+投稿、上传不在写作路线
 paper-compile-repair 与 apply-citation-fixes 须另行点名
+      ↓
+投后管理与衍生（/research-os 编排；叶入口仍可点名）
+  ├─ 审稿回复：/research-os 回复审稿 → rebuttal
+  ├─ 转投适配：/research-os 转投 → resubmit
+  └─ 学术演讲：/research-os 做会议演讲 → paper-talk
+      ↓
+交付候选回复、新目录投稿材料或 slides/notes/script
+叶 skill 的策略、措辞、范围、大纲与外发确认仍停
 ```
 
 ---
@@ -211,9 +219,9 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 | | [paper-claim-audit](skills/writing-cycle/paper-claim-audit/SKILL.md) | 显式 | 校验正文数字、图表与原始实验数据的一致性 |
 | | [claim-stress-test](skills/writing-cycle/claim-stress-test/SKILL.md) | 显式 | 模拟同行评审视角，针对论点薄弱处提出质疑 |
 | | [research-improvement](skills/writing-cycle/research-improvement/SKILL.md) | 显式 | 对代码、论点或草稿进行有限轮次的评审与修改 |
-| | [rebuttal](skills/writing-cycle/rebuttal/SKILL.md) | 显式 | 梳理审稿意见，建立证据对应并起草回复 |
-| | [resubmit-pipeline](skills/writing-cycle/resubmit-pipeline/SKILL.md) | 显式 | 论文转投适配，在保留旧稿的前提下适配新模板 |
-| | [paper-talk](skills/writing-cycle/paper-talk/SKILL.md) | 显式 | 根据论文生成学术演讲幻灯片大纲与逐字稿 |
+| | [rebuttal](skills/writing-cycle/rebuttal/SKILL.md) | 显式 | 审稿回复叶入口；`/research-os` 的 rebuttal 路线按路径级联。策略与最终措辞仍停 |
+| | [resubmit-pipeline](skills/writing-cycle/resubmit-pipeline/SKILL.md) | 显式 | 转投叶入口；resubmit 路线在新目录适配并保留旧稿。范围与改动仍停 |
+| | [paper-talk](skills/writing-cycle/paper-talk/SKILL.md) | 显式 | 演讲叶入口；paper-talk 路线产出 slides、notes、script。授权与大纲仍停 |
 
 ---
 
