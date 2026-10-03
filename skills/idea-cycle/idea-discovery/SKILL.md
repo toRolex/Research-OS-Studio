@@ -10,6 +10,7 @@ disable-model-invocation: true
 用户显式调用的顶层 Workflow：在一次授权内组合已交付的 Idea Cycle 内部能力，走完 ARIS Discovery 主链，交付 **`IDEA_DISCOVERY.md`** 与 **`RESEARCH_PROPOSAL.md`**。
 
 ## 调用与授权
+Gate: output-path | before=report-write | approval=explicit-user | source=SKILL.md#调用与授权
 
 - **User** 决定研究方向、非目标、可选 brief 与参考论文、进入查新与评审的候选上限、总预算、检查点策略、输出位置，以及每一步是否继续。
 - **Agent** 组织阶段、调用内部能力、核对每个阶段的真实返回，并把各章节合入单一权威报告；不代替内部能力裁决，不把它们的实质结论改写成摘要。
@@ -22,6 +23,7 @@ disable-model-invocation: true
 **完成条件**：方向、材料实际读到范围、非目标、约束、总预算、输出路径与检查点策略均已明确，或逐项标为缺口；未知项不被默认值填满。
 
 ## 阶段检查点
+Gate: stage-checkpoint | before=next-phase | approval=explicit-user | source=SKILL.md#阶段检查点
 
 每个阶段结束设检查点：展示该阶段结果、当前淘汰与缺口、下一阶段拟调用的内部能力及剩余预算，然后默认停下，等用户选择**继续／调整／停止**。只有用户在调用时明确授权“一次走完并给出预算”才连续执行；即便如此，每个阶段仍以自身完成条件结束，用户确认记录写入报告，遇到换题、扩大授权或外部副作用时回到用户。不得把“无回复”当作继续授权。
 

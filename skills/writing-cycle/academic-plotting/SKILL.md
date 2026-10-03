@@ -1,6 +1,7 @@
 ---
 name: academic-plotting
 description: "学术图表：从已有实验数据制作定量图、多面板图或比较表；从方法说明制作明确标注的架构／流程示意图。"
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[数据／方法说明／图表计划路径] [输出范围]" -->
 
@@ -9,6 +10,7 @@ description: "学术图表：从已有实验数据制作定量图、多面板图
 将 ARIS `paper-figure` 的图表交付方法与 Orchestra `academic-plotting` 的数据图、示意图方法组合。产物是用户项目中的自然格式图、源文件和可读说明。
 
 ## 授权边界
+Gate: external-resource | before=external-call | approval=explicit-user | source=SKILL.md#授权边界
 
 默认 **model-invoked**：只在当前已授权的图表职责内调用；用户也能点名 **standalone**。**composed** 接收父任务指定的图号、原始材料、写入范围、资源预算与主报告位置，只返回／贡献图表部分。父任务的消息不是额外用户授权。
 
@@ -17,6 +19,7 @@ description: "学术图表：从已有实验数据制作定量图、多面板图
 - 资源：默认本地、已有环境、一次生成及至多一次局部修正。先确定时间／图数上限；父授权更窄时从窄。外部数据读取须在授权来源内；远程上传、模型图像生成、付费及独立 reviewer 的外部调用须有明确内容／预算授权，否则停止对应分支。
 
 ## 1. 盘点并选图
+Gate: figure-choice | before=figure-select | approval=explicit-user | source=SKILL.md#1-盘点并选图
 
 读完整相关数据、方法上下文和已有图，不只读上游任务摘要。按 [figure-note.md](templates/figure-note.md) 的字段记录每个图号、目的、来源、类型、输出路径及授权范围；简单单图可直接用报告中的一个小节，无需制造空文件。
 

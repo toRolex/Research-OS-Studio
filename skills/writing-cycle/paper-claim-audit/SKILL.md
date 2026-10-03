@@ -1,6 +1,7 @@
 ---
 name: paper-claim-audit
 description: "数字、比较、配置、caption、实验范围是否忠实于原始结果。只输出发现。"
+disable-model-invocation: true
 ---
 
 # Paper Claim Audit — 零上下文证据核对
@@ -8,6 +9,7 @@ description: "数字、比较、配置、caption、实验范围是否忠实于�
 由 fresh reviewer 直接比较论文与原始结果，防止写实验又写论文的执行者带入预期：最佳 seed 被当成均值、不同配置被混作公平比较、相对提升算错。文件存在与模型认可均不证明 Claim 成立。
 
 ## 调用与边界
+Gate: report-target | before=report-write | approval=explicit-user | source=SKILL.md#调用与边界
 
 默认 model-invoked，用户也可点名调用。只在当前请求的数据忠实性职责内工作。
 

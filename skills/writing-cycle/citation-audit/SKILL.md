@@ -1,11 +1,13 @@
 ---
 name: citation-audit
 description: "引用身份、元数据、每处语境；父流程局部检查。只返回发现、不改。"
+disable-model-invocation: true
 ---
 
 # 引用审计
 
 ## 边界与输入
+Gate: audit-scope | before=audit-start | approval=explicit-user | source=SKILL.md#边界与输入
 
 这是 model-invoked 内部能力，也支持用户点名 standalone。composed 时只贡献父报告，继承其输入范围、资源预算、报告写入授权和 bib 冻结约束；不会启动顶层 Workflow，也不会调用应用修复入口。
 

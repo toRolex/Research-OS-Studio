@@ -46,6 +46,7 @@ key 更名／条目删除／重复合并必须连同全部相关正文引用及 
 完成条件：用户能逐组辨认确切改动、范围、依赖和残余问题；所有可执行内容都已展示，没有隐藏清理。
 
 ## 3. 等待明确授权
+Gate: apply-authorization | before=apply-diff | approval=explicit-user | source=SKILL.md#3-等待明确授权
 
 对每组询问“应用／拒绝／暂缓”，等待回复。用户调用本 Skill、“看起来不错”、旧报告上的历史批准、父流程让你修复都不能取代本轮精确 diff 之后的明确授权。
 

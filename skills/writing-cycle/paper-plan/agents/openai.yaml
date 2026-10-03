@@ -1,0 +1,5 @@
+interface:
+  display_name: "paper-plan"
+  short_description: "规划：从已有研究材料形成 Claim—Evidence、叙事、章节、图表与引用计划。支持用户点名，或在已授权父调用内贡献计划章节。"
+policy:
+  allow_implicit_invocation: false

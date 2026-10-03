@@ -1,6 +1,7 @@
 ---
 name: proof-writer
 description: 撰写固定命题的证明。用于证明定理、补全证明，或把草图写成证明。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[命题与假设；可指定输出位置与尝试预算]" -->
 
@@ -9,6 +10,7 @@ description: 撰写固定命题的证明。用于证明定理、补全证明，�
 每个非平凡蕴含写明所用规则和侧条件。
 
 ## 授权
+Gate: write-authorization | before=package-write | approval=explicit-user | source=SKILL.md#授权
 
 model-invoked。开始前从请求里取：精确命题、允许的本地材料、输出路径或报告段落、尝试预算。缺省文件名不是覆盖许可。先读目标；无关内容和已有尝试保留；冲突先问。只改约定的研究材料。
 

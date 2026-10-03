@@ -1,6 +1,7 @@
 ---
 name: formula-derivation
 description: 推导公式并组织理论主线。对象或假设未固定、需要完整推导包时使用。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[问题目标与现有公式或笔记；可指定输出位置与尝试预算]" -->
 
@@ -9,6 +10,7 @@ description: 推导公式并组织理论主线。对象或假设未固定、需�
 Build an honest derivation package, not a fake polished theorem story.
 
 ## Invocation, Authorization, and Completion
+Gate: write-authorization | before=package-write | approval=explicit-user | source=SKILL.md#invocation-authorization-and-completion
 
 This is a model-invoked generation Skill, also available when a user explicitly names it. In **standalone** mode, produce the derivation package at the agreed project path. In **composed** mode, contribute the same complete content to the caller's designated report section; do not create a second canonical report.
 
