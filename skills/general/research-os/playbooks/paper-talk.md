@@ -6,6 +6,20 @@
 
 用户给出论文、听众、时长和输出范围。回复审稿走 rebuttal；换 venue 走 resubmit。
 
+## 阶段角色
+
+Role: orchestrator
+
+授权与大纲确认。
+
+Role: writer
+
+slides、notes、script。
+
+Role: reviewer
+
+fresh 产物审查。
+
 ## 步骤
 
 1. 读 `skills/writing-cycle/paper-talk/SKILL.md` 全文。源论文与既有材料只读。停在 talk-authorization：输出目录和本轮允许写入的文件未确认时，只展示计划。

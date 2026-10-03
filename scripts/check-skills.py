@@ -14,6 +14,7 @@ import argparse
 import math
 import re
 import subprocess
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -86,15 +87,40 @@ def err(msg: str) -> None:
     problems.append(msg)
 
 
+def declaration_values(text: str, key: str) -> list[str]:
+    """读取整行 YAML 声明，而不是值、注释或其他键内的子串。"""
+    return [value.strip().strip("'\"") for value in re.findall(
+        rf"^\s*{re.escape(key)}\s*:\s*([^\n#]*)(?:#[^\n]*)?$", text, re.M
+    )]
+
+
+def duplicate_yaml_problems(text: str) -> list[str]:
+    """限定发行 YAML 的映射键检查；同层/同父键重复即拒绝。"""
+    found: list[str] = []
+    parents: list[tuple[int, str]] = []
+    seen: set[tuple[tuple[str, ...], str]] = set()
+    critical = {"name", "description", "disable-model-invocation", "allow_implicit_invocation"}
+    critical_seen: set[str] = set()
+    for line in text.splitlines():
+        match = re.match(r"^( *)([A-Za-z_][\w-]*):(?:\s|$)", line)
+        if not match:
+            continue
+        indent, key = len(match.group(1)), match.group(2)
+        while parents and parents[-1][0] >= indent:
+            parents.pop()
+        identity = (tuple(parent[1] for parent in parents), key)
+        if identity in seen or (key in critical and key in critical_seen):
+            found.append(f"YAML 重复声明 {key}")
+        seen.add(identity)
+        if key in critical:
+            critical_seen.add(key)
+        parents.append((indent, key))
+    return found
+
+
 def yaml_allow_implicit(yaml_text: str | None) -> str | None:
-    if yaml_text is None:
-        return None
-    match = re.search(
-        r"^\s*allow_implicit_invocation\s*:\s*(\S+)\s*$",
-        yaml_text,
-        re.M,
-    )
-    return match.group(1).strip().strip("'\"") if match else None
+    values = declaration_values(yaml_text or "", "allow_implicit_invocation")
+    return values[0] if len(values) == 1 else None
 
 
 def lexical_relative(base_dir: Path, target: str) -> str | None:
@@ -161,11 +187,16 @@ for sf in skill_files:
     if not re.search(r"^description:\s*\S", fm_body, re.M):
         err(f"{rel}: frontmatter 缺 description 或为空")
 
-    explicit = "disable-model-invocation: true" in fm_body
+    for problem in duplicate_yaml_problems(fm_body):
+        err(f"{rel}: {problem}")
+    invocation_values = declaration_values(fm_body, "disable-model-invocation")
+    explicit = invocation_values == ["true"]
     openai_yaml = sf.parent / "agents" / "openai.yaml"
     has_openai_yaml = openai_yaml.exists()
     yaml_text = openai_yaml.read_text(encoding="utf-8") if has_openai_yaml else None
     implicit = yaml_allow_implicit(yaml_text)
+    for problem in duplicate_yaml_problems(yaml_text or ""):
+        err(f"{openai_yaml.relative_to(ROOT)}: {problem}")
     if name == SETUP_NAME:
         # #40：唯一允许模型建议。不得保留 disable-model-invocation，yaml 必须为 true。
         if explicit:
@@ -215,11 +246,8 @@ HINTS: list[str] = []
 def invocation_value_problems(name: str, user_invoked: bool, yaml_text: str) -> list[str]:
     if not user_invoked:
         return []
-    match = re.search(r"allow_implicit_invocation:\s*(\S+)", yaml_text)
-    if match is None:
-        return [f"{name}: agents/openai.yaml 缺 allow_implicit_invocation: false"]
-    if match.group(1).strip().strip("'\"") != "false":
-        return [f"{name}: allow_implicit_invocation 必须为 false"]
+    if yaml_allow_implicit(yaml_text) != "false":
+        return [f"{name}: allow_implicit_invocation 必须唯一且为 false"]
     return []
 
 
@@ -423,9 +451,13 @@ def backtick_cascade_problems(rel: str, text: str, root: Path, tracked: set[str]
             continue
         for token in CASCADE_RE.findall(line):
             token = token.strip()
-            if token.startswith((".", "~", "/")) or "/" not in token or not token.endswith(".md"):
+            clean = token.split("#", 1)[0]
+            # .agents 等是研究项目配置示例；./ 与 ../ 才是真实相对级联。
+            if (clean.startswith(("~", "/"))
+                    or (clean.startswith(".") and not clean.startswith(("./", "../")))
+                    or "/" not in clean or not clean.endswith(".md")):
                 continue
-            clean = token.split("#", 1)[0].split()[0]
+            clean = clean.split()[0]
             if clean.startswith(("http://", "https://")):
                 continue
             raw_candidates = [source.parent]
@@ -538,11 +570,17 @@ def gate_problems(
 def legacy_router_problems(files: dict[str, str]) -> list[str]:
     found: list[str] = []
     for rel, text in files.items():
-        if LEGACY_ROUTER not in text:
-            continue
-        if any(token in text.lower() or token in text for token in LEGACY_ALLOW_MIGRATION):
-            continue
-        found.append(f"{rel}: 产品正文残留旧 router {LEGACY_ROUTER}")
+        for lineno, line in enumerate(text.splitlines(), 1):
+            # 逐引用所在句判断，其他段的 breaking/migration 不授予全文豁免。
+            for sentence in re.split(r"[。！？!?]|(?<=\.)\s+", line):
+                if LEGACY_ROUTER not in sentence:
+                    continue
+                migration = any(token in sentence.lower() for token in LEGACY_ALLOW_MIGRATION)
+                active = bool(re.search(
+                    r"请使用|请调用|推荐使用|继续使用|(?:use|invoke|run)\s+[`$ /]*ask-research-os", sentence, re.I
+                ))
+                if not migration or active:
+                    found.append(f"{rel}:{lineno}: 产品正文残留旧 router {LEGACY_ROUTER}")
     return found
 
 
@@ -837,9 +875,14 @@ def check_policy(path: Path) -> dict[str, list[str]]:
     for key in POLICY_KEYS:
         if key not in fields:
             err(f"{path}: 政策缺字段 {key}")
+    repeatable = {"compute_limit", "compute_unit", "per_attempt_compute_limit"}
     for key, values in fields.items():
         if key not in POLICY_KEYS:
             err(f"{path}: 政策含未知字段 {key}")
+        if key not in repeatable and len(values) != 1:
+            err(f"{path}: 政策字段必须唯一 {key}")
+        if any(not raw for raw in values):
+            err(f"{path}: 政策字段不能为空 {key}")
         for raw in values:
             if raw.lower() in {"unlimited", "nan", "inf", "+inf", "-inf"}:
                 err(f"{path}: 非法额度值 {key}={raw}")
@@ -870,10 +913,47 @@ def check_policy(path: Path) -> dict[str, list[str]]:
     for raw in fields.get("run_count_basis", []):
         if raw not in RUN_BASES:
             err(f"{path}: run_count_basis 只能是 planned-run 或 attempt")
+    numeric_keys = {"cost_limit", "compute_limit", "run_limit", "per_attempt_cost_limit",
+                    "per_attempt_compute_limit", "concurrency_limit", "retry_limit", "valid_for_hours"}
+    zero_default = all(finite_number(raw) == 0 for key in numeric_keys for raw in fields.get(key, []))
+    inactive_policy = all(finite_number(raw) == 0 for key in ("run_limit", "valid_for_hours")
+                          for raw in fields.get(key, []))
+    explained = "因为" in text or "because" in text.lower()
     for key in ("currency", "scope", "valid_until"):
         for raw in fields.get(key, []):
-            if raw == "not-applicable" and "因为" not in text and "because" not in text.lower():
-                err(f"{path}: {key}=not-applicable 必须解释")
+            if raw == "未指定":
+                if not inactive_policy:
+                    err(f"{path}: {key} 未指定只适用于不可执行默认政策，不是运行许可")
+                continue
+            if raw == "not-applicable":
+                if not explained:
+                    err(f"{path}: {key}=not-applicable 必须解释")
+                if key == "currency" and any(value != 0 for value in numbers.get("cost_limit", [])):
+                    err(f"{path}: currency=not-applicable 只适用于零费用")
+                if key == "valid_until" and not zero_default:
+                    err(f"{path}: 可执行批次不能以 not-applicable 省略 valid_until")
+                continue
+            if key == "scope" and (finite_number(raw) is not None or raw.lower() in {"true", "false", "null", "none"}):
+                err(f"{path}: scope 必须是说明计划、写域和环境的非空文字")
+            if key == "currency" and not re.fullmatch(r"[A-Z]{3}", raw):
+                err(f"{path}: currency 必须是三字母大写币种或解释过的 not-applicable")
+            if key == "valid_until":
+                try:
+                    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})", raw):
+                        raise ValueError
+                    if raw[-1] != "Z" and (int(raw[-5:-3]) > 23 or int(raw[-2:]) > 59):
+                        raise ValueError
+                    value = datetime.fromisoformat(raw.replace("Z", "+00:00"))
+                    if value.utcoffset() is None:
+                        raise ValueError
+                except ValueError:
+                    err(f"{path}: valid_until 必须是合法且带时区的 ISO8601 时间")
+    runs = [finite_number(raw) for raw in fields.get("run_limit", [])]
+    concurrency = [finite_number(raw) for raw in fields.get("concurrency_limit", [])]
+    if any(value is not None and value > 0 for value in runs) and not all(
+        value is not None and value >= 1 for value in concurrency
+    ):
+        err(f"{path}: 可执行批次 concurrency_limit 至少为 1")
     costs = numbers.get("cost_limit", [])
     per_costs = numbers.get("per_attempt_cost_limit", [])
     if costs and per_costs and max(per_costs) > min(costs):
