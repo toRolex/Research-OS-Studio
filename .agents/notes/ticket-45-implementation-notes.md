@@ -22,3 +22,4 @@
 - 第一次无 session 的运行把 skill 根误当成 `/tmp` 交接目录，没有读到 playbook。不作为通过证据。通过证据是带 `--session` 的第二次轨迹。
 - 未跑真实证明器、独立 reviewer 或补实验。proof 命题固定与 improvement 循环的执行行为仍是 AC 待验；本次只证明交接被读取且过期授权停住。
 - 叶 skill 正文与 composition-map 未改。
+- 合并 `integration/research-os-v2`（`f94fc10`）后，setup 已提供 `templates/compute-policy.md` 与 `templates/research-log.md`。pickup 改为按这两份模板的字段名重查，避免自造平行字段。行为轨迹发生在这次对齐之前，日志用的是中文标签；字段对齐后的第二次轨迹待补。

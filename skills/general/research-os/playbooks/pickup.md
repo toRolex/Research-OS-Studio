@@ -6,15 +6,15 @@
 
 1. `skills/general/research-os/PHASE-BOUNDARIES.md`：只用来判断上次离开会话的方式。五个选项的含义以该文件为准。
 2. 用户给出的交接路径。证明交接读 `skills/general/research-os/playbooks/proof.md` 与其中点名的轮次文件。改进交接读 `skills/general/research-os/playbooks/improvement.md` 与已保存的改进日志。
-3. 工作区里真实存在的 `compute-policy.md` 与 `research-log.md`。路径由用户或项目导航指出。文件不存在就停，并说明缺哪一份。
+3. 工作区里真实存在的 `compute-policy.md` 与 `research-log.md`。字段名以 `skills/general/setup-research-os/templates/compute-policy.md` 和 `skills/general/setup-research-os/templates/research-log.md` 为准，不另造一套。路径由用户或项目导航指出。文件不存在就停，并说明缺哪一份。
 
 ## 重查
 
 批准、授权和作业分开核对，每一项都指向读到的原文：
 
-- **批准**：交接或日志里用户确认过的范围、命题、写入路径、轮数。没有确认记录就保持未批准。
-- **授权**：`compute-policy.md` 的 scope、cost_limit、compute_limit、run_limit、per_attempt 上限、concurrency_limit、retry_limit、valid_for_hours、valid_until。缺字段、单位或过期时间时，该项为 0 或未指定，不是运行许可。`valid_until` 早于本次读取时刻则授权已过期。
-- **作业**：`research-log.md` 里的 batch_id、run_id、attempt_id、起止时间、结果状态和产物路径。未知消耗不按 0 释放。运行中的预留仍占额度。
+- **批准**：`user_confirmation`、`confirmed_at`、`confirmation_basis`，以及交接里的命题、写入路径、轮数。没有确认记录就保持未批准。
+- **授权**：`scope`、`cost_limit`、`currency`、`compute_limit`、`compute_unit`、`run_limit`、`run_count_basis`、`per_attempt_cost_limit`、`per_attempt_compute_limit`、`concurrency_limit`、`retry_limit`、`valid_for_hours`、`valid_until`。缺字段、单位或写着未指定时，该项不是运行许可。`valid_until` 不是带时区的时间，或早于本次读取时刻，则授权已过期。
+- **作业**：`batch_id`、`run_id`、`attempt_id`、`started_at`、`finished_at`、`result_status`、`artifact_paths`、`actual_consumption`、`worst_case_estimate`。`actual_consumption` 为 unknown 时不按 0 释放。运行中的预留仍占额度。
 
 无法核实并发或单编排者是否仍在写账时停止，不另造 runtime。
 

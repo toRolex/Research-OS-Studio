@@ -89,3 +89,11 @@ class Ticket45Routes(unittest.TestCase):
         pickup = (SKILL / "playbooks/pickup.md").read_text(encoding="utf-8")
         self.assertIn("valid_until", pickup)
         self.assertIn("research-log", pickup)
+        for field in (
+            "user_confirmation",
+            "authorization_status",
+            "actual_consumption",
+            "skills/general/setup-research-os/templates/compute-policy.md",
+            "skills/general/setup-research-os/templates/research-log.md",
+        ):
+            self.assertIn(field, pickup)
