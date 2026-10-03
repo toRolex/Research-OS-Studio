@@ -54,6 +54,17 @@ class ValidationRoutes(unittest.TestCase):
         )
         self.assertEqual(problems, [])
 
+    def test_attempt_times_and_exit_status_are_observed_not_inferred(self):
+        grant = GRANT.read_text(encoding="utf-8")
+        self.assertIn("启动前读取系统时钟", grant)
+        self.assertIn("退出码", grant)
+        self.assertIn("不以文件时间或估计值回填", grant)
+        self.assertIn("原始证据", grant)
+        self.assertIn("部分覆盖不代表完整实耗", grant)
+        self.assertIn("未核实份额继续保留最坏预留", grant)
+        self.assertIn("审查 session 指针、临时解析文件", grant)
+        self.assertIn("只落入已批准写域", grant)
+
     def test_leaf_skills_unchanged_by_contract_pointer(self):
         bridge = (PLAYBOOKS / "experiment-bridge.md").read_text(encoding="utf-8")
         plan = (PLAYBOOKS / "experiment-plan.md").read_text(encoding="utf-8")
