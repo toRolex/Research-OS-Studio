@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
+  <title id="title">Research OS: independent entries, bounded authorization, candidate outputs</title>
+  <desc id="desc">Choose any workflow from existing materials. No automatic Proposal to Validation to Writing transition. Execution needs a current batch grant, writing keeps leaf approval gates, and submission needs separate approval.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#475569"/></marker>
+    <style>text{font-family:system-ui,sans-serif;fill:#0f172a;font-size:19px}.heading{font-size:25px;font-weight:700}.small{font-size:17px}.box{fill:#fff;stroke:#94a3b8;stroke-width:2}.gate{fill:#fff7ed;stroke:#c2410c;stroke-width:2}.line{stroke:#475569;stroke-width:2;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect width="1200" height="660" rx="16" fill="#f1f5f9"/>
+  <text x="600" y="42" text-anchor="middle" class="heading">Research OS · Explicit invocation / 用户显式调用</text>
+  <text x="600" y="75" text-anchor="middle">Independent entries from existing materials · 现成材料可独立进入</text>
+  <path d="M600 94 V112 H205 V130 M600 112 V130 M600 112 H995 V130" fill="none" class="line"/>
+  <rect x="30" y="132" width="350" height="105" rx="12" class="box"/>
+  <text x="205" y="167" text-anchor="middle" class="heading">Idea Discovery</text>
+  <text x="205" y="201" text-anchor="middle">Direction / 研究方向</text>
+  <rect x="425" y="132" width="350" height="105" rx="12" class="box"/>
+  <text x="600" y="167" text-anchor="middle" class="heading">Validation</text>
+  <text x="600" y="201" text-anchor="middle">Proposal / hypothesis / theorem</text>
+  <rect x="820" y="132" width="350" height="105" rx="12" class="box"/>
+  <text x="995" y="167" text-anchor="middle" class="heading">Paper Writing</text>
+  <text x="995" y="201" text-anchor="middle">Results / draft · 结果或稿件</text>
+  <path d="M205 237 V270 M600 237 V270 M995 237 V270" class="line"/>
+  <rect x="30" y="272" width="350" height="108" rx="12" class="gate"/>
+  <text x="205" y="306" text-anchor="middle">Leaf checkpoints / 叶审批点</text>
+  <text x="205" y="335" text-anchor="middle" class="small">Phase-by-phase unless authorized</text>
+  <text x="205" y="361" text-anchor="middle" class="small">连续阶段须明确授权与预算</text>
+  <rect x="425" y="272" width="350" height="108" rx="12" class="gate"/>
+  <text x="600" y="306" text-anchor="middle">Current batch grant before execution</text>
+  <text x="600" y="335" text-anchor="middle" class="small">执行前：有效本批授权及额度核对</text>
+  <text x="600" y="361" text-anchor="middle" class="small">Default policy ≠ permission</text>
+  <rect x="820" y="272" width="350" height="108" rx="12" class="gate"/>
+  <text x="995" y="306" text-anchor="middle">Leaf writing / resource approval</text>
+  <text x="995" y="335" text-anchor="middle" class="small">写入及资源授权门仍有效</text>
+  <text x="995" y="361" text-anchor="middle" class="small">General / ML / Systems</text>
+  <path d="M205 380 V415 M600 380 V415 M995 380 V415" class="line"/>
+  <rect x="30" y="417" width="350" height="96" rx="12" class="box"/>
+  <text x="205" y="452" text-anchor="middle">Candidate Proposal + review</text>
+  <text x="205" y="484" text-anchor="middle" class="small">候选方案与独立评审</text>
+  <rect x="425" y="417" width="350" height="96" rx="12" class="box"/>
+  <text x="600" y="452" text-anchor="middle">Evidence + bounded Claim / proof</text>
+  <text x="600" y="484" text-anchor="middle" class="small">证据、受限主张或证明记录</text>
+  <rect x="820" y="417" width="350" height="96" rx="12" class="box"/>
+  <text x="995" y="452" text-anchor="middle">Candidate manuscript + review</text>
+  <text x="995" y="484" text-anchor="middle" class="small">候选稿与审查报告 · 非科研通过</text>
+  <text x="600" y="553" text-anchor="middle">No automatic cross-workflow advance · 不无条件 Proposal → Validation → Writing</text>
+  <text x="600" y="585" text-anchor="middle" class="small">Cross-stage continuation needs explicit scope; hard gates and leaf approvals remain.</text>
+  <text x="600" y="615" text-anchor="middle" class="small">跨阶段须明确边界；修复须另行点名，外发、删覆盖与批次越界停在副作用前。</text>
+  <text x="600" y="644" text-anchor="middle" class="small">Candidate ≠ publication-ready / accepted · 候选不等于可投稿或已接受</text>
+</svg>

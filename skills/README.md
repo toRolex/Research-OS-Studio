@@ -14,7 +14,7 @@ npx skills@latest add /绝对路径/Research-OS-Studio --list
 npx skills@latest add /绝对路径/Research-OS-Studio --all
 ```
 
-CLI 负责宿主安装目录和文件复制；本仓库不生成 projection。需要限定宿主时可使用 `--skill '*' --agent claude-code --agent codex --yes`。安装后按宿主约定重新加载 Skills 或开启新会话，确认发现 `setup-research-os`，再显式调用它；例如支持斜杠调用的宿主使用 `/setup-research-os`。宿主未发现时先核对 CLI 输出的实际安装位置，不能把文件安装成功当作模型已加载。
+CLI 负责宿主安装目录和文件复制；本仓库不生成 projection。需要限定宿主时可使用 `--skill '*' --agent claude-code --agent codex --yes`。安装后按宿主约定重新加载 Skills 或开启新会话，确认发现 `setup-research-os`，再显式调用它；pi 原生命令为 `/skill:setup-research-os`，Claude Code 为 `/setup-research-os`，Codex 为 `$setup-research-os` 或明确点名已安装技能。本页所有 `/name` 是逻辑点名：pi 用 `/skill:name`（入口 `/skill:research-os 我该从哪开始`）、Claude Code 用 `/name`、Codex 用 `$name` 或明确点名。pi 普通 `/name` 文本不保证加载隐藏的显式 Skill。宿主未发现时先核对 CLI 输出的实际安装位置，不能把文件安装成功当作模型已加载。
 
 ### 已知宿主限制
 
