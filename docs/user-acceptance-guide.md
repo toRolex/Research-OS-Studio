@@ -131,13 +131,15 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
   2. **固定问题锚点**：Refinement 在修改方案时，必须严格保留原始 **Problem Anchor**（研究核心问题），防止在迭代过程中“偷偷换题”；
   3. **双路线取舍**：对比最小可行验证路线（MVP）与前沿进阶路线（Frontier），给出权衡依据。
 
-### 5. `idea-discovery`（#8 完整 Idea 发现 Workflow）
-- **操作**：显式调用 `/idea-discovery`，输入研究方向 brief。
+### 5. `idea-discovery` 路线（#41；叶 Workflow 为 #8）
+- **操作**：对 `/research-os` 说「我有方向，没有 idea」，并给出研究方向 brief。不要只把这句话当成推荐请求。
 - **核验**：
-  1. 完整串联 Phase 0（读取 brief）→ Phase 1（文献检索）→ Phase 2（候选生成）→ Phase 3（查新）→ Phase 4（独立评审）→ Phase 4.5（锚点收敛）；
-  2. 默认在各 Phase 间停下等待用户确认（除非获得显式“一次走完”授权）；
-  3. 最终在工作区交付单一 `IDEA_DISCOVERY.md` 发现报告与 `RESEARCH_PROPOSAL.md` 研究方案；
-  4. **越权防御**：交付后立即停止，**绝不自动运行 pilot 代码、绝不自动创建实验计划、绝不自动跨入 Validation 流程**。
+  1. 命中路线 `idea-discovery`，按 playbook 读完叶 skill 全文后执行 Phase 0 → 文献 → 候选 → 查新 → 独立评审 → 固定边界收敛；
+  2. 默认每个阶段在叶上的 `stage-checkpoint` 停下。用户在本次调用写明「一次走完」并给出预算时，阶段之间连续执行；输出路径、评审范围、问题锚点仍停；
+  3. 交付单一 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止，不运行 pilot，不创建实验计划，不进入 Validation；
+  4. **粘性**：下一句「继续」或「看下一阶段」仍走本路线；
+  5. **new task**：用户说 new task 后，例如「new task 我该从哪开始」，回到入口重匹配，只读请求进 route-only。
+- 直接点名 `/idea-discovery` 仍走叶入口，不经过本路由行。
 
 ---
 
