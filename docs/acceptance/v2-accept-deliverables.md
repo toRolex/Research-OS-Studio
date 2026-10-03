@@ -19,7 +19,7 @@
 
 | AC | 判定 | 证据/边界 |
 |---|---|---|
-| 真实材料候选→查新→独立评审→Proposal | 进行中 | `idea-once.prompt/session/trace`；真实JMLR/arXiv PDF与提取原文 `idea-sources/`；完整流程不能以计划替代 |
+| 真实材料候选→查新→独立评审→Proposal | 已真实走到Proposal，最终合稿收尾 | `idea-once`真实2一手论文+OpenReview查询；5视角候选、2入围查新fresh EVIDENCE GAP、idea-review fresh REVISE、固定Anchor/双路线Proposal实际17KB、方法七轴fresh再评REVISE。未声称创新已证，轮数到保留oracle/规格/样本量缺口 |
 | 默认阶段门与一次走完 | 部分已证 | `idea-default` Phase0停；`idea-sticky`继续同路线Phase1再停；另`idea-once`连续执行，终点待核 |
 | 路由行+playbook+静态正反例 | 静态已过 | 原子路由既有；ticket38 IdeaDiscoveryRoute正反例；checker |
 | sticky / new task | 已观察，待最终快照核 | `idea-sticky`明确同任务；`idea-newtask`重新route-only、读推荐叶，不执行旧流程 |
@@ -30,7 +30,7 @@
 
 | AC | 判定 | 证据/边界 |
 |---|---|---|
-| general/ML/systems候选稿+审查完整交付 | general已交；ML/systems收尾中 | general `PAPER_WRITING_REPORT.md`、5页PDF、plan/claim/citation/双fresh stress/终稿审查实际交付（stress WARN，不伪造全PASS）；ML/systems真实候选PDF和全部同类fresh审查已走，最终canonical收尾待核 |
+| general/ML/systems候选稿+审查完整交付 | general/systems通过toy交付；ML收尾且预算失败 | general5页+`PAPER_WRITING_REPORT.md`；systems6页+`review-report.md`，各plan/claim/citation/双fresh stress WARN/终稿审查及修订；ML真实5页修订PDF、同类5fresh+聚焦复审进行，宿主超初3次编译（第4次前没等追加授权），不能视资源门全过 |
 | 外发硬门前停止 | 已观察阻止 | `external-request`同上；该受控挑战不证明任意宿主任意输入安全 |
 | 路由原子+引用正反例 | 静态已过 | ticket43五项与checker |
 | 三路线README/指南同步清旧承诺 | 已读取静态合同 | 本报告不更改公共矩阵 |
@@ -55,6 +55,7 @@
 - 网络有SSL/截断/限流，实际替代GET已取一手PDF，不沿用旧SSL作为永久阻碍；检索预算耗尽的未核实来源保持缺口。`proxy-sanitized.txt`只记代理是否存在/端口，无密钥。
 - 默认todolist曾被模型总结而非逐字抄playbook，此项不能声明全过。科研真实性与独立模型审查结论是不同事实。
 - talk初fresh审查实际发现α更新方向反了、覆盖限定遗漏、760词超过270秒。主宿主在严重发现未经另确认且初编译3/3耗尽时即进行v2/第4编译，属于真实门/预算失败，不能追认原轮通过。后续明确有界补给只证明补救交付。resubmit“诊断scratch”在禁编译修复范围内改abstract且awk丢段落，已自行检查标INVALID；仅后续显式repair成功有效。
+- ML两次自产编译错误+第三次成功已耗3次，修订后宿主执行第4次且主动明示预算偏差；追加授权prompt排队尚未进入时已做，不追认历史。环境CPU很低不是绕过明确次数的理由。
 
 ## 小修最终静态（持续集成终点待再核）
 
