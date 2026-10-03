@@ -78,6 +78,12 @@ class Ticket45Routes(unittest.TestCase):
             problems = mod.backtick_cascade_problems(rel, damaged, root, {rel})
             self.assertTrue(any("missing-handoff.md" in item for item in problems))
 
+    def test_pickup_rechecks_exact_write_and_tool_permissions(self):
+        pickup = (SKILL / "playbooks/pickup.md").read_text(encoding="utf-8")
+        self.assertIn("逐个绝对路径", pickup)
+        self.assertIn("修正误写位置也不授权删除", pickup)
+        self.assertIn("普通数学授权不自动包含", pickup)
+
     def test_route_only_points_at_shipped_boundaries(self):
         text = (SKILL / "playbooks/route-only.md").read_text(encoding="utf-8")
         self.assertNotIn("不在本发行", text)
