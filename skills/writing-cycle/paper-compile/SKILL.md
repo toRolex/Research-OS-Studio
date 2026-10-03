@@ -1,6 +1,7 @@
 ---
 name: paper-compile
 description: 编译检查 LaTeX 论文及投稿 PDF；用户要求编译论文、核验 PDF，或父写作流程进入编译验收时使用。仅检查与诊断，不修改源文件。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[论文目录或入口 .tex]" -->
 
@@ -13,6 +14,7 @@ description: 编译检查 LaTeX 论文及投稿 PDF；用户要求编译论文�
 支持 **standalone**（用户点名或当前独立检查任务）与 **composed**（父 workflow 请求编译验收）。两者执行相同检查；composed 只返回父报告可引用的贡献，不覆盖父报告、不推进提交。所有路径和工具从当前环境发现，不依赖其他 skill、固定 provider、中央 runtime、脚本或结构化状态文件。
 
 ## 1. 确定范围
+Gate: build-scope | before=build | approval=explicit-user | source=SKILL.md#1-确定范围
 
 确认论文目录、入口候选、standalone/composed、目标 venue/年份/track/投稿阶段、是否允许本次临时构建产物。缺省先检查当前目录与 `paper/`，不把 `main.tex` 当作唯一入口。确认具体运行时间与资源预算（如整个构建最多 60 秒）、覆盖范围及已有落实机制，并获得临时写域批准；无法落实预算就停止构建。确认是否需要落盘报告；默认只在聊天返回。
 

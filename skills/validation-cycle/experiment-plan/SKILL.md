@@ -9,6 +9,7 @@ disable-model-invocation: true
 将用户给定的问题、Proposal 或方法整理为 **claim → evidence → run order** 路线图。计划服务证据而非预设论文成功。
 
 ## 调用与授权
+Gate: output-path | before=plan-write | approval=explicit-user | source=SKILL.md#调用与授权
 
 这是 **user-invoked Workflow**：用户显式调用本 Skill 制定实验计划时使用。模型不自动启动它；本 Skill 也不调用其他 Workflow。输入可以是现成研究问题，不要求先运行 Discovery 或 refinement。用户若只给不稳定方向，输出缺口与待确认的假设，不替用户换题。
 

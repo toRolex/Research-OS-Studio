@@ -1,0 +1,5 @@
+interface:
+  display_name: "academic-plotting"
+  short_description: "学术图表：从已有实验数据制作定量图、多面板图或比较表；从方法说明制作明确标注的架构／流程示意图。"
+policy:
+  allow_implicit_invocation: false

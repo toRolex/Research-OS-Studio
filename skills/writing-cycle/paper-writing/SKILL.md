@@ -10,6 +10,7 @@ disable-model-invocation: true
 用户显式调用。一次授权内按下面顺序组合内部能力，交付候选稿与审查报告后停止。阶段、能力与审查输入见 [composition-map](references/composition-map.md)。
 
 ## 1. 授权门
+Gate: workflow-authorization | before=draft-write | approval=explicit-user | source=SKILL.md#1-授权门
 
 在任何草稿、图表、源码、文献或报告写入，以及任何付费／远程／高成本调用前，列出并让用户确认：
 

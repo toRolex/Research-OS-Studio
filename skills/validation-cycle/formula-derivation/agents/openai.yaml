@@ -1,0 +1,5 @@
+interface:
+  display_name: "formula-derivation"
+  short_description: "推导公式并组织理论主线。对象或假设未固定、需要完整推导包时使用。"
+policy:
+  allow_implicit_invocation: false

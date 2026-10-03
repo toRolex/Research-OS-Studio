@@ -1,13 +1,15 @@
 ---
 name: idea-generation
 description: 多视角候选。从现成文献、研究笔记或已有结果生成候选 Idea，并去重、按明确资源约束筛选。要候选池加筛选记录时使用。
+disable-model-invocation: true
 ---
 
 # 多视角候选 Idea
 
-从材料产生新的研究问题，不把用户已有候选换个格式当生成。默认 model-invoked，供当前已授权的 Idea Discovery 职责调用；用户也可点名单独使用。生成者负责扩大覆盖、说明方法与可验证性，最终采用由用户决定。
+从材料产生新的研究问题，不把用户已有候选换个格式当生成。显式调用或已授权正文级联，供当前已授权的 Idea Discovery 职责调用；用户也可点名单独使用。生成者负责扩大覆盖、说明方法与可验证性，最终采用由用户决定。
 
 ## 1. 确定输入与边界
+Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#1-确定输入与边界
 
 读取用户指定的文献、研究笔记、数据说明、已有结果及失败记录。直接接受自然格式及粘贴正文；不要求先运行文献入口或 setup。
 

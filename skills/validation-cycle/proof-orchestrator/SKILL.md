@@ -11,6 +11,7 @@ metadata:
 # 长期 Proof Orchestrator
 
 ## 职责与授权
+Gate: round-scope | before=round-start | approval=explicit-user | source=SKILL.md#职责与授权
 
 用户显式调用的独立 Workflow，适用于跨会话续接单个复杂证明 obligation、隔离长期阻塞点或准备精确交接包。普通一次性推导不需要本 Workflow；形式化不是前置条件。
 
@@ -89,6 +90,7 @@ metadata:
 完成条件：每项检查有结果及适用范围，候选正文与审查标签相符。严重独立意见尚未解决时保留争议；用户允许带风险交付不使未证命题成为已证。
 
 ## 5. 必要时准备手动交接，随后停止
+Gate: external-action | before=remote-action | approval=explicit-user | source=SKILL.md#5-必要时准备手动交接随后停止
 
 仅在已隔离阻塞点或用户明确请求交接时，按 [提示模板](references/dispatch-prompts.md) 打开本轮那一个 branch。模板是本 Workflow 的局部方法，不是额外 Skill／自动调用链。
 

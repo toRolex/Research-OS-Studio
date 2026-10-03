@@ -11,9 +11,10 @@ metadata:
 
 # 证明修复
 
-用户主动启动的有限修复流程。输入是完整证明与待修问题；输出是获准范围内的证明修订、完整数学论证和自然 Markdown 修复记录。正文保持原生格式（Markdown 或 LaTeX）；下文 LaTeX 编辑/编译步骤仅适用于对应输入，普通证明不要求 LaTeX 或 Lean 环境。记录与正文分别授权。内部数学检视自行完成；所有承担审查结论的 review 只调用 model-invoked `proof-review`。本技能不启动其它顶层 Workflow，也不接入定时循环。
+用户主动启动的有限修复流程。输入是完整证明与待修问题；输出是获准范围内的证明修订、完整数学论证和自然 Markdown 修复记录。正文保持原生格式（Markdown 或 LaTeX）；下文 LaTeX 编辑/编译步骤仅适用于对应输入，普通证明不要求 LaTeX 或 Lean 环境。记录与正文分别授权。内部数学检视自行完成；所有承担审查结论的 review 只调用 按路径级联读取的 `proof-review`。本技能不启动其它顶层 Workflow，也不接入定时循环。
 
 ## 1. 确认修复契约
+Gate: repair-contract | before=repair-write | approval=explicit-user | source=SKILL.md#1-确认修复契约
 
 确认前只读取用户已授权的材料；发现新增依赖时先列绝对路径或来源，请用户确认读取边界后，再完整阅读定义、假设、引用结果和上下游依赖、补全契约。材料不全时列出缺项；既有批评是待核实输入，不能代替原文。按 [授权与记录模板](templates/repair-record.md) 提出契约，等待用户明确确认：
 
@@ -37,6 +38,7 @@ metadata:
 完成条件：每个问题可定位到完整原文，每个待修结果的上下游、假设和未解除义务可追踪；审查失败不视为没有问题。
 
 ## 3. 在确认轮数内修复
+Gate: assumption-or-claim-change | before=claim-change | approval=explicit-user | source=SKILL.md#3-在确认轮数内修复
 
 按 FATAL → CRITICAL → MAJOR → MINOR 处理，先尝试反例，再明确四选一：
 
@@ -54,6 +56,7 @@ metadata:
 完成条件：每项改动有完整推导、明确策略、新增义务和获准下游同步；未获批方案只作为提案保留。
 
 ## 4. 独立处理编译
+Gate: compile-authorization | before=compile | approval=explicit-user | source=SKILL.md#4-独立处理编译
 
 有单独批准才使用已存在的环境执行批准命令，保留实际退出码、日志与实际产物位置。检查语法错误、未定义引用、缺失文献、标签冲突及警告；不能只凭过滤日志无输出宣布成功，不能把旧 PDF 当成新结果。编译成功不代表证明成立。
 

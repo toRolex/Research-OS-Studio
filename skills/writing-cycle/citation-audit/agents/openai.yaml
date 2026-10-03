@@ -1,0 +1,5 @@
+interface:
+  display_name: "citation-audit"
+  short_description: "引用身份、元数据、每处语境；父流程局部检查。只返回发现、不改。"
+policy:
+  allow_implicit_invocation: false

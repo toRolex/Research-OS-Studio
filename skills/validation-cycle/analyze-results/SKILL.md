@@ -1,6 +1,7 @@
 ---
 name: analyze-results
 description: 分析已完成结果的统计可信度。用户问“结果怎么样／可信吗”，或已授权的 Validation 职责需要分析已完成结果时使用。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[baseline、结果文件、attempt 记录与待答问题的路径；可指定报告位置]" -->
 
@@ -9,8 +10,9 @@ description: 分析已完成结果的统计可信度。用户问“结果怎么�
 从 baseline、全部 attempts 和失败记录形成含不确定性与偏差限制的结果分析。它回答“已有结果实际显示了什么、支撑边界在哪里”，不回答“该做什么新实验”，更不把一次胜出写成结论。
 
 ## Scope and authorization
+Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#scope-and-authorization
 
-- **Role:** model-invoked internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. Read the original result files and attempt records, not only an executor's summary. A parent Workflow is a caller, not permission to start another Workflow.
+- **Role:** explicitly invoked or path-cascaded internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. Read the original result files and attempt records, not only an executor's summary. A parent Workflow is a caller, not permission to start another Workflow.
 - **Inputs:** the baseline (numbers plus where they came from), every attempt's raw outputs and run records (success, failure, crash, timeout, invalid, excluded), the configs and seeds behind each attempt, and the question the analysis should answer. Read existing project instructions and workspace navigation if present. Setup, a particular directory layout, a GPU scheduler, or any research runtime is not a prerequisite.
 - **Resolve before work:** identify the baseline source, the attempt set, and the output mode. If the baseline is missing, the attempt set is ambiguous, or the question is contradictory, ask one focused question and stop; do not invent a baseline or fill the attempt set from a directory listing. Keep the user's research question unchanged.
 - **Resources:** use already available, authorized read and compare tools, following host-specific tool routing. Simple descriptive computation (means, spreads, deltas) uses whatever the host already provides; do not install packages, environments, or analysis services. If a recomputation cannot be performed with available tools, keep the reported number as `reported` and record the gap rather than restating it as verified.

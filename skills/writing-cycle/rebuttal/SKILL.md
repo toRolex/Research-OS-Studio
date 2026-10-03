@@ -44,6 +44,7 @@ disable-model-invocation: true
 **完成条件**：每个原始 concern 都有原文锚点、准备度、支持或缺口及下一步；不存在静默消失的问题。
 
 ## 3. 制定策略，交用户选择
+Gate: strategy-confirm | before=reply-drafting | approval=explicit-user | source=SKILL.md#3-制定策略交用户选择
 
 先读 [回应方法与压力测试](references/response-methods.md)。识别两至四个共享主题（少量 concern 不凑数），为每项选择直接澄清、证据答复、closest-work 差异、假设层次、窄让步、未来工作边界或结构性区别。
 
@@ -85,6 +86,7 @@ disable-model-invocation: true
 **完成条件**：八项均有实际结果；事实、承诺、覆盖或长度阻塞未解除时只保留候选和问题报告。达到两轮修订上限仍有问题则停止，不无限追求审查通过；模型意见不决定科研真伪或投稿安全。
 
 ## 6. 用户审阅与交付
+Gate: wording-confirm | before=paste-ready | approval=explicit-user | source=SKILL.md#6-用户审阅与交付
 
 展示完整候选措辞、修订清单、所有未解决项和检查限制，用户可删改／拒绝。确认策略不等于确认最终措辞；任何修改后重查受影响项与目标计数。
 

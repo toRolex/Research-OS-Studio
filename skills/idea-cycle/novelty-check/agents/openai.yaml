@@ -1,0 +1,5 @@
+interface:
+  display_name: "novelty-check"
+  short_description: "查新：对已有候选的核心 Claim 主动检索 closest prior work，判断已覆盖、关键区别或证据缺口。用户问“有没有人做过”时使用。"
+policy:
+  allow_implicit_invocation: false

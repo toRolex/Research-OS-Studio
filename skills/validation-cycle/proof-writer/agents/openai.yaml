@@ -1,0 +1,5 @@
+interface:
+  display_name: "proof-writer"
+  short_description: "撰写固定命题的证明。用于证明定理、补全证明，或把草图写成证明。"
+policy:
+  allow_implicit_invocation: false

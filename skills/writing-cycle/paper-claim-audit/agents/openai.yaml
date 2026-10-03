@@ -1,0 +1,5 @@
+interface:
+  display_name: "paper-claim-audit"
+  short_description: "数字、比较、配置、caption、实验范围是否忠实于原始结果。只输出发现。"
+policy:
+  allow_implicit_invocation: false

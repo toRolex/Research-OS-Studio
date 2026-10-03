@@ -1,0 +1,5 @@
+interface:
+  display_name: "claim-stress-test"
+  short_description: "整篇最强拒稿论证：整篇论证是否站得住。"
+policy:
+  allow_implicit_invocation: false

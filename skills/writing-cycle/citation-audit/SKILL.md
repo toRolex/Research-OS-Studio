@@ -1,13 +1,15 @@
 ---
 name: citation-audit
 description: "引用身份、元数据、每处语境；父流程局部检查。只返回发现、不改。"
+disable-model-invocation: true
 ---
 
 # 引用审计
 
 ## 边界与输入
+Gate: audit-scope | before=audit-start | approval=explicit-user | source=SKILL.md#边界与输入
 
-这是 model-invoked 内部能力，也支持用户点名 standalone。composed 时只贡献父报告，继承其输入范围、资源预算、报告写入授权和 bib 冻结约束；不会启动顶层 Workflow，也不会调用应用修复入口。
+这是 显式调用或已授权正文级联 内部能力，也支持用户点名 standalone。composed 时只贡献父报告，继承其输入范围、资源预算、报告写入授权和 bib 冻结约束；不会启动顶层 Workflow，也不会调用应用修复入口。
 
 输入为论文目录或明确的正文与 bibliography 文件集合；可接受 Markdown、LaTeX、幻灯片正文／备注／讲稿及其来源映射。只给 bib 时，请求正文位置；用户只要元数据检查则明确为部分审计，语境不可用。成熟草稿最适合全面审计；若用户要求检查未完成稿，标出占位和范围局限，不宣称整稿通过。
 

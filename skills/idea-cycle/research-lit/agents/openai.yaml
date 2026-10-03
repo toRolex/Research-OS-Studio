@@ -1,0 +1,5 @@
+interface:
+  display_name: "research-lit"
+  short_description: "文献综合：从研究主题主动找论文、梳理 related work，或解释用户已有论文。当前授权的文献调查或单篇解释需要来源核实与证据综合时使用。"
+policy:
+  allow_implicit_invocation: false

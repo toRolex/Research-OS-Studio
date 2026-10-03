@@ -1,0 +1,5 @@
+interface:
+  display_name: "monitor-experiment"
+  short_description: "只读观测已有实验或训练作业的运行事实（running/completed/crashed/unknown、进度、输出与退出证据）。用户问“跑完了吗/还在跑吗”，或父 Workflo"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,5 @@
+interface:
+  display_name: "experiment-queue"
+  short_description: "把已授权的多作业实验组织为有界批次。用于“批量实验”“跑 grid”“多 seed sweep”，或 run-experiment 的批量阶段。"
+policy:
+  allow_implicit_invocation: false

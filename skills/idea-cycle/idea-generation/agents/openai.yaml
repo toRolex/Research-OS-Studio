@@ -1,0 +1,5 @@
+interface:
+  display_name: "idea-generation"
+  short_description: "多视角候选。从现成文献、研究笔记或已有结果生成候选 Idea，并去重、按明确资源约束筛选。要候选池加筛选记录时使用。"
+policy:
+  allow_implicit_invocation: false

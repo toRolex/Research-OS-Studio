@@ -1,0 +1,5 @@
+interface:
+  display_name: "analyze-results"
+  short_description: "分析已完成结果的统计可信度。用户问“结果怎么样／可信吗”，或已授权的 Validation 职责需要分析已完成结果时使用。"
+policy:
+  allow_implicit_invocation: false

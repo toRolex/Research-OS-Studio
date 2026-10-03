@@ -1,0 +1,5 @@
+interface:
+  display_name: "experiment-audit"
+  short_description: "实验完整性审计。用户要求审计实验是否真实完整，或已授权的 Validation／写作流程在形成 Claim 前需要独立核对时使用。"
+policy:
+  allow_implicit_invocation: false
