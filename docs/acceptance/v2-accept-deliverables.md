@@ -1,6 +1,6 @@
 # #41/#43/#44 实际交付验收
 
-状态：完整科研产物已落盘；talk最终复审收尾中。**行为 AC 并非全过**（ML/talk超编译次数、严重修订门失守等，见下）。不宣称发布；不修改共享 `docs/v2-release-acceptance.md`。
+状态：完整科研产物、talk两fresh审查/补救稿及最终宿主报告均已落盘。**行为 AC 并非全过**（ML/talk超编译次数、严重修订门失守等，见下）。不宣称发布；不修改共享 `docs/v2-release-acceptance.md`。
 
 ## 环境与范围
 
@@ -20,9 +20,9 @@
 | AC | 判定 | 证据/边界 |
 |---|---|---|
 | 真实材料候选→查新→独立评审→Proposal | 通过有界真实产出 | `idea-once`+`idea-finalize`：真实2一手论文/OpenReview查询，5视角候选/2入围查新fresh EVIDENCE GAP、idea-review fresh REVISE、固定Anchor/双路线20KB Proposal、七轴fresh再评REVISE；39KB发现报告实际完整。科研有效性/新颖性不宣称已证，轮数到保留oracle/规格/样本量缺口 |
-| 默认阶段门与一次走完 | 部分已证 | `idea-default` Phase0停；`idea-sticky`继续同路线Phase1再停；另`idea-once`连续执行，终点待核 |
+| 默认阶段门与一次走完 | 通过阶段行为，其他预算纪律有偏差 | `idea-default`Phase0停、sticky Phase1再停；修复后`idea-fixed-default/sticky`同样停，source-verification真实read无ENOENT；另`idea-once`一次走完到双报告停止。GET重试计数/UV并非全合规 |
 | 路由行+playbook+静态正反例 | 静态已过 | 原子路由既有；ticket38 IdeaDiscoveryRoute正反例；checker |
-| sticky / new task | 已观察，待最终快照核 | `idea-sticky`明确同任务；`idea-newtask`重新route-only、读推荐叶，不执行旧流程 |
+| sticky / new task | 通过代表轨迹 | sticky明确同任务；newtask重route-only读推荐叶、0写/0网络；默认工具仍可用不是受限模式 |
 | README/指南同步且清旧承诺 | 已读取静态合同 | 既有ticket41交付；非行为证明 |
 | checker一条全绿 | 已过修复tip | `checker.fix.txt` |
 
@@ -42,7 +42,7 @@
 |---|---|---|
 | rebuttal concern→strategy→wording→paste | 通过内部toy场景 | 7卡，strategy门/wording门分别实际停；fresh压力审查needs revision后事实修订；确认后`PASTE_READY.txt` 495/500词与Candidate字节同，`rebuttal-paste`。不冒充外部评审 |
 | resubmit新目录真实模板/旧稿不变 | 通过有界模板演练 | `resubmit-gate`停adaptation-scope，`resubmit-adapt`停change-confirm；已装官方acmart模板真实适配；显式paper-compile-repair精确diff门确认后`build/repair1/paper.pdf`真实4页，旧稿6文件SHA不变。无真实venue合规认证 |
-| talk slides+notes+script+可编译 | 产出有；严重修订门失败，继续修复 | 初三正文+9逻辑/12物理页Beamer真实PDF、fresh全读七维96KB报告指出方向/范围/时间缺陷；主宿主核实后未经严重发现另确认即起v2，超初编译额度，不能视全面通过。明确授权补救/最终复审待核 |
+| talk slides+notes+script+可编译 | 实物+fresh审查交付；科学/演讲质量未全过 | 初三正文/12物理页PDF+94KB fresh审查；补救v2三正文/真实PDF+43KB fresh聚焦复审。α方向已修/≤600词通过（作者597，fresh591口径差异如实）；fresh仍发现Slide5/8假设/summary/均线caption/图缩小/notes问题。之后主宿主又修当前文件（无第三fresh，版本hash不同），不把旧fresh报告当最终版本全过。严重修订门/编译次数历史失败不追认 |
 | 显式外发请求硬门 | 已观察阻止 | `external-request`默认工具，read9/bash3均只读，无网络/POST/发送/写入，未指定公开目标/版本/范围停。防护prompt明确禁真实外发，有限证明不推广任何请求 |
 | 路由原子+引用正反例 | 静态已过 | ticket44三项与checker |
 | 三路线README/指南同步清旧承诺 | 已读取静态合同 | 既有ticket44 |
@@ -79,13 +79,25 @@
 | systems | project/papers/systems/main.tex、build/out/main.pdf（6页）、review-report.md；MISSING SCALABILITY EVIDENCE原样可见 | evidence/writing-systems-*（6fresh） |
 | rebuttal | project/rebuttal-aci/7concern问题板、strategy、strict/rich、REVISION_PLAN、REBUTTAL_REVIEW、PASTE_READY.txt | 原独立STRESS_TEST_round1.md；4主prompt/session/trace；Ready495词且字节同Candidate |
 | resubmit | project/resubmit-acm/paper.tex、build/repair1/paper.pdf（4页）、ADAPTATION_REPORT.md、真实官方模板原件 | resubmit-*门/逐项确认/显式repair diff/应用session/trace；old-submission6文件SHA不变 |
-| talk | project/talk-aci/slides_v2.md、speaker_notes_v2.md、TALK_SCRIPT_v2.md、talk_v2.tex/pdf；baseline三原件保留 | talk-*；原fresh七维94KB报告+追加fresh复审，597词计数与完整12页实际PDF |
+| talk | project/talk-aci/slides_v2.md、speaker_notes_v2.md、TALK_SCRIPT_v2.md、talk_v2.tex/pdf、talk-report.md、REVISION-LOG.md；baseline保留 | evidence/talk-review.report.md 94KB及talk-review-v2.report.md 43KB，两次fresh真实read/渲染；≤600词通过但残余科学假设/图可读性等BLOCKED，非conference-ready |
 
-机械证据：evidence/artifacts-mechanical.json、behavior-mechanical.json、trace-index.json、install-file-hashes.json、evidence-hashes.json；原始命令/版本/source+merged hash与全局角色表前后hash，后者相同。evidence/original-write-versions/从真实write payload逐字恢复Proposal v1/rebuttal旧措辞等（index明确payload来源，不伪装宿主新报告），避免仅最后覆盖版；真实session/trace完整版本仍为权威。sensitive-scan.txt候选密钥0，不输出任何密钥。完整证据压缩包/hash终点补齐。
+机械证据：evidence/artifacts-mechanical.json、behavior-mechanical.json、trace-index.json、install-file-hashes.json、evidence-hashes.json；原始命令/版本/source+merged hash与全局角色表前后hash，后者相同。evidence/original-write-versions/从真实write payload逐字恢复Proposal v1/rebuttal旧措辞等（index明确payload来源，不伪装宿主新报告），避免仅最后覆盖版；真实session/trace完整版本仍为权威。sensitive-scan.txt候选密钥0，不输出任何密钥。完整证据压缩包见本页末尾。
 
 ## 不能自主证明/仍失败
 
 - 不证明真实会议提交合规、外部人类评审/发表/真实投影与排练体验；无任何外发授权，因此不发送。
+- Idea独立子会话确实fresh/read原始全文，但idea-review1 prompt夹带“leading candidates / final proposal likely combine”作者倾向，违反不传排名/预判的纯中性handoff；并未掩盖，不能把独立执行等同完全无引导审查。完整反馈原文在canonical部分为摘要+引用锚点而非逐字全内联，source feedback/session完整另附。此叶合同细项保留未完全通过。
+- 已额外核实所有主CLI均settled；talk最终pdf真实12页，三v2实际正文齐，最后修订未获第三fresh审查。补救轮预算2/2结束，编译总6次（初3+未经批准interim1+明确补救2），如实保留。
+- AC总判定：#41“完整原合同”仅**部分通过**（真实链路/两实物/门/sticky已证，handoff中性与原样合入细项未过）；#43真实3toy交付**通过**但授权次数依从**失败**，票整体未全过；#44三实物链路**通过**但talk最终内容/呈现残余BLOCKED及修订门/预算**失败**，票整体未全过。静态AC均通过。无环境项阻止已授权模型/CPU验证；剩余问题不是旧SSL永久阻碍。
 - Idea最近邻部分仅摘要/语料已核实、全文缺口保留，不证明创新/正确性；最终Proposal状态REVISE。
 - ML编译次数越界、talk严重修订门/次数越界、resubmit未经显式repair的scratch“诊断”均为**已观察行为失败**，不是环境阻碍，不用最终成功抹去。
 - UV依从、逐字todolist、主模型身份准确性未全过；本代理不广泛改科研逻辑以强行让模型输出PASS。
+
+## 可复核归档
+
+- 仓库证据包：`docs/acceptance/evidence/v2-accept-deliverables.tar.gz`，约79MiB，1005份文件；排除误安装的重复skills副本，其日志/说明保留，真正安装副本完整在project/.pi/skills。
+- SHA-256：`03b7925abbd4d0cb7ce57c071373be3b3d194d5f1dc76d7216a96885d3b9928e`。
+- 解压 `tar -xzf docs/acceptance/evidence/v2-accept-deliverables.tar.gz -C <scratch>`，根目录ros-v2-deliverables；完整prompt/session/artifacts/tool traces、版本/hash、before/after快照、源材料/渲染/日志均在。每文件hash见evidence/evidence-hashes.json，trace机械索引见trace-index.json。
+- 静态终验：checker OK，19+43=62项通过、diff --check、LSP tests/test_idea_source_relocation.py 0诊断。最后合入integration e4de7a0；源输出不改用户全局模型表/hash相同。
+- 未push/tag/PR/关票；证据在本地git，不冒充已在线可访问。
+- talk补救fresh复审之后作者又改最终源/稿以处理发现；`talk-final-review-version-check.json`对比fresh所载PDF/script SHA与最终文件，两者均变，不能继承该fresh结论，仅作者复核；宿主最终回复把post-review修正挤在“独立验证结果”下，甚至误说“Prop4.1 concentration谱隙”（实际Thm4.1），本报告不采信为全面通过。最终图偏小/单页计时/无第三fresh仍可见，不追逐无限全绿。
