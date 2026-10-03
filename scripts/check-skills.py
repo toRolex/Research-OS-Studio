@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Research OS Studio Skills 静态完整性检查（spec Testing 5）。
+"""Research OS Studio Skills 静态完整性检查。
 
 纯标准库；报告全部问题并以非零退出码结束。检查项：
 1. skills/ 下 SKILL.md 数量与 frontmatter 基本规范（name/description）
 2. name 与目录名一致、name 全局唯一
 3. 调用策略：除 setup-research-os 外必须显式调用，且 openai.yaml 的 allow_implicit_invocation 值为 false
-3b. 叶 skill 门声明与经审阅基线一致；入口 research-os 用 Gates: none
+3b. 叶 skill 门声明与经审阅基线一致；入口 research-os 用 Gates: none；setup 门由同一脚本的角色/政策合同核对
 4. 全部 markdown 相对链接指向 git 追踪内存在的文件（豁免占位符与已知 brace 行文）
 5. README.md 与 skills/README.md 的 Skill 清单与目录树一致
+6. 角色表、算力政策、研究日志字段；--skip-suite 只查显式给出的合同文件
 """
+import argparse
+import math
 import re
 import subprocess
 import sys
@@ -18,9 +21,68 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "skills"
 EXPECTED_COUNT = 39
 SETUP_NAME = "setup-research-os"
+ROLES = (
+    "orchestrator",
+    "literature",
+    "ideator",
+    "implementer",
+    "analyst",
+    "prover",
+    "writer",
+    "reviewer",
+)
+THINKING = {"off", "minimal", "low", "medium", "high", "xhigh", "max"}
+COMPUTE_UNITS = {"cpu-core-hour", "gpu-device-hour"}
+RUN_BASES = {"planned-run", "attempt"}
+POLICY_KEYS = (
+    "scope",
+    "cost_limit",
+    "currency",
+    "compute_limit",
+    "compute_unit",
+    "run_limit",
+    "run_count_basis",
+    "per_attempt_cost_limit",
+    "per_attempt_compute_limit",
+    "concurrency_limit",
+    "retry_limit",
+    "valid_for_hours",
+    "valid_until",
+)
+LOG_EXTRAS = (
+    "batch_id",
+    "plan",
+    "mode",
+    "user_confirmation",
+    "confirmed_at",
+    "confirmation_basis",
+    "authorization_status",
+    "run_id",
+    "attempt_id",
+    "worst_case_estimate",
+    "started_at",
+    "finished_at",
+    "actual_consumption",
+    "result_status",
+    "artifact_paths",
+)
+# 本票只登记 setup。其他 skill 尚未写出门声明时不要求；写出后必须落在此处。
+GATE_BASELINE = {
+    "setup-research-os": {"model-confirm", "write-confirm"},
+}
+GATE_RE = re.compile(
+    r"^Gate:\s*([A-Za-z0-9-]+)\s*\|\s*before=([A-Za-z0-9-]+)\s*\|\s*"
+    r"approval=([A-Za-z0-9-]+)\s*\|\s*source=(\S+)\s*$"
+)
+GATES_NONE_RE = re.compile(r"^Gates:\s*none\s*$")
+ROLE_LINE_RE = re.compile(r"^([a-z]+):\s*(\S+)\s*\|\s*([A-Za-z0-9]+)\s*$")
+ROLE_REF_RE = re.compile(r"Role:\s*([A-Za-z0-9_-]+)")
+FIELD_RE = re.compile(r"^-\s*([a-z_]+):\s*(.*?)\s*$")
+ANCHOR_RE = re.compile(r"^#{1,6}\s+(.+?)\s*$")
 
 # 已知豁免：上游路径描述的 brace 展开行文（systems-paper-writing 来源段），
 # 行内已注明"上游仓库路径"，本仓不持有这些文件。
+
 LINK_EXEMPT_SNIPPETS = ("references/{", "writing-systems-papers")
 
 problems: list[str] = []
@@ -111,17 +173,13 @@ for sf in skill_files:
     yaml_text = openai_yaml.read_text(encoding="utf-8") if has_openai_yaml else None
     implicit = yaml_allow_implicit(yaml_text)
     if name == SETUP_NAME:
-        # #40 才翻转 setup。当前仍是显式调用；已写的显式字段不得半翻。
-        if explicit and not has_openai_yaml:
-            err(f"{rel}: User-invoked 但缺 agents/openai.yaml")
-        if explicit and implicit != "false":
-            err(
-                f"{rel}: setup 若已显式调用，allow_implicit_invocation 必须为 false，实际 {implicit!r}"
-            )
-        if implicit == "false" and not explicit:
-            err(f"{rel}: setup 的 openai.yaml 为 false 但 frontmatter 不是显式调用")
-        if not explicit and has_openai_yaml and implicit != "false":
-            err(f"{rel}: model-invoked 但存在 agents/openai.yaml")
+        # #40：唯一允许模型建议。不得保留 disable-model-invocation，yaml 必须为 true。
+        if explicit:
+            err(f"{rel}: setup-research-os 必须允许模型建议，不能禁用 model invocation")
+        if not has_openai_yaml:
+            err(f"{rel}: setup-research-os 缺 agents/openai.yaml")
+        elif implicit != "true":
+            err(f"{rel}: setup-research-os 的 allow_implicit_invocation 必须为 true，实际 {implicit!r}")
     else:
         if not explicit:
             err(f"{rel}: 调用策略缺失或值错误，除 setup 外必须 disable-model-invocation: true")
@@ -672,19 +730,273 @@ for sf in skill_files:
         err(f"{rel}: 门声明与基线不一致，期望 {sorted(expected)}，实际 {seen}")
 
 
-def main() -> None:
+
+def parse_fields(text: str) -> dict[str, list[str]]:
+    found: dict[str, list[str]] = {}
+    for line in text.splitlines():
+        match = FIELD_RE.match(line.strip())
+        if match:
+            found.setdefault(match.group(1), []).append(match.group(2).strip())
+    return found
+
+
+def finite_number(raw: str) -> float | None:
+    try:
+        value = float(raw)
+    except ValueError:
+        return None
+    if not math.isfinite(value):
+        return None
+    return value
+
+
+def check_role_file(path: Path, label: str) -> set[str]:
+    seen: set[str] = set()
+    if not path.is_file():
+        err(f"{label}: 角色表不存在")
+        return seen
+    for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        match = ROLE_LINE_RE.match(stripped)
+        if not match:
+            err(f"{label}:{lineno}: 角色行格式必须是 `角色: provider/model-id | thinking`")
+            continue
+        role, model, thinking = match.groups()
+        if role not in ROLES:
+            err(f"{label}:{lineno}: 未知角色 {role}")
+        if role in seen:
+            err(f"{label}:{lineno}: 角色 {role} 重复")
+        seen.add(role)
+        if "/" not in model or model.startswith("/") or model.endswith("/"):
+            err(f"{label}:{lineno}: 模型必须是 provider/model-id")
+        if thinking not in THINKING:
+            err(f"{label}:{lineno}: thinking `{thinking}` 不在允许档位")
+    missing = [role for role in ROLES if role not in seen]
+    if missing:
+        err(f"{label}: 角色表缺 {', '.join(missing)}")
+    return seen
+
+
+def check_role_refs(paths: list[Path], roles: set[str]) -> None:
+    allowed = roles or set(ROLES)
+    for path in paths:
+        if not path.is_file():
+            err(f"{path}: 角色引用文件不存在")
+            continue
+        for lineno, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+            for role in ROLE_REF_RE.findall(line):
+                if role not in allowed:
+                    err(f"{path}:{lineno}: 角色引用未闭合: {role}")
+
+
+def check_policy(path: Path) -> dict[str, list[str]]:
+    if not path.is_file():
+        err(f"{path}: 政策文件不存在")
+        return {}
+    text = path.read_text(encoding="utf-8")
+    fields = parse_fields(text)
+    for key in POLICY_KEYS:
+        if key not in fields:
+            err(f"{path}: 政策缺字段 {key}")
+    for key, values in fields.items():
+        if key not in POLICY_KEYS:
+            err(f"{path}: 政策含未知字段 {key}")
+        for raw in values:
+            if raw.lower() in {"unlimited", "nan", "inf", "+inf", "-inf"}:
+                err(f"{path}: 非法额度值 {key}={raw}")
+    numbers: dict[str, list[float]] = {}
+    for key in (
+        "cost_limit",
+        "compute_limit",
+        "per_attempt_cost_limit",
+        "per_attempt_compute_limit",
+        "valid_for_hours",
+    ):
+        for raw in fields.get(key, []):
+            value = finite_number(raw)
+            if value is None or value < 0:
+                err(f"{path}: {key} 必须是有限非负数，实际 {raw}")
+            else:
+                numbers.setdefault(key, []).append(value)
+    for key in ("run_limit", "concurrency_limit", "retry_limit"):
+        for raw in fields.get(key, []):
+            value = finite_number(raw)
+            if value is None or value < 0 or not value.is_integer():
+                err(f"{path}: {key} 必须是非负整数，实际 {raw}")
+    for raw in fields.get("compute_unit", []):
+        if raw not in COMPUTE_UNITS:
+            err(f"{path}: 无单位或未知算力单位 {raw}")
+    if len(fields.get("compute_limit", [])) != len(fields.get("compute_unit", [])):
+        err(f"{path}: compute_limit 与 compute_unit 必须逐行配对")
+    for raw in fields.get("run_count_basis", []):
+        if raw not in RUN_BASES:
+            err(f"{path}: run_count_basis 只能是 planned-run 或 attempt")
+    for key in ("currency", "scope", "valid_until"):
+        for raw in fields.get(key, []):
+            if raw == "not-applicable" and "因为" not in text and "because" not in text.lower():
+                err(f"{path}: {key}=not-applicable 必须解释")
+    costs = numbers.get("cost_limit", [])
+    per_costs = numbers.get("per_attempt_cost_limit", [])
+    if costs and per_costs and max(per_costs) > min(costs):
+        err(f"{path}: 单次超过累计上限")
+    computes = numbers.get("compute_limit", [])
+    per_computes = numbers.get("per_attempt_compute_limit", [])
+    if computes and per_computes and sum(per_computes) > sum(computes) and len(computes) == len(per_computes):
+        for index, (limit, per_attempt) in enumerate(zip(computes, per_computes, strict=True)):
+            if per_attempt > limit:
+                err(f"{path}: 第 {index + 1} 行单次超过累计上限")
+    return fields
+
+
+def check_log(path: Path, policy_fields: dict[str, list[str]]) -> None:
+    if not path.is_file():
+        err(f"{path}: 日志文件不存在")
+        return
+    fields = parse_fields(path.read_text(encoding="utf-8"))
+    for key in POLICY_KEYS + LOG_EXTRAS:
+        if key not in fields:
+            err(f"{path}: 日志缺字段 {key}")
+    if policy_fields:
+        for key in POLICY_KEYS:
+            if key not in fields:
+                err(f"{path}: 日志未复用政策字段 {key}")
+
+
+def anchors_in(path: Path) -> set[str]:
+    found = set()
+    if not path.is_file():
+        return found
+    for line in path.read_text(encoding="utf-8").splitlines():
+        match = ANCHOR_RE.match(line.strip())
+        if match:
+            found.add(match.group(1).replace(" ", "-"))
+    return found
+
+
+def check_gates(skill_dir: Path, skill_name: str) -> None:
+    expected = GATE_BASELINE.get(skill_name)
+    skill_file = skill_dir / "SKILL.md"
+    if not skill_file.is_file():
+        err(f"{skill_name}: SKILL.md 不存在")
+        return
+    found: list[str] = []
+    none_lines = 0
+    for lineno, line in enumerate(skill_file.read_text(encoding="utf-8").splitlines(), 1):
+        stripped = line.strip()
+        if GATES_NONE_RE.match(stripped):
+            none_lines += 1
+            continue
+        match = GATE_RE.match(stripped)
+        if stripped.startswith(("Gate:", "Gates:")) and match is None and none_lines == 0:
+            err(f"{skill_name}:{lineno}: 门声明格式错误")
+            continue
+        if not match:
+            continue
+        gate_id, _before, approval, source = match.groups()
+        if approval != "explicit-user":
+            err(f"{skill_name}:{lineno}: approval 必须是 explicit-user")
+        if not source.startswith("SKILL.md#") and not source.startswith("references/"):
+            err(f"{skill_name}:{lineno}: source 越出当前 skill")
+        source_path, _, anchor = source.partition("#")
+        target = skill_dir / source_path
+        if anchor not in anchors_in(target):
+            err(f"{skill_name}:{lineno}: 坏 source {source}")
+        found.append(gate_id)
+    duplicates = sorted({gate for gate in found if found.count(gate) > 1})
+    if duplicates:
+        err(f"{skill_name}: 重复门 {', '.join(duplicates)}")
+    if none_lines and found:
+        err(f"{skill_name}: none 与具体门不能并存")
+    if expected is None:
+        if found or none_lines:
+            err(f"{skill_name}: 门声明不在已审阅基线")
+        return
+    actual = set(found)
+    if none_lines:
+        actual = set()
+        if expected:
+            err(f"{skill_name}: 全部→none，基线要求 {', '.join(sorted(expected))}")
+    missing = sorted(expected - actual)
+    extra = sorted(actual - expected)
+    if missing:
+        err(f"{skill_name}: 缺失门 {', '.join(missing)}")
+    if extra:
+        err(f"{skill_name}: 多余门 {', '.join(extra)}")
+    if not found and not none_lines and expected:
+        err(f"{skill_name}: 整节删，基线要求 {', '.join(sorted(expected))}")
+
+
+def run_contract(args: argparse.Namespace) -> None:
+    roles: set[str] = set()
+    if args.role_file:
+        roles = check_role_file(Path(args.role_file), args.role_file)
+    if args.role_template:
+        check_role_file(Path(args.role_template), args.role_template)
+    if args.role_refs:
+        check_role_refs([Path(item) for item in args.role_refs], roles)
+    policy_fields: dict[str, list[str]] = {}
+    if args.policy_file:
+        policy_fields = check_policy(Path(args.policy_file))
+    if args.log_file:
+        check_log(Path(args.log_file), policy_fields)
+    if args.gates_dir:
+        if not args.skill_name:
+            err("门检查需要 --skill-name")
+        else:
+            check_gates(Path(args.gates_dir), args.skill_name)
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Research OS skill 与配置合同检查")
+    parser.add_argument("--role-file")
+    parser.add_argument("--role-template")
+    parser.add_argument("--role-refs", nargs="*")
+    parser.add_argument("--policy-file")
+    parser.add_argument("--log-file")
+    parser.add_argument("--gates-dir")
+    parser.add_argument("--skill-name")
+    parser.add_argument(
+        "--skip-suite",
+        action="store_true",
+        help="只检查显式给出的角色、政策、日志或门，不扫描仓库 skills/",
+    )
+    return parser.parse_args()
+
+
+
+
+def run_builtin_contract() -> None:
+    setup_dir = SKILLS / "general" / "setup-research-os"
+    check_role_file(
+        setup_dir / "templates" / "research-os-models.md", "research-os-models.md"
+    )
+    check_policy(setup_dir / "templates" / "compute-policy.md")
+    check_log(setup_dir / "templates" / "research-log.md", {})
+    check_gates(SKILLS / "general" / "setup-research-os", "setup-research-os")
+
+
+
+def main() -> int:
+    args = parse_args()
+    if args.skip_suite:
+        run_contract(args)
+    else:
+        run_builtin_contract()
+        run_contract(args)
     if problems:
         print(f"FAIL: {len(problems)} 个问题")
-        for p in problems:
-            print(f"  - {p}")
-        sys.exit(1)
-
-    u_count = sum(1 for v in classifications.values() if v == "U")
-    m_count = sum(1 for v in classifications.values() if v == "M")
+        for problem in problems:
+            print(f"  - {problem}")
+        return 1
+    u_count = sum(1 for value in classifications.values() if value == "U")
+    m_count = sum(1 for value in classifications.values() if value == "M")
     print(
         f"OK: {len(skill_files)} 个 Skill（U {u_count} / M {m_count}），调用策略与门声明通过"
     )
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
