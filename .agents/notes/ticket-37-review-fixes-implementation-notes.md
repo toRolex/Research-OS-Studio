@@ -28,4 +28,8 @@ use_skill pre-implement、writing-for-agents 已加载；use_skill tdd 不在注
 
 ## Deviations / acceptance gaps
 
-- 无真实宿主科研项目轨迹；编排者核实、逐步 todolist、跨宿主显式策略仍待 Seam B，静态测试不伪造行为通过。
+- 无本轮重跑的真实宿主科研项目轨迹；编排者核实、逐步 todolist、跨宿主显式策略仍待 Seam B，静态测试不伪造行为通过。
+
+## Integration / final verification
+
+修复 commit 23d8fc5；报告前合入最新 integration tip 70306a9，merge commit 2ec4671，无冲突。合并后重跑 checker OK（39 / U38 M1），tests/ 16 + scripts/ 41 = 57 项通过，git diff --check 通过；主动 LSP 检查两个 Python 改动文件无诊断。#46 acceptance 文档纠正「推荐对象名等于执行路由」的过度推断并明确合同修复未重跑行为。未 push/PR/关票，未动原 main。

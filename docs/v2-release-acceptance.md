@@ -21,8 +21,8 @@
 |---|---|---|---|
 | 只读意图夹带「写论文并跑实验」 | pi，`cliproxy/glm-5.3-flash`，工具仅 read | 读了路由表、route-only、PRODUCT-MAP、idea-cycle。推荐 idea-discovery，并给出备选。项目快照不变 | `pi-route3.jsonl` |
 | 同上 | Claude Code，`--model haiku`，实际用量记 `gpt-6-luna` 与 `glm-5.3-flash`，工具 Read，`permission_mode plan` | 命中 route-only，声明未写文件。`web_search_requests` 为 0。快照不变。第一次文本输出只有 `/research-os`，不采用 | `claude-route2.json`，session `ce398e80-1b39-4460-9681-211572445938` |
-| 同上 | Codex `deepseek-v4.1-flash`，read-only sandbox，ephemeral | 读了三份文件，回复首选 experiment-plan。只读优先未遵守。不作为通过 | `codex-route.jsonl` |
-| 无子代理，点名「设计实验」 | pi，工具仅 read | 命中 experiment-plan，只读两份编排文件，未写文件。叶 `experiment-plan` 正文未读，串行降级未走完级联 | `pi-serial.jsonl` |
+| 同上 | Codex `deepseek-v4.1-flash`，read-only sandbox，ephemeral | 读了入口、route-only 与地图；reasoning 明确选择 route-only，最终推荐 experiment-plan，无执行证据。未读推荐叶正文，且「论文骨架」描述无叶依据；不作为完整通过 | `codex-route.jsonl` |
+| 无子代理，点名「设计实验」 | pi，工具仅 read | 命中 experiment-plan，只读两份编排文件，未写文件；明确因扁平安装路径不知而停止，未冒充已读。叶 `experiment-plan` 正文未读，串行降级未走完级联 | `pi-serial.jsonl` |
 
 pi 第一次把 `--skill` 指到 research-os 时，实际读的是 setup，推荐 setup。第二次 `--no-skills` 未给出绝对路径，四次 read 都 ENOENT。这两次不作通过证据。
 
@@ -38,6 +38,12 @@ pi 第一次把 `--skill` 指到 research-os 时，实际读的是 setup，推�
 | 43 | 授权前读路径 | 三变体真实材料交付仍缺 |
 | 44 | `/tmp/ros-t44-throwaway` 三条路线 | 文件还在；本次未重跑 |
 | 45 | `/tmp/ros-pickup2-xa6P/session2.jsonl` | 文件还在；本次未重跑 |
+
+## #37 review 修复后状态
+
+在修复分支合入 integration tip `70306a9` 后，checker 仍通过；tests/ 16 项、scripts/ 41 项，共 57 项通过。新静态反例覆盖 none 混用、当前 skill 来源边界（含 symlink）、异构算力逐单位上限与配对、默认角色闭合、未追踪级联引用。入口补 todolist/核实产物、当前 route-only 与推荐对象区分、扁平安装路径映射及串行叶全文读取。
+
+这些是合同修复，不是原失败场景重跑结果；上述宿主轨迹来自修复前。未重跑，不把正文增强视为行为已通过。
 
 ## 发布
 
