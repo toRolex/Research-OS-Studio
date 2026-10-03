@@ -14,6 +14,10 @@
 | Phase 4 评审 | `idea-review` | `#独立评审` |
 | Phase 4.5 收敛 | `idea-refinement`（另写入获准的 `RESEARCH_PROPOSAL.md`） | `#收敛与 Proposal` |
 
+## 原文合入检查
+
+独立评审及续轮的实际请求与原始回复在 canonical 对应章节逐字完整内联（可使用 fenced text 保持原文）；保留轮次、来源定位与全部未解决意见。链接或摘要不替代原始全文，执行摘要仅作导航。交付前从真实返回逐段直接对照章节，缺段先补齐或标为未完成；不能因反馈另存在 sidecar 就宣称原样合入完成。
+
 ## 缺口降级
 
 - **无可用检索能力**：Phase 1 按 supplied-material synthesis 继续，覆盖范围限定为已供材料；不推断“无文献存在”。
