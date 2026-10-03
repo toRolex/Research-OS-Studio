@@ -101,12 +101,12 @@ It recommends the appropriate skill based on your research topic or existing dra
 ## 39 Skills Inventory
 
 The suite contains 39 standalone skills organized by trigger type:
-- **User-invoked (User, 17 skills)**: Top-level workflows or administrative entry points initiated by the user.
-- **Model-invoked (Model, 22 skills)**: Specialized internal capabilities called within top-level workflows or run individually.
+- **User-invoked (User, 16 skills)**: Top-level workflows or administrative entry points initiated by the user.
+- **Model-invoked (Model, 23 skills)**: Specialized capabilities that can be suggested or called by name. `setup-research-os` is in this group, and every write still needs confirmation.
 
 | Category | Skill Name | Invocation | Description |
 |---|---|---|---|
-| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | User | Interactive workspace initialization with explicit confirmation |
+| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Model | Confirm live session models, eight roles, a zero-grant policy, and workspace seeds |
 | | [ask-research-os](../skills/general/ask-research-os/SKILL.md) | User | Read-only guide recommending skills for your current stage |
 | **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | User | Full ideation workflow: literature search, ideation, novelty check, review, proposal |
 | | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Model | Literature search and synthesis with source verification |
