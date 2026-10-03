@@ -65,7 +65,7 @@ Gates: none
 
 ## 级联
 
-命中已交付 playbook 后，把其步骤逐字抄入 todolist，逐步跟踪 pending / in-progress / completed / blocked；仅达到该步骤完成条件才标 completed。用当前会话的清单记录即可；route-only 只在对话内跟踪，不创建任务或文件。
+命中已交付 playbook 后，把其步骤逐字抄入 todolist，逐步跟踪 pending / in-progress / completed / blocked；清单保留编号、原句及子列表，只附状态和证据定位，不压缩成阶段摘要。首次展示清单后逐项直接对照 playbook，漏句先补齐；仅达到该步骤完成条件才标 completed。用当前会话的清单记录即可；route-only 只在对话内跟踪，不创建任务或文件。
 
 每步开始前读对应叶 SKILL.md 全文，再按正文的条件读取点名资源并执行；读过入口、playbook 或步骤清单不等于读过叶正文。没有子代理工具时同样由编排者串行完成这些读取与步骤，不缩减叶合同。仓库路径形如 skills/<category>/<skill-name>/SKILL.md；安装扁平布局时映射到 <安装根>/<skill-name>/SKILL.md（安装根取当前入口 SKILL.md 所在 skill 目录的父级或宿主报告的位置），共置资源相对该叶目录解析。先核实实际文件；找不到时标 blocked 与路径缺口，不猜测已读或跳到后续步骤。
 
