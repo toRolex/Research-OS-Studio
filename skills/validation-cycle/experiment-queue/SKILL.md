@@ -1,6 +1,7 @@
 ---
 name: experiment-queue
 description: 把已授权的多作业实验组织为有界批次。用于“批量实验”“跑 grid”“多 seed sweep”，或 run-experiment 的批量阶段。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[manifest 或 grid 规格；可指定并发上限、重试上限与状态位置]" -->
 
@@ -11,6 +12,7 @@ description: 把已授权的多作业实验组织为有界批次。用于“批�
 与 run-experiment 的分工见 [experiment-bridge 第 4 节](../experiment-bridge/SKILL.md)。进度读状态表，不另开调度时钟。
 
 ## 1. 授权与资源门
+Gate: batch-authorization | before=job-start | approval=explicit-user | source=SKILL.md#1-授权与资源门
 
 在任何作业启动前，列出并让用户确认：
 
@@ -42,6 +44,7 @@ Grid 规格按笛卡尔积展开为明确作业；阶段模板在展开时把变
 **完成条件**：每个作业都有唯一 id、明确命令、预期输出和所属阶段；grid 展开可人工复核；依赖关系无环且指向已声明阶段。
 
 ## 3. 预检
+Gate: precondition-block | before=blocked-job | approval=explicit-user | source=SKILL.md#3-预检
 
 在执行前逐项检查并记录：
 

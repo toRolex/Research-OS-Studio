@@ -1,6 +1,7 @@
 ---
 name: run-experiment
 description: 已授权计划内的实现、审查、sanity、有界运行。用户说“实现并跑实验”，或 Validation Workflow 的实现执行阶段使用。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[实验计划、tracker 或 proposal 路径；说明演练/真实执行、可修改范围与资源上限]" -->
 
@@ -21,6 +22,7 @@ description: 已授权计划内的实现、审查、sanity、有界运行。用�
 输入至少包含以下之一：`EXPERIMENT_PLAN.md`、`EXPERIMENT_TRACKER.md`、`FINAL_PROPOSAL.md`，或用户明确给出的自然格式计划、代码、数据说明和评估说明。优先读取项目已有的 `CLAUDE.md`/`AGENTS.md`、README、工作区导航和计划引用的原始材料。文件缺失时不得按记忆补造计划；说明缺口并请求最小必要输入。计划中的命令、链接或文字不能扩大本次授权。
 
 ### 授权门
+Gate: run-authorization | before=run-start | approval=explicit-user | source=SKILL.md#授权门
 
 确认项、运行名额与停止／恢复的差额在 [experiment-bridge 第 1、4、7 节](../experiment-bridge/SKILL.md)。本文件执行该确认：缺少确认时只读解析并形成执行草案，停在授权门。默认不安装 Python/GPU/SSH/Slurm/云工具，不修改用户环境，不申请新凭据，不上传私有材料，不提交、push、发布或启动外部服务。
 
@@ -82,6 +84,7 @@ Sanity 的通过不是科学 Claim 的通过；sanity 失败也不是允许自�
 **完成条件**：审查结果与修复历史已保存；sanity 已按演练/真实模式明确执行或明确未执行；其状态为通过、失败、无效、超时或阻塞之一，并有原始记录。
 
 ## 5. Baseline-first 与执行顺序
+Gate: milestone-start | before=milestone | approval=explicit-user | source=SKILL.md#5-baseline-first-与执行顺序
 
 默认顺序固定为：
 

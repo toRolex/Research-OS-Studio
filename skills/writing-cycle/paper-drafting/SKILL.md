@@ -1,6 +1,7 @@
 ---
 name: paper-drafting
 description: 从计划写全文或指定节：依据现成计划和原始 Claims、Evidence、结果起草候选正文。供已授权 Workflow 调用，也支持用户点名。
+disable-model-invocation: true
 ---
 
 # Paper drafting
@@ -8,6 +9,7 @@ description: 从计划写全文或指定节：依据现成计划和原始 Claims
 将用户已有的计划写成受原始证据约束的候选正文。默认 model-invoked 的局部能力；用户可直接点名使用。与 `paper-writing` 总 Workflow 独立分工（另票交付）：本能力既不代替它，也不自动启动它。无需运行 setup 或其他前序 Skill。
 
 ## 1. 确认本次边界
+Gate: boundary-confirm | before=draft-write | approval=explicit-user | source=SKILL.md#1-确认本次边界
 
 读取请求和已有项目导航，确定：
 
@@ -39,6 +41,7 @@ description: 从计划写全文或指定节：依据现成计划和原始 Claims
 **完成条件**：每个计划 Claim 已有原始定位和支持判断或明确缺口；每个拟写数字与比较可复算，不能支持的部分已隔离。
 
 ## 3. 处理 venue 与引用分支
+Gate: venue-conflict | before=template-choice | approval=explicit-user | source=SKILL.md#3-处理-venue-与引用分支
 
 - **指定 venue／模板**：先读 [venue-and-format.md](references/venue-and-format.md)，核对用户指定年份、track 和投稿阶段的当前官方规则；列出官方来源、查询日期及模板冲突。冲突处等待用户决定，不擅自选模板或声明合规。
 - **正文使用引用**：先读 [citation-workflow.md](references/citation-workflow.md)，逐条完成检索、身份、元数据和原文语境核查。无法完成的项保留可见缺口，不生成似真的引用或占位 BibTeX 条目。

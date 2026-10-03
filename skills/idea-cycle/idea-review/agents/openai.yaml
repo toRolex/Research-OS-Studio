@@ -1,0 +1,5 @@
+interface:
+  display_name: "idea-review"
+  short_description: "独立评审现成研究候选：发现逻辑、证据、贡献与可行性弱点；初评，或在已授权候选修订后复核问题是否解决。用于 Idea Discovery 内部评审或用户点名审查 Idea。"
+policy:
+  allow_implicit_invocation: false

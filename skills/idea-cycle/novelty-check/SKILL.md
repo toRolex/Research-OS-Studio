@@ -1,10 +1,12 @@
 ---
 name: novelty-check
 description: 查新：对已有候选的核心 Claim 主动检索 closest prior work，判断已覆盖、关键区别或证据缺口。用户问“有没有人做过”时使用。
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[候选描述或原始材料路径；可指定报告位置与检索范围]" -->
 
 # Novelty Check
+Gates: none
 
 Check whether a proposed method/idea has already been done in the literature. Judge the claimed delta, not whether the topic has neighbors.
 

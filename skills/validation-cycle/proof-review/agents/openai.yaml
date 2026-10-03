@@ -1,0 +1,5 @@
+interface:
+  display_name: "proof-review"
+  short_description: "审查现成证明。用于检查证明，或已授权修复后的只读复审。"
+policy:
+  allow_implicit_invocation: false

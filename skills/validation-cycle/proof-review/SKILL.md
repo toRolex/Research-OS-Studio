@@ -5,10 +5,12 @@ license: MIT
 metadata:
   category: validation-cycle
   invocation: model
+disable-model-invocation: true
 ---
 <!-- argument-hint: "[证明路径或目标] [--restatement-check]" -->
 
 # Proof Review：只读证明审查
+Gates: none
 
 直接读证明，逐条检查义务，只返回发现。没有工具验证的普通数学审查不是 Lean kernel 验证；模型共识不是科研结论。
 
