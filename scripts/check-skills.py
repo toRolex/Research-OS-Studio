@@ -461,10 +461,11 @@ def backtick_cascade_problems(rel: str, text: str, root: Path, tracked: set[str]
             if clean.startswith(("http://", "https://")):
                 continue
             raw_candidates = [source.parent]
-            if not clean.startswith("skills/"):
-                raw_candidates.append(skill_root)
-            else:
+            if clean.startswith("skills/"):
                 raw_candidates.append(root)
+            elif not clean.startswith(("./", "../")):
+                # 显式 dot 路径只相对引用文件；同名 skill-root 文件不能掩盖坏基准。
+                raw_candidates.append(skill_root)
             resolved = None
             rel_resolved = ""
             for base in raw_candidates:
