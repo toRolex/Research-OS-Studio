@@ -6,6 +6,24 @@
 
 已有计划或 tracker，用户要跑完并分析结果。只有计划还没写时，回到入口重匹配 experiment-plan。规模大不自动改去 improvement。
 
+## 阶段角色
+
+Role: orchestrator
+
+授权检查、单一写账与亲核。
+
+Role: implementer
+
+实现与各阶段实验。
+
+Role: analyst
+
+结果分析。
+
+Role: reviewer
+
+fresh 代码审查与实验审计。
+
 ## 步骤
 
 1. 读 `skills/validation-cycle/experiment-bridge/SKILL.md` 全文，并读它点名的 references 与 templates。阶段顺序、子 skill 组合和报告以该正文为准。

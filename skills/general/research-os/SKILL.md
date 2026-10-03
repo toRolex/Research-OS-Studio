@@ -43,13 +43,17 @@ Gates: none
 
 ## 模型
 
+Role: orchestrator
+
 项目角色表是研究项目里的 `.agents/research-os-models.md`，一行一个角色：`reviewer: provider/model-id | high`。角色只有 orchestrator、literature、ideator、implementer、analyst、prover、writer、reviewer。thinking 只能是 off、minimal、low、medium、high、xhigh、max，而且必须是该模型支持的值。正文引用写成 `Role: reviewer`。
 
-文件缺失时使用当前 session 实际可用的模型与 thinking，并明示回退，不编造 slug。同上下文里的自审不是 fresh 独立审查。用户指定的模型不可用时停下，请用户确认替代。不修改 `~/.agents/pstack-models.md`。
+每个执行阶段按 playbook 的独立 `Role:` 声明解析本研究项目已确认的角色行，核实 provider/model-id 可用且支持 thinking；fresh dispatch 显式传入这两个值，并记录角色、解析来源、实际模型与 thinking。Role 管阶段执行者，不只是任务标签。当前宿主进程的 model 不改；orchestrator 配置不同于当前宿主时，把获准编排阶段派到对应 fresh 执行者，当前宿主只监督；没有此能力时明示宿主模型差异并请求用户确认串行回退。
+
+文件或角色行缺失时使用当前 session 实际可用的模型与 thinking，并明示回退及原因，不编造 slug。显式指定模型不可用、thinking 不支持、行重复或格式错误时停下，请用户确认替代，不静默改配置。同上下文里的自审不是 fresh 独立审查；同模型 fresh 上下文可保留独立性，但不得冒充跨家族。无 fresh 能力时串行完成可执行阶段，独立审查明确标 `independent review not performed`，不把串行自查当独立 review。不修改 `~/.agents/pstack-models.md`。
 
 ## 算力
 
-工作区 `compute-policy.md` 是默认政策，不是本批运行许可。未配置时范围未指定，费用、算力和运行数都是 0，有效期 0 小时。experiment-plan 与 experiment-bridge 按 [batch-authorization.md](references/batch-authorization.md) 核对已记入研究日志的本批授权；route-only 与未批准的 custom 不消耗额度。
+工作区 `compute-policy.md` 是默认政策，不是本批运行许可。未配置时范围未指定，费用、算力和运行数都是 0，有效期 0 小时。experiment-plan、experiment-bridge 与 improvement 补实验分支按 [batch-authorization.md](references/batch-authorization.md) 核对已记入研究日志的本批授权；route-only 与未批准的 custom 不消耗额度。
 
 ## 宿主映射
 

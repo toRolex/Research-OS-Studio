@@ -6,6 +6,20 @@
 
 用户给出旧投稿目录、目标 venue 和另一个新目录。只回复审稿走 rebuttal；只做演讲走 paper-talk。
 
+## 阶段角色
+
+Role: orchestrator
+
+范围与改动确认。
+
+Role: writer
+
+获准适配。
+
+Role: reviewer
+
+只读编译／引用检查；无 fresh 时标自查。
+
 ## 步骤
 
 1. 读 `skills/writing-cycle/resubmit-pipeline/SKILL.md` 全文。停在 adaptation-scope：用户批准新目录之前不创建、不复制、不覆盖。目标已存在、非空或指向旧稿时停止。

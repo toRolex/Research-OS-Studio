@@ -6,6 +6,24 @@
 
 用户带来论文与原始评审，目标是回复清单、候选措辞或 quick mode 的问题板。换 venue 走 resubmit；做 slides 走 paper-talk。
 
+## 阶段角色
+
+Role: orchestrator
+
+策略与措辞门。
+
+Role: analyst
+
+concern 与证据映射。
+
+Role: writer
+
+获准候选回复。
+
+Role: reviewer
+
+回复检查；无 fresh 时标自查。
+
 ## 步骤
 
 1. 读 `skills/writing-cycle/rebuttal/SKILL.md` 全文。论文、结果、原始评审只读。写入范围只限用户确认的输出目录。

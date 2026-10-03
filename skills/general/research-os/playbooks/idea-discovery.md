@@ -6,6 +6,24 @@ Gates: none
 
 匹配后跨 turn 保持本路线。用户说 new task 时停止本文件，回到 [入口](../SKILL.md) 重匹配。
 
+## 阶段角色
+
+Role: orchestrator
+
+Phase 0、阶段门与Phase 5汇总。
+
+Role: literature
+
+Phase 1文献与Phase 3查新。
+
+Role: ideator
+
+Phase 2候选与Phase 4.5细化。
+
+Role: reviewer
+
+Phase 4 fresh 独立评审。
+
 ## 步骤
 
 1. 读完 `skills/idea-cycle/idea-discovery/SKILL.md` 与 `skills/idea-cycle/idea-discovery/references/composition-notes.md`。阶段顺序、章节锚点和缺口降级以 composition-notes 为准。

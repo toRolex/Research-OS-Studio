@@ -1,6 +1,6 @@
 # 批次授权
 
-本文件是 experiment-plan 与 experiment-bridge 的唯一授权账本。默认政策不是本批授权。
+本文件是 experiment-plan、experiment-bridge 与 improvement 补实验分支的共享授权规则；实际账本是工作区 research-log.md。默认政策不是本批授权。
 
 ## 默认政策
 
@@ -13,7 +13,7 @@
 - scope：计划、允许写域、环境。未指定则本批不能执行。
 - cost_limit、currency：有限非负费用与币种。
 - compute_limit、compute_unit：有限非负算力。单位只能是 cpu-core-hour 或 gpu-device-hour，异构各写一行。
-- run_limit、run_count_basis：非负整数。experiment-bridge 用 planned-run；research-improvement 用 attempt。本文件不改后者。
+- run_limit、run_count_basis：非负整数。experiment-bridge 用 planned-run；research-improvement 用 attempt。两者名额语义不混用。
 - per_attempt_cost_limit、per_attempt_compute_limit：与累计同单位，且不大于累计上限。
 - concurrency_limit：非负整数。要启动时至少为 1。
 - retry_limit：每个 planned run 还能追加的 attempt 次数。重试额度不代替修复轮数。
@@ -34,7 +34,7 @@ setup 不改已有研究日志。本批确认是新的授权段落，不覆盖�
 2. 当前时刻早于 valid_until，scope 覆盖本次计划、写域和环境。范围变了就停。
 3. 本次最坏费用不超过 per_attempt_cost_limit，本次最坏算力不超过 per_attempt_compute_limit。
 4. 已入账消耗 + 仍在跑的预留最坏消耗 + 本次最坏消耗 ≤ 对应累计上限。恰好等于上限可以启动。
-5. planned-run 名额、并发和该 run 的剩余 retry 都还够。每个 attempt 都扣费用和算力。失败、超时、无效也入账。
+5. 按 run_count_basis 核名额：planned-run 按不同 run_id 计，重试不得伪装为新 run；attempt 名额按全部 attempt_id 计，含失败、超时、无效和运行中项。并发和该 run 的剩余 retry 都还够；有 retry 许可不代表还有 attempt 名额。每个 attempt 都扣费用和算力。失败、超时、无效也入账。
 6. 未知消耗保持预留，不按 0 释放。
 
 ## 每次留账
