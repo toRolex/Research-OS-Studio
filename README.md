@@ -115,15 +115,20 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 ```text
 输入研究方向
       ↓
-/idea-discovery
+/research-os 我有方向，没有 idea
+      ↓
+playbook idea-discovery
+  默认每个阶段停下；写明「一次走完」并给出预算才连续
   ├─ 检索文献并标注出处 (research-lit)
-  ├─ 多视角生成方案 (idea-generation & creative-thinking)
+  ├─ 多视角生成方案 (idea-generation；卡住时 creative-thinking)
   ├─ 检索已知工作并精准查新 (novelty-check)
   ├─ 独立评审与挑刺 (idea-review)
   └─ 方案细化与收敛 (idea-refinement)
       ↓
-交付 RESEARCH_PROPOSAL.md（停止，等待用户决策）
+交付 IDEA_DISCOVERY.md 与 RESEARCH_PROPOSAL.md 后停止
 ```
+
+叶上的输出路径、阶段检查点、评审范围和问题锚点仍然生效。下一句延续本路线；说 new task 才重匹配。直接点名 `/idea-discovery` 仍走叶入口。
 
 ### 2. 实验与推导（Validation）
 ```text
