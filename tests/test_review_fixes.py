@@ -43,6 +43,17 @@ class ReviewFixes(unittest.TestCase):
         self.assertIn("当前入口 SKILL.md 所在 skill 目录的父级", text)
         self.assertNotIn("安装根取当前入口实际路径的父级", text)
 
+    def test_pi_explicit_entry_uses_host_native_skill_command(self):
+        # Native pi explicit invocation is /skill:name; /name is not a skill command.
+        router = (ROOT / ROUTER).read_text()
+        self.assertIn("/skill:research-os", router)
+        self.assertNotIn("三宿主都用显式 `/research-os`", router)
+        self.assertIn("/skill:setup-research-os", (ROOT / "README.md").read_text())
+
+    def test_route_only_does_not_update_previous_tasks_after_new_task(self):
+        text = (ROOT / "skills/general/research-os/playbooks/route-only.md").read_text()
+        self.assertIn("不更新既有任务", text)
+
     def test_leaf_bodies_do_not_claim_implicit_invocation(self):
         for path in (ROOT / "skills").glob("*/*/SKILL.md"):
             if path.parent.name != "setup-research-os":

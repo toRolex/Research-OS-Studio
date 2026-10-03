@@ -89,7 +89,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 
 ### 2. 初始化工作区
 
-安装后，在 Agent 中运行初始化命令：
+安装后，在 Agent 中运行初始化命令。以下 `/name` 示例是逻辑点名；pi 原生命令为 `/skill:name`（setup：`/skill:setup-research-os`；入口：`/skill:research-os 我该从哪开始`），Claude Code 用 `/name`，Codex 用 `$name` 或明确点名已安装技能。pi 的普通 `/name` 文本不保证加载隐藏的显式 Skill：
 
 ```bash
 /setup-research-os

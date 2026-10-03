@@ -53,7 +53,7 @@ Gates: none
 
 ## 宿主映射
 
-三宿主都用显式 `/research-os`。安装目录和派发方式不同：
+下文 `/research-os` 表示逻辑入口；实际显式命令按宿主映射。pi 使用 `/skill:research-os`（叶入口同理 `/skill:<skill-name>`，setup 为 `/skill:setup-research-os`），Claude Code 使用 `/research-os`，Codex 使用 `$research-os` 或明确点名并读取已安装 SKILL.md。不要把 pi 中普通文本 `/research-os` 当成已加载入口；`disable-model-invocation` 会将它隐藏于自动发现清单。安装目录和派发方式不同：
 
 | 宿主 | Skills 位置 | 委派 | 会话 |
 |---|---|---|---|
