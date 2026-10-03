@@ -24,12 +24,14 @@
 1. [#41–45独立AC复核](acceptance/v2-release-ac-review.md)：每票原AC全部通过，剩余AC无。直接核原session/授权/tool/冻结物；不是科研认证。#42空裸Python probe、#44被测fresh像素探针生成digest的历史过程偏差单列，不谎称全UV/零digest。
 2. 当前tip三宿主限定安装/字段与完整路由组合：安装各39×270文件hash全同；真实默认工具回归在执行，待独立原始tool trace结束；不是重演全部科研长输出。
 3. 当前tip跨票预算/外发/重大修订门组合：八场真实pi默认工具执行中，待原始tool trace结束。
-4. 新45MiB包899常规文件、70,273,550字节及11PDF文本已扫描；898/898 payload SHA全同，无缺失/额外/mismatch，真凭据0，不需清洗。旧三包扫描也无新增真敏感值（publisher签名已REDACTED）；完整安全报告待落盘。
+4. [安全与静态独立报告](acceptance/v2-release-security-static.md)：新45MiB包899常规文件、70,273,550字节及11PDF文本已扫描；898/898 payload SHA全同，无缺失/额外/mismatch，真凭据0，不需清洗。四包合计5753常规文件/545,918,107原字节；148候选均科学授权文案/模板/regex/已REDACTED publisher签名或CLI help，转义JSON字符串补scan也无真敏感。validation唯一软链接包内目标AGENTS，核边界但不创建。
 5. UV实跑 `uv run python scripts/check-skills.py`（39/U38/M1）、`uv run python -m unittest discover -s tests -v`（23）、`uv run python -m unittest discover -s scripts -p 'test*.py' -v`（45）：**68通过**，不是仅默认discover可能漏suite。
 6. doc sweep TDD小fix `ecdddab`：两真实旧句副本RED两subtest，保留合法叶停止正例；既有checker literal补两条、README中英各一行GREEN8/8，两Python主动LSP0、diff --check通过，无新validator。该commit不改变产品skills，回归执行5efd2da仍核当前同字节skills。
 
 ## 发布边界
 
-本轮不tag、不push、不PR；不关闭#37/#46。待最终review决定发布动作。将明确列出最终commit、已关闭前票、精确未满足AC及测试，绝不沿用历史SSL或笼统raw缺口作为永久阻碍。
+已按独立原AC评论并关闭 **#41/#42/#43/#44/#45**；GraphQL回查全部CLOSED。#37/#46仍OPEN，context评论分别 `5968914862` / `5968915099`，明确仅本地commit与回归正在末验。
+
+本轮不tag、不push、不PR、不关闭#37/#46。待最终review决定发布动作。最终再列组合精确未满足AC，不沿用历史SSL或笼统raw缺口作为永久阻碍。
 
 实施因果见 `.agents/notes/v2-merge-remediation-release-implementation-notes.md`。

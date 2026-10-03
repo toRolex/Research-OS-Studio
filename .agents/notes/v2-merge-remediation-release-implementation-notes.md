@@ -26,7 +26,11 @@
 - 另派v2-release-gate-combinations补当前tip预算/外发/严重修订跨票门；host agent仍负责14具体playbook路由与三宿主。固定原素材引用，不重演全部科研长输出。
 - 主最终doc sweep发现根README安全第2条和英文核心原则仍有无条件产物后停止；现checker只检测两literal未捉。sol medium先新真实副本反例RED两subtest、合法叶停止正例，再仅加现literal两条并改中英两句，GREEN T46 8/8、checker39、两Python LSP0。主读diff与notes后提交 `ecdddab828ef027590d1b49eb3870435bf995a71`。
 - `git diff 5efd2da ecdddab -- skills`为空。宿主执行5efd2da安装仍是当前产品skills，静态在ecdddab重跑；不以不相关doc/checker变更要求从零科研重演。
-- gh预检第二次core/graphql仍返回5000；这是实返回，不据此称零请求。已知读取七issue via gh JSON（评论字段同批），无GitHub写操作至此。
+- gh预检第二次core/graphql仍返回5000；这是实返回，不据此称零请求。已知读取七issue via gh JSON（评论字段同批）。
+- 独立AC reviewer已直接核四报告/原票/关键叶/原始session与固定物，#41–45全AC达标。其最终存在两个assistant正文，工具仅回最后短总结；主用UV读取retained session提取首份完整逐AC正文落 `docs/acceptance/v2-release-ac-review.md`，未伪造其结果。notes/report commit `464b2727f4e55f91dcb46fe9608a0a993937cb15`；最初commit diff check捕到Markdown尾双空格，立即消除并amend，主最终commit无该空格。
+- security中间已实核新增898manifest/真凭据0；ecdddab UV tests23+scripts45=68，精确stage日志读到。基于此先gh预检后 `gh issue close --comment` 顺序5票全成功（评论含local未push/逐AC/toy/旧失败与过程偏差），#41–45已CLOSED。
+- #37/#46进度context评论分别 `5968914862` / `5968915099`，注明hosts/gates组合正在末验、首route清单/虚报仍待唯一有界重测。一次合并GraphQL回查7状态cost1，remaining4971/resetAt2026-10-03T12:25:04Z，#37/#46 OPEN。gh预检仍core/graphql5000但与GraphQL实监不同，不据此称零消耗。
+- 已知GitHub写动作：5次close（各带评论，gh内部请求数未监不能杜撰REST精确耗费）、2次context comment。未tag/push/PR/关#37/#46。
 
 ## Deviations
 
