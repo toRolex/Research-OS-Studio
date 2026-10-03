@@ -247,6 +247,115 @@ def route_table_problems(rows: list[dict[str, str]], skill_dir: Path) -> tuple[l
     return problems_out, hints
 
 
+PAPER_WRITING_SHARED = (
+    "skills/writing-cycle/paper-plan/SKILL.md",
+    "skills/writing-cycle/academic-plotting/SKILL.md",
+    "skills/writing-cycle/paper-drafting/SKILL.md",
+    "skills/writing-cycle/paper-compile/SKILL.md",
+    "skills/writing-cycle/paper-claim-audit/SKILL.md",
+    "skills/writing-cycle/citation-audit/SKILL.md",
+    "skills/writing-cycle/claim-stress-test/SKILL.md",
+    "skills/validation-cycle/proof-review/SKILL.md",
+)
+PAPER_WRITING_REQUIRED: dict[str, tuple[str, ...]] = {
+    "general": PAPER_WRITING_SHARED
+    + (
+        "skills/writing-cycle/paper-writing/SKILL.md",
+        "skills/writing-cycle/paper-writing/references/composition-map.md",
+    ),
+    "ml": PAPER_WRITING_SHARED
+    + (
+        "skills/writing-cycle/ml-paper-writing/SKILL.md",
+        "skills/writing-cycle/ml-paper-writing/references/composition-map.md",
+        "skills/writing-cycle/ml-paper-writing/references/experiment-reporting.md",
+        "skills/writing-cycle/ml-paper-writing/references/reviewer-expectations.md",
+        "skills/writing-cycle/ml-paper-writing/references/venue-checklists.md",
+    ),
+    "systems": PAPER_WRITING_SHARED
+    + (
+        "skills/writing-cycle/systems-paper-writing/SKILL.md",
+        "skills/writing-cycle/systems-paper-writing/references/composition-map.md",
+        "skills/writing-cycle/systems-paper-writing/references/systems-writing-methods.md",
+        "skills/writing-cycle/systems-paper-writing/references/evaluation-methods.md",
+        "skills/writing-cycle/systems-paper-writing/references/checklist.md",
+        "skills/writing-cycle/systems-paper-writing/references/venue-and-reviewer.md",
+        "skills/writing-cycle/paper-plan/references/systems-blueprints.md",
+        "skills/writing-cycle/paper-plan/references/systems-patterns.md",
+    ),
+}
+PAPER_WRITING_FORBIDDEN: dict[str, tuple[str, ...]] = {
+    "general": (
+        "skills/writing-cycle/ml-paper-writing/SKILL.md",
+        "skills/writing-cycle/systems-paper-writing/SKILL.md",
+    ),
+    "ml": (
+        "skills/writing-cycle/paper-writing/SKILL.md",
+        "skills/writing-cycle/systems-paper-writing/SKILL.md",
+    ),
+    "systems": (
+        "skills/writing-cycle/paper-writing/SKILL.md",
+        "skills/writing-cycle/ml-paper-writing/SKILL.md",
+    ),
+}
+PAPER_WRITING_HARD_STOPS = ("paper-compile-repair", "apply-citation-fixes")
+
+
+def paper_writing_variant_problems(variant: str, text: str, root: Path) -> list[str]:
+    """单个 paper-writing playbook：本变体级联存在，且不经其他写作入口。"""
+    found: list[str] = []
+    required = PAPER_WRITING_REQUIRED.get(variant)
+    if required is None:
+        return [f"paper-writing 变体未知：{variant}"]
+    for path in required:
+        if f"`{path}`" not in text:
+            found.append(f"paper-writing/{variant} 缺级联 {path}")
+        elif not (root / path).is_file():
+            found.append(f"paper-writing/{variant} 级联目标不存在：{path}")
+    for path in PAPER_WRITING_FORBIDDEN[variant]:
+        if f"`{path}`" in text:
+            found.append(f"paper-writing/{variant} 不得级联其他写作入口：{path}")
+    for name in PAPER_WRITING_HARD_STOPS:
+        if f"`{name}`" not in text:
+            found.append(f"paper-writing/{variant} 缺另行点名硬停止：{name}")
+    if "授权" not in text:
+        found.append(f"paper-writing/{variant} 未保留叶授权门")
+    return found
+
+
+def paper_writing_route_problems(rows: list[dict[str, str]], root: Path) -> list[str]:
+    """仓库路由表里的 paper-writing 三变体必须成套，并指向真实 playbook。"""
+    found: list[str] = []
+    seen: dict[str, dict[str, str]] = {}
+    for row in rows:
+        if row["路线"] != "paper-writing":
+            continue
+        variant = row["变体"]
+        if variant in seen:
+            found.append(f"paper-writing 变体重复：{variant}")
+        seen[variant] = row
+    for variant in ("general", "ml", "systems"):
+        row = seen.get(variant)
+        if row is None:
+            found.append(f"缺 paper-writing/{variant} 路由行")
+            continue
+        if row["只读约束"] != "no":
+            found.append(f"paper-writing/{variant} 的只读约束必须是 no")
+        expected = f"playbooks/paper-writing-{variant}.md"
+        if expected not in row["playbook"]:
+            found.append(f"paper-writing/{variant} 的 playbook 必须是 {expected}")
+            continue
+        playbook = root / "skills/general/research-os" / expected
+        if not playbook.is_file():
+            found.append(f"paper-writing/{variant} 的 playbook 文件不存在")
+            continue
+        found.extend(
+            paper_writing_variant_problems(
+                variant, playbook.read_text(encoding="utf-8"), root
+            )
+        )
+    return found
+
+
 def cascade_scope(rel: str) -> bool:
     return rel.startswith(CASCADE_PREFIX)
 
@@ -420,6 +529,8 @@ if research_os.exists():
         err(f"skills/general/research-os/SKILL.md: {problem}")
     route_problems, route_hints = route_table_problems(route_rows, research_os.parent)
     for problem in route_problems:
+        err(f"skills/general/research-os/SKILL.md: {problem}")
+    for problem in paper_writing_route_problems(route_rows, ROOT):
         err(f"skills/general/research-os/SKILL.md: {problem}")
     HINTS.extend(route_hints)
 

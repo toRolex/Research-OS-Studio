@@ -21,9 +21,12 @@ Gates: none
 | 路线 | 变体 | 触发词 | 适用条件 | 只读约束 | playbook |
 |---|---|---|---|---|---|
 | route-only | — | 我该从哪开始、该用哪个、只看推荐、推荐入口、不要执行 | 用户只要入口或下一步建议 | yes | [route-only](playbooks/route-only.md) |
+| paper-writing | general | 写论文 | 已有研究材料要写成论文，且材料不是机器学习实验、也不是以系统设计与实现为核心贡献 | no | [paper-writing-general](playbooks/paper-writing-general.md) |
+| paper-writing | ml | 机器学习 | 材料是机器学习或人工智能实验，要按该专业入口写论文 | no | [paper-writing-ml](playbooks/paper-writing-ml.md) |
+| paper-writing | systems | 系统论文 | 材料以系统设计与实现为核心贡献，要按该专业入口写论文 | no | [paper-writing-systems](playbooks/paper-writing-systems.md) |
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
 
-已命名、文件未交付，本票不建路由行：idea-discovery、experiment-plan、experiment-bridge、paper-writing（general / ml / systems）、proof、rebuttal、resubmit、paper-talk、improvement、pickup。对应 playbook 由后续票与路由行一起加入。
+已命名、文件未交付，本票不建路由行：idea-discovery、experiment-plan、experiment-bridge、proof、rebuttal、resubmit、paper-talk、improvement、pickup。对应 playbook 由后续票与路由行一起加入。
 
 ## 只读优先
 
