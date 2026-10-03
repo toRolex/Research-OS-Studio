@@ -38,7 +38,10 @@
 - hosts全部45CLI结束：43完整真实exit0模型、1pickup部分timeout、1slash空调用；pickup唯一208.51s35tools/stop/mismatch203.81s0变化重测，setup轻回归完成。当前“冲突”副本实际已修后一致，本轮仅旧物保留/路径门，不假称又跑修改冲突；原79轮真冲突固定证据可继承。
 - host父51tools/285s实际读canonical4716行、原批准/反馈、当前稿/CSV/build2/7PNG/PDF绑定，UV Decimal50.625/90/39.375核，未新build/fresh。810安装+612fixture+global SHA/mtime同。15,807,902bytes/928file包SHAd80e...cadc，927manifest双核match；安全独立末验928regular/57,045,065bytes456JSON解码真secret0。两新包1503payload全SHA+bytes同，无清洗hash不变。
 - 主在eaa76f0又实跑checker39/tests23/scripts45=68全部exit0，日志/tmp/ros-v2-release-final，diff --check过；后仅docs/archive/notes，产品skills树f673b96d不变，不谎称模型在最终docscommit从零重演。
-- #46原AC1–5有限代表覆盖达标；AC6tag用户禁止未满足，#37/#46继续OPEN。Codex direct重跑review-rules截断未补是具体额外资源纪律局限，不把入口验证泛化全叶正确；Claude最后gap解释质量局限单列。可交release review候选，不称已发布/所有宿主永远安全，后续若人要求补该单场资源严谨性，只补这一场而非全部科研。
+- #46行为/静态/安装/migration AC2–5有限代表覆盖达标；AC6tag用户禁止，#37/#46继续OPEN。Codex direct重跑review-rules截断未补是具体额外资源纪律局限，不把入口验证泛化全叶正确；Claude最后gap解释质量局限单列。可交release review候选，不称已发布/所有宿主永远安全，后续若人要求补该单场资源严谨性，只补这一场而非全部科研。
+- 完整最终归档/文档提交 `eadfe77ed16ae0bb5dd4cabf1c01a1fa54a47ec1`，工作树当时干净，最终checker再39、合并全diff --check过。
+- 最终#37/#46补context请求前rate预检正常5000，`gh issue comment 37` GraphQL EOF，后REST查询两票comments及rate预检均EOF；一次清代理直连预检也EOF。共3有界恢复尝试后停，不假称评论已送达，不继续网络循环。两原进度context先前已真实送达；最终正文保存 `/tmp/ros-v2-release-issues/final-context.md`。
+- 因此当前精确余AC还有#46-1完整最终归档/commit汇总评论补送（不是前票证据缺失）及#46-6 tag。不需要科研长输出重演。前票close成功和当时GraphQL状态回查有实证，不因本末EOF重写其状态。
 
 ## Deviations
 
