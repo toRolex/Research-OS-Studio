@@ -50,6 +50,10 @@ class ReviewFixes(unittest.TestCase):
         self.assertNotIn("三宿主都用显式 `/research-os`", router)
         self.assertIn("/skill:setup-research-os", (ROOT / "README.md").read_text())
 
+    def test_route_only_does_not_update_previous_tasks_after_new_task(self):
+        text = (ROOT / "skills/general/research-os/playbooks/route-only.md").read_text()
+        self.assertIn("不更新既有任务", text)
+
     def test_leaf_bodies_do_not_claim_implicit_invocation(self):
         for path in (ROOT / "skills").glob("*/*/SKILL.md"):
             if path.parent.name != "setup-research-os":
