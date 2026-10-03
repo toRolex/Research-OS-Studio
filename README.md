@@ -27,11 +27,7 @@
 ## 架构与工作流
 
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/assets/workflow-dark.png">
-    <source media="(prefers-color-scheme: light)" srcset="docs/assets/workflow-light.jpg">
-    <img alt="Research OS Studio System Architecture Workflow" src="docs/assets/workflow-light.jpg" width="100%">
-  </picture>
+  <img alt="独立科研入口、授权门与候选产物" src="docs/assets/workflow-v2.svg" width="100%">
 </div>
 
 ---

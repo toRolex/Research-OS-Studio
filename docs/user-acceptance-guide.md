@@ -44,6 +44,10 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 ---
 
+## 宿主原生调用约定
+
+本指南所有 `/name` 示例是逻辑点名，不是各宿主通用命令。pi 用 `/skill:name`（setup：`/skill:setup-research-os`；入口：`/skill:research-os 我该从哪开始`），Claude Code 用 `/name`，Codex 用 `$name` 或明确点名已安装技能。pi 普通 `/name` 文本不保证加载隐藏的显式 Skill；安装文件成功也不等于宿主已加载。
+
 ## 二、通用入口（General）验收场景
 
 ### 1. `setup-research-os`（#40 项目配置与安全初始化）
@@ -293,7 +297,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 1. **Skills CLI 转换行为说明**：
    通用 Skills CLI 在向特定宿主（如 Eve）复制文件时，可能会根据宿主规则转换 frontmatter（例如移除 `disable-model-invocation`）。本仓库在 `.agents/skills/` 与 Claude Code / Codex 的安装副本中均完整保留规范字段。在未确认目标宿主能严格遵守仅显式调用策略前，高权限或可写入口（如 `proof-repair`、`apply-citation-fixes`、`research-improvement`）应在受控环境中审慎使用。
 2. **模型发现清单与 User-invoked 入口**：
-   部分 Agent 宿主在向模型展示可用工具列表时，会根据 `disable-model-invocation: true` 自动隐藏 User-invoked 入口。这是符合预期的安全机制，防止模型在未经人类允许时越权自动调用顶层工作流。用户可通过宿主支持的显式指令（如 `/skill-name`）正常调用。
+   部分 Agent 宿主在向模型展示可用工具列表时，会根据 `disable-model-invocation: true` 自动隐藏 User-invoked 入口。这是符合预期的安全机制，防止模型在未经人类允许时越权自动调用顶层工作流。用户应使用宿主原生显式调用：pi `/skill:name`、Claude Code `/name`、Codex `$name` 或明确点名已安装技能；不能以普通斜杠文本推断隐藏 Skill 已加载。
 
 ---
 

@@ -26,11 +26,7 @@
 ## Architecture and Workflow
 
 <div align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/workflow-dark.jpg">
-    <source media="(prefers-color-scheme: light)" srcset="assets/workflow-light.jpg">
-    <img alt="Research OS Studio System Architecture Workflow" src="assets/workflow-light.jpg" width="100%">
-  </picture>
+  <img alt="Independent research entries with authorization gates and candidate outputs" src="assets/workflow-v2.svg" width="100%">
 </div>
 
 ---
@@ -68,7 +64,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 
 ### 2. Workspace Setup
 
-After installation, run the setup command in your Agent:
+After installation, use your host's native invocation. All `/name` examples here are logical skill names, not universal commands: pi uses `/skill:name` (setup: `/skill:setup-research-os`; entry: `/skill:research-os where should I start`), Claude Code uses `/name`, and Codex uses `$name` or explicitly names the installed skill. Plain `/name` text in pi does not guarantee that a hidden explicit-only skill is loaded.
 
 ```bash
 /setup-research-os
