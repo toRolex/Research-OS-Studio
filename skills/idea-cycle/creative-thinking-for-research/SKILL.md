@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Creative Thinking for Research
 
-默认 model-invoked 的认知方法能力，用户可单独点名；被当前已授权 Idea 构思职责组合调用时，只贡献洞见。保留 Orchestra 八个框架的操作步骤、示例及自查表，不把“通过两句话测试”当科学质量验收。
+显式调用或已授权正文级联 的认知方法能力，用户可单独点名；被当前已授权 Idea 构思职责组合调用时，只贡献洞见。保留 Orchestra 八个框架的操作步骤、示例及自查表，不把“通过两句话测试”当科学质量验收。
 
 ## 1. 读取问题与授权
 Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#1-读取问题与授权

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Idea Refinement
 
-默认 model-invoked Internal Skill，用户可点名 standalone。修订者负责提出方法；独立评审者负责判断，不让候选生成覆盖或修订者自查替代独立裁决。
+显式调用或已授权正文级联 Internal Skill，用户可点名 standalone。修订者负责提出方法；独立评审者负责判断，不让候选生成覆盖或修订者自查替代独立裁决。
 
 目标是 **problem → focused method → minimal validation sketch**。最小充分机制优先；前沿技术是机制选择，不是装饰。
 

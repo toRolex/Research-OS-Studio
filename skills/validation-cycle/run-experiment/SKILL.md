@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Run Experiment
 
-把用户已批准的现成计划落实为一次有界的实现、代码审查、sanity、执行与初步结果收集。这是 model-invoked 的内部执行能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。报告交付后停止；不进入分析、审计、Results-to-Claims、写作或下一轮。
+把用户已批准的现成计划落实为一次有界的实现、代码审查、sanity、执行与初步结果收集。这是 显式调用或已授权正文级联 的内部执行能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。报告交付后停止；不进入分析、审计、Results-to-Claims、写作或下一轮。
 
 方法主顺序是：读取计划 → 实现代码 → review → sanity → 执行前确认 → collect。保留这条顺序；执行前确认替代自动 deploy，固定 provider、运行队列、无限重试和跨 Workflow handoff 改为当前项目中的自然文件与用户可见步骤。
 

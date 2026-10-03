@@ -39,7 +39,7 @@ Gates: none
 
 ## 只读优先
 
-只要用户是在问该从哪开始、该用哪个、或明确不要执行，就打开 [route-only](playbooks/route-only.md)。即使句子里同时出现「写论文」「跑实验」等执行词，只读意图仍优先。route-only 不创建任务、不联网、不写文件、不派子代理。
+只要用户是在问该从哪开始、该用哪个、或明确不要执行，就打开 [route-only](playbooks/route-only.md)。即使句子里同时出现「写论文」「跑实验」「设计实验」等执行词，当前命中路线是 route-only；执行词只帮助选择推荐对象，不改变当前路线。回复区分「当前路线：route-only」与「推荐入口：…」。route-only 不创建任务、不联网、不写文件、不派子代理。
 
 ## 模型
 
@@ -65,4 +65,10 @@ Gates: none
 
 ## 级联
 
-命中已交付 playbook 后，逐字采用其步骤。步骤里的反引号路径和 Markdown 链接都要读全文，例如 `references/PRODUCT-MAP.md`、`skills/general/research-os/playbooks/experiment-plan.md`、`skills/general/research-os/playbooks/experiment-bridge.md`、`skills/general/research-os/playbooks/rebuttal.md`、`skills/general/research-os/playbooks/resubmit.md`、`skills/general/research-os/playbooks/paper-talk.md`、`skills/general/research-os/playbooks/proof.md`、`skills/general/research-os/playbooks/improvement.md`、`skills/general/research-os/playbooks/pickup.md`。不把未读文件说成已执行。
+命中已交付 playbook 后，把其步骤逐字抄入 todolist，逐步跟踪 pending / in-progress / completed / blocked；仅达到该步骤完成条件才标 completed。用当前会话的清单记录即可；route-only 只在对话内跟踪，不创建任务或文件。
+
+每步开始前读对应叶 SKILL.md 全文，再按正文的条件读取点名资源并执行；读过入口、playbook 或步骤清单不等于读过叶正文。没有子代理工具时同样由编排者串行完成这些读取与步骤，不缩减叶合同。仓库路径形如 skills/<category>/<skill-name>/SKILL.md；安装扁平布局时映射到 <安装根>/<skill-name>/SKILL.md（安装根取当前入口实际路径的父级或宿主报告的位置），共置资源相对该叶目录解析。先核实实际文件；找不到时标 blocked 与路径缺口，不猜测已读或跳到后续步骤。
+
+收到子代理结果后，编排者自己核实实际产物、原始依据、读取覆盖及该步骤完成条件，记录定位与未核实项，再决定接受、在现有预算内修复或标 blocked；子代理总结只作线索，不直接转述为已核实结论。编排者核实不冒充独立 fresh review，保留各叶的独立审查隔离要求。
+
+步骤里的反引号路径和 Markdown 链接都要读全文，例如 `references/PRODUCT-MAP.md`、`skills/general/research-os/playbooks/experiment-plan.md`、`skills/general/research-os/playbooks/experiment-bridge.md`、`skills/general/research-os/playbooks/rebuttal.md`、`skills/general/research-os/playbooks/resubmit.md`、`skills/general/research-os/playbooks/paper-talk.md`、`skills/general/research-os/playbooks/proof.md`、`skills/general/research-os/playbooks/improvement.md`、`skills/general/research-os/playbooks/pickup.md`。不把未读文件说成已执行。

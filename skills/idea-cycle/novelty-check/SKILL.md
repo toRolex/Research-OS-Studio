@@ -12,7 +12,7 @@ Check whether a proposed method/idea has already been done in the literature. Ju
 
 ## Scope and authorization
 
-- **Role:** model-invoked internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. Read the original candidate, not only a generator's summary. A parent Workflow is a caller, not permission to start another Workflow.
+- **Role:** explicitly invoked or path-cascaded internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. Read the original candidate, not only a generator's summary. A parent Workflow is a caller, not permission to start another Workflow.
 - **Inputs:** candidate description or source paths; core Claim and problem/setting; known references; search cutoff and any confidentiality/resource limits. Read existing project instructions and workspace navigation if present. Setup, a particular directory, and any research runtime are not prerequisites.
 - **Resolve before work:** identify the candidate, cutoff (today unless specified), allowed public search terms, and output mode. If the actual claimed contribution is missing or contradictory, ask one focused question and stop; do not invent it. Keep the user's problem and Claim unchanged.
 - **Resources:** use already available, authorized read/search tools. Follow host-specific tool routing. Public lookup does not authorize uploading private drafts, paying for services, installing tools, using new credentials, or remote writes. Request permission for any such escalation; denial ends that action. If search/full text is unavailable, retain the failed lookup and report the precise limitation rather than pretend the check ran.

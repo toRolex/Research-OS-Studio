@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 # Experiment Queue
 
-当单个 [run-experiment](../run-experiment/SKILL.md) 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞清理、状态可恢复。这是 model-invoked 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停在汇总报告。
+当单个 [run-experiment](../run-experiment/SKILL.md) 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞清理、状态可恢复。这是 显式调用或已授权正文级联 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停在汇总报告。
 
 与 run-experiment 的分工见 [experiment-bridge 第 4 节](../experiment-bridge/SKILL.md)。进度读状态表，不另开调度时钟。
 

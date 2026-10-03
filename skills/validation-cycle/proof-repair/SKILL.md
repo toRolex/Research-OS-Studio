@@ -11,7 +11,7 @@ metadata:
 
 # 证明修复
 
-用户主动启动的有限修复流程。输入是完整证明与待修问题；输出是获准范围内的证明修订、完整数学论证和自然 Markdown 修复记录。正文保持原生格式（Markdown 或 LaTeX）；下文 LaTeX 编辑/编译步骤仅适用于对应输入，普通证明不要求 LaTeX 或 Lean 环境。记录与正文分别授权。内部数学检视自行完成；所有承担审查结论的 review 只调用 model-invoked `proof-review`。本技能不启动其它顶层 Workflow，也不接入定时循环。
+用户主动启动的有限修复流程。输入是完整证明与待修问题；输出是获准范围内的证明修订、完整数学论证和自然 Markdown 修复记录。正文保持原生格式（Markdown 或 LaTeX）；下文 LaTeX 编辑/编译步骤仅适用于对应输入，普通证明不要求 LaTeX 或 Lean 环境。记录与正文分别授权。内部数学检视自行完成；所有承担审查结论的 review 只调用 按路径级联读取的 `proof-review`。本技能不启动其它顶层 Workflow，也不接入定时循环。
 
 ## 1. 确认修复契约
 Gate: repair-contract | before=repair-write | approval=explicit-user | source=SKILL.md#1-确认修复契约

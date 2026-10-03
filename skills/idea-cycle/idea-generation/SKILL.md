@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # 多视角候选 Idea
 
-从材料产生新的研究问题，不把用户已有候选换个格式当生成。默认 model-invoked，供当前已授权的 Idea Discovery 职责调用；用户也可点名单独使用。生成者负责扩大覆盖、说明方法与可验证性，最终采用由用户决定。
+从材料产生新的研究问题，不把用户已有候选换个格式当生成。显式调用或已授权正文级联，供当前已授权的 Idea Discovery 职责调用；用户也可点名单独使用。生成者负责扩大覆盖、说明方法与可验证性，最终采用由用户决定。
 
 ## 1. 确定输入与边界
 Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#1-确定输入与边界

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Paper Plan：证据先行的论文规划
 
-从用户自己的研究材料形成可供写作者使用的计划。默认 model-invoked，也支持用户点名；无须先运行 setup、Idea Discovery 或 Validation，无须采用固定文件名。
+从用户自己的研究材料形成可供写作者使用的计划。显式调用或已授权正文级联，也支持用户点名；无须先运行 setup、Idea Discovery 或 Validation，无须采用固定文件名。
 
 ## 1. 确定材料与权限
 Gate: write-authorization | before=plan-write | approval=explicit-user | source=SKILL.md#1-确定材料与权限
