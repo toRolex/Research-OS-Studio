@@ -40,6 +40,8 @@ class ReviewFixes(unittest.TestCase):
         text = (ROOT / ROUTER).read_text()
         for required in ("逐字抄入 todolist", "逐步跟踪", "编排者自己核实", "当前命中路线是 route-only", "<安装根>/<skill-name>/SKILL.md", "叶 SKILL.md 全文"):
             self.assertIn(required, text)
+        self.assertIn("当前入口 SKILL.md 所在 skill 目录的父级", text)
+        self.assertNotIn("安装根取当前入口实际路径的父级", text)
 
     def test_leaf_bodies_do_not_claim_implicit_invocation(self):
         for path in (ROOT / "skills").glob("*/*/SKILL.md"):
