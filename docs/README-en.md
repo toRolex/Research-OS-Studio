@@ -154,17 +154,22 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 
 ### 1. Idea Discovery
 ```text
-Provide research direction
+Provide a research direction
       ↓
-/idea-discovery
+/research-os I have a direction and no idea
+      ↓
+playbook idea-discovery
+  Stop after each phase unless the user writes "一次走完" and a budget
   ├─ Search literature and track citations (research-lit)
-  ├─ Generate candidate ideas (idea-generation & creative-thinking)
+  ├─ Generate candidate ideas (idea-generation; creative-thinking if stuck)
   ├─ Search prior work and check novelty (novelty-check)
   ├─ Review and identify weaknesses (idea-review)
   └─ Refine and converge route (idea-refinement)
       ↓
-Delivers RESEARCH_PROPOSAL.md (Stops, awaiting user decision)
+Deliver IDEA_DISCOVERY.md and RESEARCH_PROPOSAL.md, then stop
 ```
+
+Leaf output-path, stage-checkpoint, review-scope, and problem-anchor gates stay in force. The next turn stays on this route; `new task` rematches. `/idea-discovery` remains the direct leaf entry.
 
 ### 2. Validation
 ```text
