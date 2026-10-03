@@ -20,6 +20,8 @@
   </p>
 </div>
 
+> **Breaking（v2）**：旧只读入口 `ask-research-os` 已删除，没有双轨期。不确定从哪开始时，用 `/research-os` 的 route-only（例如 `/research-os 我该从哪开始`）。它只给推荐，不启动任务、不联网、不写文件。
+
 ---
 
 ## 架构与工作流
@@ -97,13 +99,13 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 
 ### 3. 选择技能
 
-如果你不确定当前阶段该用哪个技能，可以直接询问路由助手：
+如果你不确定当前阶段该用哪个技能，直接问统一入口，并说明只要推荐：
 
 ```bash
-/ask-research-os
+/research-os 我该从哪开始
 ```
 
-它会根据你的研究方向或已有材料推荐最合适的技能。该助手只读咨询，不修改文件，也不自动触发任何工作流。如果你已经清楚目标，也可以直接输入对应技能名称调用。
+这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。
 
 ---
 
@@ -174,7 +176,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 | 分类 | 技能名称 | 调用方式 | 说明 |
 |---|---|---|---|
 | **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | User | 对话式初始化科研工作区与配置，需确认后写入 |
-| | [ask-research-os](skills/general/ask-research-os/SKILL.md) | User | 只读导航助手，推荐当前阶段适用的技能 |
+| | [research-os](skills/general/research-os/SKILL.md) | User | 统一编排入口；只读请求走 route-only，零副作用 |
 | **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | User | 构思查新工作流：文献检索、生成方案、查新、评审并输出 Proposal |
 | | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | Model | 文献检索与综合，标注出处与核实状态 |
 | | [idea-generation](skills/idea-cycle/idea-generation/SKILL.md) | Model | 多视角生成研究候选方案，记录筛选理由 |
@@ -236,7 +238,7 @@ A: 支持遵循标准 Skills 机制的客户端，包括 Claude Code、Codex、C
 ## 相关文档
 
 - [用户验收指南](docs/user-acceptance-guide.md)：测试用例与边界核验方法
-- [产品地图与状态表](skills/general/ask-research-os/PRODUCT-MAP.md)：技能定义与触发边界
+- [产品地图与状态表](skills/general/research-os/references/PRODUCT-MAP.md)：技能定义与触发边界
 - [Skills 目录总览](skills/README.md)：目录结构与兼容性说明
 - [上游来源与许可证说明](docs/upstream-sources-and-licenses.md)：移植与借鉴项目的许可证声明
 

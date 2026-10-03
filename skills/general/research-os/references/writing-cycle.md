@@ -1,6 +1,6 @@
 # Writing Cycle
 
-状态词见 [PRODUCT-MAP.md](../PRODUCT-MAP.md)。目标是规划、起草、绘图、编译、审查、修订，或处理审稿、转投、演讲时阅读。
+状态词见 [PRODUCT-MAP.md](PRODUCT-MAP.md)。目标是规划、起草、绘图、编译、审查、修订，或处理审稿、转投、演讲时阅读。
 
 ## 写作内部能力
 

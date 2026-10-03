@@ -27,7 +27,7 @@ disable-model-invocation: true
 
 需要基线构建才能复现时，先让用户单独认可命令、临时写域、执行分级、具体资源/时间预算及已有落实机制与“仅基线，不改源”。获准后按 build §3–4 运行一次。基线不消耗修复轮次，但必须报告；没有基线权限就只做静态诊断，不凭空填写退出码。
 
-出现错误、警告或 VERIFY 时读取 [八类诊断](../../paper-compile/references/diagnostics.md)，逐项关联原文与源文件/行号；对源结构执行该文档的递归孤立 .tex 检测。定位不足时请求证据，不试探性写源。应用 diff 的顺序见 [有界修复](references/bounded-repair.md)。
+出现错误、警告或 VERIFY 时读取 [八类诊断](../paper-compile/references/diagnostics.md)，逐项关联原文与源文件/行号；对源结构执行该文档的递归孤立 .tex 检测。定位不足时请求证据，不试探性写源。应用 diff 的顺序见 [有界修复](references/bounded-repair.md)。
 
 **完成条件：** 安全门已满足或列为阻塞；诊断来源、当前源对应性、全部待处理错误/warning 与 .tex 分类可核验；基线若执行有独立许可和真实日志。
 
@@ -52,7 +52,7 @@ disable-model-invocation: true
 
 按 build §3–4 对本轮原稿制作新普通文件快照，在**本轮新空输出目录**运行获准多遍链；快照源不改。每轮保留精确 diff、用户认可依据、每条命令/真实退出状态及全部日志。成功构建也扫描最终 warning，不以旧 PDF 作为成功。
 
-修复成功则进入核验；仍失败时按 [diagnostics](../../paper-compile/references/diagnostics.md) 与 [有界修复](references/bounded-repair.md) 定位新根因。连续两轮无进展时暂停复核日志、包冲突、编码与宏，给出用户可选择的人工/独立分析建议，不自动派发外部工具或 agent。仍有预算且存在有证据的新 diff 才回步骤 3；绝不直接应用下一轮猜测。
+修复成功则进入核验；仍失败时按 [diagnostics](../paper-compile/references/diagnostics.md) 与 [有界修复](references/bounded-repair.md) 定位新根因。连续两轮无进展时暂停复核日志、包冲突、编码与宏，给出用户可选择的人工/独立分析建议，不自动派发外部工具或 agent。仍有预算且存在有证据的新 diff 才回步骤 3；绝不直接应用下一轮猜测。
 
 达到预算、授权撤回、无可信修复、需扩权/远程资源、出现并发写入、所选安全门失效或预算落实机制失效时停止。失败也保留已批准修改及日志，明确当前状态；回滚同样需要展示并批准具体 diff，不自动回滚用户工作。
 
