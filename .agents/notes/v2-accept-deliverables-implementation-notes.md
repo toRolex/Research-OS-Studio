@@ -1,0 +1,27 @@
+# v2 accept deliverables (#41/#43/#44)
+
+## 基线/批准 seam
+
+- 自有 worktree `v2/accept-deliverables`，HEAD `67a04ff`；已确认 integration 基线为祖先；用户要求交付前 merge 最新 integration 并重测。
+- 已读取共享批准合同、release 验收、用户指南、#37/#41/#43/#44 GitHub正文与评论及相关票 notes。
+- 已调用 pre-implement、github-api-rate-limits；tdd 工具不可用，完整读取 `/Users/rolex/.agents/skills/tdd/SKILL.md`。沿用已批准 Seam A checker、Seam B 真 CLI/tool trace+机械快照；正文 bug 若发现，先红再修。无 mock/合成工具输出。
+
+## 决策
+
+- 仅 /tmp 项目限定安装当前 tip；pi 默认内置工具，禁扩展/全局上下文以免污染全局环境。skill 从安装副本实际全文读取。
+- 生成研究材料允许明确标注 toy 的极小 CPU 数据，但验收报告、论文稿、独立审查、Proposal、rebuttal/talk 均必须由宿主执行 skill 产生。
+- fresh 审查由真实主宿主自己用 bash 启动新 pi --session，独立上下文读取原始输入；不让验收代理先写审查。
+- 不 push/tag/PR/关票，不修改共享 release 矩阵、不修改原 main 用户资料。报告独立 `docs/acceptance/v2-accept-deliverables.md`。
+- GitHub 4票合并为一次 GraphQL（cost 1，remaining 4996），因为需合并四端点+评论；只读。
+
+## 过程
+
+- Phase0 default真实trace停stage-checkpoint，零研究材料写入；JMLR/arXiv页面GET核实成功。一次走完另外新session；JMLR/arXiv真实PDF已下载/提取，部分NeurIPS SSL失败但合理替代一手来源继续，不视永久阻碍。
+- 默认sticky续接research-lit真实read暴露安装路径bug：`../source-verification.md`仅仓库category共有、flat副本不存在；宿主如实记录ENOENT。先写Seam B mechanical flat-copy回归，research-lit/novelty-check两subtest红（evidence/source-relocation.red.txt）。只把原共用正文逐字复制到两个skill references，并改两个链接；绿及checker OK。不改科研逻辑，保留仓库共有文件兼容旧外部链接。
+- 默认工具三writing门实测已停且未写；批准后后台真实CLI继续，toy原始fixture stdlib通过UV实际执行，输入不可写。
+- fresh方法/专项审查要求由主宿主write prompt及新pi session，不由验收代理生成。
+
+## Deviations
+
+- 第一条skills安装命令误在本自有worktree执行，生成`.pi/skills`与skills-lock.json（未触碰全局或原main）。立即移到/tmp evidence保留记录，工作树零安装残留；实际代表测试全部使用/tmp限定副本。这是验收操作偏差不是产品行为。
+- 宿主idea-once的少量材料解析用了python3（违反UV要求），工具轨迹原样保留，不假装合规；后续明确加强并复测。
