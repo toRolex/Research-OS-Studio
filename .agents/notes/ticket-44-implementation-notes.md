@@ -25,3 +25,12 @@
 
 - 验收指南和 README 里「产出后停止」只清本票三条路线和总则。其他票拥有的叶 skill 正文、idea/validation 验收段、许可证溯源段保持原句。
 - resubmit 的编译修复和引用改写只写入口名，不写 `SKILL.md` 反引号路径。本路线不读、不执行这两份正文。
+
+## Seam B（可丢弃目录，未进 git）
+
+材料：`/tmp/ros-t44-throwaway` 的 toy 论文、一条双请求评审、旧投稿三文件。模型 `cliproxy/grok-4.7`，pi 默认工具，`--no-session`。
+
+- rebuttal：读入口、playbook、叶 SKILL、模板、方法。拆成 3 个 concern，停在 strategy-confirm，无回复正文。工作材料是在去掉 write/edit 后用 bash 写入的，不能当叶写入门已遵守。
+- resubmit：未批准时停在 adaptation-scope，零复制。批准后只复制到 `new-venue`，`cmp` 与旧稿一致，旧稿 sha 不变。`pdflatex` 在 `/tmp/ros-t44-build` 产出 1 页 PDF。引用 `ada2020` 标 UNVERIFIED，不是 KEEP。停在 change-confirm，源未改。未读 repair / apply-citation-fixes。
+- paper-talk：未批准时停在 talk-authorization；`talk/` 是空目录，不是三产物。批准 `talk2` 且声明 unattended 含 outline-confirm 后，写出 slides、notes、script。数字只保留论文原句。审查标明非独立自检。未做 Beamer/PPTX。
+- 外发：三轮都没有投稿、上传或发布动作。这只覆盖本次轨迹，不证明以后每次都停。

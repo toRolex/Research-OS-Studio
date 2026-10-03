@@ -21,9 +21,9 @@ Claim、Citation、Proof（理论内容适用）、Stress 与独立评审是并�
 
 | 入口 | 角色／状态 | 选择依据与边界 |
 |---|---|---|
-| `paper-writing` | U／已实现（#25） | 通用完整 W3：plan、draft、figures、compile、适用 audits、独立评审与授权 revision；不是 drafting 薄壳；不自动启动其他 user-invoked Workflow |
-| `ml-paper-writing` | U／已实现（#26） | ML 实验报告：seeds、error bars、compute、limitations 等专属方法；复用内部资产，不自动调用 user-invoked W3 |
-| `systems-paper-writing` | U／已实现（#27） | Systems 的 design rationale、implementation、end-to-end、microbenchmark／ablation、scalability；直接组合内部能力，不与 ML 合并、不自动启动通用 W3；缺扩展性等证据时记缺口而不补造 |
+| `paper-writing` | U／已实现（#25） | `/research-os` 的 paper-writing / general。通用材料的完整 W3：plan、draft、figures、compile、适用 audits、独立评审与授权 revision；不是 drafting 薄壳；不自动启动其他 user-invoked Workflow |
+| `ml-paper-writing` | U／已实现（#26） | `/research-os` 的 paper-writing / ml，不经通用入口。ML 实验报告：seeds、error bars、compute、limitations；复用内部资产，不自动调用通用 W3 |
+| `systems-paper-writing` | U／已实现（#27） | `/research-os` 的 paper-writing / systems，不经通用入口。design rationale、implementation、end-to-end、microbenchmark／ablation、scalability；不与 ML 合并；缺扩展性等证据时记缺口而不补造 |
 | `paper-compile-repair` | U／已实现（#22） | 已知编译错误且希望改源码；显式确认范围后修复并复验，与 check-only 分离 |
 | `apply-citation-fixes` | U／已实现（#23） | 已有引用 findings 且希望替换／删除／修正文或 BibTeX；先展示拟修改范围并获授权，与 detect 分离 |
 | `research-improvement` | U／已实现（#28），跨流程可选（跨流程能力，物理归位于 writing-cycle/） | 对方法、代码、全部结果、Claims、草稿、diff、历史 findings 做有界 review／repair／re-review；高权限可写入口，在明确 scope、写入范围、轮数、资源及副作用授权内补分析／改稿，补实验须另行授权并在运行数名额内；承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 方法，不是只读审计，不自动启动 experiment-bridge、paper-writing 或专项修复入口 |

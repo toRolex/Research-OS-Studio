@@ -46,33 +46,32 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 ## 二、通用入口（General）验收场景
 
-### 1. `setup-research-os`（#3 项目安全初始化）
-`setup-research-os` 是对话式的初始化 Workflow，采用 **Explore → Present → Ask → Draft → Confirm → Write → Verify → Stop** 八步闭环。
+### 1. `setup-research-os`（#40 项目配置与安全初始化）
+`setup-research-os` 一次配齐项目级角色表、默认算力政策和工作区种子。模型可以建议运行它；建议本身不是写入授权。写入前有两个停点：逐角色确认当时可用模型，以及确认整份草稿。
 
-- **场景 1.1：全新空项目初始化**
-  - **操作**：在空目录中运行 `/setup-research-os`。
+- **场景 1.1：全新空项目**
+  - **操作**：在空目录中运行 setup。宿主先列出本 session 可用模型。
   - **核验**：
-    1. 自动探索并建议创建默认的 `research/` 目录；
-    2. 当 `CLAUDE.md` 和 `AGENTS.md` 均不存在时，主动询问用户选择创建哪一个；
-    3. 展示拟写入的完整草稿（包含项目基础导航、研究日志、工作区说明及 Agent 指令区块）；
-    4. 用户确认前**零文件写入**；
-    5. 用户确认后写入文件，验证存在性后立即停止，不配置环境、不生成假研究数据、不启动研究流程。
-- **场景 1.2：非空既有科研项目（沿用目录，不搬迁）**
-  - **操作**：在已有论文草稿、代码和数据的项目中运行 `/setup-research-os`。
-  - **核验**：
-    1. 自动识别已有工作目录（如 `docs/`、`experiments/` 或自定义目录），推荐沿用已有结构；
-    2. 绝不强制搬迁或删除用户既有文件；
-    3. 仅补齐缺失的导航和指令区块。
-- **场景 1.3：重复执行（幂等性，不覆盖）**
-  - **操作**：在已初始化的项目中再次运行 `/setup-research-os`。
-  - **核验**：检测到基础文件与指令区块均已完整，报告“无需额外写入”，已有内容和研究日志**零修改、零覆盖**。
-- **场景 1.4：内容冲突处理与差异展示**
-  - **操作**：手动修改既有指令文件中的 Research OS 区块内容，再次运行 `/setup-research-os`。
-  - **核验**：展示当前内容与推荐草稿的精确 diff，逐项询问用户决定（保留当前、原位更新或手动合并），保留所有周边无关段落。当两个指令文件都存在时，优先更新 `CLAUDE.md`。
-- **场景 1.5：拒绝写入与外部突发变动防护**
-  - **操作**：
-    - 展示草稿后输入拒绝，核验项目保持零修改；
-    - 在展示草稿与确认写入的间隙，模拟外部新建或修改目标文件（如外部新增了 `CLAUDE.md`），核验 setup 立即停止整批写入，重新扫描并要求重新确认。
+    1. 八个角色 orchestrator、literature、ideator、implementer、analyst、prover、writer、reviewer 逐个确认；
+    2. 每个写入的 `provider/model-id` 都能在刚才的清单里逐字找到；
+    3. 建议 `research/`，并展示角色表、默认政策、导航、项目说明、findings、研究日志和指令区块；
+    4. 确认前零写入；确认后 `.agents/research-os-models.md` 恰好八行，`research/compute-policy.md` 写明不是运行授权，额度是 0；
+    5. 不配置环境、不生成研究结论、不启动研究流程。
+- **场景 1.2：既有材料**
+  - **操作**：项目里已有论文、代码、数据、工作区和研究日志。
+  - **核验**：沿用已有工作区；不搬迁材料；研究日志字节不变；只补缺失的导航、政策或角色表。
+- **场景 1.3：重复执行**
+  - **操作**：对已确认的同一份角色表和政策再跑一次。
+  - **核验**：目标与确认稿字节相同则不写；不追加第二套角色或第二套额度。已有研究日志仍不变。
+- **场景 1.4：不可用模型**
+  - **操作**：给一个不在本轮 `pi --list-models`（或其他宿主清单）中的 slug。
+  - **核验**：停下并重新询问；未确认的模型不进入草稿，也不写入角色表。
+- **场景 1.5：全局角色表**
+  - **操作**：记录 `~/.agents/pstack-models.md` 的修改时间，再完成 setup。
+  - **核验**：该文件的修改时间不变；本来没有它，setup 也不创建它。
+- **场景 1.6：冲突、拒绝与外部变化**
+  - **操作**：改已有 Research OS 区块；或在确认前拒绝；或确认后由外部新建 `CLAUDE.md`。
+  - **核验**：区块差异逐项决定，周边段落保留；拒绝时零写入；候选优先级变化时停止整批并重新确认。两个指令文件都存在时只更新 `CLAUDE.md`。
 
 ### 2. `research-os` route-only（#38 只读入口导航）
 旧入口 `ask-research-os` 已删除。`/research-os` 的 route-only 是只读出口，帮助用户在 39 个 Skill 中选择切入点。
@@ -124,13 +123,15 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
   2. **固定问题锚点**：Refinement 在修改方案时，必须严格保留原始 **Problem Anchor**（研究核心问题），防止在迭代过程中“偷偷换题”；
   3. **双路线取舍**：对比最小可行验证路线（MVP）与前沿进阶路线（Frontier），给出权衡依据。
 
-### 5. `idea-discovery`（#8 完整 Idea 发现 Workflow）
-- **操作**：显式调用 `/idea-discovery`，输入研究方向 brief。
+### 5. `idea-discovery` 路线（#41；叶 Workflow 为 #8）
+- **操作**：对 `/research-os` 说「我有方向，没有 idea」，并给出研究方向 brief。不要只把这句话当成推荐请求。
 - **核验**：
-  1. 完整串联 Phase 0（读取 brief）→ Phase 1（文献检索）→ Phase 2（候选生成）→ Phase 3（查新）→ Phase 4（独立评审）→ Phase 4.5（锚点收敛）；
-  2. 默认在各 Phase 间停下等待用户确认（除非获得显式“一次走完”授权）；
-  3. 最终在工作区交付单一 `IDEA_DISCOVERY.md` 发现报告与 `RESEARCH_PROPOSAL.md` 研究方案；
-  4. **越权防御**：交付后立即停止，**绝不自动运行 pilot 代码、绝不自动创建实验计划、绝不自动跨入 Validation 流程**。
+  1. 命中路线 `idea-discovery`，按 playbook 读完叶 skill 全文后执行 Phase 0 → 文献 → 候选 → 查新 → 独立评审 → 固定边界收敛；
+  2. 默认每个阶段在叶上的 `stage-checkpoint` 停下。用户在本次调用写明「一次走完」并给出预算时，阶段之间连续执行；输出路径、评审范围、问题锚点仍停；
+  3. 交付单一 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止，不运行 pilot，不创建实验计划，不进入 Validation；
+  4. **粘性**：下一句「继续」或「看下一阶段」仍走本路线；
+  5. **new task**：用户说 new task 后，例如「new task 我该从哪开始」，回到入口重匹配，只读请求进 route-only。
+- 直接点名 `/idea-discovery` 仍走叶入口，不经过本路由行。
 
 ---
 
@@ -229,19 +230,20 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 ### 2. 完整写作 Workflow 与专业扩展
 
-- **`paper-writing`（#25 通用 W3 写作 Workflow）**
-  - **操作**：显式调用 `/paper-writing`，提供完整研究材料。
-  - **核验**：有序执行规划→图表→起草→编译检查→并列审计→独立整篇评审→授权修订；交付候选稿与审查报告后立即停止，**绝不自动提交投稿，绝不自动补跑实验**。
-- **`ml-paper-writing`（#26 ML 专业写作 Workflow）**
-  - **操作**：显式调用 `/ml-paper-writing`。
+- **`/research-os` 的 paper-writing（#43，三变体仍用既有叶 skill）**
+  - **操作**：在可丢弃副本里分别给出通用材料、机器学习实验材料、系统设计与实现材料，显式调用 `/research-os` 并要求写论文。
   - **核验**：
-    1. 严格执行 ML/AI 领域实验报告规范：每次对比必须明确 random seeds 数量、runs 统计不确定性（error bars）、超参调优范围、算力消耗（compute budget）、复现性与独立的 Limitations 章节；
-    2. 发现数据缺失时，正文显式标注 `[SEED COUNT NEEDED]` 或 `[COMPUTE NEEDED]` 等可见缺口，**严禁用默认值掩盖，绝不自动调用外部环境补跑实验**。
-- **`systems-paper-writing`（#27 Systems 专业写作 Workflow）**
-  - **操作**：显式调用 `/systems-paper-writing`。
+    1. general 只打开 `paper-writing`；ml 只打开 `ml-paper-writing`；systems 只打开 `systems-paper-writing`。专业材料不读通用入口。
+    2. 授权确认前停在叶 skill 的授权门，零写入。确认后按该叶的 composition-map 走规划、图表、起草、真实编译，以及 claim、citation、stress；含证明时才读 `proof-review`。
+    3. 交付候选稿与审查报告后停止。投稿与上传不发生。`paper-compile-repair` 与 `apply-citation-fixes` 仍须另行点名。
+- **`ml-paper-writing`（#26，paper-writing / ml 的叶合同）**
   - **核验**：
-    1. 严格遵循系统顶会结构规范：5 句摘要法、Introduction 突出问题与 Gap、Design 详细论述架构与替代方案权衡（Alternatives/Trade-offs）、Evaluation 区分 End-to-End、Microbenchmark 与 Scalability；
-    2. **缺失证据处理**：若缺少扩展性实验，显式标记 `MISSING SCALABILITY EVIDENCE` 并收窄主张，绝不擅自脑补外推曲线。
+    1. 每次对比写明 seeds、runs、error bars、超参与选择、compute、复现与 Limitations；
+    2. 缺失处保留 `[SEED COUNT NEEDED]` 或 `[COMPUTE NEEDED]`，不用默认值填空，不补跑实验。
+- **`systems-paper-writing`（#27，paper-writing / systems 的叶合同）**
+  - **核验**：
+    1. 章节按叶 skill 的系统写作方法：摘要、Gap、alternatives、end-to-end、microbenchmark／ablation、scalability；
+    2. 缺少扩展性实验时保留 `MISSING SCALABILITY EVIDENCE`，不外推曲线。
 - **`research-improvement`（#28 全研究有界改进循环）**
   - **操作**：显式调用 `/research-improvement`，设定修改范围与最大轮数（如 2 轮）。
   - **核验**：
@@ -289,13 +291,13 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 | 序号 | 验证项 | 预期表现 | 验收判定 |
 |---|---|---|---|
 | 1 | **CLI 清单发现** | `skills add ... --list` 列出全部 39 个 Skill，无遗漏、无重复、无幽灵入口 | [ ] 通过 |
-| 2 | **Setup 不覆盖** | `setup-research-os` 遇到既有材料零覆盖，遇到冲突展示 diff，拒绝则零改动 | [ ] 通过 |
+| 2 | **Setup 不覆盖** | `setup-research-os` 沿用既有材料且不改研究日志；零授权政策不是运行许可；清单外模型停下；冲突展示 diff，拒绝或外部新建 `CLAUDE.md` 则零改动并重新确认 | [ ] 通过 |
 | 3 | **route-only 只读导航** | `/research-os` 在只读意图下推荐切入点，零文件写入、零联网、不自动触发任何工作流 | [ ] 通过 |
 | 4 | **Discovery 真实查新** | `idea-discovery` 执行真实检索与查新，独立评审，交付 Proposal 后停止 | [ ] 通过 |
 | 5 | **实验执行有界** | `experiment-bridge` 严格限制在批准预算和文件范围内，保留全部 attempts 历史 | [ ] 通过 |
 | 6 | **结果审计与 Claim** | `experiment-audit` 独立查作弊/幻觉；`result-to-claim` 收窄不确定结论 | [ ] 通过 |
 | 7 | **数学证明与修复** | `proof-review` 只读报告；`proof-repair` 遇反例不擅改命题，无 Lean 安全降级 | [ ] 通过 |
-| 8 | **论文写作与编译** | `paper-writing` 闭环交付候选稿后停止；编译与引用修复均需显式授权 diff | [ ] 通过 |
-| 9 | **ML/Systems 专业规范** | ML 强制 seeds/compute 纪律；Systems 强制 5 句摘要/alternatives/scalability | [ ] 通过 |
+| 8 | **论文写作与编译** | `/research-os` paper-writing 三变体各自走本专业入口，授权前零写入，交付候选稿与审查报告；编译修复与引用修复仍须另行点名 | [ ] 通过 |
+| 9 | **ML/Systems 专业规范** | ml 不经通用入口，seeds/compute 缺口保持可见；systems 不经通用入口，缺扩展性保持 `MISSING SCALABILITY EVIDENCE` | [ ] 通过 |
 | 10 | **审稿、转投、演讲** | `/research-os` 进入 rebuttal、resubmit、paper-talk；策略、措辞、范围、改动、授权、大纲与外发仍停；旧稿保留，三产物是 slides、notes、script | [ ] 通过 |
 | 11 | **工具缺失与边界** | 缺失外部环境（LaTeX/Lean/GPU）如实报告并降级，不假报成功，不自装环境 | [ ] 通过 |

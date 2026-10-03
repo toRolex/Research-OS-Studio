@@ -115,15 +115,20 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 ```text
 输入研究方向
       ↓
-/idea-discovery
+/research-os 我有方向，没有 idea
+      ↓
+playbook idea-discovery
+  默认每个阶段停下；写明「一次走完」并给出预算才连续
   ├─ 检索文献并标注出处 (research-lit)
-  ├─ 多视角生成方案 (idea-generation & creative-thinking)
+  ├─ 多视角生成方案 (idea-generation；卡住时 creative-thinking)
   ├─ 检索已知工作并精准查新 (novelty-check)
   ├─ 独立评审与挑刺 (idea-review)
   └─ 方案细化与收敛 (idea-refinement)
       ↓
-交付 RESEARCH_PROPOSAL.md（停止，等待用户决策）
+交付 IDEA_DISCOVERY.md 与 RESEARCH_PROPOSAL.md 后停止
 ```
+
+叶上的输出路径、阶段检查点、评审范围和问题锚点仍然生效。下一句延续本路线；说 new task 才重匹配。直接点名 `/idea-discovery` 仍走叶入口。
 
 ### 2. 实验与推导（Validation）
 ```text
@@ -146,16 +151,18 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 ```text
 输入实验数据或理论成果
       ↓
-论文起草与制作
-  ├─ 通用论文：/paper-writing
-  ├─ 机器学习：/ml-paper-writing
-  └─ 系统方向：/systems-paper-writing
+/research-os 按材料匹配 paper-writing
+  ├─ 通用材料：general → paper-writing
+  ├─ 机器学习材料：ml → ml-paper-writing（不经通用入口）
+  └─ 系统设计与实现：systems → systems-paper-writing（不经通用入口）
       ↓
-专项审计与真实编译
-  ├─ LaTeX 编译检查与修复 (paper-compile / /paper-compile-repair)
-  ├─ 引用真实性核对与更新 (citation-audit / /apply-citation-fixes)
-  ├─ 全文数据一致性校验 (paper-claim-audit)
-  └─ 同行评审压力测试 (claim-stress-test)
+叶 skill 自带授权门；门内才规划、绘图、起草、真实编译
+并列审查：paper-claim-audit、citation-audit、claim-stress-test
+证明稿件才读 proof-review
+      ↓
+交付候选稿与审查报告
+投稿、上传不在写作路线
+paper-compile-repair 与 apply-citation-fixes 须另行点名
       ↓
 投后管理与衍生（/research-os 编排；叶入口仍可点名）
   ├─ 审稿回复：/research-os 回复审稿 → rebuttal
@@ -163,7 +170,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
   └─ 学术演讲：/research-os 做会议演讲 → paper-talk
       ↓
 交付候选回复、新目录投稿材料或 slides/notes/script
-叶 skill 的策略、措辞、范围、大纲与外发确认仍停；不把产出当成流程结束
+叶 skill 的策略、措辞、范围、大纲与外发确认仍停
 ```
 
 ---
@@ -172,11 +179,11 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 
 全套包含 39 个独立技能。根据触发机制分为两类：
 - **除 setup 外全部显式调用**：用户直接点名，或父流程按路径级联读取全文。模型不因描述自动触发。
-- **`setup-research-os`**：唯一允许模型主动建议的例外；该翻转由 setup 票负责，当前仍是显式调用。
+- **`setup-research-os`**：唯一允许模型主动建议的例外。写入前仍要逐角色确认模型和整份草稿。
 
 | 分类 | 技能名称 | 调用方式 | 说明 |
 |---|---|---|---|
-| **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | 显式 | 对话式初始化科研工作区与配置，需确认后写入；模型主动建议尚未翻转 |
+| **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | 可建议 | 确认本 session 可用模型、八角色、零授权默认政策与工作区种子；建议本身不是写入授权 |
 | | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口；只读请求走 route-only，零副作用 |
 | **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | 显式 | 构思查新工作流：文献检索、生成方案、查新、评审并输出 Proposal |
 | | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | 显式 | 文献检索与综合，标注出处与核实状态 |
@@ -199,9 +206,9 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 | | [proof-review](skills/validation-cycle/proof-review/SKILL.md) | 显式 | 只读审查证明逻辑与边界反例，不修改文件 |
 | | [proof-repair](skills/validation-cycle/proof-repair/SKILL.md) | 显式 | 在授权范围内有针对性地修复证明断点 |
 | | [proof-orchestrator](skills/validation-cycle/proof-orchestrator/SKILL.md) | 显式 | 管理复杂长定理证明，支持 Lean 辅助推导 |
-| **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | 显式 | 通用论文写作工作流：大纲、绘图、起草、编译与审计 |
-| | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | 显式 | 机器学习论文写作，侧重实验设置、随机种子与算力开销记录 |
-| | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | 显式 | 系统方向论文写作，侧重设计权衡与性能评测 |
+| **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | 显式 | `/research-os` paper-writing / general：通用材料的规划、绘图、起草、真实编译与并列审查；叶 skill 自带授权门 |
+| | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | 显式 | paper-writing / ml：机器学习材料不经通用入口；seeds、error bars、compute、limitations |
+| | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | 显式 | paper-writing / systems：系统设计材料不经通用入口；design rationale、end-to-end、scalability |
 | | [paper-plan](skills/writing-cycle/paper-plan/SKILL.md) | 显式 | 规划论文大纲与 Claim-Evidence 证据对应矩阵 |
 | | [paper-drafting](skills/writing-cycle/paper-drafting/SKILL.md) | 显式 | 依据实验数据与推导记录起草论文正文 |
 | | [academic-plotting](skills/writing-cycle/academic-plotting/SKILL.md) | 显式 | 绘制学术图表并保留可复现绘图脚本 |

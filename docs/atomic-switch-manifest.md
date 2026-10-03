@@ -116,7 +116,7 @@
 
 ### 4.2 发现范围与防冲突验证
 - **发现根路径**：仅扫描 `skills/` 目录。
-- **数量核对**：39 个 `SKILL.md`，17 个 user-invoked（配置 `disable-model-invocation: true` 与 `agents/openai.yaml`），22 个 model-invoked。
+- **数量核对**：39 个 `SKILL.md`。除 `setup-research-os` 外，user-invoked 配置 `disable-model-invocation: true` 与 `agents/openai.yaml`。setup 允许模型建议，`allow_implicit_invocation: true`，写入仍须确认。
 - **命名空间**：所有 39 个 Skill 具有全局唯一名称，不存在跨目录同名。
 - **消除旧污染**：在 #36 删除 `core/skills/` 和 `ports/` 后，`npx skills add toRolex/Research-OS-Studio --list` 将只展示 39 个纯 Skill，彻底消除同名竞争与幽灵入口。
 
