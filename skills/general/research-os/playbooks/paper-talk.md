@@ -13,7 +13,7 @@
 3. 在授权目录生成 `slides.md`、`speaker_notes.md`、`TALK_SCRIPT.md`。三份使用同一逻辑页编号。请求的 Beamer 或 PPTX 再读 `skills/writing-cycle/paper-talk/references/slide-templates.md`；工具缺失时保留 Markdown，并写明未生成的格式。
 4. 按 `skills/writing-cycle/paper-talk/references/talk-audit.md` 只读审查这三份实际产物。审查不改演讲，也不改论文。
 5. 内容修订、视觉精修和导出只在本次授权包含对应动作时进行。视觉步骤读 `skills/writing-cycle/paper-talk/references/visual-polish.md`。报告用 `skills/writing-cycle/paper-talk/templates/talk-report.md`。
-6. 交付后停止。不上传、不发布、不投稿。
+6. 交付 slides、notes、script 与报告。不上传、不发布、不投稿。
 
 ## 停止
 

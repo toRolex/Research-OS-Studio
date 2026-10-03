@@ -13,7 +13,7 @@
 - **环境所有权归用户所有**：Research OS 不会且不得自动为用户安装或配置 Python、Lean、LaTeX、R、CUDA/GPU 驱动、SSH 密钥或 Slurm 调度器。
 - **工具缺失如实报告**：当 Skill 需要的外部工具（如 `pdflatex`、`lean`、`web_search` 或特定 Python 库）不存在时，Skill 必须如实报告工具缺失缺口并安全降级，**绝不伪造执行成功**。
 - **高成本与破坏性操作边界**：涉及 GPU 算力消耗、付费 API 调用、远程代码执行、文件重写或外部发布的行为，必须预先明确修改范围与资源预算，并在操作前获得用户明确授权。
-- **零自动跨流程推进**：所有 User-invoked 顶层 Workflow 在完成当前职责并输出报告后必须立即停止，**绝不自动启动下一条主流程**。
+- **叶门保留、旧停止语义作废**：`/research-os` 命中已交付 playbook 后继续编排。可逆步骤直接做。对外发送、删或覆盖既有实验数据，以及叶 skill 正文里的审批点，仍停下来等批准。不再把「产出报告」本身当成必须结束流程的信号。
 
 ### 2. 准备可丢弃的测试工作区
 在独立的临时目录中克隆或创建测试项目，不要直接在未经备份的重要科研仓库中进行首次破坏性测试：
@@ -251,25 +251,25 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 ### 3. 投后与衍生独立 Workflow（W4 - W6）
 
-- **`rebuttal`（#29 审稿意见回复，W4）**
-  - **操作**：提供论文初稿、审稿人评审意见（Reviews）与已有证据，显式调用 `/rebuttal`。
+- **rebuttal（#44 路线，叶入口 `rebuttal` #29）**
+  - **操作**：提供论文、原始评审与已有证据，调用 `/research-os 回复审稿`。也可直接点名 `/rebuttal`。
   - **核验**：
-    1. 将审稿意见拆解为原子化 concern，逐项映射到论文现有证据；
-    2. 明确区分“已有证据可直接回答”、“评审存在歧义需澄清”与“需补充新工作”；
-    3. 审稿人文本中要求的补充实验不自动构成执行授权；补实验必须由用户另行确认；
-    4. 各 Reviewer 线程自包含，符合目标 venue 篇幅限制（严格区分 strict 与 rich 模式）；完成后停止，不自动修改原论文或投稿。
-- **`resubmit-pipeline`（#30 论文转投适配，W5）**
-  - **操作**：提供旧投稿目录、目标新会议要求与新输出目录，显式调用 `/resubmit-pipeline`。
+    1. 编排者按 playbook 读 `rebuttal` 全文，把审稿意见拆成原子 concern，并映射到现有证据；
+    2. 区分可直接回答、需澄清、需补充工作；
+    3. 未确认策略时停在 strategy-confirm，只有问题板和策略；确认策略不等于确认措辞，未确认完整措辞时停在 wording-confirm，不生成已确认粘贴版；
+    4. 评审里的补实验不构成执行授权。不投稿、不上传。
+- **resubmit（#44 路线，叶入口 `resubmit-pipeline` #30）**
+  - **操作**：提供旧投稿目录、目标 venue 与另一个新目录，调用 `/research-os 转投`。也可直接点名 `/resubmit-pipeline`。
   - **核验**：
-    1. 在新目录中适配新 venue 模板与格式规则，**原旧稿目录完整保留、绝不污染**；
-    2. 用户自定义模板与官方规则冲突时，列出差异由用户决定，不替用户做主；
-    3. 在新目录中真实构建 PDF，报告编译状态；完成后停止，不自动投稿。
-- **`paper-talk`（#31 学术演讲生成，W6）**
-  - **操作**：提供已发表/已完成论文，显式调用 `/paper-talk`。
+    1. 未批准新目录时停在 adaptation-scope，零复制；目标已存在、非空或指向旧稿时停；
+    2. 批准后只在新目录适配，旧稿逐文件保持原样；模板冲突列出差异，由用户决定；
+    3. 只读编译与引用检测之后，未逐项确认改动时停在 change-confirm；全部拒绝则零研究材料写入。不向投稿系统提交。
+- **paper-talk（#44 路线，叶入口 `paper-talk` #31）**
+  - **操作**：提供已完成论文、听众、时长和输出目录，调用 `/research-os 做会议演讲`。也可直接点名 `/paper-talk`。
   - **核验**：
-    1. 生成逐页对应的 Slides 内容、Speaker Notes 与逐字演讲稿（Script）；
-    2. 严格核算主讲时长与 Q&A 预留时间，数字与结论与原论文完全一致；
-    3. 独立审计演讲材料的故事线、信息密度与图表可读性；完成后停止，不自动发布。
+    1. 未确认输出范围时停在 talk-authorization；未确认逐页大纲时停在 outline-confirm，不生成三份正文；
+    2. 确认后得到 slides、speaker notes、逐字 script，页号一致，时长合计不超预算，数字可追溯到论文；
+    3. 审查报告覆盖故事、密度、计时、图可读性、开场、takeaway、渐进讲解。不上传、不发布。
 
 ---
 
@@ -297,5 +297,5 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 | 7 | **数学证明与修复** | `proof-review` 只读报告；`proof-repair` 遇反例不擅改命题，无 Lean 安全降级 | [ ] 通过 |
 | 8 | **论文写作与编译** | `paper-writing` 闭环交付候选稿后停止；编译与引用修复均需显式授权 diff | [ ] 通过 |
 | 9 | **ML/Systems 专业规范** | ML 强制 seeds/compute 纪律；Systems 强制 5 句摘要/alternatives/scalability | [ ] 通过 |
-| 10 | **W4-W6 独立后续** | `rebuttal`、`resubmit-pipeline`、`paper-talk` 独立可用，互不自动串联 | [ ] 通过 |
+| 10 | **审稿、转投、演讲** | `/research-os` 进入 rebuttal、resubmit、paper-talk；策略、措辞、范围、改动、授权、大纲与外发仍停；旧稿保留，三产物是 slides、notes、script | [ ] 通过 |
 | 11 | **工具缺失与边界** | 缺失外部环境（LaTeX/Lean/GPU）如实报告并降级，不假报成功，不自装环境 | [ ] 通过 |

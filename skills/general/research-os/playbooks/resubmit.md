@@ -13,7 +13,7 @@
 3. 只读检查读 `skills/writing-cycle/paper-compile/SKILL.md`，引用检测读 `skills/writing-cycle/citation-audit/SKILL.md`。两份正文的自带门照旧生效。本步不改研究材料。
 4. 停在 change-confirm。用户逐项决定之前零研究材料写入。编译修复与引用改写只记下待转交入口名 paper-compile-repair、apply-citation-fixes。本路线不打开它们的正文，也不执行它们；用户要做时另行点名。
 5. 对已批准的本路线正文改动应用后，重做只读检查。报告格式用 `skills/writing-cycle/resubmit-pipeline/templates/adaptation-report.md`。
-6. 交付后停止。不向投稿系统提交、不上传、不发布。
+6. 交付新目录候选与报告。不向投稿系统提交、不上传、不发布。
 
 ## 停止
 
