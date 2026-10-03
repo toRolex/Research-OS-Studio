@@ -13,7 +13,7 @@
 - **环境所有权归用户所有**：Research OS 不会且不得自动为用户安装或配置 Python、Lean、LaTeX、R、CUDA/GPU 驱动、SSH 密钥或 Slurm 调度器。
 - **工具缺失如实报告**：当 Skill 需要的外部工具（如 `pdflatex`、`lean`、`web_search` 或特定 Python 库）不存在时，Skill 必须如实报告工具缺失缺口并安全降级，**绝不伪造执行成功**。
 - **高成本与破坏性操作边界**：涉及 GPU 算力消耗、付费 API 调用、远程代码执行、文件重写或外部发布的行为，必须预先明确修改范围与资源预算，并在操作前获得用户明确授权。
-- **叶门保留、旧停止语义作废**：`/research-os` 命中已交付 playbook 后继续编排。可逆步骤直接做。对外发送、删或覆盖既有实验数据，以及叶 skill 正文里的审批点，仍停下来等批准。不再把「产出报告」本身当成必须结束流程的信号。
+- **叶门保留、旧停止语义作废**：`/research-os` 命中已交付 playbook 后继续编排。可逆步骤直接做。对外发送、删或覆盖既有实验数据，以及叶 skill 正文里的审批点，仍停下来等批准。不再把「产出报告」本身当成必须结束流程的信号。下一条主流程不因报告完成而自动开始；已交付 playbook 只在本批授权内继续。默认算力政策不是这张授权。
 
 ### 2. 准备可丢弃的测试工作区
 在独立的临时目录中克隆或创建测试项目，不要直接在未经备份的重要科研仓库中进行首次破坏性测试：
@@ -147,9 +147,10 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 ### 1. 计算与实证研究路径
 
-- **`experiment-plan`（#9 制定有界实验计划）**
-  - **操作**：提供研究假设，调用 `/experiment-plan`。
+- **`experiment-plan`（#9 制定有界实验计划；#42 经 `/research-os` 编排）**
+  - **操作**：提供研究假设。可直接调用 `/experiment-plan`，或调用 `/research-os 设计实验`。
   - **核验**：产出包含 Hypothesis、Baseline 对照、评估 Metrics、Ablation 方案、固定不变评价面、允许修改代码范围、计算资源预算与失败判据的计划，产出后立即停止，不执行任何代码。
+  - **本批授权**：计划获准时确认的是本批字段，写入 `research-log.md`。工作区默认 `compute-policy.md` 额度仍为 0，不能当作已授权。拒绝确认则不写 authorization_status。
 - **`run-experiment` & `experiment-queue`（#10 授权执行与队列管理）**
   - **操作**：在单次授权的资源限额内运行实验。
   - **核验**：
@@ -179,12 +180,16 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     1. 严格区分“数据文件存在”与“数据是否充分支持结论”；
     2. 将部分支持或存在边界的结论收窄为可辩护的候选 Claim（例如限定数据集、限定算力范围）；
     3. 产出候选 Claim 清单后停止，最终采纳与否由用户决定。
-- **`experiment-bridge`（#15 宏实验 Bridge Workflow）**
-  - **操作**：提供已批准的实验计划，显式调用 `/experiment-bridge`。
+- **`experiment-bridge`（#15 宏实验 Bridge Workflow；#42 批次预授权）**
+  - **操作**：提供已批准的实验计划。可直接调用 `/experiment-bridge`，或调用 `/research-os 跑完这个实验并分析`。低消耗验收用可丢弃项目里的一条本地命令，不用 GPU。
   - **核验**：
-    1. 在一次授权内串联实现、sanity 验证、正式执行、监控、结果分析与审计；
-    2. 严格受限于批准的资源预算与文件修改范围；
-    3. 产出全流程总结后停止，**绝不自动进入 Paper Writing 写作阶段**。
+    1. 在一次授权内串联实现、sanity 验证、正式执行、监控、结果分析与审计；叶 skill 的阶段不由 playbook 重写；
+    2. 启动前读研究日志。缺本批授权、valid_until 已过、scope 不含本次写域、累计或单次越界、并发或重试越界：停，无作业产物；
+    3. 已入账消耗加上仍在跑的预留，再加本次最坏消耗；恰好等于上限可以跑；未知消耗不按 0 释放；
+    4. run_count_basis 为 planned-run；每个 attempt 都扣费用和算力，失败、超时、无效也入账；
+    5. 删除或覆盖既有实验结果前另停，额度足够也不自动删；
+    6. 获准后 research-log 的次数、费用、算力与授权对得上；产出后停止，**绝不自动进入 Paper Writing**。
+  - **证据**：行为场景看真实宿主的工具轨迹。静态检查只证明路由和引用，不证明停在作业前。
 
 ### 2. 数学与理论研究路径
 

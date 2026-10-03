@@ -41,7 +41,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 
 ## 只读入口导航
 
-不确定从哪里开始时，显式调用 `/research-os` 并说明只要推荐。旧入口 `ask-research-os` 已删除，改用 `/research-os` 的 route-only。已知入口仍可直接点名，无需先 setup。route-only 接受方向、已有结果或稿件，只在对话中推荐并停止，不写研究材料、不联网、不启动推荐任务。
+不确定从哪里开始时，显式调用 `/research-os` 并说明只要推荐。旧入口 `ask-research-os` 已删除，改用 `/research-os` 的 route-only。已知入口仍可直接点名，无需先 setup。route-only 接受方向、已有结果或稿件，只在对话中推荐并停止，不写研究材料、不联网、不启动推荐任务。`/research-os 设计实验` 进入 experiment-plan；`/research-os 跑完这个实验并分析` 进入 experiment-bridge。两条都只认研究日志里的本批授权。
 
 已保存交接用 `/research-os` 的三条路线，不另建状态机：
 

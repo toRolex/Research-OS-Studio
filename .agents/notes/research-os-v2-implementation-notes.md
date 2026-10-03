@@ -31,3 +31,11 @@
 冲突只在 `skills/general/research-os/SKILL.md` 路由表与 `skills/README.md` 只读导航。路由行按合同顺序并入 idea-discovery、paper-writing 三变体、proof、rebuttal、resubmit、paper-talk、improvement、pickup、route-only、custom。未交付名单只留 experiment-plan、experiment-bridge。级联示例同时点名 #44 与 #45 的 playbook。README 导航保留 proof／improvement／pickup，并保留 paper-writing 按材料分变体。composition 文档未改。checker 仍是 `scripts/check-skills.py`。
 
 #44 notes 的 Seam B 与 #45 notes 的 pickup 轨迹仍只属于各自分支的可丢弃目录。本次合并没有重跑这些轨迹，不把它们写成集成后已验。
+
+## #42 合入
+
+`--no-ff` 合入 `v2/ticket-42` `b163430`（功能提交 `7acd43c`）。不 squash，不 push，不开 PR，不关票，不动原 main。
+
+冲突：`skills/general/research-os/SKILL.md`、`skills/general/research-os/references/PRODUCT-MAP.md`、`docs/user-acceptance-guide.md`。路由表保留全部 14 行：route-only、idea-discovery、experiment-plan、experiment-bridge、paper-writing general / ml / systems、proof、rebuttal、resubmit、paper-talk、improvement、pickup、custom。未交付名单改为「无」。级联示例补上 experiment-plan 与 experiment-bridge。PRODUCT-MAP 同时保留 #42 的本批授权和 #45 的 proof / improvement / pickup。验收指南保留叶门与「报告本身不是停点」，并写明默认算力政策不是本批授权。`README.md`、`docs/README-en.md`、`skills/README.md` 自动合并，#45 的交接段还在。checker 仍是 `scripts/check-skills.py`，没有第二个 checker。
+
+#42 行为轨迹没有在这次合并重跑，也不算集成后已验。范围只以分支 notes 为准：`/tmp/ros42-cases/{missing,expired,scope,exact,cumul,concur,retry,unknown,delete,loop}`，宿主 `pi --session … -p`，工具 read/write/edit/bash，模型 cliproxy/grok-4.7 thinking off。拒绝场景无 `results/out.txt`。exact 与 loop 有本地 `printf` 产物 `ok`。loop 两笔 completed 对上 2 USD / 0.2 cpu-core-hour / 2 planned-run，第三笔 refused 且无 started_at；默认政策仍为 0；`results/run.csv` 保持 `seed result v1`。这证明授权门，不是 experiment-bridge 全阶段科研质量，也不是叶 skill 正文被改过。

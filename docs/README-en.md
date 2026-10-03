@@ -84,7 +84,7 @@ If you are unsure which skill fits your current stage, ask the unified entry and
 /research-os where should I start
 ```
 
-That selects route-only. It recommends a skill from your topic or existing materials, modifies no files, does not use the network, and never starts a workflow. The old entry `ask-research-os` has been removed. If you already know the skill, invoke it directly, or let `/research-os` open the matching playbook.
+That selects route-only. It recommends a skill from your topic or existing materials, modifies no files, does not use the network, and never starts a workflow. The old entry `ask-research-os` has been removed. If you already know the skill, invoke it directly, or let `/research-os` open the matching playbook. Designing an experiment uses experiment-plan; running an approved plan through analysis uses experiment-bridge. Both require the batch grant in the research log. The default policy written by setup is not permission to run.
 
 Saved handoffs use three routes and no new state machine: `proof` resumes one fixed obligation, `improvement` runs the bounded review → repair → re-review loop, and `pickup` re-reads the saved handoff, `compute-policy.md`, and `research-log.md`. An expired authorization stays expired.
 
@@ -111,7 +111,7 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 | Category | Skill Name | Invocation | Description |
 |---|---|---|---|
 | **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Confirm live session models, eight roles, a zero-grant policy, and workspace seeds; a suggestion is not write authorization |
-| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; read-only requests use route-only and have no side effects |
+| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; route-only is read-only; experiment-plan and experiment-bridge are delivered and bill a batch grant |
 | **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Full ideation workflow: literature search, ideation, novelty check, review, proposal |
 | | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
 | | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Explicit | Multi-angle research candidate generation with filtering logs |

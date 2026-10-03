@@ -20,11 +20,13 @@
 
 上述是可选路径，不是线性通关表。任意外部材料都能成为切入点；有结果不必先跑 Discovery，有稿件不必重新实验或起草，普通证明无需 Lean。
 
-`research-os`（U，已实现，#38）：唯一编排入口。只读请求走 route-only，零副作用。已保存的证明轮次走 proof，已有研究整体的有界改进走 improvement，新会话恢复已保存交接走 pickup（#45）。pickup 重读批准、授权和作业记录，不延长授权。`setup-research-os`（U，已实现，#3）：用户确实想初始化或补齐人类可读工作区；探索、逐问、完整草稿确认后补缺。**不是咨询或其他入口的前置门槛**。
+`research-os`（U，已实现，#38）：唯一编排入口。只读请求走 route-only，零副作用。已交付 playbook：route-only、custom、idea-discovery、experiment-plan、experiment-bridge、paper-writing 的 general / ml / systems、proof、rebuttal、resubmit、paper-talk、improvement、pickup。experiment-plan 与 experiment-bridge 在计划获准时确认本批授权；默认算力政策不是运行许可。已保存的证明轮次走 proof，已有研究整体的有界改进走 improvement，新会话恢复已保存交接走 pickup（#45）。pickup 重读批准、授权和作业记录，不延长授权。`setup-research-os`（U，已实现，#3）：用户确实想初始化或补齐人类可读工作区；探索、逐问、完整草稿确认后补缺。**不是咨询或其他入口的前置门槛**。
 
 ## 按现有材料选切入点
 
 - **只有方向**：想形成完整 Proposal，由 `/research-os` 进入 `idea-discovery` 并照 playbook 执行到 Proposal。默认每个阶段停下；用户写明一次走完并给出预算才连续。也可直接点名候选生成／创意思考，或对已选候选单独查新／评审／收敛。不对空方向捏造 novelty 结论。读 [idea-cycle.md](idea-cycle.md)。
+- **已有问题要做计划**：走已交付的 experiment-plan。它只产计划；执行授权写在研究日志，不来自默认政策。
+- **已有计划要跑完并分析**：走已交付的 experiment-bridge。启动前核对研究日志里的本批授权；缺授权、过期、越界或要删既有结果时停。
 - **已有结果**：先看用户要解释不确定性、审计真实性，还是形成候选 Claim；分别推荐对应内部能力或已实现的 `result-to-claim`。仅想从结果衍生新方向时才考虑已实现的 `idea-generation`；不强迫重新找 Idea。读 [validation.md](validation.md)；衍生新方向再读 idea-cycle。
 - **已有稿件**：按需要选引用／Claim／Proof／Stress 检查、局部修复、通用／专业写作，或 `/research-os` 的 rebuttal、resubmit、paper-talk（叶入口仍是 `rebuttal`、`resubmit-pipeline`、`paper-talk`）与 `research-improvement`。不自动起草新稿、运行实验或初始化目录。读 [writing-cycle.md](writing-cycle.md)。
 
