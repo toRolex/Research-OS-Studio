@@ -177,11 +177,11 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 
 全套包含 39 个独立技能。根据触发机制分为两类：
 - **除 setup 外全部显式调用**：用户直接点名，或父流程按路径级联读取全文。模型不因描述自动触发。
-- **`setup-research-os`**：唯一允许模型主动建议的例外；该翻转由 setup 票负责，当前仍是显式调用。
+- **`setup-research-os`**：唯一允许模型主动建议的例外。写入前仍要逐角色确认模型和整份草稿。
 
 | 分类 | 技能名称 | 调用方式 | 说明 |
 |---|---|---|---|
-| **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | 显式 | 对话式初始化科研工作区与配置，需确认后写入；模型主动建议尚未翻转 |
+| **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | 可建议 | 确认本 session 可用模型、八角色、零授权默认政策与工作区种子；建议本身不是写入授权 |
 | | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口；只读请求走 route-only，零副作用 |
 | **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | 显式 | 构思查新工作流：文献检索、生成方案、查新、评审并输出 Proposal |
 | | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | 显式 | 文献检索与综合，标注出处与核实状态 |

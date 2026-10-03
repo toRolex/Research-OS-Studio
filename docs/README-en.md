@@ -106,11 +106,11 @@ Saved handoffs use three routes and no new state machine: `proof` resumes one fi
 
 The suite contains 39 standalone skills. Invocation is explicit except for setup:
 - **Explicit except setup**: the user names the skill, or a parent playbook reads it by path. The model does not trigger it from the description.
-- **`setup-research-os`**: the only skill that may later be suggested by the model. That flip belongs to the setup ticket and has not landed; it is still explicit.
+- **`setup-research-os`**: the one skill a model may suggest. Confirming each live model and the full draft still comes before any write.
 
 | Category | Skill Name | Invocation | Description |
 |---|---|---|---|
-| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Explicit | Interactive workspace initialization; model suggestion not flipped yet |
+| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Confirm live session models, eight roles, a zero-grant policy, and workspace seeds; a suggestion is not write authorization |
 | | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; read-only requests use route-only and have no side effects |
 | **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Full ideation workflow: literature search, ideation, novelty check, review, proposal |
 | | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
