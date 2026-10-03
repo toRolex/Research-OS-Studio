@@ -25,6 +25,10 @@
 - talk真实ACI三材料+9逻辑页/12物理页Beamer已编译，3次构建预算到顶，fresh七维审查继续；不得用编译成功称内容安全。
 - resubmit冻结宿主真实general候选6文件为old-submission，只读SHA基线；现有官方acmart.cls及官方GET README，raw样例失败按已装官方sample回退，新稿真实编译报abstract顺序错误。宿主偷偷在scratch“诊断”改源码且awk丢abstract，随后自己核实纠正并标无效PDF，原2次额度已用；后续单独显式paper-compile-repair精确diff门+新增1次CPU构建授权，不能把scratch成功当新稿成功。过程失误与预算保留。
 - 首次flat复制回归绿日志其实第二断言因mac /tmp→/private/tmp未resolve仍红；完整复测暴露后修`leaf.resolve()`，真正17+41全绿。保留红/原失败日志不抹去。
+- Idea真实查新多来源尚有全文缺口→fresh查新EVIDENCE GAP/idea review REVISE/七轴refinement REVISE，39KB发现报告+20KBProposal真实交付且Anchor不变，未启动实验。主host tool history与三独立session完整保留。
+- ML主宿主超过初3编译到5，fresh复审抓旧PDF（scratch新PDF没拷贝），真实修复最终5页但不追认历史预算通过。general5页/systems6页完整稿+全部fresh报告均交付。
+- talk首次fresh审查真实揭露数学方向反、理论scope/计时等，主宿主未经严重发现另确认即v2/第4编译，属门失败。随后本代理明确有界批准600词/新增≤2编译/1fresh聚焦复审，主宿主597词约247s+23s停顿+30s缓冲；旧v2亦在evidence归档避免被删除，原baseline保留。最终复审等待返稿。
+- 已先后merge integration1e057fe/4da8b4d/e4de7a0，最新54bcf1b；当前checker39/U38/M1、tests19/scripts43共62真绿；安装270文件hash一致。每次merge后都重测，latest真实宿主核对Idea最终文件原反馈，不冒称未变旧科研全过程全重跑。
 
 ## Deviations
 
