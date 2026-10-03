@@ -25,12 +25,15 @@ Gates: none
 | paper-writing | general | 写论文 | 已有研究材料要写成论文，且材料不是机器学习实验、也不是以系统设计与实现为核心贡献 | no | [paper-writing-general](playbooks/paper-writing-general.md) |
 | paper-writing | ml | 机器学习 | 材料是机器学习或人工智能实验，要按该专业入口写论文 | no | [paper-writing-ml](playbooks/paper-writing-ml.md) |
 | paper-writing | systems | 系统论文 | 材料以系统设计与实现为核心贡献，要按该专业入口写论文 | no | [paper-writing-systems](playbooks/paper-writing-systems.md) |
+| proof | — | 续证明、接上一轮证明、证明交接、固定命题 | 已有固定命题或上一轮证明材料，要续接该 obligation | no | [proof](playbooks/proof.md) |
 | rebuttal | — | 回复审稿、逐条回应审稿意见、写 rebuttal | 已有论文与审稿意见，要逐 concern 候选回复 | no | [rebuttal](playbooks/rebuttal.md) |
 | resubmit | — | 转投、换 venue 重投、保留旧稿改投 | 已有投稿目录，要在新目录适配另一 venue 并保留旧稿 | no | [resubmit](playbooks/resubmit.md) |
 | paper-talk | — | 做会议演讲、生成 slides notes script、准备 paper talk | 已有论文，要 slides、notes 与逐字 script | no | [paper-talk](playbooks/paper-talk.md) |
+| improvement | — | 整体改进、有界循环、review 后修复再审 | 用户要在固定轮数和写入范围内改进已有研究整体 | no | [improvement](playbooks/improvement.md) |
+| pickup | — | 接上次会话、从交接恢复、新会话续接 | 已保存交接、批准或作业记录，要在新会话恢复 | no | [pickup](playbooks/pickup.md) |
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
 
-已命名、文件未交付，不建路由行：experiment-plan、experiment-bridge、proof、improvement、pickup。对应 playbook 由后续票与路由行一起加入。
+已命名、文件未交付，不建路由行：experiment-plan、experiment-bridge。对应 playbook 由后续票与路由行一起加入。
 
 ## 只读优先
 
@@ -60,4 +63,4 @@ Gates: none
 
 ## 级联
 
-命中已交付 playbook 后，逐字采用其步骤。步骤里的反引号路径和 Markdown 链接都要读全文，例如 `references/PRODUCT-MAP.md`。不把未读文件说成已执行。
+命中已交付 playbook 后，逐字采用其步骤。步骤里的反引号路径和 Markdown 链接都要读全文，例如 `references/PRODUCT-MAP.md`、`skills/general/research-os/playbooks/rebuttal.md`、`skills/general/research-os/playbooks/resubmit.md`、`skills/general/research-os/playbooks/paper-talk.md`、`skills/general/research-os/playbooks/proof.md`、`skills/general/research-os/playbooks/improvement.md`、`skills/general/research-os/playbooks/pickup.md`。不把未读文件说成已执行。

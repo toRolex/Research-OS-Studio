@@ -23,3 +23,11 @@
 
 - `skills/README.md` 验收清单采用 #40 的八步，并加回「原先仅有 AGENTS.md、确认后外部新增 CLAUDE.md」这一条。#40 正文写的是「指令候选优先级变化则停整批」；这条是同一停点的可执行例子，不是新授权。
 - 不把模板角色行或静态字段检查写成 Seam B 的真实工具轨迹。
+
+## #44 / #45 合入
+
+`--no-ff` 先合 `v2/ticket-44` `134c038`，再合 `v2/ticket-45` `63e3e15`。不 squash，不 push，不开 PR，不关票，不动原 main。
+
+冲突只在 `skills/general/research-os/SKILL.md` 路由表与 `skills/README.md` 只读导航。路由行按合同顺序并入 idea-discovery、paper-writing 三变体、proof、rebuttal、resubmit、paper-talk、improvement、pickup、route-only、custom。未交付名单只留 experiment-plan、experiment-bridge。级联示例同时点名 #44 与 #45 的 playbook。README 导航保留 proof／improvement／pickup，并保留 paper-writing 按材料分变体。composition 文档未改。checker 仍是 `scripts/check-skills.py`。
+
+#44 notes 的 Seam B 与 #45 notes 的 pickup 轨迹仍只属于各自分支的可丢弃目录。本次合并没有重跑这些轨迹，不把它们写成集成后已验。

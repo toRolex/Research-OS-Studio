@@ -107,6 +107,12 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 
 这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。
 
+已有上一轮证明、改进日志或研究作业记录时，不要从零重跑：
+
+- `/research-os` proof：续接固定命题，新目录只做本轮 obligation。
+- `/research-os` improvement：在确认的轮数和写入范围内做 review → repair → re-review。
+- `/research-os` pickup：新会话重读交接、算力政策和研究日志。已过期的授权保持过期。
+
 ---
 
 ## 典型科研流程
