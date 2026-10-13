@@ -36,3 +36,6 @@ __pycache__/
 # 一次性发布验收记录
 /gates/publish-github.md
 /planning/research-os-wayfinder/github-publication-implementation-notes.md
+
+# 验收证据压缩包（体积过大，改存 GitHub Release assets）
+/docs/acceptance/evidence/*.tar.gz
