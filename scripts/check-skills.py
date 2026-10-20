@@ -19,7 +19,6 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "skills"
-EXPECTED_COUNT = 39
 SETUP_NAME = "setup-research-os"
 ROLES = (
     "orchestrator",
@@ -150,9 +149,12 @@ def git_tracked() -> set[str]:
 tracked = git_tracked()
 
 # --- 1/2: 收集 skill 目录与 frontmatter -----------------------------------
+# 不写死总数：实际发现的目录必须与两份 README 清单一致（第 5 节），且每个 skill 目录
+# 都要有正文。新增或迁移 Skill 只同步清单与门基线，不需要改常数。
 skill_files = sorted(SKILLS.glob("*/*/SKILL.md"))
-if len(skill_files) != EXPECTED_COUNT:
-    err(f"skills/ 下 SKILL.md 数量为 {len(skill_files)}，期望 {EXPECTED_COUNT}")
+for skill_dir in sorted(SKILLS.glob("*/*")):
+    if skill_dir.is_dir() and not (skill_dir / "SKILL.md").is_file():
+        err(f"{skill_dir.relative_to(ROOT)}: skill 目录缺 SKILL.md")
 
 names: dict[str, str] = {}
 classifications: dict[str, str] = {}
@@ -587,6 +589,7 @@ def legacy_router_problems(files: dict[str, str]) -> list[str]:
 
 REQUIRED_RELEASE_ROUTES = (
     ("route-only", "—", "yes"),
+    ("literature", "—", "no"),
     ("idea-discovery", "—", "no"),
     ("experiment-plan", "—", "no"),
     ("experiment-bridge", "—", "no"),
@@ -744,15 +747,77 @@ for problem in stale_promise_problems(legacy_files):
     err(problem)
 
 
-# --- 叶 skill 门声明（#39 基线）；入口与 setup 不进这份路径表 ---
-LEAF_EXPECTED_GATES: dict[str, set[str]] = {
+def expected_gates(skill_dir: Path, skill_name: str) -> frozenset[str] | None:
+    """按迁移状态解析门基线：已迁移为空，未迁移为旧基线，未登记为 None。"""
+    rel = f"skills/{skill_dir.parent.name}/{skill_name}/SKILL.md"
+    if skill_name in GATE_BASELINE:
+        return frozenset(GATE_BASELINE[skill_name])
+    if skill_name in EXPECTED_GATES:
+        return EXPECTED_GATES[skill_name]
+    if rel in MIGRATED_CONTRACT:
+        return frozenset()
+    if rel in LEGACY_LEAF_GATES:
+        return frozenset(LEGACY_LEAF_GATES[rel])
+    return None
+
+
+def migration_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """委托合同与 expand 边界：合同单一权威，迁移集与文档记录一致。"""
+    found: list[str] = []
+    mandate = root / MANDATE_DOC
+    if not mandate.is_file():
+        found.append(f"{MANDATE_DOC}: 研究委托合同不存在")
+    elif MANDATE_DOC not in tracked_paths:
+        found.append(f"{MANDATE_DOC}: 研究委托合同未追踪")
+    else:
+        anchors = heading_anchors(mandate.read_text(encoding="utf-8"))
+        for section in MANDATE_SECTIONS:
+            if section not in anchors:
+                found.append(f"{MANDATE_DOC}: 缺「{section}」小节")
+    entry = root / "skills/general/research-os/SKILL.md"
+    if entry.is_file() and "references/mandate.md" not in entry.read_text(encoding="utf-8"):
+        found.append("skills/general/research-os/SKILL.md: 入口未指向 references/mandate.md")
+    for rel, marker in MIGRATED_CONTRACT.items():
+        path = root / rel
+        if not path.is_file():
+            found.append(f"{rel}: 已登记迁移但文件不存在")
+        elif marker not in heading_anchors(path.read_text(encoding="utf-8")):
+            found.append(f"{rel}: 已迁移技能缺「{marker}」小节")
+    boundary = root / MIGRATION_DOC
+    if not boundary.is_file() or MIGRATION_DOC not in tracked_paths:
+        found.append(f"{MIGRATION_DOC}: 迁移边界文档缺失或未追踪")
+        return found
+    text = boundary.read_text(encoding="utf-8")
+    if "未迁移" not in heading_anchors(text):
+        found.append(f"{MIGRATION_DOC}: 缺「未迁移」小节")
+    if "LEGACY_LEAF_GATES" not in text:
+        found.append(f"{MIGRATION_DOC}: 未指明未迁移门基线的权威位置")
+    for rel in MIGRATED_CONTRACT:
+        if Path(rel).parent.name not in text:
+            found.append(f"{MIGRATION_DOC}: 未列出已迁移技能 {Path(rel).parent.name}")
+    return found
+
+
+# --- expand 迁移边界 -------------------------------------------------------
+# 已迁移能力遵循委托合同（references/mandate.md）：正文无旧门，并带指定的合同小节。
+# 未迁移能力保留 #39 旧门基线，照旧单独可用；某能力迁移完成后，把它的条目从这里
+# 移入 MIGRATED_CONTRACT，并在 references/migration-boundary.md 记录同一事实。
+MIGRATED_CONTRACT: dict[str, str] = {
+    "skills/general/research-os/SKILL.md": "研究委托",
+    "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
+}
+MANDATE_DOC = "skills/general/research-os/references/mandate.md"
+MIGRATION_DOC = "skills/general/research-os/references/migration-boundary.md"
+MANDATE_SECTIONS = ("目标", "权限", "研究额度", "完成与停止")
+
+# --- 未迁移叶 skill 门声明（#39 基线）；入口、setup 与已迁移能力不进这份路径表 ---
+LEGACY_LEAF_GATES: dict[str, set[str]] = {
     "skills/idea-cycle/creative-thinking-for-research/SKILL.md": {"write-path"},
     "skills/idea-cycle/idea-discovery/SKILL.md": {"stage-checkpoint", "output-path"},
     "skills/idea-cycle/idea-generation/SKILL.md": {"write-path"},
     "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
     "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
     "skills/idea-cycle/novelty-check/SKILL.md": set(),
-    "skills/idea-cycle/research-lit/SKILL.md": {"write-path"},
     "skills/validation-cycle/analyze-results/SKILL.md": {"write-path"},
     "skills/validation-cycle/experiment-audit/SKILL.md": {"write-path"},
     "skills/validation-cycle/experiment-bridge/SKILL.md": {"run-authorization"},
@@ -788,23 +853,20 @@ LEAF_EXPECTED_GATES: dict[str, set[str]] = {
     "skills/writing-cycle/resubmit-pipeline/SKILL.md": {"adaptation-scope", "change-confirm"},
     "skills/writing-cycle/systems-paper-writing/SKILL.md": {"workflow-authorization"},
 }
-GATE_SKIP = {
-    "skills/general/setup-research-os/SKILL.md",
-    "skills/general/research-os/SKILL.md",
-}
-
-
 
 
 for sf in skill_files:
     rel = sf.relative_to(ROOT).as_posix()
-    if rel not in LEAF_EXPECTED_GATES:
-        if rel not in GATE_SKIP:
-            err(f"{rel}: 缺少门声明基线")
+    expected = expected_gates(sf.parent, sf.parent.name)
+    if expected is None:
+        err(f"{rel}: 缺少门声明基线")
         continue
     body = sf.read_text(encoding="utf-8").split("---", 2)[-1]
-    for problem in gate_problems(sf.parent.name, sf.parent, body, frozenset(LEAF_EXPECTED_GATES[rel]), tracked):
+    for problem in gate_problems(sf.parent.name, sf.parent, body, expected, tracked):
         err(f"{rel}: {problem}")
+
+for problem in migration_contract_problems(ROOT, tracked):
+    err(problem)
 
 
 def parse_fields(text: str) -> dict[str, list[str]]:
@@ -990,11 +1052,7 @@ def check_log(path: Path, policy_fields: dict[str, list[str]]) -> None:
 
 
 def check_gates(skill_dir: Path, skill_name: str) -> None:
-    expected = GATE_BASELINE.get(skill_name)
-    if expected is None:
-        expected = EXPECTED_GATES.get(skill_name)
-    if expected is None:
-        expected = LEAF_EXPECTED_GATES.get(f"skills/{skill_dir.parent.name}/{skill_name}/SKILL.md")
+    expected = expected_gates(skill_dir, skill_name)
     if expected is None:
         err(f"{skill_name}: 门声明不在已审阅基线")
         return

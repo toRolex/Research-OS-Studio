@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""#46：14 行路由组合、旧承诺 sweep、串行降级。先于实现写，期望失败。"""
+"""#46：已交付路由组合、旧承诺 sweep、串行降级。#49 补入 literature route。"""
 import importlib.util
 import unittest
 from pathlib import Path
@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 REQUIRED_ROUTES = (
     ("route-only", "—", "yes"),
+    ("literature", "—", "no"),
     ("idea-discovery", "—", "no"),
     ("experiment-plan", "—", "no"),
     ("experiment-bridge", "—", "no"),
@@ -35,7 +36,7 @@ def load():
 
 
 class ReleaseGate(unittest.TestCase):
-    def test_fourteen_routes_are_complete(self):
+    def test_release_routes_are_complete(self):
         mod = load()
         text = (ROOT / "skills/general/research-os/SKILL.md").read_text(encoding="utf-8")
         rows, errors = mod.parse_route_table(text)

@@ -16,6 +16,8 @@ SKILLS = ROOT / "skills"
 SETUP = "skills/general/setup-research-os/SKILL.md"
 ROUTER = "skills/general/ask-research-os/SKILL.md"
 # 本票拥有的叶。入口与 setup 基线由后续票并入同一 checker。
+# #49 起 research-lit 已迁移到委托合同（Gates: none + 「委托继承」小节），不在本表；
+# 其迁移状态由 tests/test_spec48_ticket49.py 与 check-skills.py 的 MIGRATED_CONTRACT 校验。
 LEAF_GATES = {
     "skills/idea-cycle/creative-thinking-for-research/SKILL.md": {"write-path"},
     "skills/idea-cycle/idea-discovery/SKILL.md": {"stage-checkpoint", "output-path"},
@@ -23,7 +25,6 @@ LEAF_GATES = {
     "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
     "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
     "skills/idea-cycle/novelty-check/SKILL.md": set(),
-    "skills/idea-cycle/research-lit/SKILL.md": {"write-path"},
     "skills/validation-cycle/analyze-results/SKILL.md": {"write-path"},
     "skills/validation-cycle/experiment-audit/SKILL.md": {"write-path"},
     "skills/validation-cycle/experiment-bridge/SKILL.md": {"run-authorization"},

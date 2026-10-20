@@ -1,0 +1,286 @@
+"""#49 研究委托合同与最小单入口。
+
+期望来自 #48 spec 与 #49 票面，不从被测脚本反读。历史基线：`bce31c1` 的
+`docs/acceptance/**` 链到被 `.gitignore` 忽略的 `evidence/*.tar.gz`，checker 已因此 FAIL；
+本票只允许这一组历史失败，不新增断链，也不把 checker 说成全绿。
+"""
+import importlib.util
+import re
+import shutil
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+CHECK = ROOT / "scripts" / "check-skills.py"
+ENTRY = ROOT / "skills/general/research-os/SKILL.md"
+MANDATE = ROOT / "skills/general/research-os/references/mandate.md"
+BOUNDARY = ROOT / "skills/general/research-os/references/migration-boundary.md"
+LEAF = ROOT / "skills/idea-cycle/research-lit/SKILL.md"
+PLAYBOOK = ROOT / "skills/general/research-os/playbooks/literature-review.md"
+SKILLS = ROOT / "skills"
+
+# 历史断链：main 上已存在，任何票都不得把它当自己的回归。
+HISTORICAL = re.compile(
+    r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
+)
+MANDATE_SECTIONS = ("目标", "权限", "研究额度", "完成与停止")
+README_LIST = re.compile(r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+)/SKILL\.md\)")
+
+
+def load():
+    spec = importlib.util.spec_from_file_location("check_skills_t49", CHECK)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("cannot load check-skills.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def discovered() -> set[str]:
+    return {f"{p.parent.parent.name}/{p.parent.name}" for p in SKILLS.glob("*/*/SKILL.md")}
+
+
+def problem_lines(root: Path) -> list[str]:
+    result = subprocess.run(
+        [sys.executable, str(root / "scripts/check-skills.py")],
+        cwd=root,
+        capture_output=True,
+        text=True,
+    )
+    return [line for line in result.stdout.splitlines() if line.startswith("  - ")]
+
+
+def fresh_problems(root: Path) -> list[str]:
+    return [line for line in problem_lines(root) if not HISTORICAL.match(line)]
+
+
+def heading_set(text: str) -> set[str]:
+    return {match.group(1).strip() for match in re.finditer(r"^#{1,6}\s+(.+?)\s*$", text, re.M)}
+
+
+SKILL_TEMPLATE = (
+    "---\nname: new-capability\ndescription: \"临时能力。\"\n"
+    "disable-model-invocation: true\n---\n\n# New\n\nGates: none\n"
+)
+
+
+def add_skill(root: Path, listed: bool) -> Path:
+    """在副本里加一个未登记迁移状态的新 Skill；listed 决定是否同步 README 清单。"""
+    new_dir = root / "skills/idea-cycle/new-capability"
+    (new_dir / "agents").mkdir(parents=True)
+    (new_dir / "SKILL.md").write_text(SKILL_TEMPLATE, encoding="utf-8")
+    (new_dir / "agents/openai.yaml").write_text(
+        'name: "new-capability"\nallow_implicit_invocation: false\n', encoding="utf-8"
+    )
+    (new_dir / "LICENSE").write_text("MIT\n", encoding="utf-8")
+    if listed:
+        for name in ("README.md", "skills/README.md"):
+            path = root / name
+            path.write_text(
+                path.read_text(encoding="utf-8")
+                + "\n- [new-capability](skills/idea-cycle/new-capability/SKILL.md)\n",
+                encoding="utf-8",
+            )
+    return new_dir
+
+
+class WorkCopy:
+    """可损坏副本：git 初始化后即等价于已追踪工作区。"""
+
+    def __init__(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = Path(self._tmp.name) / "repo"
+        shutil.copytree(
+            ROOT,
+            self.path,
+            ignore=shutil.ignore_patterns(".git", ".venv", "__pycache__"),
+        )
+        for command in (
+            ["git", "init"],
+            ["git", "add", "-A"],
+            ["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-m", "base"],
+        ):
+            subprocess.run(command, cwd=self.path, check=True, capture_output=True)
+
+    def __enter__(self) -> "WorkCopy":
+        return self
+
+    def __exit__(self, *_exc) -> None:
+        self._tmp.cleanup()
+
+    def stage(self) -> None:
+        subprocess.run(["git", "add", "-A"], cwd=self.path, check=True, capture_output=True)
+
+
+class ContractText(unittest.TestCase):
+    def test_mandate_states_goal_permission_quota_and_stop(self):
+        text = MANDATE.read_text(encoding="utf-8")
+        headings = heading_set(text)
+        for section in MANDATE_SECTIONS:
+            self.assertIn(section, headings, f"委托合同缺「{section}」")
+        for clause in ("目标替换", "只读", "独立调用", "有界首轮"):
+            self.assertIn(clause, text, clause)
+
+    def test_entry_points_at_mandate_and_keeps_readonly_and_host_map(self):
+        text = ENTRY.read_text(encoding="utf-8")
+        self.assertIn("references/mandate.md", text)
+        for kept in ("当前命中路线是 route-only", "无该工具时由编排者串行执行", "保留编号、原句及子列表"):
+            self.assertIn(kept, text, kept)
+
+    def test_legacy_leaf_still_declares_its_own_gate(self):
+        rebuttal = (SKILLS / "writing-cycle/rebuttal/SKILL.md").read_text(encoding="utf-8")
+        self.assertRegex(rebuttal, r"(?m)^Gate: strategy-confirm \|")
+
+
+class MigrationBoundary(unittest.TestCase):
+    def test_migrated_and_legacy_sets_partition_the_suite(self):
+        module = load()
+        migrated = set(module.MIGRATED_CONTRACT)
+        legacy = set(module.LEGACY_LEAF_GATES)
+        entry = "skills/general/research-os/SKILL.md"
+        setup = "skills/general/setup-research-os/SKILL.md"
+        leaves = {f"skills/{name}/SKILL.md" for name in discovered()}
+        self.assertEqual(migrated | legacy, leaves - {setup}, "每个叶必须登记为已迁移或未迁移")
+        self.assertIn(entry, migrated)
+        self.assertNotIn(setup, migrated | legacy)
+        self.assertEqual(migrated & legacy, set())
+
+    def test_boundary_doc_lists_migrated_skills_and_legacy_remainder(self):
+        text = BOUNDARY.read_text(encoding="utf-8")
+        module = load()
+        for rel in module.MIGRATED_CONTRACT:
+            self.assertIn(Path(rel).parent.name, text, rel)
+        self.assertIn("未迁移", heading_set(text))
+        self.assertIn("LEGACY_LEAF_GATES", text)
+
+    def test_migrated_skills_follow_inheritance_contract(self):
+        entry = ENTRY.read_text(encoding="utf-8")
+        leaf = LEAF.read_text(encoding="utf-8")
+        self.assertRegex(entry, r"(?m)^Gates: none$")
+        self.assertRegex(leaf, r"(?m)^Gates: none$")
+        self.assertNotRegex(leaf, r"(?m)^Gate: ")
+        self.assertIn("委托继承", heading_set(leaf))
+        self.assertIn("研究委托", heading_set(entry))
+
+
+class CompletePath(unittest.TestCase):
+    def test_route_row_links_playbook_and_is_a_release_route(self):
+        module = load()
+        text = ENTRY.read_text(encoding="utf-8")
+        rows, errors = module.parse_route_table(text)
+        self.assertEqual(errors, [])
+        self.assertIn(("literature", "—", "no"), {(row["路线"], row["变体"], row["只读约束"]) for row in rows})
+        self.assertEqual(module.release_route_problems(rows), [])
+        self.assertTrue(PLAYBOOK.is_file())
+
+    def test_playbook_enters_existing_capability_then_accepts_artifacts(self):
+        text = PLAYBOOK.read_text(encoding="utf-8")
+        self.assertIn("skills/idea-cycle/research-lit/SKILL.md", text)
+        for clause in ("验收", "实际产物", "目标替换", "有界首轮"):
+            self.assertIn(clause, text, clause)
+        self.assertIsNone(re.search(r"等待批准|批准后再执行|需再次确认", text), text)
+
+
+class CounterRelationship(unittest.TestCase):
+    def test_no_fixed_skill_count_and_manifests_match_discovery(self):
+        self.assertNotIn("EXPECTED_COUNT", CHECK.read_text(encoding="utf-8"))
+        actual = discovered()
+        for name in ("README.md", "skills/README.md"):
+            listed = set(README_LIST.findall((ROOT / name).read_text(encoding="utf-8")))
+            self.assertEqual(listed, actual, name)
+
+    def test_current_tree_has_no_new_breakage(self):
+        self.assertEqual(fresh_problems(ROOT), [])
+
+    def test_unlisted_new_skill_is_red(self):
+        with WorkCopy() as work:
+            add_skill(work.path, listed=False)
+            work.stage()
+            self.assertIn("清单缺", "\n".join(problem_lines(work.path)))
+
+    def test_registered_but_unclassified_skill_is_red(self):
+        with WorkCopy() as work:
+            add_skill(work.path, listed=True)
+            work.stage()
+            self.assertIn("缺少门声明基线", "\n".join(problem_lines(work.path)))
+
+    def test_migrated_skill_regaining_a_gate_is_red(self):
+        with WorkCopy() as work:
+            leaf = work.path / LEAF.relative_to(ROOT)
+            leaf.write_text(
+                leaf.read_text(encoding="utf-8").replace(
+                    "Gates: none",
+                    "Gate: write-path | before=report-write | approval=explicit-user "
+                    "| source=SKILL.md#scope-and-authorization",
+                    1,
+                ),
+                encoding="utf-8",
+            )
+            work.stage()
+            blob = "\n".join(problem_lines(work.path))
+            self.assertIn("research-lit", blob)
+
+    def test_dropped_mandate_section_is_red(self):
+        with WorkCopy() as work:
+            mandate = work.path / MANDATE.relative_to(ROOT)
+            mandate.write_text(
+                mandate.read_text(encoding="utf-8").replace("## 研究额度", "## Quota", 1),
+                encoding="utf-8",
+            )
+            work.stage()
+            self.assertIn("研究额度", "\n".join(problem_lines(work.path)))
+
+    def test_boundary_doc_without_migrated_skill_is_red(self):
+        with WorkCopy() as work:
+            boundary = work.path / BOUNDARY.relative_to(ROOT)
+            boundary.write_text(
+                boundary.read_text(encoding="utf-8").replace("research-lit", "文献能力", 1),
+                encoding="utf-8",
+            )
+            work.stage()
+            self.assertIn("research-lit", "\n".join(problem_lines(work.path)))
+
+
+class FlatInstall(unittest.TestCase):
+    """可丢弃目录的扁平安装：入口与代表能力可发现、可读取、共置资源可达。"""
+
+    def test_entry_and_leaf_survive_flat_install(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name in ("general/research-os", "idea-cycle/research-lit"):
+                shutil.copytree(SKILLS / name, root / Path(name).name)
+            entry = (root / "research-os/SKILL.md").read_text(encoding="utf-8")
+            leaf_dir = root / "research-lit"
+            leaf = (leaf_dir / "SKILL.md").read_text(encoding="utf-8")
+            self.assertIn("literature-review", entry)
+            self.assertIn("references/mandate.md", entry)
+            for rel in ("references/mandate.md", "references/migration-boundary.md",
+                        "playbooks/literature-review.md"):
+                self.assertTrue((root / "research-os" / rel).is_file(), rel)
+            self.assertTrue((leaf_dir / "references/source-verification.md").is_file())
+            self.assertTrue((leaf_dir / "references/source-methods.md").is_file())
+            self.assertTrue((leaf_dir / "templates/literature-report.md").is_file())
+            link = re.findall(r"\[source verification\]\(([^)]+)\)", leaf)
+            self.assertEqual(len(link), 1)
+            self.assertTrue((leaf_dir / link[0].split("#")[0]).is_file())
+
+    def test_playbook_pointers_map_to_flat_layout(self):
+        text = PLAYBOOK.read_text(encoding="utf-8")
+        targets = set(re.findall(r"`(skills/[\w-]+/[\w-]+/SKILL\.md)`", text))
+        self.assertIn("skills/idea-cycle/research-lit/SKILL.md", targets)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for target in targets:
+                parts = Path(target).parts
+                skill = parts[-2]
+                copy = root / skill
+                if not copy.exists():
+                    shutil.copytree(SKILLS / parts[1] / skill, copy)
+                self.assertTrue((copy / "SKILL.md").is_file(), target)
+
+
+if __name__ == "__main__":
+    unittest.main()

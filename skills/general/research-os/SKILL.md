@@ -6,21 +6,32 @@ disable-model-invocation: true
 
 # Research OS
 
-用户显式调用 `/research-os` 后，本入口负责匹配路线并照 playbook 执行。除 `setup-research-os` 外，各 skill 仍由用户点名或由本入口按路径级联读取；模型不自动发现它们。
+用户显式调用 `/research-os` 后，本入口按研究委托组织底层能力：用户给目标，入口在委托给的权限与额度内自主编排，交付由目标决定。除 `setup-research-os` 外，各 skill 仍由用户点名或由本入口按路径级联读取；模型不自动发现它们。
 
 Gates: none
 
+## 研究委托
+
+一次调用是一份委托。目标、权限、研究额度与完成／停止语义以[委托合同](references/mandate.md)为唯一权威；本文件只负责匹配与编排。
+
+- **持续的是委托，不是路线。** 路线、辅助命题、特殊情形与证明策略可自由更换；只有目标替换才停下确认，其余分支继续推进。
+- **授权继承。** 内部级联、进入下一项能力或完成一次审查都不重置授权，也不要求用户再次点名。只读、只规划、只求建议的请求保持该范围。
+- **额度不因并行、重试、恢复而重置。** 没有 setup 或显式额度时按有界首轮开始，不推导无限或付费许可。
+- **已迁移能力**遵循该合同；**未迁移能力**仍按自身门声明停下确认，边界见[迁移边界](references/migration-boundary.md)。不把整包说成已统一。
+- 需要越权、超额、未授权的破坏性或对外动作时只阻塞那一步，其他工作继续。
+
 ## 匹配
 
-用户意图和只读约束优先，材料状态限定适用路线，规模决定编排方式。任意大任务不等于 improvement。匹配后跨 turn 保持该路线；用户说 new task 时重新匹配。
+用户意图和只读约束优先，材料状态限定入口，规模决定编排方式。任意大任务不等于 improvement。命中的是起点：同一委托内可来回调用多项能力；用户说 new task 或替换主要目标时重新匹配。
 
-无已交付路线时打开 [custom](playbooks/custom.md)，先设计有界流程，只有真歧义才问。不要把未交付路线的文件写成已经存在。
+无已交付路线时打开 [custom](playbooks/custom.md)：先写出有界流程，再按委托直接开始其中不需要额外授权的步骤，只有真歧义才问。不要把未交付路线的文件写成已经存在。
 
 ## 路由表
 
 | 路线 | 变体 | 触发词 | 适用条件 | 只读约束 | playbook |
 |---|---|---|---|---|---|
 | route-only | — | 我该从哪开始、该用哪个、只看推荐、推荐入口、不要执行 | 用户只要入口或下一步建议 | yes | [route-only](playbooks/route-only.md) |
+| literature | — | 查文献、文献综述、梳理 related work、这批论文怎么看 | 已有明确主题或论文集合，要在有界额度内完成一次文献综合并验收 | no | [literature-review](playbooks/literature-review.md) |
 | idea-discovery | — | 我有方向没 idea、从方向到 proposal、形成完整 Proposal | 只有方向或 brief，要文献、候选、查新、评审并收敛 | no | [idea-discovery](playbooks/idea-discovery.md) |
 | experiment-plan | — | 设计实验、写实验计划、做实验方案 | 已有研究问题，要的是有界计划而不是开跑 | no | [experiment-plan](playbooks/experiment-plan.md) |
 | experiment-bridge | — | 跑完这个实验并分析、按计划跑实验、实验桥接 | 已有计划或 tracker，要在本批授权内做完并分析 | no | [experiment-bridge](playbooks/experiment-bridge.md) |
@@ -53,7 +64,7 @@ Role: orchestrator
 
 ## 算力
 
-工作区 `compute-policy.md` 是默认政策，不是本批运行许可。未配置时范围未指定，费用、算力和运行数都是 0，有效期 0 小时。experiment-plan、experiment-bridge 与 improvement 补实验分支按 [batch-authorization.md](references/batch-authorization.md) 核对已记入研究日志的本批授权；route-only 与未批准的 custom 不消耗额度。
+工作区 `compute-policy.md` 是默认政策，不是本批运行许可。未配置时范围未指定，费用、算力和运行数都是 0，有效期 0 小时。有界首轮不由此获得运行许可：它只允许不占用付费资源、不改写既有成果的小步工作，见[研究额度](references/mandate.md)。experiment-plan、experiment-bridge 与 improvement 补实验分支按 [batch-authorization.md](references/batch-authorization.md) 核对已记入研究日志的本批授权；route-only 与未批准的 custom 不消耗额度。
 
 ## 宿主映射
 
@@ -70,6 +81,8 @@ Role: orchestrator
 ## 级联
 
 命中已交付 playbook 后，把其步骤逐字抄入 todolist，逐步跟踪 pending / in-progress / completed / blocked；清单保留编号、原句及子列表，只附状态和证据定位，不压缩成阶段摘要。首次展示清单后逐项直接对照 playbook，漏句先补齐；仅达到该步骤完成条件才标 completed。用当前会话的清单记录即可；route-only 只在对话内跟踪，不创建任务或文件。
+
+级联进入已迁移叶时沿用本次委托，不重复请求批准；进入未迁移叶时仍按该叶自己的门停下确认，处理完该点后同一委托继续。
 
 每步开始前读对应叶 SKILL.md 全文，再按正文的条件读取点名资源并执行；读过入口、playbook 或步骤清单不等于读过叶正文。没有子代理工具时同样由编排者串行完成这些读取与步骤，不缩减叶合同。仓库路径形如 skills/<category>/<skill-name>/SKILL.md；安装扁平布局时映射到 <安装根>/<skill-name>/SKILL.md（安装根取当前入口 SKILL.md 所在 skill 目录的父级或宿主报告的位置），共置资源相对该叶目录解析。先核实实际文件；找不到时标 blocked 与路径缺口，不猜测已读或跳到后续步骤。
 
