@@ -357,6 +357,14 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 
 ## 已解决的 revision／路径矛盾
 
+## 已采用的持续推进、暂停恢复与项目流程改进机制
+
+#59 的 `playbooks/continuation.md` 与 `skills/writing-cycle/research-improvement/SKILL.md` 的流程改进分支改编自 cursor/plugins 的 `pstack/` 子树，固定 revision `88d47514b82e7c44f00f2b2a72ff6dd12158038c`。2026-10-21 从离线归档逐字读取 `pstack/LICENSE`，并读取 `pstack/skills/{recall,reflect,correct,automate-me}/SKILL.md`、`pstack/skills/poteto-mode/playbooks/{autonomous-run,pause-safely,session-pickup}.md` 与 `pstack/docs/guide/07-overnight.md`；`pstack/skills/reflect/references/*.md` 只作 reviewer/synthesizer 对照，未逐字复制。
+
+- **采用机制**：持续执行保留可检查完成谓词、最小步进、验证、检查点、停滞换方法与死路如实停止；暂停保留安全边界、可恢复交接与“磁盘状态优先于会话记忆”；过程改进保留按重复错误和流程摩擦提炼可执行改进，以及公共行为改动先确认。
+- **本仓适配**：删除 Cursor `/loop`、云端 worker、固定模型、transcript 目录与个人目录绑定；不承诺后台进程。时间、费用、算力、子代理、重试与恢复改按研究委托合同累计，不重置；批次作业走批次授权；恢复核对原始产物、义务与活跃作业；外部 tracker 与公共套件行为必须用户确认。
+- **共置资源与许可**：`research-improvement` 携带 `NOTICE.md` 与 `UPSTREAM-LICENSE.md`，完整 MIT 文本为 `Copyright (c) 2026 Lauren Tan`。`continuation.md` 位于自带许可证与来源文档随包的 `research-os` 套件内；扁平安装不依赖 `/tmp/research-os-spec48-upstream` 或其他开发者材料。
+
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
 
 Archon 旧报告还把 `hgraph/` 与 `subagents/compile.py` 作为可复制路径；本次官方树没有这些路径。后续只能依据当前 `src/archon_horizon/...` 重新定位并审核，不得使用旧 checkout 路径。

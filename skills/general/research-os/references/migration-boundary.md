@@ -10,6 +10,7 @@
 | 文献综合 | `skills/idea-cycle/research-lit/SKILL.md` | 「委托继承」小节；无旧门，写入与预算由委托给 |
 | 形式化检查创建 | `skills/validation-cycle/create-formal-verification-skill/SKILL.md` | 「委托继承」小节；项目内验证资产与依赖准备在授权内，缺子代理时独立复核标 blocked |
 | 形式化检查维护 | `skills/validation-cycle/maintain-formal-verification-skill/SKILL.md` | 「委托继承」小节；只改验证不改产品代码，同步 commit 与假设版本随检查推进 |
+| 持续推进、暂停恢复与改进 | `skills/general/research-os/playbooks/continuation.md`；`skills/writing-cycle/research-improvement/SKILL.md` | 入口明确路由；恢复核对原始产物、开放义务与活跃作业；改进继承委托，批次与公共行为修改保留决定门 |
 
 迁移一个能力的完整动作：把正文改成继承委托（去掉旧 `Gate:`，写出该能力的边界与完成条件），在 `scripts/check-skills.py` 的 `MIGRATED_CONTRACT` 登记路径与小节名，把同一行加入本表，并从 `LEGACY_LEAF_GATES` 删除。
 

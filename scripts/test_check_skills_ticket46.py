@@ -20,6 +20,7 @@ REQUIRED_ROUTES = (
     ("resubmit", "—", "no"),
     ("paper-talk", "—", "no"),
     ("improvement", "—", "no"),
+    ("continuation", "—", "no"),
     ("pickup", "—", "no"),
     ("custom", "—", "no"),
 )

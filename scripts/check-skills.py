@@ -805,6 +805,60 @@ def migration_contract_problems(root: Path, tracked_paths: set[str]) -> list[str
     return found
 
 
+CONTINUATION_PLAYBOOK = "skills/general/research-os/playbooks/continuation.md"
+CONTINUATION_MARKERS = (
+    "references/mandate.md",
+    "references/batch-authorization.md",
+    "可核验收束条件",
+    "wall-clock",
+    "同一条额度",
+    "暂停保存",
+    "停滞",
+    "真正死路",
+    "恢复前完整走",
+    "不把 Skill 文本当后台服务",
+    "blocked",
+)
+CONTINUATION_HOST_BINDINGS = ("~/.cursor", "/loop", "agent-transcripts")
+CONTINUATION_NOTICE = "skills/writing-cycle/research-improvement/NOTICE.md"
+CONTINUATION_LICENSE = "skills/writing-cycle/research-improvement/UPSTREAM-LICENSE.md"
+CONTINUATION_DEPENDENCIES = "skills/writing-cycle/research-improvement/references/dependencies.md"
+
+
+def continuation_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#59 持续/暂停/恢复：委托额度、真实恢复和宿主/权限边界不漂移。"""
+    found: list[str] = []
+    path = root / CONTINUATION_PLAYBOOK
+    text = path.read_text(encoding="utf-8") if path.is_file() else ""
+    if not path.is_file():
+        found.append(f"{CONTINUATION_PLAYBOOK}: 持续执行配方不存在")
+    elif CONTINUATION_PLAYBOOK not in tracked_paths:
+        found.append(f"{CONTINUATION_PLAYBOOK}: 持续执行配方未追踪")
+    for marker in CONTINUATION_MARKERS:
+        if marker not in text:
+            found.append(f"{CONTINUATION_PLAYBOOK}: 缺「{marker}」")
+    for binding in CONTINUATION_HOST_BINDINGS:
+        if binding in text:
+            found.append(f"{CONTINUATION_PLAYBOOK}: 宿主绑定残留 {binding}")
+    required_assets = (
+        (CONTINUATION_NOTICE, "来源说明", ("cursor/plugins", FORMAL_UPSTREAM_REVISION, "MIT", "Lauren Tan"), "缺来源记录"),
+        (CONTINUATION_LICENSE, "许可证", ("MIT License", "Copyright (c) 2026 Lauren Tan"), "缺 MIT 版权文本"),
+        (CONTINUATION_DEPENDENCIES, "安装依赖映射", ("research-os/references/mandate.md", "research-os/references/batch-authorization.md", "<skills-root>/research-os/", "实际存在且可读", "composition-map.md"), "缺依赖声明"),
+    )
+    for rel, label, markers, detail in required_assets:
+        asset = root / rel
+        if not asset.is_file():
+            found.append(f"{rel}: {label}不存在")
+            continue
+        if rel not in tracked_paths:
+            found.append(f"{rel}: {label}未追踪")
+        body = asset.read_text(encoding="utf-8")
+        for marker in markers:
+            if marker not in body:
+                found.append(f"{rel}: {detail} {marker}")
+    return found
+
+
 # --- expand 迁移边界 -------------------------------------------------------
 # 已迁移能力遵循委托合同（references/mandate.md）：正文无旧门，并带指定的合同小节。
 # 未迁移能力保留 #39 旧门基线，照旧单独可用；某能力迁移完成后，把它的条目从这里
@@ -814,6 +868,7 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
     "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
+    "skills/writing-cycle/research-improvement/SKILL.md": "委托继承",
 }
 MANDATE_DOC = "skills/general/research-os/references/mandate.md"
 MIGRATION_DOC = "skills/general/research-os/references/migration-boundary.md"
@@ -858,7 +913,6 @@ LEGACY_LEAF_GATES: dict[str, set[str]] = {
     "skills/writing-cycle/paper-talk/SKILL.md": {"talk-authorization", "outline-confirm"},
     "skills/writing-cycle/paper-writing/SKILL.md": {"workflow-authorization"},
     "skills/writing-cycle/rebuttal/SKILL.md": {"strategy-confirm", "wording-confirm"},
-    "skills/writing-cycle/research-improvement/SKILL.md": {"loop-authorization", "experiment-topup"},
     "skills/writing-cycle/resubmit-pipeline/SKILL.md": {"adaptation-scope", "change-confirm"},
     "skills/writing-cycle/systems-paper-writing/SKILL.md": {"workflow-authorization"},
 }
@@ -993,6 +1047,8 @@ for sf in skill_files:
         err(f"{rel}: {problem}")
 
 for problem in migration_contract_problems(ROOT, tracked):
+    err(problem)
+for problem in continuation_contract_problems(ROOT, tracked):
     err(problem)
 for problem in formal_verification_problems(ROOT, tracked):
     err(problem)

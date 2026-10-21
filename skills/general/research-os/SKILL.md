@@ -17,7 +17,7 @@ Gates: none
 - **持续的是委托，不是路线。** 路线、辅助命题、特殊情形与证明策略可自由更换；只有目标替换才停下确认，其余分支继续推进。
 - **授权继承。** 内部级联、进入下一项能力或完成一次审查都不重置授权，也不要求用户再次点名。只读、只规划、只求建议的请求保持该范围。
 - **额度不因并行、重试、恢复而重置。** 没有 setup 或显式额度时按有界首轮开始，不推导无限或付费许可。
-- **已迁移能力**遵循该合同；**未迁移能力**仍按自身门声明停下确认，边界见[迁移边界](references/migration-boundary.md)。不把整包说成已统一。
+- **已迁移能力**遵循该合同；**未迁移能力**仍按自身门声明停下确认，边界见[迁移边界](references/migration-boundary.md)。continuation 路线按同一委托执行并在该边界登记；不把整包说成已统一。
 - 需要越权、超额、未授权的破坏性或对外动作时只阻塞那一步，其他工作继续。
 
 ## 匹配
@@ -45,6 +45,7 @@ Gates: none
 | resubmit | — | 转投、换 venue 重投、保留旧稿改投 | 已有投稿目录，要在新目录适配另一 venue 并保留旧稿 | no | [resubmit](playbooks/resubmit.md) |
 | paper-talk | — | 做会议演讲、生成 slides notes script、准备 paper talk | 已有论文，要 slides、notes 与逐字 script | no | [paper-talk](playbooks/paper-talk.md) |
 | improvement | — | 整体改进、有界循环、review 后修复再审 | 用户要在固定轮数和写入范围内改进已有研究整体 | no | [improvement](playbooks/improvement.md) |
+| continuation | — | 继续研究、暂停研究、恢复研究、额度收束 | 同一委托在授权和额度内持续推进、安全暂停或恢复 | no | [continuation](playbooks/continuation.md) |
 | pickup | — | 接上次会话、从交接恢复、新会话续接 | 已保存交接、批准或作业记录，要在新会话恢复 | no | [pickup](playbooks/pickup.md) |
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
 
