@@ -28,6 +28,8 @@ Gates: none
 
 无已交付路线时打开 [custom](playbooks/custom.md)：先写出有界流程，再按委托直接开始其中不需要额外授权的步骤，只有真歧义才问。不要把未交付路线的文件写成已经存在。
 
+形式化不是必经路线：需要对关键代码性质、形式模型或定理编码建立或维护检查时，直接点名 `create-formal-verification-skill` 或 `maintain-formal-verification-skill`。它们只在该问题确实需要范围内每种情况时使用，普通测试够用就不升级。
+
 ## 路由表
 
 | 路线 | 变体 | 触发词 | 适用条件 | 只读约束 | playbook |
