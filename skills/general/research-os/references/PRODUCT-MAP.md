@@ -20,11 +20,12 @@
 
 上述是可选路径，不是线性通关表。任意外部材料都能成为切入点；有结果不必先跑 Discovery，有稿件不必重新实验或起草，普通证明无需 Lean。
 
-`research-os`（U，已实现，#38）：唯一编排入口。只读请求走 route-only，零副作用。已交付 playbook：route-only、custom、idea-discovery、experiment-plan、experiment-bridge、paper-writing 的 general / ml / systems、proof、rebuttal、resubmit、paper-talk、improvement、pickup。experiment-plan 与 experiment-bridge 在计划获准时确认本批授权；默认算力政策不是运行许可。已保存的证明轮次走 proof，已有研究整体的有界改进走 improvement，新会话恢复已保存交接走 pickup（#45）。pickup 重读批准、授权和作业记录，不延长授权。`setup-research-os`（U，已实现，#3）：用户确实想初始化或补齐人类可读工作区；探索、逐问、完整草稿确认后补缺。**不是咨询或其他入口的前置门槛**。
+`research-os`（U，已实现，#38）：唯一编排入口。只读请求走 route-only，零副作用。已交付 playbook：route-only、literature、custom、idea-discovery、experiment-plan、experiment-bridge、paper-writing 的 general / ml / systems、proof、rebuttal、resubmit、paper-talk、improvement、pickup。入口已按研究委托合同迁移（#49）：目标、权限、额度与完成条件见 [mandate.md](mandate.md)；literature 是已迁移的最短完整链路，其余路线仍属未迁移批次，边界与清单见 [migration-boundary.md](migration-boundary.md)。experiment-plan 与 experiment-bridge 在计划获准时确认本批授权；默认算力政策不是运行许可。已保存的证明轮次走 proof，已有研究整体的有界改进走 improvement，新会话恢复已保存交接走 pickup（#45）。pickup 重读批准、授权和作业记录，不延长授权。`setup-research-os`（U，已实现，#3）：用户确实想初始化或补齐人类可读工作区；探索、逐问、完整草稿确认后补缺。**不是咨询或其他入口的前置门槛**。
 
 ## 按现有材料选切入点
 
-- **只有方向**：想形成完整 Proposal，由 `/research-os` 进入 `idea-discovery` 并照 playbook 执行到 Proposal。默认每个阶段停下；用户写明一次走完并给出预算才连续。也可直接点名候选生成／创意思考，或对已选候选单独查新／评审／收敛。不对空方向捏造 novelty 结论。读 [idea-cycle.md](idea-cycle.md)。
+- **只有方向**：想形成完整 Proposal，由 `/research-os` 进入 `idea-discovery` 并照 playbook 执行到 Proposal。该路线仍未迁移，默认每个阶段停下；用户写明一次走完并给出预算才连续。也可直接点名候选生成／创意思考，或对已选候选单独查新／评审／收敛。不对空方向捏造 novelty 结论。读 [idea-cycle.md](idea-cycle.md)。
+- **已有主题要一次文献综合**：走已迁移的 literature route（playbook literature-review）。它按委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度；要拿这批材料形成 Proposal 才改走 idea-discovery。也可直接点名 `research-lit`。
 - **已有问题要做计划**：走已交付的 experiment-plan。它只产计划；执行授权写在研究日志，不来自默认政策。
 - **已有计划要跑完并分析**：走已交付的 experiment-bridge。启动前核对研究日志里的本批授权；缺授权、过期、越界或要删既有结果时停。
 - **已有结果**：先看用户要解释不确定性、审计真实性，还是形成候选 Claim；分别推荐对应内部能力或已实现的 `result-to-claim`。仅想从结果衍生新方向时才考虑已实现的 `idea-generation`；不强迫重新找 Idea。读 [validation.md](validation.md)；衍生新方向再读 idea-cycle。

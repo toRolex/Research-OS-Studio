@@ -101,7 +101,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 /research-os 我该从哪开始
 ```
 
-这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。设计实验走 experiment-plan；跑完已有计划并分析走 experiment-bridge。两条都要求研究日志里的本批授权，setup 写下的默认政策不能当运行许可。
+这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。只要一次文献综合走 literature：入口按研究委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度。设计实验走 experiment-plan；跑完已有计划并分析走 experiment-bridge。这两条要占用运行资源，要求研究日志里的本批授权，setup 写下的默认政策不能当运行许可。
 
 已有上一轮证明、改进日志或研究作业记录时，不要从零重跑：
 
@@ -186,9 +186,9 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 | 分类 | 技能名称 | 调用方式 | 说明 |
 |---|---|---|---|
 | **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | 可建议 | 确认本 session 可用模型、八角色、零授权默认政策与工作区种子；建议本身不是写入授权 |
-| | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口；只读走 route-only；experiment-plan / experiment-bridge 已交付，本批授权写在研究日志 |
+| | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口：一次调用是一份研究委托（目标/权限/额度/完成条件见 `references/mandate.md`）；只读走 route-only；literature 是已迁移的最短链路，未迁移路线仍按各自旧门停下（边界见 `references/migration-boundary.md`） |
 | **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | 显式 | 构思查新工作流：文献检索、生成方案、查新、评审并输出 Proposal |
-| | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | 显式 | 文献检索与综合，标注出处与核实状态 |
+| | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | 显式 | 文献检索与综合，标注出处与核实状态；已迁移到研究委托合同，不再有叶级审批门 |
 | | [idea-generation](skills/idea-cycle/idea-generation/SKILL.md) | 显式 | 多视角生成研究候选方案，记录筛选理由 |
 | | [creative-thinking-for-research](skills/idea-cycle/creative-thinking-for-research/SKILL.md) | 显式 | 构思瓶颈时的认知转换与正交发散 |
 | | [novelty-check](skills/idea-cycle/novelty-check/SKILL.md) | 显式 | 检索已知工作，核对方案新颖性 |

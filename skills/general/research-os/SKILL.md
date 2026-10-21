@@ -6,21 +6,32 @@ disable-model-invocation: true
 
 # Research OS
 
-用户显式调用 `/research-os` 后，本入口负责匹配路线并照 playbook 执行。除 `setup-research-os` 外，各 skill 仍由用户点名或由本入口按路径级联读取；模型不自动发现它们。
+用户显式调用 `/research-os` 后，本入口按研究委托组织底层能力：用户给目标，入口在委托给的权限与额度内自主编排，交付由目标决定。除 `setup-research-os` 外，各 skill 仍由用户点名或由本入口按路径级联读取；模型不自动发现它们。
 
 Gates: none
 
+## 研究委托
+
+一次调用是一份委托。目标、权限、研究额度与完成／停止语义以[委托合同](references/mandate.md)为唯一权威；本文件只负责匹配与编排。
+
+- **持续的是委托，不是路线。** 路线、辅助命题、特殊情形与证明策略可自由更换；只有目标替换才停下确认，其余分支继续推进。
+- **授权继承。** 内部级联、进入下一项能力或完成一次审查都不重置授权，也不要求用户再次点名。只读、只规划、只求建议的请求保持该范围。
+- **额度不因并行、重试、恢复而重置。** 没有 setup 或显式额度时按有界首轮开始，不推导无限或付费许可。
+- **已迁移能力**遵循该合同；**未迁移能力**仍按自身门声明停下确认，边界见[迁移边界](references/migration-boundary.md)。不把整包说成已统一。
+- 需要越权、超额、未授权的破坏性或对外动作时只阻塞那一步，其他工作继续。
+
 ## 匹配
 
-用户意图和只读约束优先，材料状态限定适用路线，规模决定编排方式。任意大任务不等于 improvement。匹配后跨 turn 保持该路线；用户说 new task 时重新匹配。
+用户意图和只读约束优先，材料状态限定入口，规模决定编排方式。任意大任务不等于 improvement。命中的是起点：同一委托内可来回调用多项能力；用户说 new task 或替换主要目标时重新匹配。
 
-无已交付路线时打开 [custom](playbooks/custom.md)，先设计有界流程，只有真歧义才问。不要把未交付路线的文件写成已经存在。
+无已交付路线时打开 [custom](playbooks/custom.md)：先写出有界流程，再按委托直接开始其中不需要额外授权的步骤，只有真歧义才问。不要把未交付路线的文件写成已经存在。
 
 ## 路由表
 
 | 路线 | 变体 | 触发词 | 适用条件 | 只读约束 | playbook |
 |---|---|---|---|---|---|
 | route-only | — | 我该从哪开始、该用哪个、只看推荐、推荐入口、不要执行 | 用户只要入口或下一步建议 | yes | [route-only](playbooks/route-only.md) |
+| literature | — | 查文献、文献综述、梳理 related work、这批论文怎么看 | 已有明确主题或论文集合，要在有界额度内完成一次文献综合并验收 | no | [literature-review](playbooks/literature-review.md) |
 | idea-discovery | — | 我有方向没 idea、从方向到 proposal、形成完整 Proposal | 只有方向或 brief，要文献、候选、查新、评审并收敛 | no | [idea-discovery](playbooks/idea-discovery.md) |
 | experiment-plan | — | 设计实验、写实验计划、做实验方案 | 已有研究问题，要的是有界计划而不是开跑 | no | [experiment-plan](playbooks/experiment-plan.md) |
 | experiment-bridge | — | 跑完这个实验并分析、按计划跑实验、实验桥接 | 已有计划或 tracker，要在本批授权内做完并分析 | no | [experiment-bridge](playbooks/experiment-bridge.md) |
@@ -47,13 +58,13 @@ Role: orchestrator
 
 项目角色表是研究项目里的 `.agents/research-os-models.md`，一行一个角色：`reviewer: provider/model-id | high`。角色只有 orchestrator、literature、ideator、implementer、analyst、prover、writer、reviewer。thinking 只能是 off、minimal、low、medium、high、xhigh、max，而且必须是该模型支持的值。正文引用写成 `Role: reviewer`。
 
-每个执行阶段按 playbook 的独立 `Role:` 声明解析本研究项目已确认的角色行，核实 provider/model-id 可用且支持 thinking；fresh dispatch 显式传入这两个值，并记录角色、解析来源、实际模型与 thinking。Role 管阶段执行者，不只是任务标签。当前宿主进程的 model 不改；orchestrator 配置不同于当前宿主时，把获准编排阶段派到对应 fresh 执行者，当前宿主只监督；没有此能力时明示宿主模型差异并请求用户确认串行回退。
+每个执行阶段按 playbook 的独立 `Role:` 声明解析本研究项目已确认的角色行，核实 provider/model-id 可用且支持 thinking；fresh dispatch 显式传入这两个值，并记录角色、解析来源、实际模型与 thinking。Role 管阶段执行者，不只是任务标签。当前宿主进程的 model 不改；orchestrator 配置不同于当前宿主时，把获准编排阶段派到对应 fresh 执行者，当前宿主只监督；没有该派发能力时如实标 blocked 并说明宿主模型差异，不把当前宿主自己跑说成已派发。
 
-文件或角色行缺失时使用当前 session 实际可用的模型与 thinking，并明示回退及原因，不编造 slug。显式指定模型不可用、thinking 不支持、行重复或格式错误时停下，请用户确认替代，不静默改配置。同上下文里的自审不是 fresh 独立审查；同模型 fresh 上下文可保留独立性，但不得冒充跨家族。无 fresh 能力时串行完成可执行阶段，独立审查明确标 `independent review not performed`，不把串行自查当独立 review。不修改 `~/.agents/pstack-models.md`。
+文件或角色行缺失时使用当前 session 实际可用的模型与 thinking，并明示回退及原因，不编造 slug。显式指定模型不可用、thinking 不支持、行重复或格式错误时停下，请用户确认替代，不静默改配置。同上下文里的自审不是 fresh 独立审查；同模型 fresh 上下文可保留独立性，但不得冒充跨家族。无 fresh 能力时该阶段标 blocked 并写明 `independent review not performed`，不把同上下文自查记成执行或独立 review。不修改 `~/.agents/pstack-models.md`。
 
 ## 算力
 
-工作区 `compute-policy.md` 是默认政策，不是本批运行许可。未配置时范围未指定，费用、算力和运行数都是 0，有效期 0 小时。experiment-plan、experiment-bridge 与 improvement 补实验分支按 [batch-authorization.md](references/batch-authorization.md) 核对已记入研究日志的本批授权；route-only 与未批准的 custom 不消耗额度。
+工作区 `compute-policy.md` 是默认政策，不是本批运行许可。未配置时范围未指定，费用、算力和运行数都是 0，有效期 0 小时。有界首轮不由此获得运行许可：它只允许不占用付费资源、不改写既有成果的小步工作，见[研究额度](references/mandate.md)。experiment-plan、experiment-bridge 与 improvement 补实验分支按 [batch-authorization.md](references/batch-authorization.md) 核对已记入研究日志的本批授权；route-only 与未批准的 custom 不消耗额度。
 
 ## 宿主映射
 
@@ -62,16 +73,18 @@ Role: orchestrator
 | 宿主 | Skills 位置 | 委派 | 会话 |
 |---|---|---|---|
 | pi | 项目 `.agents/skills/`，也发现用户目录下的 agents skills | `herdr_spawn_agent`；子代理按项目 `.agents/research-os-models.md` 的 `Role:` 选模型 | pi 默认 sessions 目录中的 `--session` 文件 |
-| Claude Code | 项目 `.claude/skills/` | Agent tool 派 subagent；无该工具时由编排者串行执行 | 当前 Claude Code 会话 |
-| Codex | 项目 `.agents/skills/` 或 Codex 实际报告的 skills 目录 | spawn_agent；无该工具时由编排者串行执行 | Codex 当前 thread / session |
+| Claude Code | 项目 `.claude/skills/` | Agent tool 派 subagent | 当前 Claude Code 会话 |
+| Codex | 项目 `.agents/skills/` 或 Codex 实际报告的 skills 目录 | spawn_agent | Codex 当前 thread / session |
 
-命令存在不等于已经登录或具备委派能力。并行 fan-out 只在该宿主当前会话确实有子代理工具时使用；没有时，编排者按 playbook 顺序自己执行。本文件不发明第四种宿主映射。
+命令存在不等于已经登录或具备委派能力。子代理是这条编排路径的支持前提，按当前会话实际可调用的工具判定，不按宿主品牌推定：有子代理工具时才分派 fan-out 与执行阶段；没有时，需要分派的那一步标 blocked，入口只给只读建议（当前路线、下一步、或该直接点名哪个底层能力），不串行代跑整条 playbook，也不把编排者自己跑记成委托已执行。底层单能力的独立调用不受影响：用户直接点名 `research-lit` 之类的能力时，那一次调用自带边界，是能力本身的真实用途，不是入口的降级模式。
 
 ## 级联
 
 命中已交付 playbook 后，把其步骤逐字抄入 todolist，逐步跟踪 pending / in-progress / completed / blocked；清单保留编号、原句及子列表，只附状态和证据定位，不压缩成阶段摘要。首次展示清单后逐项直接对照 playbook，漏句先补齐；仅达到该步骤完成条件才标 completed。用当前会话的清单记录即可；route-only 只在对话内跟踪，不创建任务或文件。
 
-每步开始前读对应叶 SKILL.md 全文，再按正文的条件读取点名资源并执行；读过入口、playbook 或步骤清单不等于读过叶正文。没有子代理工具时同样由编排者串行完成这些读取与步骤，不缩减叶合同。仓库路径形如 skills/<category>/<skill-name>/SKILL.md；安装扁平布局时映射到 <安装根>/<skill-name>/SKILL.md（安装根取当前入口 SKILL.md 所在 skill 目录的父级或宿主报告的位置），共置资源相对该叶目录解析。先核实实际文件；找不到时标 blocked 与路径缺口，不猜测已读或跳到后续步骤。
+级联进入已迁移叶时沿用本次委托，不重复请求批准；进入未迁移叶时仍按该叶自己的门停下确认，处理完该点后同一委托继续。
+
+每步开始前读对应叶 SKILL.md 全文，再按正文的条件读取点名资源并执行；读过入口、playbook 或步骤清单不等于读过叶正文。没有子代理工具时，需要分派的那一步按上面「宿主映射」标 blocked 并写明缺子代理能力，不把编排者自己读、自己跑记成已执行；只读建议与底层能力独立调用仍可用。仓库路径形如 skills/<category>/<skill-name>/SKILL.md；安装扁平布局时映射到 <安装根>/<skill-name>/SKILL.md（安装根取当前入口 SKILL.md 所在 skill 目录的父级或宿主报告的位置），共置资源相对该叶目录解析。先核实实际文件；找不到时标 blocked 与路径缺口，不猜测已读或跳到后续步骤。
 
 收到子代理结果后，编排者自己核实实际产物、原始依据、读取覆盖及该步骤完成条件，记录定位与未核实项，再决定接受、在现有预算内修复或标 blocked；子代理总结只作线索，不直接转述为已核实结论。编排者核实不冒充独立 fresh review，保留各叶的独立审查隔离要求。
 
