@@ -1,6 +1,6 @@
 # Ticket #50 实施记录：迁入 swarm，宿主中立并行覆盖能力
 
-worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-b26667a5`，branch `t3/add-swarm-capability`，基线 `integration/spec-48` @ `98e4333`。接续因 DeepSeek 429 终态失败的原任务，本票全部工作在本 worktree 完成，未触碰主目录与 integration。
+worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-b26667a5`，branch `t3/add-swarm-capability`，基线 `integration/spec-48` @ `98e4333`。接续中止的原任务，全部写入留在本 worktree；本次复验期间未触碰主目录与 integration。已合并 `integration/spec-48` @ `e84f779`，并在 `34a374e` 保留 #50 与 #54 两侧成果。
 
 ## 状态
 
@@ -10,7 +10,7 @@ worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-b26667a5`，branch `t
 | U2 许可与归属 | 上游正文核查、MIT 版权文本随技能共置 | done | `skills/general/swarm/LICENSE`（字节复制自 pstack@88d4751 的 `pstack/LICENSE`，Copyright (c) 2026 Lauren Tan） + SKILL.md「来源与许可」 | `UpstreamAttribution`（2 passed）；LICENSE 为 `cp` 原样复制 |
 | U3 宿主中立 | 去 Cursor cloud／固定模型／个人目录绑定；角色表解析；缺子代理 blocked | done | SKILL.md「委托继承」「Phase A/B」 | `HostNeutrality`（3 passed）+ checker 禁词清单（`swarm_contract_problems`） |
 | U4 入口发现 | 路由行 + playbook + checker/README/迁移登记 | done | `playbooks/swarm.md`、入口路由表 `swarm` 行、`REQUIRED_RELEASE_ROUTES`、`MIGRATED_CONTRACT`、migration-boundary 表、两份 README 清单 | `EntryDiscovery`（7 passed） |
-| U5 安装实测 | 独立安装可读、资源可达 | done | 本文「安装证据」 | 实跑 skills CLI（见下） |
+| U5 安装实测 | 独立安装可读、资源可达 | done | 本文「安装证据」 | 实跑 skills CLI 1.7.4：独立 swarm 安装与 research-os+swarm 组合安装均成功（见下） |
 
 ## 逐 AC 证据
 
@@ -23,17 +23,21 @@ worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-b26667a5`，branch `t
 ## 红绿证据
 
 ```text
-# 红（实现前）
-$ uv run --with pytest python -m pytest tests/test_spec48_ticket50.py -q
-9 failed, 10 errors, 19 items      # 全部失败：能力/登记/路由均不存在
+# 原实现记录中的红（本次未独立复现原始中间树，不追认）
+# 原 notes 记录：9 failed, 10 errors, 19 items
+# 本次独立红：从 34a374e git archive 生成损坏副本，将 swarm 正文的“重派”改为“转交”
+$ cd /tmp/spec48-50-verification.uJW75f/damaged
+$ uv run --with pytest python -m pytest tests/test_spec48_ticket50.py::SwarmMechanism::test_evidence_absent_result_not_pass_and_bounded_respawn -q
+1 failed（预期：缺少重派合同标记） EXIT=1
 
-# 绿
+# 绿（合并后的现工作树）
+$ cd '<worktree>'
 $ uv run --with pytest python -m pytest tests/test_spec48_ticket50.py -q
 19 passed
 
 # 全套（含既有测试）
 $ uv run --with pytest python -m pytest tests scripts/test_check_skills_ticket*.py -q
-7 failed, 109 passed, 44 subtests passed
+7 failed, 134 passed, 44 subtests passed
 ```
 
 失败集合与 #49 notes 记录的历史基线**完全一致**（同 7 个测试，均为 9 条 `evidence/*.tar.gz` 历史断链）。唯一中途出现的非历史失败是 `test_check_skills_ticket46.py::test_release_routes_are_complete`，其 `REQUIRED_ROUTES` 固定元组不含新路由，属 spec Testing #7 允许的预期漂移，已按 #49 同款最小编辑加 `("swarm", "—", "no")` 行；未删除他人断言。
@@ -46,17 +50,27 @@ FAIL: 9 个问题   # 与改动前基线相同：9 条历史 tar.gz 断链；本
 ## 安装证据（可丢弃目录）
 
 ```text
-$ cd /tmp/spec48-50-install
-$ node <skills CLI> add "<worktree>" -s swarm -a claude-code -y
-Found 40 skills → Installed 1 skill → ./.claude/skills/swarm   EXIT=0
-  SKILL.md（frontmatter 完整）、LICENSE、agents/openai.yaml 均在
-  副本内相对链接断链 = 0（脚本逐条 resolve）
+$ node /Users/rolex/.npm/_npx/5606f1555d02ef53/node_modules/skills/bin/cli.mjs --version
+1.7.4
 
-$ cd /tmp/spec48-50-install-all
-$ node <skills CLI> add "<worktree>" -s '*' -a claude-code -y
-40 skills installed
-  .claude/skills/research-os/playbooks/swarm.md 可达
-  .claude/skills/swarm/LICENSE 可达
+$ node <CLI> add "<worktree>" -s swarm -a claude-code -y
+Found 42 skills → Installed 1 skill → ./.claude/skills/swarm   EXIT=0
+  SKILL.md、LICENSE、agents/openai.yaml 均在
+
+$ cd /tmp/spec48-50-verification.uJW75f/combined
+$ node <same CLI> add "<worktree>" -s research-os -s swarm -a claude-code -y
+EXIT=0；research-os/playbooks/swarm.md、references/mandate.md、swarm/SKILL.md 均可达
+```
+
+上述目录为临时可丢弃验收目录；CLI 实际将两技能复制到各自 `.claude/skills/` 下。独立 swarm 安装只验证正文及同目录资源；组合安装验证入口引用的 playbook、mandate 与 swarm 资源可达。本次没有重跑全包 `-s '*'` 安装，也没有声称对所有安装后相对链接逐条解析；旧记录里的 40 技能/链接扫描不作为本次独立证据。
+
+## 合并后复验
+
+本次临时验收目录：`/tmp/spec48-50-verification.uJW75f`。
+
+- 基线现为 `98e4333`；源实现提交 `6c47ecf`，上游 integration 提交 `e84f779`。合并提交 `34a374e` 两父分别为 swarm 提交与最新 integration tip；`git merge-base --is-ancestor integration/spec-48 HEAD` 退出码 0。工作树无未提交改动。
+- `git diff --check 98e4333..HEAD` 通过；未改动 #54 整合带入的文件。
+- 合并后定向测试 19 passed。全套 7 failed / 134 passed / 44 subtests passed，失败集合逐条对应 #49 notes 的七个 checker 受历史 tar.gz 断链影响的既存失败；checker 仍报同 9 条，不屏蔽。
 ```
 
 ## 决策
@@ -66,6 +80,7 @@ $ node <skills CLI> add "<worktree>" -s '*' -a claude-code -y
 3. **合同用「委托继承」单小节，不跨 skill 链接 mandate.md**：与 research-lit 同款，保证扁平/独立安装时正文自足（归档 README 的引用闭合检查也确认上游同类文件无跨文件硬依赖）。
 4. **checker 为本票新增独立 `swarm_contract_problems`**：只追加函数与一处调用，不改既有检查；禁词清单是具体绑定形态（`~/.cursor`、`pstack-models`、`grok-4.7`、`environment: "cloud"`、`cloud_base_branch`），不含裸 "cursor"，因为归属段合法出现 `cursor/plugins`。
 5. **无上游原样复制正文**：SKILL.md 是改写（宿主中立化、委托合同衔接、重派/缺口合同），骨架与上游一致；机制要点逐条对照过原文。
+6. **恢复对正文检查器的“重派”标记**：复验发现本地 Skill 编辑器曾自动将正文中的“重派”规范化成“转交”，导致本票定向测试中 1 项失败；把本票两处标记恢复为 “重派” 后单测复绿，符合已有 checker/test 合同，无需扩展测试或改变实际语义。
 
 ## 限制 / 未完成
 
