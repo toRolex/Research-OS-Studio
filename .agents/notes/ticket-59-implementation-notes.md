@@ -1,5 +1,34 @@
 # Ticket #59 implementation notes
 
+## Review retry: independent REJECT (2026-10-21)
+
+当前交付状态以本节为准：独立报告 `/tmp/research-os-spec48-ticket59-review/REPORT.md` 的初始结论为 REJECT；R1–R4 已在本 worktree 定向修复并完成针对性/安装验证，尚待提交、合入最新 `integration/spec-48` 与合入后复验。只在本票 worktree `t3/a14e0648` 工作，不继续派发；不触碰 integration/主目录，不 reset/clean，不 push/PR/写 issue/删除 worktree。
+
+### 逐 finding 处理决定
+
+| Finding | 响应与修复边界 | 红绿证据 |
+| --- | --- | --- |
+| R1 委托继承/再确认矛盾 | 区分用户独立显式调用与已授权入口级联；轮次仅核对原授权轮数、范围及剩余额度。Pickup 依原委托来源/暂停记录恢复，不另要旧式本轮批准清单；保留目标替换、越权、超额及未授权副作用门。composition map 遵循已迁移/legacy 边界。 | 初始新反例为红（见 targeted red）；最终 `test_direct_invocation_and_delegated_inheritance_are_distinct` 通过，目标集 18 pass。 |
+| R2 setup 硬阻塞及安装依赖断链 | 普通非付费、非作业的恢复允许按委托/暂停记录有界继续；仅作业、费用/资源批次要求 compute policy 与研究账本。setup 模板作为该分支显式成组依赖，核对真实扁平安装路径；保留无 setup 正例。 | 初始 `test_unconfigured_nonpaid_resume_is_allowed_but_job_branches_need_setup` 为红；最终通过。paired CLI 正例无 setup 安装继续合同，代表安装解析两模板。 |
+| R3 reviewer 不可用时合同冲突 | 本轮统一 `blocked`；可给只读自查建议，但不能记作 fresh 独立审查，也不能计作完成 review/repair/re-review。 | 初始叶/方法/依赖一致性测试为红；最终 `test_unavailable_reviewer_blocks_the_review_repair_round` 通过。 |
+| R4 五类损坏仍虚绿 | Checker/test 针对配额重置、信旧总结、自动公共外发、截断 MIT、错误分支映射逐一检查；依赖检查解析仓库路径及扁平安装目标；许可证核完整固定文本，不声称理解任意自然语言。 | 五个报告 mutant 均拒绝：`test_ticket59_contract_checker_catches_reported_semantic_mutants` → 1 passed、5 subtests、exit 0。R1/R2/R3/级联边界四类旧句重新注入先红（4 subtests、exit 1），加入旧合同拒绝后 `test_ticket59_contract_checker_rejects_reintroduced_conflicts` → 1 passed、4 subtests、exit 0。 |
+
+### 执行约束与入口记录
+
+- 按用户指定由当前 luna6 xhigh 直接实现，不派发；禁止 DS/GLM/Grok/Kimi。预算按本 work unit 20% 控制，若无法完整完成先保留笔记与差异并报告未完成，不仓促合并。
+- 已读取原始 brief、Spec #48、Ticket #59、独立报告及其 `probe_review.py` 精确损坏文本；当前 worktree 初始 HEAD 为 `754bc5228b335bb720d3fe5402f72b0472e4c559`，初始 clean。
+- 配置技能目录中没有请求的 `tdd`、`pre-implement`、`writing-for-agents` 或 `SKILL-MECHANICS.md` 文件；因此按红→绿执行并在此维护实现决策，不把未找到的技能说成已加载。
+
+### Review retry verification
+
+- **TDD 红**：`PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/Users/rolex/.cache/uv/archive-v0/ZHSqs5vxcDKWb5QD/lib/python3.14/site-packages UV_CACHE_DIR=/tmp/research-os-spec48-ticket59-review/uv-cache uv run --offline python -m pytest -q -p no:cacheprovider tests/test_spec48_ticket59.py`，首次新增反例后 `8 failed, 12 passed`，exit 1；失败命中 R1–R3 语义差异、R2 普通恢复硬门及 R4 checker 缺失，不是旧红记录追认。
+- **定向冲突红→绿**：`... pytest -q -p no:cacheprovider tests/test_spec48_ticket59.py::CheckerRegistration::test_ticket59_contract_checker_rejects_reintroduced_conflicts` 首次 `4 failed`，exit 1；加入精确旧合同诊断后 `1 passed, 4 subtests passed`，exit 0。
+- **Targeted 绿**：同 `tests/test_spec48_ticket59.py` 命令最终 `18 passed, 12 subtests passed`，exit 0。五个报告 mutant 与四类 R1/R2/R3 过期冲突句均有隔离 fixture；完整合同 fixture 为零诊断。
+- **Applicable full suite**：增加最后一项 #59 旧句 mutant 测试前，`uv run --offline python -m pytest -q -p no:cacheprovider tests scripts/test_check_skills_ticket*.py` 为 `7 failed, 132 passed, 52 subtests passed`，exit 1。7 个失败 ID 与既有 baseline 完全相同：`PolicyAndGates.test_checker_green_and_leaf_baseline`、`ConfigContractTests.test_gate_baseline_and_counterexamples`、`test_shipped_templates_and_full_checker`、`test_valid_policy_and_log_fields`、`test_valid_role_table`、`FinalContracts.test_full_cli_damaged_declarations_refs_and_readme`、`ReviewFixes.test_compute_limits_are_per_unit_not_summed`；均来自同 9 条历史 evidence archive 断链。本票目标测试与更新后的 Ticket #45 恢复来源断言无新增失败；未加 skip/xfail。最终合入后的 full suite 结果待补。
+- **Checker**：`uv run --offline python scripts/check-skills.py` → `FAIL: 9`，exit 1；仅报告上述历史 archive 链接，没有新增本票合同/依赖/许可诊断。
+- **真实 Skills CLI 1.7.4 安装**：三个隔离 HOME 和临时项目均 exit 0。standalone：1 包/9 文件，22 Markdown 链接 0 断；无 `research-os` 共享合同，按文档应 blocked。paired：2 包/36 文件，76 链接 0 断；无 `setup-research-os`，两项模板仅缺于条件分支，普通恢复正例明确允许。representative：7 包/68 文件与源逐文件 SHA256 一致，103 链接 0 断，15 条依赖映射均与仓库路径一致，4 个选中组合分支与 pickup 5 个反引号资源均实际解析，setup 两模板存在。三种安装的完整 MIT 文件 SHA256 均为 `bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`。
+- **环境**：报告要求的 upstream 全文资源不在本次修复范围；既有固定来源/许可证文档及 hash 保持。没有运行真实研究、生产宿主、费用或长时任务。
+
 ## Status
 
 | Unit | Deliverable | Status | Evidence / next |
@@ -15,7 +44,7 @@
 - Implements #59 of Spec #48 in this worktree only; no dispatches, no changes to proof family (#55), experiment leaf (#56), or writing leaf (#57).
 - Retains parent-provided initial staged/unstaged work and the already-added test file; do not reset/clean or overwrite.
 - Upstream method archive: `cursor/plugins` pstack subtree @ `88d47514b82e7c44f00f2b2a72ff6dd12158038c`; source/notice and MIT text are co-located in the independent `research-improvement` package.
-- Before implementation, read the requested Multi-Agent, model availability, pstack model, and coding standards files; DS/GLM/Grok/Kimi are prohibited. TDD/pre-implement/writing-for-agents loaded; no TDD skill exists under the requested name in this environment. Current execution is direct, limited work—no further delegation.
+- Before implementation, read the requested Multi-Agent, model availability, pstack model, and coding standards files; DS/GLM/Grok/Kimi are prohibited. The requested TDD/pre-implement/writing-for-agents skills and SKILL-MECHANICS.md were not present under the configured skill roots; use explicit red→green tests and maintain these implementation notes instead. Current execution is direct—no further delegation.
 
 ## Decisions and fixes
 

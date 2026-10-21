@@ -11,6 +11,7 @@
 6. 角色表、算力政策、研究日志字段；--skip-suite 只查显式给出的合同文件
 """
 import argparse
+import hashlib
 import math
 import re
 import subprocess
@@ -859,6 +860,167 @@ def continuation_contract_problems(root: Path, tracked_paths: set[str]) -> list[
     return found
 
 
+TICKET59_CONTRACTS: dict[str, tuple[str, ...]] = {
+    CONTINUATION_PLAYBOOK: (
+        "并行、换线程、重试、恢复和子代理消耗**同一条额度**，不重置",
+        "未知消耗保留预留，不按 0 释放",
+    ),
+    "skills/general/research-os/playbooks/pickup.md": (
+        "必须回到**原始产物**和原始命令核对",
+        "旧总结的成功标签不能直接当事实",
+        "普通研究恢复不要求 setup-research-os",
+        "原委托来源",
+        "剩余额度",
+        "不要求恢复会话另有本轮批准清单",
+    ),
+    "skills/writing-cycle/research-improvement/SKILL.md": (
+        "独立显式调用本能力时",
+        "由已授权的 research-os 委托级联时",
+        "只核对原委托的最大轮数、当前轮次、剩余额度与写域",
+        "先展示拟改内容并等用户确认",
+        "不自动向公共仓库或 tracker 写入",
+        "不计为 fresh 独立审查",
+        "reviewer 不可用",
+    ),
+    "skills/writing-cycle/research-improvement/references/composition-map.md": (
+        "已迁移能力不要求另行点名",
+        "未迁移叶仍执行其自身门",
+        "review/repair/re-review 轮统一标 `blocked`",
+    ),
+    "skills/writing-cycle/research-improvement/references/loop-methods.md": (
+        "reviewer 不可用",
+        "只读自查建议",
+        "不计为 fresh 独立审查",
+        "不得降级为单执行者评估",
+    ),
+    CONTINUATION_DEPENDENCIES: (
+        "仅作业/费用批次分支依赖",
+        "普通研究恢复不需要 `setup-research-os`",
+        "独立 reviewer 是 review/repair/re-review 的必要条件",
+        "不计为 fresh 独立审查",
+    ),
+}
+TICKET59_FORBIDDEN_CONTRACTS: dict[str, tuple[str, ...]] = {
+    "skills/writing-cycle/research-improvement/SKILL.md": (
+        "没有任何未经再次确认的新轮次",
+    ),
+    "skills/general/research-os/playbooks/pickup.md": (
+        "文件不存在就停",
+    ),
+    "skills/writing-cycle/research-improvement/references/loop-methods.md": (
+        "审查者不可用或独立性无法建立时，标 `independent review not performed` 并降级为单执行者评估",
+    ),
+    "skills/writing-cycle/research-improvement/references/composition-map.md": (
+        "以下均为 user-invoked，只能由用户另行显式调用",
+    ),
+}
+TICKET59_DEPENDENCY_REPO_PATHS = {
+    "skills/general/research-os/references/mandate.md",
+    "skills/general/research-os/references/batch-authorization.md",
+    "skills/general/setup-research-os/templates/compute-policy.md",
+    "skills/general/setup-research-os/templates/research-log.md",
+    "skills/writing-cycle/paper-compile/SKILL.md",
+}
+TICKET59_LICENSE_SHA256 = "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
+
+
+def ticket59_dependency_rows(text: str) -> list[tuple[str, str, str]]:
+    """Return (name, source repository path, flattened install path) table rows."""
+    rows: list[tuple[str, str, str]] = []
+    for line in text.splitlines():
+        if not line.lstrip().startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) < 3:
+            continue
+        source = cells[1].strip("`")
+        installed = cells[2].strip("`")
+        if source.startswith("skills/"):
+            rows.append((cells[0].strip("`"), source, installed))
+    return rows
+
+
+def ticket59_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """Check #59's specific recovery/review contract and installable file map.
+
+    This is a narrow set of explicit contract clauses and path relationships, not
+    a claim that static text analysis understands arbitrary natural language.
+    """
+    found: list[str] = []
+    for rel, markers in TICKET59_CONTRACTS.items():
+        path = root / rel
+        if not path.is_file():
+            found.append(f"{rel}: #59 合同文件不存在")
+            continue
+        if rel not in tracked_paths:
+            found.append(f"{rel}: #59 合同文件未追踪")
+        body = path.read_text(encoding="utf-8")
+        for marker in markers:
+            if marker not in body:
+                found.append(f"{rel}: 缺少 #59 合同条款「{marker}」")
+        for obsolete in TICKET59_FORBIDDEN_CONTRACTS.get(rel, ()):
+            if obsolete in body:
+                found.append(f"{rel}: 残留与迁移合同冲突的旧条款「{obsolete}」")
+
+    dependency_path = root / CONTINUATION_DEPENDENCIES
+    if not dependency_path.is_file():
+        return found
+    dependency_text = dependency_path.read_text(encoding="utf-8")
+    rows = ticket59_dependency_rows(dependency_text)
+    mapped_sources: set[str] = set()
+    mapped_targets: set[str] = set()
+    for name, source_rel, install_cell in rows:
+        mapped_sources.add(source_rel)
+        source = root / source_rel
+        if not source.is_file():
+            found.append(f"{CONTINUATION_DEPENDENCIES}: 依赖仓库目标不存在 {source_rel}")
+        elif source_rel not in tracked_paths:
+            found.append(f"{CONTINUATION_DEPENDENCIES}: 依赖仓库目标未追踪 {source_rel}")
+        expected = "/".join(source_rel.split("/")[2:])
+        prefix = "<skills-root>/"
+        actual = install_cell.removeprefix(prefix)
+        if not install_cell.startswith(prefix) or actual != expected:
+            found.append(
+                f"{CONTINUATION_DEPENDENCIES}: {name} 扁平映射应为 {prefix}{expected}，实际为 {install_cell}"
+            )
+        mapped_targets.add(actual)
+
+    for source_rel in sorted(TICKET59_DEPENDENCY_REPO_PATHS - mapped_sources):
+        found.append(f"{CONTINUATION_DEPENDENCIES}: 缺少依赖映射 {source_rel}")
+
+    composition_path = root / "skills/writing-cycle/research-improvement/references/composition-map.md"
+    if composition_path.is_file():
+        composition = composition_path.read_text(encoding="utf-8")
+        for skill_name in re.findall(r"\|[^|]+\|\s*`([a-z0-9-]+)`\s*\|", composition):
+            if f"{skill_name}/SKILL.md" not in mapped_targets:
+                found.append(
+                    f"{CONTINUATION_DEPENDENCIES}: composition-map 分支 {skill_name} 无对应安装映射"
+                )
+
+    pickup_path = root / "skills/general/research-os/playbooks/pickup.md"
+    if pickup_path.is_file():
+        pickup = pickup_path.read_text(encoding="utf-8")
+        for source_rel in re.findall(r"`(skills/[^`]+)`", pickup):
+            if not source_rel.endswith((".md", ".py", ".sh", ".json")):
+                continue
+            if not (root / source_rel).is_file():
+                found.append(f"pickup.md: 反引号必读资源不存在 {source_rel}")
+                continue
+            target = "/".join(source_rel.split("/")[2:])
+            package = target.split("/", 1)[0]
+            if not any(mapped.startswith(f"{package}/") for mapped in mapped_targets):
+                found.append(f"{CONTINUATION_DEPENDENCIES}: pickup.md 必读包 {package} 未声明映射")
+
+    license_path = root / CONTINUATION_LICENSE
+    if license_path.is_file():
+        digest = hashlib.sha256(license_path.read_bytes()).hexdigest()
+        if digest != TICKET59_LICENSE_SHA256:
+            found.append(f"{CONTINUATION_LICENSE}: MIT 许可证全文校验失败（SHA256 {digest}）")
+    else:
+        found.append(f"{CONTINUATION_LICENSE}: MIT 许可证全文不存在")
+    return found
+
+
 # --- expand 迁移边界 -------------------------------------------------------
 # 已迁移能力遵循委托合同（references/mandate.md）：正文无旧门，并带指定的合同小节。
 # 未迁移能力保留 #39 旧门基线，照旧单独可用；某能力迁移完成后，把它的条目从这里
@@ -1049,6 +1211,8 @@ for sf in skill_files:
 for problem in migration_contract_problems(ROOT, tracked):
     err(problem)
 for problem in continuation_contract_problems(ROOT, tracked):
+    err(problem)
+for problem in ticket59_contract_problems(ROOT, tracked):
     err(problem)
 for problem in formal_verification_problems(ROOT, tracked):
     err(problem)

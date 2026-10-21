@@ -5,6 +5,7 @@
 """
 import importlib.util
 import re
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -21,6 +22,33 @@ IMPROVEMENT_LOG = ROOT / (
 BOUNDARY = ROOT / "skills/general/research-os/references/migration-boundary.md"
 DEPENDENCIES = ROOT / "skills/writing-cycle/research-improvement/references/dependencies.md"
 CHECK = ROOT / "scripts/check-skills.py"
+LOOP_METHODS = ROOT / "skills/writing-cycle/research-improvement/references/loop-methods.md"
+COMPOSITION = ROOT / "skills/writing-cycle/research-improvement/references/composition-map.md"
+LICENSE = ROOT / "skills/writing-cycle/research-improvement/UPSTREAM-LICENSE.md"
+
+CONTRACT_FILES = (
+    CONTINUATION,
+    PICKUP,
+    IMPROVEMENT_SKILL,
+    DEPENDENCIES,
+    LOOP_METHODS,
+    COMPOSITION,
+    LICENSE,
+)
+
+
+def copy_contract_fixture(root: Path) -> set[str]:
+    """Copy the #59 contract and all dependency-map targets to an isolated fixture."""
+    files = {path.relative_to(ROOT).as_posix() for path in CONTRACT_FILES}
+    dependency_text = DEPENDENCIES.read_text(encoding="utf-8")
+    files.update(re.findall(r"^\|\s*[^|]+\|\s*`(skills/[^`]+)`", dependency_text, re.M))
+    pickup_text = PICKUP.read_text(encoding="utf-8")
+    files.update(re.findall(r"`(skills/[^`]+)`", pickup_text))
+    for relative in files:
+        target = root / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / relative, target)
+    return files
 
 
 def load_checker():
@@ -76,6 +104,23 @@ class ResumeContract(unittest.TestCase):
             self.assertIn(marker, text, marker)
         self.assertIn("已完成的轮次", text)
 
+    def test_unconfigured_nonpaid_resume_is_allowed_but_job_branches_need_setup(self):
+        text = PICKUP.read_text(encoding="utf-8")
+        self.assertIn("普通研究恢复不要求 setup-research-os", text)
+        self.assertIn("仅进入作业、费用或资源批次时", text)
+        self.assertIn("不要求恢复会话另有本轮批准清单", text)
+        self.assertNotIn("user_confirmation", text)
+        dependencies = DEPENDENCIES.read_text(encoding="utf-8")
+        self.assertIn("仅作业/费用批次分支依赖", dependencies)
+        self.assertIn(
+            "<skills-root>/setup-research-os/templates/compute-policy.md",
+            dependencies,
+        )
+        self.assertIn(
+            "<skills-root>/setup-research-os/templates/research-log.md",
+            dependencies,
+        )
+
 
 class ImprovementMigration(unittest.TestCase):
     def test_research_improvement_inherits_mandate_not_repeated_gate(self):
@@ -105,6 +150,32 @@ class ImprovementMigration(unittest.TestCase):
         self.assertIn("wall-clock", text)
         self.assertIn("已消耗", text)
         self.assertIn("失败、超时、无效", text)
+
+    def test_direct_invocation_and_delegated_inheritance_are_distinct(self):
+        text = IMPROVEMENT_SKILL.read_text(encoding="utf-8")
+        self.assertIn("独立显式调用本能力时", text)
+        self.assertIn("由已授权的 research-os 委托级联时", text)
+        self.assertIn("只核对原委托的最大轮数、当前轮次、剩余额度与写域", text)
+        self.assertNotIn("没有任何未经再次确认的新轮次", text)
+        pickup = PICKUP.read_text(encoding="utf-8")
+        self.assertIn("原委托来源", pickup)
+        self.assertIn("剩余额度", pickup)
+        composition = COMPOSITION.read_text(encoding="utf-8")
+        self.assertIn("已迁移能力不要求另行点名", composition)
+        self.assertIn("未迁移叶仍执行其自身门", composition)
+
+    def test_unavailable_reviewer_blocks_the_review_repair_round(self):
+        for path in (IMPROVEMENT_SKILL, LOOP_METHODS, DEPENDENCIES):
+            with self.subTest(path=path):
+                text = path.read_text(encoding="utf-8")
+                self.assertIn("reviewer 不可用", text)
+                self.assertIn("blocked", text)
+                self.assertIn("只读自查", text)
+                self.assertIn("不计为 fresh 独立审查", text)
+        self.assertIn(
+            "不得降级为单执行者评估后将本轮记为完成",
+            LOOP_METHODS.read_text(encoding="utf-8"),
+        )
 
     def test_improvement_log_records_process_tools_and_public_change_gate(self):
         skill = IMPROVEMENT_SKILL.read_text(encoding="utf-8")
@@ -178,6 +249,91 @@ class CheckerRegistration(unittest.TestCase):
             problems = module.continuation_contract_problems(root, set())
         self.assertTrue(any("缺「wall-clock」" in problem for problem in problems))
         self.assertTrue(any("宿主绑定残留" in problem for problem in problems))
+
+    def test_ticket59_contract_checker_catches_reported_semantic_mutants(self):
+        module = load_checker()
+        self.assertTrue(hasattr(module, "ticket59_contract_problems"))
+        mutations = (
+            (
+                CONTINUATION.relative_to(ROOT).as_posix(),
+                "不重置；未知消耗保留预留，不按 0 释放。",
+                "恢复时从零重置；未知消耗按 0 释放。",
+                "未知消耗保留预留",
+            ),
+            (
+                PICKUP.relative_to(ROOT).as_posix(),
+                "必须回到**原始产物**和原始命令核对，旧总结的成功标签不能直接当事实。",
+                "无需回到**原始产物**和原始命令核对，旧总结的成功标签可以直接当事实。",
+                "原始产物",
+            ),
+            (
+                IMPROVEMENT_SKILL.relative_to(ROOT).as_posix(),
+                "先展示拟改内容并等用户确认",
+                "自动修改公共套件并创建外部 tracker，无需用户确认。",
+                "先展示拟改内容",
+            ),
+            (
+                LICENSE.relative_to(ROOT).as_posix(),
+                LICENSE.read_text(encoding="utf-8"),
+                "MIT License\n\nCopyright (c) 2026 Lauren Tan\n",
+                "许可证",
+            ),
+            (
+                DEPENDENCIES.relative_to(ROOT).as_posix(),
+                "<skills-root>/paper-compile/SKILL.md",
+                "<skills-root>/missing-paper-compile/SKILL.md",
+                "paper-compile",
+            ),
+        )
+        for relative, before, after, expected in mutations:
+            with self.subTest(mutant=expected), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                tracked = copy_contract_fixture(root)
+                target = root / relative
+                text = target.read_text(encoding="utf-8")
+                self.assertIn(before, text)
+                target.write_text(text.replace(before, after), encoding="utf-8")
+                problems = module.ticket59_contract_problems(root, tracked)
+                self.assertIn(expected, "\n".join(problems))
+
+    def test_ticket59_contract_checker_accepts_complete_contract_fixture(self):
+        module = load_checker()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tracked = copy_contract_fixture(root)
+            self.assertEqual(module.ticket59_contract_problems(root, tracked), [])
+
+    def test_ticket59_contract_checker_rejects_reintroduced_conflicts(self):
+        module = load_checker()
+        conflicts = (
+            (
+                IMPROVEMENT_SKILL.relative_to(ROOT).as_posix(),
+                "没有任何未经再次确认的新轮次",
+            ),
+            (
+                PICKUP.relative_to(ROOT).as_posix(),
+                "文件不存在就停",
+            ),
+            (
+                LOOP_METHODS.relative_to(ROOT).as_posix(),
+                "审查者不可用或独立性无法建立时，标 `independent review not performed` 并降级为单执行者评估",
+            ),
+            (
+                COMPOSITION.relative_to(ROOT).as_posix(),
+                "以下均为 user-invoked，只能由用户另行显式调用",
+            ),
+        )
+        for relative, obsolete_clause in conflicts:
+            with self.subTest(clause=obsolete_clause), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                tracked = copy_contract_fixture(root)
+                target = root / relative
+                target.write_text(
+                    target.read_text(encoding="utf-8") + f"\n\n{obsolete_clause}\n",
+                    encoding="utf-8",
+                )
+                problems = module.ticket59_contract_problems(root, tracked)
+                self.assertIn(obsolete_clause, "\n".join(problems))
 
 
 class InstalledLayout(unittest.TestCase):

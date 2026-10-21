@@ -11,7 +11,16 @@
 | 委托合同 | `skills/general/research-os/references/mandate.md` | `<skills-root>/research-os/references/mandate.md` |
 | 批次授权 | `skills/general/research-os/references/batch-authorization.md` | `<skills-root>/research-os/references/batch-authorization.md` |
 
-`<skills-root>` 是安装器放置 `research-improvement/` 与 `research-os/` 两个目录的共同父目录（例如 `.claude/skills/`）。先按当前 Skill 的安装目录找到该根，再检查表中目标文件实际存在且可读；缺任一项时将依赖合同的执行步骤标为 `blocked`，不以摘要、缓存或本文件替代。
+`<skills-root>` 是安装器放置各 Skill 目录的共同父目录（例如 `.claude/skills/`）。先按当前 Skill 的安装目录找到该根，再检查所进入分支的目标文件实际存在且可读；缺少当前分支必需依赖时只将该分支标为 `blocked`，不以摘要、缓存或本文件替代。
+
+## 作业/费用批次的条件依赖
+
+普通研究恢复不需要 `setup-research-os`。该 Skill 是仅作业/费用批次分支依赖：只有进入作业、费用/资源或远程批次分支时，才需要它的策略与账本模板；缺模板只阻断该批次分支，不阻断按委托/暂停记录进行的普通恢复。
+
+| 依赖 | 仓库内路径 | 扁平 Skills 安装路径 |
+|---|---|---|
+| 计算策略模板 | `skills/general/setup-research-os/templates/compute-policy.md` | `<skills-root>/setup-research-os/templates/compute-policy.md` |
+| 作业与费用账本模板 | `skills/general/setup-research-os/templates/research-log.md` | `<skills-root>/setup-research-os/templates/research-log.md` |
 
 ## 按需的组合能力
 
@@ -30,5 +39,7 @@
 | `monitor-experiment` | `skills/validation-cycle/monitor-experiment/SKILL.md` | `<skills-root>/monitor-experiment/SKILL.md` |
 | `training-health-check` | `skills/validation-cycle/training-health-check/SKILL.md` | `<skills-root>/training-health-check/SKILL.md` |
 | `paper-compile` | `skills/writing-cycle/paper-compile/SKILL.md` | `<skills-root>/paper-compile/SKILL.md` |
+
+独立 reviewer 是 review/repair/re-review 的必要条件。reviewer 不可用时将对应审查/改进轮标为 `blocked`；允许提供只读自查建议，但不计为 fresh 独立审查，也不算完成 review/repair/re-review。不能以编排者串行自评替代该轮。
 
 仓库 checker 核对仓库路径存在；离线安装验收则核对实际安装目录。若安装器改变布局，先从它的实际输出确认安装根并更新此映射及测试，不能假设路径或用复制目录代替安装。

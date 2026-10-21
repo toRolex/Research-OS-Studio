@@ -1,6 +1,6 @@
 ---
 name: research-improvement
-description: 在用户显式授权的一次有界循环内，对研究工作整体做 review → repair → re-review。直接读取 Claims、草稿、方法与代码、原始结果、当前 diff 与历史 findings；在批准范围内修代码、补分析、改稿或补实验并复审，保留全过程与未解决 findings 后停止。跨 Validation 与 Idea Cycle 产物，物理归位于 writing-cycle/。
+description: 在用户直接调用或既有 research-os 委托授权的一次有界循环内，对研究工作整体做 review → repair → re-review。直接读取 Claims、草稿、方法与代码、原始结果、当前 diff 与历史 findings；在授权范围内修代码、补分析、改稿或补实验并复审，保留全过程与未解决 findings 后停止。跨 Validation 与 Idea Cycle 产物，物理归位于 writing-cycle/。
 license: MIT
 disable-model-invocation: true
 metadata:
@@ -13,7 +13,7 @@ metadata:
 
 **跨流程能力**：本 Skill 覆盖 Validation 与 Idea Cycle 的产物（方法与代码、实验结果、Claims、Proposal），只因物理归位约定放在 `writing-cycle/` 下，不归入任何单一主流程。
 
-用户显式启动的高权限 Workflow：在委托授权内，对研究工作整体循环 **review → repair → re-review**。它同时读取并修复研究本体与论文表达——Claims、草稿、方法与代码、原始结果、当前 diff、历史 findings——因此不是只读审计：它会在批准范围内修改代码、补分析、改稿，并在批次授权时补实验。有界：轮数、写入范围、资源与副作用上限来自委托；没有无限循环，不因重试隐藏地扩大预算，不自动启动其他顶层 Workflow。
+受研究委托约束的高权限 Workflow：在有效授权内，对研究工作整体循环 **review → repair → re-review**。它同时读取并修复研究本体与论文表达——Claims、草稿、方法与代码、原始结果、当前 diff、历史 findings——因此不是只读审计：它会在授权范围内修改代码、补分析、改稿，并在批次授权时补实验。有界：轮数、写入范围、资源与副作用上限来自委托；没有无限循环，不因重试隐藏地扩大预算，不自动启动其他顶层 Workflow。
 
 本 Skill 承接 W3 的 `auto-paper-improvement-loop`（论文 review → fix → recompile）与 W2 的 `auto-review-loop`（研究 review → implement → re-review）两条上游方法：保留 fresh reviewer、直接读原文、逐轮修复与完整留存原始回应；删除固定 provider/MCP、reviewer 私有线程记忆、机器 JSON 状态、自证式停止与跨 Workflow 自动推进。方法细节见 [轮次方法](references/loop-methods.md)，内部能力组合见 [组合映射](references/composition-map.md)。依赖安装与扁平布局解析规则见[安装依赖](references/dependencies.md)。
 
@@ -21,7 +21,7 @@ metadata:
 
 Gates: none
 
-本叶能力继承 `research-os` 的委托合同：目标、权限、研究额度与停止语义以该合同为唯一权威，不再设置重复的 loop-authorization 门。扁平安装下的资源路径按[安装依赖](references/dependencies.md)解析。调用者显式点名本能力和委托说明的 scope、写入范围、轮数、资源预算与副作用就是本轮授权依据。
+本叶能力继承 `research-os` 的委托合同：目标、权限、研究额度与停止语义以该合同为唯一权威，不再设置重复的 loop-authorization 门。扁平安装下的资源路径按[安装依赖](references/dependencies.md)解析。**独立显式调用本能力时**，用户点名与本次指令界定授权；**由已授权的 research-os 委托级联时**，沿用原委托已经覆盖的目标、scope、写入范围、轮数、资源预算与副作用，不要求再次点名或重批普通步骤。无论哪种入口，都不得超出授权边界。
 
 - **目标替换**、只读约束、未授权破坏/对外动作和子代理前提按委托合同执行。
 - 没有 setup 或显式额度时，只做**有界首轮**：不占付费资源、不改既有成果、单次可交付。它不推导无限循环或运行许可。
@@ -31,7 +31,7 @@ Gates: none
 
 - **User**：拥有研究目标、材料、预算、环境与外部副作用的最终决定权。用户确认 scope、写入范围、最大轮数、资源预算、副作用与停止条件，并可随时要求停止或改变轮次授权。
 - **本 Workflow**：持有循环、审查调度与修复执行。在当前授权内读取原始材料、实施修复、复审并交付正文报告；交付后停止。
-- **Reviewer**：fresh 独立审查者，直接读取当前 primary artifacts；不看执行者的修复摘要或「本轮改了什么」，每轮重新开始。
+- **Reviewer**：fresh 独立审查者，直接读取当前 primary artifacts；不看执行者的修复摘要或「本轮改了什么」，每轮重新开始。reviewer 不可用时，本轮标为 `blocked`；可另附只读自查建议，但不计为 fresh 独立审查，也不算完成一次 review/repair/re-review。
 - **被组合的内部能力**：只在本次职责、写入范围和资源授权内工作，贡献本 Workflow 正文报告的对应章节。
 
 开始时从当前研究委托和项目记录提取边界，不另设重复的 loop-authorization 门，也不要求用户再次批准已授权的普通步骤：
@@ -62,7 +62,7 @@ Gates: none
 
 每轮开始时由 fresh reviewer 直接读取当前材料，给出可核对的裁决。审查输出至少包含：分数、verdict（如 ready / almost / not ready 三档，具体词表由本次约定）、按严重度排序的 weaknesses，以及每条 weakness 的最小修复方向。完整原始回应逐字保留，不摘要、不改写。
 
-**独立性**：每轮使用全新审查上下文；给 reviewer 的输入只有 primary artifacts（第 2 节的 Claims/正文、方法与代码、原始结果、本轮前 diff、历史 findings 原文）与本次问题，不包含「上一轮已修好什么」、执行者解释或修复承诺。上一轮的问题清单只用于追踪，不作为评审证据。审查者不可用时标 `independent review not performed`，降级为单执行者评估，不把自查或用户陈述升级为验证。
+**独立性**：每轮使用全新审查上下文；给 reviewer 的输入只有 primary artifacts（第 2 节的 Claims/正文、方法与代码、原始结果、本轮前 diff、历史 findings 原文）与本次问题，不包含「上一轮已修好什么」、执行者解释或修复承诺。上一轮的问题清单只用于追踪，不作为评审证据。reviewer 不可用时将本审查/改进轮标为 `blocked`；可提供只读自查建议，但须明确它不计为 fresh 独立审查，也不完成 review/repair/re-review，不把自查或用户陈述升级为验证。
 
 **组合只读能力**（在本次授权职责内，按其自身边界工作）：数字与配置—`paper-claim-audit`、引用—`citation-audit`、整篇拒稿论证—`claim-stress-test`、证明—`proof-review`、实验完整性—`experiment-audit`、统计—`analyze-results`。仅在对应 Skill 已安装且可读时进入其分支，解析方式见[安装依赖](references/dependencies.md)。它们只报告、不修文件，发现并入本轮 finding 列表。
 
@@ -103,14 +103,14 @@ Gates: none
 - 资源预算或补实验运行数名额用完（含中途耗尽：停止新编辑与运行，保留已落盘修改并标为未验证，不为补验证超预算）；
 - 新一轮无实质改善或出现分数回退，且下一步需要用户决策；
 - 某项修复必须越出写入范围或未授权实验／外部副作用才能继续，且已无其他可推进的范围内修复（补实验类以第 5 节的唯一路径／用户要求条件为准）；
-- 材料冲突、不可读或 reviewer 不可用使本轮无法成立；
+- 材料冲突、不可读或 reviewer 不可用使本轮无法成立；reviewer 缺失时统一标 `blocked`，不得改记为单执行者完成的审查轮；
 - 用户要求停止。
 
 多条停止条件同时命中时全部记录，并标明首要原因；涉及未授权写入、实验或外部副作用的停止优先于其他原因，其后依次为轮数与预算用尽、无实质改善、需要用户决策；正面结论、用户要求停止与材料／reviewer 阻塞各自记明，不参与上述排序。
 
 停止后不自动开始新一轮、不扩大预算、不把「本轮未发现阻断问题」写成科研真理或用户接受。
 
-**完成条件**：停止原因、已用轮数与预算、每轮分数轨迹均可核对；没有任何未经再次确认的新轮次。
+**完成条件**：停止原因、已用轮数与预算、每轮分数轨迹均可核对；每轮开始只核对原委托的最大轮数、当前轮次、剩余额度与写域，不得开启超出原授权的新轮次或范围，也不因进入已授权的下一轮单独要求再次确认。
 
 ## 7. 未解决 findings 与不越权声明
 
@@ -130,4 +130,4 @@ Gates: none
 
 改进循环中的重复摩擦、失效验证、工具缺口和流程问题单独记录：现象、证据、建议修改、受影响项目与可核验效果。项目内流程或工具的改动只在授权写域内实施，并写入改进日志的“流程/工具改进”。
 
-修改**公共套件行为**（入口、共享 Skill、共享模板或共享 checker）或创建**外部 tracker** 不是本轮研究的默认授权；先展示拟改内容并等用户确认。确认记录、适配范围与验证证据保留在日志中；不扩权、不降低证据标准，也不把个人偏好自动固化为共享规则。
+修改**公共套件行为**（入口、共享 Skill、共享模板或共享 checker）或创建/更新**外部 tracker** 不是本轮研究的默认授权；先展示拟改内容并等用户确认，不自动向公共仓库或 tracker 写入。确认记录、适配范围与验证证据保留在日志中；不扩权、不降低证据标准，也不把个人偏好自动固化为共享规则。
