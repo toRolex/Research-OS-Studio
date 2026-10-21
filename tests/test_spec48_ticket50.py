@@ -5,8 +5,9 @@ from __future__ import annotations
 import importlib.util
 import re
 import subprocess
-import unittest
 import sys
+import tempfile
+import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -86,6 +87,39 @@ class SwarmMechanism(unittest.TestCase):
         assert "缺口" in self.text
         assert re.search(r"一次|1 次", self.text)
         assert re.search(r"缺口.{0,40}(不算|不作为|不能计)通过", self.text), "缺口不得计为通过"
+
+    def test_aggregate_contract_has_bounded_retry_and_terminal_gap(self):
+        checker = _load_checker()
+        problems = checker.swarm_aggregate_contract_problems(self.text)
+        assert problems == [], "Aggregate 缺少局部重派上限或最终缺口合同：\n" + "\n".join(problems)
+
+    def test_aggregate_contract_rejects_missing_retry_cap_and_terminal_gap(self):
+        checker = _load_checker()
+        damaged_copies = (
+            (
+                "unbounded-retry.md",
+                self.text.replace(
+                    "剩余额度允许时最多重派一次，brief 里补写证据要求；否则直接记为缺口。第二次仍缺，记为缺口。",
+                    "剩余额度允许时继续重派，直到证据完整。第二次仍缺，记为缺口。",
+                ),
+                "重派上限",
+                "下一次会话",
+            ),
+            (
+                "missing-terminal-gap.md",
+                self.text.replace("第二次仍缺，记为缺口。", "第二次仍缺，保留原结果状态。"),
+                "最终缺口",
+                "缺口不算通过",
+            ),
+        )
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            for filename, damaged_text, expected_problem, unrelated_phrase in damaged_copies:
+                assert damaged_text != self.text
+                assert unrelated_phrase in damaged_text  # 全文其他段落的措辞不得替代局部 Aggregate 合同。
+                damaged_copy = Path(tmp_dir) / filename
+                damaged_copy.write_text(damaged_text, encoding="utf-8")
+                problems = checker.swarm_contract_problems(damaged_copy.read_text(encoding="utf-8"))
+                assert any(expected_problem in problem for problem in problems), problems
 
 
 class HostNeutrality(unittest.TestCase):

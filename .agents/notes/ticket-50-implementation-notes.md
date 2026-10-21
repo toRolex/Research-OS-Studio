@@ -1,5 +1,15 @@
 # Ticket #50 实施记录：迁入 swarm，宿主中立并行覆盖能力
 
+## 后续小修：Aggregate 有界重派合同（本次）
+
+| 单元 | 交付目标 | 状态 | 产物 | 验收证据 |
+|---|---|---|---|---|
+| F1 有界重派检查补强 | 在 Aggregate 局部约束额度门槛、最多一次重派与终态缺口，覆盖丢上限/丢二次缺口反例 | done | `skills/general/swarm/SKILL.md`、`scripts/check-skills.py`、`tests/test_spec48_ticket50.py` | 定向损坏副本分别红；原文局部合同绿；21 项票测通过；CLI 独立安装 3/3、组合安装 swarm 3/3 和入口 27/27 文件一致 |
+
+此次仅补强独立验收报告指出的 F1 测试缺口，不倒改原始证据记录或追认原 19 条测试能证明该语义。正文明确“剩余额度允许时最多重派一次，否则直接记为缺口”；checker 截取 Aggregate 到 Report 之间的局部条款，逐项验证额度内的上限、无额度直记缺口、第二次缺证后的最终缺口，避免全文无关“一次”虚绿。两个损坏副本分别删除上限句或二次缺口句；即便全文还留有“下一次会话”或一般“缺口不算通过”，都必须失败。测试按 TDD 先加合同断言得到 `AttributeError` 红，再在独立 git 副本中分别移除上限与终态缺口，两次运行均各失败 1 项（exit 1，日志 `/tmp/research-os-spec48-ticket50-review/f1/unbounded-retry-red.log`、`missing-terminal-gap-red.log`）；修复后反例测试及整票均绿（`uv run --with pytest python -m pytest tests/test_spec48_ticket50.py -q`，21 passed，exit 0，日志 `final-targeted.log`）。
+
+按原要求用真实 Skills CLI 1.7.4 复验更新后的正文：单独安装 swarm exit 0，3/3 文件逐字节一致；组合安装 research-os+swarm exit 0，入口 27/27、swarm 3/3 文件逐字节一致，安装日志及 SHA 清单在 `/tmp/research-os-spec48-ticket50-review/f1/install-{swarm,combined}.log`、`installed-f1-file-audit.json`。完整套件仍有历史 7 failed / 136 passed / 44 subtests passed（exit 1）；checker 为历史 9 条 evidence tar.gz 断链（exit 1），无本票新增；对照详见 `/tmp/research-os-spec48-ticket50-review/f1/final-full.log` 和 `final-checker.log`。`git diff --check` exit 0。尝试 fetch `origin integration/spec-48` 时远端报告该 ref 不存在；本地 integration tip 为 `e84f779d78755937a59d46364e14cc6496aa2b03`，工作分支已包含该提交，`git merge --no-edit integration/spec-48` 返回“已经是最新的”。
+
 worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-b26667a5`，branch `t3/add-swarm-capability`，基线 `integration/spec-48` @ `98e4333`。接续中止的原任务，全部写入留在本 worktree；本次复验期间未触碰主目录与 integration。已合并 `integration/spec-48` @ `e84f779`，并在 `34a374e` 保留 #50 与 #54 两侧成果。
 
 ## 状态

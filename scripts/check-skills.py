@@ -640,6 +640,23 @@ def stale_promise_problems(files: dict[str, str]) -> list[str]:
     return found
 
 
+def swarm_aggregate_contract_problems(text: str) -> list[str]:
+    """Aggregate 需在局部保留重派上限、额度门槛与最终缺口状态。"""
+    aggregate = re.search(r"(?ms)^## Phase C: Aggregate\s*\n(.*?)(?=^## Phase D: Report\s*$)", text)
+    if aggregate is None:
+        return ["swarm Aggregate 缺失或无法定位"]
+
+    contract = aggregate.group(1)
+    found: list[str] = []
+    if not re.search(r"剩余额度允许时最多重派一次", contract):
+        found.append("swarm Aggregate 缺剩余额度允许时的重派上限")
+    if not re.search(r"否则直接记为缺口", contract):
+        found.append("swarm Aggregate 缺额度不足时直接记最终缺口")
+    if not re.search(r"第二次仍缺，记为缺口", contract):
+        found.append("swarm Aggregate 缺二次缺证后的最终缺口")
+    return found
+
+
 def swarm_contract_problems(text: str) -> list[str]:
     """swarm 能力合同：分片/竞赛/混合、预声明规则、输出隔离、有界重派与缺口；无宿主/固定模型绑定。"""
     found: list[str] = []
@@ -652,6 +669,7 @@ def swarm_contract_problems(text: str) -> list[str]:
     ):
         if marker not in text:
             found.append(f"swarm 正文缺 {marker}")
+    found.extend(swarm_aggregate_contract_problems(text))
     lowered = text.lower()
     for banned in ("~/.cursor", "pstack-models", "grok-4.7", 'environment: "cloud"', "cloud_base_branch"):
         if banned in lowered:
