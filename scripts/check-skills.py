@@ -604,6 +604,7 @@ REQUIRED_RELEASE_ROUTES = (
     ("improvement", "—", "no"),
     ("pickup", "—", "no"),
     ("custom", "—", "no"),
+    ("swarm", "—", "no"),
 )
 STALE_PROMISE_SNIPPETS = (
     "完成后立即停止，绝不自动跳转",
@@ -618,6 +619,40 @@ HOST_SERIAL_SUBSTITUTES = (
     "由编排者串行完成",
     "编排者串行完成同一合同",
 )
+
+
+INTERROGATE_BUCKETS = ("Act on", "Consider", "Noted", "Dismissed")
+INTERROGATE_FIXED_MODEL_MARKERS = ("claude-opus", "grok-4", "composer-", "cursor")
+
+
+def interrogate_contract_problems(text: str) -> list[str]:
+    """interrogate 技能的合同检查：只读、独立审查机制与宿主中立。"""
+    found: list[str] = []
+    for marker in (
+        "## 委托继承",
+        "Gates: none",
+        "只读",
+        "不自动",
+        "去重",
+        "分歧",
+        "主审",
+        "子代理",
+        "blocked",
+        ".agents/research-os-models.md",
+    ):
+        if marker not in text:
+            found.append(f"interrogate 正文缺 {marker}")
+    for bucket in INTERROGATE_BUCKETS:
+        if bucket not in text:
+            found.append(f"interrogate 主审四桶缺 {bucket}")
+    for banned in INTERROGATE_FIXED_MODEL_MARKERS:
+        if banned in text.lower():
+            found.append(f"interrogate 残留固定模型/宿主绑定：{banned}")
+    if not (SKILLS / "general" / "interrogate" / "references" / "research-review.md").exists():
+        found.append("interrogate 缺科研审查 lens research-review.md")
+    if not (SKILLS / "general" / "interrogate" / "references" / "PROVENANCE.md").exists():
+        found.append("interrogate 缺来源登记 PROVENANCE.md")
+    return found
 
 
 def release_route_problems(rows: list[dict[str, str]]) -> list[str]:
@@ -637,6 +672,43 @@ def stale_promise_problems(files: dict[str, str]) -> list[str]:
         for snippet in STALE_PROMISE_SNIPPETS:
             if snippet in text:
                 found.append(f"{rel}: 残留旧停止承诺：{snippet}")
+    return found
+
+
+def swarm_aggregate_contract_problems(text: str) -> list[str]:
+    """Aggregate 需在局部保留重派上限、额度门槛与最终缺口状态。"""
+    aggregate = re.search(r"(?ms)^## Phase C: Aggregate\s*\n(.*?)(?=^## Phase D: Report\s*$)", text)
+    if aggregate is None:
+        return ["swarm Aggregate 缺失或无法定位"]
+
+    contract = aggregate.group(1)
+    found: list[str] = []
+    if not re.search(r"剩余额度允许时最多重派一次", contract):
+        found.append("swarm Aggregate 缺剩余额度允许时的重派上限")
+    if not re.search(r"否则直接记为缺口", contract):
+        found.append("swarm Aggregate 缺额度不足时直接记最终缺口")
+    if not re.search(r"第二次仍缺，记为缺口", contract):
+        found.append("swarm Aggregate 缺二次缺证后的最终缺口")
+    return found
+
+
+def swarm_contract_problems(text: str) -> list[str]:
+    """swarm 能力合同：分片/竞赛/混合、预声明规则、输出隔离、有界重派与缺口；无宿主/固定模型绑定。"""
+    found: list[str] = []
+    for marker in (
+        "Frame", "Fan out", "Aggregate", "Report",
+        "分片", "竞赛", "混合", "first pass", "rank all", "best-of",
+        "完成条件", "独立 brief", "输出隔离", "重派",
+        "缺口不算通过", "blocked", "子代理", "Role: implementer",
+        ".agents/research-os-models.md", "88d47514b82e7c44f00f2b2a72ff6dd12158038c",
+    ):
+        if marker not in text:
+            found.append(f"swarm 正文缺 {marker}")
+    found.extend(swarm_aggregate_contract_problems(text))
+    lowered = text.lower()
+    for banned in ("~/.cursor", "pstack-models", "grok-4.7", 'environment: "cloud"', "cloud_base_branch"):
+        if banned in lowered:
+            found.append(f"swarm 正文残留固定绑定：{banned}")
     return found
 
 
@@ -729,7 +801,18 @@ if research_os.exists():
         err(f"skills/general/research-os/SKILL.md: {problem}")
     for problem in host_capability_problems(research_os.read_text(encoding="utf-8")):
         err(f"skills/general/research-os/SKILL.md: {problem}")
+    swarm_skill = SKILLS / "general" / "swarm" / "SKILL.md"
+    if swarm_skill.is_file():
+        for problem in swarm_contract_problems(swarm_skill.read_text(encoding="utf-8")):
+            err(f"skills/general/swarm/SKILL.md: {problem}")
+    else:
+        err("skills/general/swarm/SKILL.md: swarm 能力缺失")
     HINTS.extend(route_hints)
+
+interrogate_skill = SKILLS / "general" / "interrogate" / "SKILL.md"
+if interrogate_skill.exists():
+    for problem in interrogate_contract_problems(interrogate_skill.read_text(encoding="utf-8")):
+        err(f"skills/general/interrogate/SKILL.md: {problem}")
 
 for md in md_files:
     rel_md = md.relative_to(ROOT).as_posix()
@@ -1028,6 +1111,10 @@ def ticket59_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]
 MIGRATED_CONTRACT: dict[str, str] = {
     "skills/general/research-os/SKILL.md": "研究委托",
     "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
+    "skills/validation-cycle/create-verification-skill/SKILL.md": "委托继承",
+    "skills/validation-cycle/maintain-verification-skill/SKILL.md": "委托继承",
+    "skills/general/swarm/SKILL.md": "委托继承",
+    "skills/general/interrogate/SKILL.md": "委托继承",
     "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
     "skills/writing-cycle/research-improvement/SKILL.md": "委托继承",
@@ -1198,6 +1285,95 @@ def formal_verification_problems(root: Path, tracked_paths: set[str]) -> list[st
     return found
 
 
+# --- #53 项目行为验证资产 ---------------------------------------------------
+# 来源与许可随 Skill 共置（LICENSE/NOTICE.md）。创建侧必须保留真实启动、健康检查、
+# 驱动、证据、清理与特征覆盖映射的机制并带 helper；维护侧必须带三态结果、只改
+# 验证、源读波与现场驱动。未执行的生成资产只能标草稿；证据须绑定被测对象且在
+# 相关材料变化后失效；不绑定宿主或固定模型，与形式化能力分工明确。
+VERIFICATION_UPSTREAM_REVISION = "88d47514b82e7c44f00f2b2a72ff6dd12158038c"
+VERIFICATION_SKILLS: dict[str, tuple[str, ...]] = {
+    "create-verification-skill": (
+        "启动", "健康检查", "驱动", "证据", "清理", "覆盖映射", "doctor",
+        "草稿", "blocked", "子代理", "宿主", "证据归属与失效", "stale",
+        "不得为新对象背书", "重跑受影响覆盖",
+        "create-formal-verification-skill", "不宣称数学定理成立",
+    ),
+    "maintain-verification-skill": (
+        "clean", "changed", "blocked", "只改验证", "源读波", "现场驱动",
+        "doctor", "证据", "清理", "verified-unreachable", "子代理", "宿主",
+        "证据归属与失效", "stale", "不得为新对象背书", "重跑受影响覆盖",
+        "maintain-formal-verification-skill",
+    ),
+}
+VERIFICATION_REQUIRED_FILES = {
+    "create-verification-skill": (
+        "LICENSE", "NOTICE.md", "agents/openai.yaml",
+        "references/feature-map-example/README.md",
+        "helpers/feature-map-lint.py",
+    ),
+    "maintain-verification-skill": (
+        "LICENSE", "NOTICE.md", "agents/openai.yaml",
+    ),
+}
+
+
+def verification_skill_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#53 行为验证：许可、共置资源、机制保留、草稿/分工语义、宿主中立。"""
+    found: list[str] = []
+    base = root / "skills/validation-cycle"
+    for name, markers in VERIFICATION_SKILLS.items():
+        skill_dir = base / name
+        rel_dir = f"skills/validation-cycle/{name}"
+        if not skill_dir.is_dir():
+            found.append(f"{rel_dir}: 行为验证 Skill 不存在")
+            continue
+        for rel in VERIFICATION_REQUIRED_FILES[name]:
+            path = skill_dir / rel
+            rel_path = f"{rel_dir}/{rel}"
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少行为验证资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+        license_path = skill_dir / "LICENSE"
+        if license_path.is_file():
+            license_text = license_path.read_text(encoding="utf-8")
+            for marker in ("MIT License", "Copyright (c) 2026 Lauren Tan"):
+                if marker not in license_text:
+                    found.append(f"{rel_dir}/LICENSE: 缺 MIT 版权文本 {marker}")
+        notice_path = skill_dir / "NOTICE.md"
+        if notice_path.is_file():
+            notice = notice_path.read_text(encoding="utf-8")
+            for marker in ("cursor/plugins", VERIFICATION_UPSTREAM_REVISION, "MIT"):
+                if marker not in notice:
+                    found.append(f"{rel_dir}/NOTICE.md: 缺来源记录 {marker}")
+        skill_path = skill_dir / "SKILL.md"
+        if not skill_path.is_file():
+            continue
+        text = skill_path.read_text(encoding="utf-8")
+        for marker in markers:
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺「{marker}」")
+        if "委托继承" not in heading_anchors(text):
+            found.append(f"{rel_dir}/SKILL.md: 缺「委托继承」小节")
+        for binding in FORMAL_HOST_BINDINGS:
+            if binding in text:
+                found.append(f"{rel_dir}/SKILL.md: 宿主绑定残留 {binding}")
+        if FORMAL_MODEL_PIN.search(text):
+            found.append(f"{rel_dir}/SKILL.md: 固定模型绑定")
+        yaml_path = skill_dir / "agents" / "openai.yaml"
+        if yaml_path.is_file() and yaml_allow_implicit(yaml_path.read_text(encoding="utf-8")) != "false":
+            found.append(f"{rel_dir}/agents/openai.yaml: allow_implicit_invocation 必须为 false")
+        if f"{rel_dir}/SKILL.md" not in MIGRATED_CONTRACT:
+            found.append(f"{rel_dir}/SKILL.md: 未登记迁移状态")
+    boundary = root / MIGRATION_DOC
+    if boundary.is_file():
+        boundary_text = boundary.read_text(encoding="utf-8")
+        for name in VERIFICATION_SKILLS:
+            if name not in boundary_text:
+                found.append(f"{MIGRATION_DOC}: 未列出行为验证能力 {name}")
+    return found
+
+
 for sf in skill_files:
     rel = sf.relative_to(ROOT).as_posix()
     expected = expected_gates(sf.parent, sf.parent.name)
@@ -1215,6 +1391,8 @@ for problem in continuation_contract_problems(ROOT, tracked):
 for problem in ticket59_contract_problems(ROOT, tracked):
     err(problem)
 for problem in formal_verification_problems(ROOT, tracked):
+    err(problem)
+for problem in verification_skill_problems(ROOT, tracked):
     err(problem)
 
 

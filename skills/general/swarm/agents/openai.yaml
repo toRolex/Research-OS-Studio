@@ -1,0 +1,5 @@
+interface:
+  display_name: "swarm"
+  short_description: "并行覆盖：分片、竞赛或混合探索，派发宿主真实子代理，聚合带证据、缺口与退出情况的报告。"
+policy:
+  allow_implicit_invocation: false

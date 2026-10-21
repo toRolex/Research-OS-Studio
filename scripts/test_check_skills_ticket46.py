@@ -23,6 +23,7 @@ REQUIRED_ROUTES = (
     ("continuation", "—", "no"),
     ("pickup", "—", "no"),
     ("custom", "—", "no"),
+    ("swarm", "—", "no"),  # #50：新增并行覆盖路线
 )
 
 

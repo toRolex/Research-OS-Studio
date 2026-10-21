@@ -28,6 +28,8 @@ Gates: none
 
 形式化不是必经路线：需要对关键代码性质、形式模型或定理编码建立或维护检查时，直接点名 `create-formal-verification-skill` 或 `maintain-formal-verification-skill`。它们只在该问题确实需要范围内每种情况时使用，普通测试够用就不升级。
 
+软件、CLI 或服务需要可脚本化运行的行为证明时，直接点名 `create-verification-skill` 建立项目本地 verify skill（启动、doctor、按用户路径驱动、证据与特征覆盖映射），或点名 `maintain-verification-skill` 随应用变化保持映射诚实。行为验证不宣称数学定理成立；定理编码与形式化由上一行两条能力负责。
+
 ## 路由表
 
 | 路线 | 变体 | 触发词 | 适用条件 | 只读约束 | playbook |
@@ -48,8 +50,11 @@ Gates: none
 | continuation | — | 继续研究、暂停研究、恢复研究、额度收束 | 同一委托在授权和额度内持续推进、安全暂停或恢复 | no | [continuation](playbooks/continuation.md) |
 | pickup | — | 接上次会话、从交接恢复、新会话续接 | 已保存交接、批准或作业记录，要在新会话恢复 | no | [pickup](playbooks/pickup.md) |
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
+| swarm | — | 并行覆盖、分片排查、多方案竞赛、全面摸排 | 已有明确问题，要在有界额度内用并行子代理分片、竞赛或混合探索并汇总 | no | [swarm](playbooks/swarm.md) |
 
 已命名、文件未交付：无。
+
+不占路线的独立能力：用户要对抗审查、独立挑战或多模型审查时，委托内由编排者或用户直接点名 [interrogate](../interrogate/SKILL.md)：独立 reviewer 逐模型挑战、findings 去重、分歧保留，主审四桶有据判断；该调用始终只读，修复由委托按授权另行组织（如 proof-repair、research-improvement）。
 
 ## 只读优先
 
