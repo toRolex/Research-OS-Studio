@@ -106,3 +106,55 @@ setup 的 workspace 模板有四个明示待填的尖括号示例链接，单列
 - 已拒绝合入，integration 产品树仍停在 `bc35b36a9b7aee57f003967c67b5bca6485ab891`；本次提交只增加此 notes。待审源完整 tip 仍为 `af5e3864bf41c02c9bbf034411b4faebf1546a8f`（修复 `a2cc3b451d8d45c8eb34b13521642a0a6565e36a`，源合基线 `08749d4a2bfd983f5569ee0d2b8513d8ebc1ea94`）。没有 no-ff merge，所以没有“合入后复验”可宣称。
 - 未完成：R5 产品补齐及缺失/截断入口许可反例、修复后的新一轮独立 review，之后才考虑唯一 merger no-ff merge 和最终六票/全套复验。本轮不继续派发或代修。
 - 未验证：真实开放科研、数学真值、付费/远程生产作业、真实跨模型调度、长期后台执行、所有宿主或全部技能组合。过程偏离和原始首红缺证据仍保留，不以本轮验收追认。
+
+---
+
+## R5 修复后新独立 review round（2026-10-21）
+
+### 本轮状态（前述 REJECT 是历史裁决，不改写）
+
+- 范围/规则/历史核对：done；本轮按明确授权直接审查，不继续派发、不新增 feature，不调用受限模型或动态 workflow。仓库唯一写域为本 integration worktree，使用 Git，不碰源 checkout/主目录。
+- R5 差异、固定上游与独立反例：done；起点 `8b21f78385d89b5f600ccbef7843278a048be0fa`，待审 `ea1e162979156d1e06b77f179dca06eaba888eae`；产品基线 `bc35b36a9b7aee57f003967c67b5bca6485ab891`。证据根 `/tmp/research-os-spec48-ticket59-r5-review/`（仅测试归档/临时项目，不是其他仓库写域），四个 R5 mutant 均真实 red，恢复后整 #59 20 passed/12 subtests。
+- 六票关键、全量与精确基线比较：done；136 passed/61 subtests；head 全套 7 failed/204 passed/105 subtests，baseline 7 failed/184 passed/93 subtests。七个原始 node ID、JUnit failure type/message 属性逐项相等，九条 checker 诊断原始字节完全相同。
+- 唯一 merger 裁决/合后复验：done；新 round ACCEPT（仅安装/结构/文本合同），无新增阻断；no-ff merge `d4fd5ed0f8629a1678e9c92e07722ee894ad8ae8`，双亲是起点 8b21f78 与精确源 ea1e162。合后干净 archive 的六票/全量/精确基线对照及入口单装全部复验，见 `postmerge-verification.json`。
+
+本轮复用前轮 R1–R4 的详细通过证据，已核对相关产品/测试未回退；本次完整重跑 #59 与 #49/#50/#52/#53/#54、全套及九诊断。仅追加本文件，不写 orchestrator notes；已加载 pre-implement 与 writing-for-agents/SKILL-MECHANICS，仍不追认实现者原始首红或历史工具加载。
+
+### 亲核结果、逐 finding 与 AC
+
+- **R1：通过，未回退。** 前轮实际三轮授权/第二轮恢复、第四轮不得进入的合同回放仍有效；`af5e386… → ea1e162…` 的叶 SKILL、composition-map、pickup 等产品逐字节未变。本轮重跑整 #59 覆盖已授权轮次/恢复。未重新声称执行了真实模型循环。
+- **R2：通过，未回退。** 普通无 setup 与费用批次条件依赖的前轮实际回放复用；本轮真实入口单装仍不含 setup，pickup 五个反引号必读路径中三个普通路径存在、两模板按批次依赖缺失。代表八包真实安装后五路径全在，15 行源路径→扁平路径逐行核对；仅选中分支要求实际存在，未选兄弟缺项保留，不泛过滤。
+- **R3：通过，未回退。** 缺 reviewer 的 blocked/只读建议不冒充独立完成，相关叶、loop-methods、依赖文件与前轮完全相同，整 #59 正反合同检查通过。
+- **R4：通过已有五个 mutant 的定向守护。** 复用前轮 `mutants.json`、补丁/原始日志和哈希恢复证据，五项真实 red 不重新冒称本轮运行。与前轮比本次 checker 仅新增 R5 资产检查/固定 SHA256/两份 MIT 字节比较，既有守护和相关产品未删改，#59 测试仅增加 fixture 资产与两个新测试；三项 R5 选测包括一项原有测试，不虚称新增三测试。本轮全票/联合/全量均复跑。
+- **R5：通过，本轮独立重放。** 入口 `NOTICE-PSTACK.md` 明确 cursor/plugins、固定 revision `88d47514b82e7c44f00f2b2a72ff6dd12158038c`、原正文路径、采用范围、MIT/Lauren Tan 及不含 Cursor/cloud-worker/固定模型/transcript 假设。亲读 autonomous-run/pause-safely/session-pickup/recall/reflect/correct 正文及完整 LICENSE；所读七文件的长度与 git blob SHA1 均与固定归档 manifest 对应。适配保留最小步进/可检查谓词、检查点、安全暂停、原始事实恢复、流程摩擦改进；上游自动外发 backlog 未引入。
+- 本轮分别实际删除 notice、删除入口 LICENSE-PSTACK、截断 notice、将 LICENSE-PSTACK 截为标题/版权行；四次完整 checker 均有新增明确诊断且 exit 1，整 #59 也均 exit 1（分别 12 failed/17 passed/3 subtests、12 failed/17 passed/3 subtests、1 failed/19 passed/12 subtests、1 failed/19 passed/12 subtests）。每次均用 apply_patch 恢复，完整快照文件 SHA256 manifest 与原值一致，最终 #59 为 20 passed/12 subtests。此为新独立反例证据，不是倒推最初 TDD red。
+- 入口单包真实 Skills CLI 1.7.4：只选 `research-os`，30/30 全文件集合与字节一致，未安装 research-improvement；原 `LICENSE`（Matt Pocock）与 `LICENSE-PSTACK`（Lauren Tan）同在。完整 pstack MIT 1067 bytes，SHA256 `bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`，与固定上游及 RI 许可逐字节相同；原 LICENSE 与 bc35b36 原值相同（SHA256 `0e7ac423bf2c6e223b7c5b156f8cf72da49d748e56a1641402c31f22ad07dbb5`），没有替换原包许可。56/57 条本地 Markdown 链接可达，唯一缺链仍是前轮精确登记的可选 `research-os/SKILL.md -> ../interrogate/SKILL.md`，不称零断链。代表八包 80/80 文件一致，113/113 实际链接可达，另四个 workspace 模板尖括号占位示例单列。
+- **AC1 通过**：持续/暂停/恢复及适用 recall/reflect/correct 机制、固定采用说明与两种独立包完整许可闭合；证据为正文/manifest、真实安装与 R5 四反例。
+- **AC2 通过（合同）**：wall-clock 与资源跨 worker/重试/恢复累计、unknown 保留、按状态收束不固定比例；相关产品与前轮未变，额度正反测试复跑。
+- **AC3 通过（合同）**：停滞检验前提/换方法、真实死路如实交接、不降完成条件，保存失败路线与重开依据；continuation/日志与前轮未变。
+- **AC4 通过（合同/资源）**：恢复目标/授权/原始产物/义务/活跃作业，不信旧成功摘要；R1/R2 合同及实际恢复资源闭合沿用前轮，五条 pickup 路径本轮实装重核。
+- **AC5 通过（合同）**：项目改进留记录；公共套件行为、外发 tracker、越权动作保留确认；相关 SKILL/日志与前轮未变，相关反例测试复跑；本轮没有外发。
+- **AC6 通过（约定 seam）**：automate-me 非必需、不冒称后台，单包/代表安装、资源和合同测试实际执行；不扩大为真实科研或长期后台证明。
+
+### 命令、回归及范围保护
+
+- 快照来自 `git archive <精确tip> | tar -xf - -C <独立快照>`，再在各快照 git init/add 满足 tracked-files seam。TMPDIR 在快照外 `/tmp/research-os-spec48-ticket59-r5-review/tmp`；uv cache 同证据根；`PYTHONDONTWRITEBYTECODE=1`、pytest 禁 cache，沿用已存在 pytest site-packages；所有 Python 经 uv，未用 copytree 假装安装。
+- 原始命令/exit/cwd：`commands.json`、`logs/`；复现脚本 `review.py`（复用前轮通用运行/哈希函数但全新执行和日志）、`provenance_and_resources.py`。测试命令 `uv run --offline python -m pytest -q -p no:cacheprovider --junitxml=<证据文件> tests scripts/test_check_skills_ticket*.py`；关键命令显式列六票。实际 CLI 为 `node <既有skills/bin/cli.mjs> add <干净archive> -s <选中包> -a claude-code -y --copy`，各次独立 HOME/临时 Git 项目。
+- 精确对照：`head-baseline-comparison.json` 保留七个 node ID 和 failure 属性；`logs/{baseline,head}-checker.log` 原始字节相同，均为本文件历史章节原样列明九诊断，不新增 skip/xfail、宽泛过滤或改产品掩盖基线问题。
+- 许可/采用与未回退：`provenance-and-no-regression.json`；新反例：`r5-mutants.json`、对应 JUnit/原始日志；全部文件恢复：`head-manifest.json`；实装：`installed-entry.json`、`installed-representative.json`、`installed-resources.json`。
+- source 已含 8b21f78（旧 REJECT notes），本次整合不是覆盖其他 merger。#50 swarm 的「缺证据有界重派一次」、#52 interrogate 的始终只读、#53 创建/维护行为验证与 helper 及六票相关测试均与 integration 基线未变。入口只增加 continuation 行/说明，迁移登记只追加 #59 一行，已有迁移行未删除；共享旧测试只适配 pickup 原授权和新增 continuation 路由。KISS/YAGNI/DRY 自检：本轮无产品代修/新 runtime/新依赖或功能，完整许可校验是交付守护；`git diff --check` 通过。
+
+### 本轮限制与偏离
+
+- 只验证离线固定上游归档与其 blob manifest，不对未归档上游作在线认证或法律判断。实现者 R5 的先红后绿仅作为其记录；本轮独立反例不能倒推首红。
+- 本轮复用前轮 R1–R4 深入回放/五 mutant 证据，未重新做相同人工输入/五 mutant；已用精确 diff 确认其产品未变并重跑全部相关测试。没有代替模型执行或新行为 runtime。
+- 未做真实开放科研/数学真值、真实跨家族调度、实际费用或 wall-clock 扣账、付费/远程生产作业、全部技能组合、所有宿主、长期后台。全部 pass 仅限 spec 已确认的安装/结构/文本合同 seam。原过程偏离保留。
+- 不 push、不 PR/issues、不清理 worktree，不写其他 checkout 或 orchestrator notes。合后状态与完整 merge tip 见下续记。
+
+### 合入后复验与交回
+
+- 已无冲突地 `git merge --no-ff --no-edit ea1e162979156d1e06b77f179dca06eaba888eae`，得到 **`d4fd5ed0f8629a1678e9c92e07722ee894ad8ae8`**；父提交依次为 `8b21f78385d89b5f600ccbef7843278a048be0fa`、`ea1e162979156d1e06b77f179dca06eaba888eae`。作者/提交者为现有身份 `rolex <torolex@163.com>`，未覆写身份或关闭 hooks。合入结果与待审源完整 tree OID 同为 `b1336ad678b7637616a12cdd546f891da2618a36`，没有语义解冲突或代改产品。
+- 对该 merge 重新 `git archive` 至独立 `merged/`，再次运行六票关键 **136 passed/61 subtests**、全套 **7 failed/204 passed/105 subtests**、checker **9 个历史问题**。`merged-baseline-comparison.json` 断言七个原始失败 ID 和 JUnit failure 属性逐项与 bc35b36 一致；checker 输出仍与 baseline 原始字节完全相同。没有把非零全量称作全绿。
+- 对该 merge archive 再次真实 CLI **只装 research-os**：30/30 文件逐字节一致，两份 LICENSE 与 notice 保留，不带 research-improvement；完整 MIT 1067 bytes/固定 SHA256 与前验相同；仍是 56 可达链接 + 1 条精确登记的可选 interrogate 缺链。证据 `installed-merged-entry.json`、`logs/cli-merged-entry.log`。完整合后快照文件哈希在执行前后不变；`postmerge.py`、`postmerge-verification.json` 记录命令及断言。
+- 亲核旧 `8b21f78` 的 verification notes 是当前文件的**逐字节前缀**，原 REJECT 章节、findings、限制和未完成历史均未删除或倒改；只有本新 round 追加验收并关闭 R5。本次仓库新增写入仅本 verification notes，产品由原源提交及 no-ff merge 引入。最后 notes 提交只含本文件，不改变已验证产品树。
+- 交回裁决：**ACCEPT #59（限定 seam），已 no-ff 合入，R1–R5 无剩余阻断**。剩余为原有七项失败/九诊断与上述明确未验证事项；未 push/PR/issues/清 worktree。完整最终记录提交 tip 由提交后 `git rev-parse HEAD` 交回，避免自引用 hash。
