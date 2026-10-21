@@ -101,25 +101,42 @@ class ArenaCapabilityTests(unittest.TestCase):
     def test_six_phases_preserved_with_full_reading_and_rubric_first(self):
         for phase in PHASES:
             self.assertIn(phase, self.text, phase)
-        self.assertIn("rubric", self.text.lower())
-        # 候选只看任务；rubric 在候选运行前确定（pick 者的工具）
-        self.assertIn("先", self.text)  # 预先声明措辞存在性由细粒度断言补
-        self.assertIn("完整", self.text)  # 完整阅读候选
+        frame = self.text.split("## Phase A: Frame", 1)[1].split("## Phase B: Fan-out", 1)[0]
+        self.assertLess(frame.index("先声明 rubric"), frame.index("候选运行之前"))
+        self.assertIn("候选只看任务本身，不看 rubric", frame)
+        self.assertLess(self.text.index("## Phase B: Fan-out"), self.text.index("## Phase C: Cross-judge"))
+        cross_judge = self.text.split("## Phase C: Cross-judge", 1)[1].split("## Phase D: Pick", 1)[0]
+        self.assertIn("候选还在写的时候不要派评判者", cross_judge)
+        pick = self.text.split("## Phase D: Pick", 1)[1].split("## Phase E: Graft", 1)[0]
+        self.assertIn("完整阅读每一个候选全文", pick)
+        self.assertIn("逐项打分", pick)
 
     def test_output_isolation_and_cross_judge_independence(self):
-        self.assertIn("隔离", self.text)
-        self.assertIn("独立", self.text)
+        fan_out = self.text.split("## Phase A: Frame", 1)[1].split("## Phase B: Fan-out", 1)[0]
+        self.assertIn("候选之间不共享写入", fan_out)
+        self.assertIn("不读到彼此输出", fan_out)
+        self.assertIn("交叉评判者", self.text)
+        self.assertIn("作者与派发顺序", self.text)
 
     def test_orchestrator_synthesizes_not_mechanical(self):
-        self.assertIn("综合", self.text)
-        self.assertIn("逐项", self.text)
+        pick = self.text.split("## Phase D: Pick", 1)[1].split("## Phase E: Graft", 1)[0]
+        graft = self.text.split("## Phase E: Graft", 1)[1].split("## 数学整合后的重查", 1)[0]
+        self.assertIn("把独立评判的打分与推荐摆在一起比较", pick)
+        self.assertIn("不做整体印象判断", pick)
+        self.assertIn("手工改写融入基座", graft)
+        self.assertIn("不机械拼接段落", graft)
+
+    def test_independent_invocation_defines_authorization_scope(self):
+        self.assertIn("独立调用时，以用户给定的任务及其明确范围为授权", self.text)
+        self.assertIn("用户未给候选数时，默认两个", self.text)
+        self.assertIn("不覆盖既有材料的独立目录", self.text)
 
     def test_math_recheck_and_win_is_not_proof(self):
-        self.assertIn("假设", self.text)
-        self.assertIn("记号", self.text)
-        self.assertIn("闭合", self.text)
-        self.assertIn("不等于", self.text)
-        self.assertIn("命题", self.text)
+        math_recheck = self.text.split("## 数学整合后的重查", 1)[1].split("## Phase F: Verify", 1)[0]
+        self.assertIn("假设是否仍然成立且被声明", math_recheck)
+        self.assertIn("记号是否全篇一致无冲突", math_recheck)
+        self.assertIn("依赖是否闭合", math_recheck)
+        self.assertIn("胜出不等于命题成立", math_recheck)
 
     def test_subagent_prerequisite_blocks_without_host_support(self):
         self.assertIn("子代理", self.text)
@@ -148,6 +165,16 @@ class ArenaCapabilityTests(unittest.TestCase):
         for name in ("README.md", "skills/README.md"):
             text = (ROOT / name).read_text(encoding="utf-8")
             self.assertIn("organization/arena/SKILL.md", text, name)
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        listed = re.findall(r"\]\((?:skills/)?[a-z-]+/[a-z0-9-]+/SKILL\.md\)", readme)
+        self.assertEqual(len(listed), len(set(listed)))
+        badge = re.search(r"/badge/skills-(\d+)-green\.svg", readme)
+        heading = re.search(r"^## (\d+) 个 Skill 能力清单$", readme, re.M)
+        self.assertIsNotNone(badge)
+        self.assertIsNotNone(heading)
+        if badge is not None and heading is not None:
+            self.assertEqual(int(badge.group(1)), len(listed))
+            self.assertEqual(int(heading.group(1)), len(listed))
 
 
 class ArenaCheckerRegressionTests(unittest.TestCase):
@@ -164,7 +191,7 @@ class ArenaCheckerRegressionTests(unittest.TestCase):
             )
             self.assertTrue(fresh_problems(tmp))
         finally:
-            shutil.rmtree(tmp.parent, onexc=lambda f,p,e: os.chmod(p, 0o700) and None or None, ignore_errors=False) if False else shutil.rmtree(tmp.parent, onexc=_force_rmtree)
+            shutil.rmtree(tmp.parent, onexc=_force_rmtree)
 
     def test_dropped_phase_is_red(self):
         tmp = copy_tree()
@@ -177,7 +204,18 @@ class ArenaCheckerRegressionTests(unittest.TestCase):
             problems = "\n".join(fresh_problems(tmp))
             self.assertIn("Cross-judge", problems)
         finally:
-            shutil.rmtree(tmp.parent, onexc=lambda f,p,e: os.chmod(p, 0o700) and None or None, ignore_errors=False) if False else shutil.rmtree(tmp.parent, onexc=_force_rmtree)
+            shutil.rmtree(tmp.parent, onexc=_force_rmtree)
+
+    def test_stale_skill_badge_is_red(self):
+        tmp = copy_tree()
+        try:
+            readme = tmp / "README.md"
+            text = readme.read_text(encoding="utf-8").replace("/badge/skills-42-green.svg", "/badge/skills-39-green.svg")
+            readme.write_text(text, encoding="utf-8")
+            problems = "\n".join(fresh_problems(tmp))
+            self.assertIn("skills 数量徽章", problems)
+        finally:
+            shutil.rmtree(tmp.parent, onexc=_force_rmtree)
 
 
 if __name__ == "__main__":

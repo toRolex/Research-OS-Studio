@@ -695,7 +695,8 @@ for readme_name in ("README.md", "skills/README.md"):
     if not rp.exists():
         err(f"{readme_name}: 不存在")
         continue
-    listed = set(re.findall(r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+)/SKILL\.md\)", rp.read_text(encoding="utf-8")))
+    readme_text = rp.read_text(encoding="utf-8")
+    listed = set(re.findall(r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+)/SKILL\.md\)", readme_text))
     if listed != actual:
         missing = sorted(actual - listed)
         extra = sorted(listed - actual)
@@ -703,6 +704,13 @@ for readme_name in ("README.md", "skills/README.md"):
             err(f"{readme_name}: 清单缺 {len(missing)} 个 Skill: {', '.join(missing)}")
         if extra:
             err(f"{readme_name}: 清单含不存在 Skill: {', '.join(extra)}")
+    if readme_name == "README.md":
+        badge = re.search(r"/badge/skills-(\d+)-green\.svg", readme_text)
+        heading = re.search(r"^## (\d+) 个 Skill 能力清单$", readme_text, re.M)
+        if badge is None or int(badge.group(1)) != len(actual):
+            err(f"{readme_name}: skills 数量徽章应与实际 {len(actual)} 个 Skill 一致")
+        if heading is None or int(heading.group(1)) != len(actual):
+            err(f"{readme_name}: Skill 能力清单标题应与实际 {len(actual)} 个 Skill 一致")
 
 # --- 6–9: 入口合同（路由、级联、门、旧 router） ---------------------------
 for skill_name, rel, skill_dir, skill_text, user_invoked, yaml_text in skill_bodies:
