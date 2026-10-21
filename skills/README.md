@@ -181,7 +181,7 @@ Skills CLI 1.5.26 的本票本地安装中，Claude Code / Codex 副本完整；
 
 ## Resubmit 转投适配与人工验收
 
-限定宿主（Claude Code／Codex）安装中，canonical 副本与安装副本逐字节一致；`--list` 共 41 个 Skill，含 `resubmit-pipeline`。Eve 副本与真实科研验收未做，不声明 Eve 兼容或端到端通过。
+限定宿主（Claude Code／Codex）安装中，canonical 副本与安装副本逐字节一致；`--list` 共 43 个 Skill，含 `resubmit-pipeline`。Eve 副本与真实科研验收未做，不声明 Eve 兼容或端到端通过。
 
 用 `/research-os 转投`，或直接点名 `resubmit-pipeline`。提供旧投稿目录、目标 venue 与新目录；不要求先运行 setup 或写作流程，不先创建目录。范围与改动两道叶门仍停，旧稿保留。
 

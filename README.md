@@ -10,7 +10,7 @@
   <p>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
     <a href="https://linux.do"><img src="https://img.shields.io/badge/LINUX%20DO-Community-blue?logo=linux&logoColor=white" alt="LINUX DO"></a>
-    <a href="skills/README.md"><img src="https://img.shields.io/badge/skills-41-green.svg" alt="Skills"></a>
+    <a href="skills/README.md"><img src="https://img.shields.io/badge/skills-43-green.svg" alt="Skills"></a>
     <a href="docs/user-acceptance-guide.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
     <a href="https://github.com/toRolex/Research-OS-Studio/stargazers"><img src="https://img.shields.io/github/stars/toRolex/Research-OS-Studio.svg?style=social" alt="GitHub stars"></a>
   </p>
@@ -49,7 +49,7 @@ Research OS Studio 将科研过程拆解为边界明确的工作流。AI 在单�
 - [核心设计原则](#核心设计原则)
 - [快速开始](#快速开始)
 - [典型科研流程](#典型科研流程)
-- [41 个 Skill 能力清单](#41-个-skill-能力清单)
+- [43 个 Skill 能力清单](#43-个-skill-能力清单)
 - [安全与控制原则](#安全与控制原则)
 - [常见问题](#常见问题)
 - [相关文档](#相关文档)
@@ -177,9 +177,9 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 
 ---
 
-## 41 个 Skill 能力清单
+## 43 个 Skill 能力清单
 
-全套包含 41 个独立技能。根据触发机制分为两类：
+全套包含 43 个独立技能。根据触发机制分为两类：
 - **除 setup 外全部显式调用**：用户直接点名，或父流程按路径级联读取全文。模型不因描述自动触发。
 - **`setup-research-os`**：唯一允许模型主动建议的例外。写入前仍要逐角色确认模型和整份草稿。
 
