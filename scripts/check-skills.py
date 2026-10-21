@@ -1007,6 +1007,7 @@ EXPERIMENT_REQUIRED_FILES = {
     "run-experiment": (
         "references/execution-contract.md",
         "references/remote-execution.md",
+        "references/batch-authorization.md",
         "templates/run-report.md",
     ),
     "experiment-queue": ("templates/batch-manifest.md",),
@@ -1018,8 +1019,14 @@ EXPERIMENT_TEXT_MARKERS = {
         "远程只是执行位置", "SSH", "已有调度",
     ),
     "experiment-bridge": ("兼容入口", "不再重复执行控制", "委托继承"),
-    "experiment-queue": ("委托继承", *EXPERIMENT_JOB_CONTRACT, *EXPERIMENT_RECOVERY),
-    "experiment-plan": ("委托继承", "数学计算", "不硬套训练 baseline", "计划声明的对照"),
+    "experiment-queue": (
+        "委托继承", *EXPERIMENT_JOB_CONTRACT, *EXPERIMENT_RECOVERY,
+        "不因进入队列或新波次重复索权", "研究日志",
+    ),
+    "experiment-plan": (
+        "委托继承", "数学计算", "不硬套训练 baseline", "计划声明的对照",
+        "不逐 milestone 再索权",
+    ),
     "monitor-experiment": ("委托继承",),
     "training-health-check": ("委托继承",),
     "analyze-results": ("委托继承",),
@@ -1029,11 +1036,21 @@ EXPERIMENT_TEXT_MARKERS = {
 EXPERIMENT_FILE_MARKERS = {
     "run-experiment/references/execution-contract.md": EXPERIMENT_JOB_CONTRACT,
     "run-experiment/references/remote-execution.md": EXPERIMENT_REMOTE,
+    "run-experiment/references/batch-authorization.md": (
+        "research-log.md", "valid_until", "scope", "累计额度", "run_count_basis=planned-run",
+        "concurrency_limit", "retry_limit", "worst_case_estimate",
+    ),
     "run-experiment/templates/run-report.md": EXPERIMENT_JOB_CONTRACT,
     "experiment-queue/templates/batch-manifest.md": EXPERIMENT_JOB_CONTRACT,
 }
 EXPERIMENT_HOST_BINDINGS = FORMAL_HOST_BINDINGS
 EXPERIMENT_MODEL_PIN = FORMAL_MODEL_PIN
+EXPERIMENT_AUTHORIZATION_MARKERS = (
+    "research-log.md", "valid_until", "scope", "累计额度", "run_count_basis=planned-run",
+    "concurrency_limit", "retry_limit", "worst_case_estimate", "不按 milestone 重复索取",
+    "batch-authorization.md",
+)
+EXPERIMENT_BRIDGE_PLAYBOOK = "skills/general/research-os/playbooks/experiment-bridge.md"
 
 
 def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[str]:
@@ -1089,6 +1106,22 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
         run_body = run_text.read_text(encoding="utf-8")
         if "../experiment-bridge/SKILL.md" in run_body:
             found.append("skills/validation-cycle/run-experiment/SKILL.md: 仍依赖旧桥接控制器")
+        if "仓库中的 `experiment-queue`" not in run_body or "单独安装时如 queue 不可用" not in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 缺批量队列可用性边界")
+        for marker in EXPERIMENT_AUTHORIZATION_MARKERS:
+            if marker not in run_body:
+                found.append(f"skills/validation-cycle/run-experiment/SKILL.md: 缺批次授权合同「{marker}」")
+    bridge_playbook = root / EXPERIMENT_BRIDGE_PLAYBOOK
+    if bridge_playbook.is_file():
+        playbook = bridge_playbook.read_text(encoding="utf-8")
+        for marker in ("run-experiment", "analyze-results", "experiment-audit"):
+            if marker not in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 缺能力路由 {marker}")
+        for marker in ("run_count_basis=planned-run", "每个 attempt 先记最坏预留"):
+            if marker in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 桥接 playbook 重复执行控制合同 {marker}")
+    else:
+        found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: playbook 不存在")
     boundary = root / MIGRATION_DOC
     if boundary.is_file():
         boundary_text = boundary.read_text(encoding="utf-8")

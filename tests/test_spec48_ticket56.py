@@ -31,6 +31,7 @@ RUN = BASE / "run-experiment"
 QUEUE = BASE / "experiment-queue"
 BRIDGE = BASE / "experiment-bridge"
 BOUNDARY = ROOT / "skills/general/research-os/references/migration-boundary.md"
+BRIDGE_PLAYBOOK = ROOT / "skills/general/research-os/playbooks/experiment-bridge.md"
 UPSTREAM = ROOT / "docs/upstream-sources-and-licenses.md"
 
 HISTORICAL = re.compile(
@@ -128,6 +129,8 @@ class OwnershipAndMandate(unittest.TestCase):
             self.assertNotIn(phrase, bridge, phrase)
         self.assertIn("执行控制", run)
         self.assertIn("小批量或队列", run)
+        self.assertIn("仓库中的 `experiment-queue`", run)
+        self.assertIn("单独安装时如 queue 不可用", run)
         self.assertNotIn("../experiment-bridge/SKILL.md", run)
 
 
@@ -145,6 +148,8 @@ class ExecutionContract(unittest.TestCase):
 
     def test_queue_reuses_same_contract_and_has_recovery(self):
         queue = text(QUEUE / "SKILL.md")
+        self.assertIn("不因进入队列或新波次重复索权", queue)
+        self.assertIn("同一个 `research-log.md` 批次", queue)
         manifest = text(QUEUE / "templates/batch-manifest.md")
         for phrase in ("输入版本", "工具链", "独立目录", "作业身份", "退出码", "原始日志", "产物"):
             self.assertIn(phrase, queue, phrase)
@@ -183,6 +188,28 @@ class RemoteAndRecovery(unittest.TestCase):
             self.assertIsNone(MODEL_PIN.search(body), name)
 
 
+class UnifiedController(unittest.TestCase):
+    def test_run_experiment_owns_batch_authorization_and_accounting(self):
+        run = text(RUN / "SKILL.md")
+        for phrase in (
+            "research-log.md", "valid_until", "累计额度", "run_count_basis",
+            "最坏预留", "本批已确认", "不按 milestone 重复索取",
+        ):
+            self.assertIn(phrase, run, phrase)
+        self.assertNotIn("用户仍确认", run)
+        self.assertNotIn("用户确认后才启动", run)
+
+    def test_research_os_bridge_playbook_is_a_pointer_not_a_second_controller(self):
+        playbook = text(BRIDGE_PLAYBOOK)
+        self.assertIn("run-experiment", playbook)
+        self.assertIn("分析或审计", playbook)
+        self.assertIn("analyze-results", playbook)
+        self.assertIn("experiment-audit", playbook)
+        self.assertNotIn("run_count_basis=planned-run", playbook)
+        self.assertNotIn("每个 attempt 先记最坏预留", playbook)
+        self.assertIn("run_count_basis", text(RUN / "SKILL.md"))
+
+
 class CheckerContract(unittest.TestCase):
     def test_builtin_checker_registers_ticket56_contract(self):
         self.assertEqual(fresh_problems(ROOT), [])
@@ -206,6 +233,26 @@ class CheckerContract(unittest.TestCase):
             )
             root.stage()
             self.assertIn("已有调度", "\n".join(fresh_problems(root)))
+
+    def test_checker_detects_missing_batch_authorization_contract(self):
+        with WorkCopy() as root:
+            run_path = root.path / RUN.relative_to(ROOT) / "SKILL.md"
+            run_path.write_text(
+                run_path.read_text(encoding="utf-8").replace("valid_until", "expiry_time"),
+                encoding="utf-8",
+            )
+            root.stage()
+            self.assertIn("批次授权合同", "\n".join(fresh_problems(root)))
+
+    def test_checker_detects_duplicate_bridge_authorization_controller(self):
+        with WorkCopy() as root:
+            playbook_path = root.path / BRIDGE_PLAYBOOK.relative_to(ROOT)
+            playbook_path.write_text(
+                playbook_path.read_text(encoding="utf-8") + "\nrun_count_basis=planned-run\n",
+                encoding="utf-8",
+            )
+            root.stage()
+            self.assertIn("桥接 playbook 重复执行控制合同", "\n".join(fresh_problems(root)))
 
 
 if __name__ == "__main__":

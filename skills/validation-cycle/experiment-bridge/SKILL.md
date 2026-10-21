@@ -15,6 +15,7 @@ Gates: none
 - 调用本入口时，立即按同一委托读取 run-experiment，不在此创建第二份授权、里程碑、报告或 tracker 更新。
 - 本入口不再重复执行控制，不启动任何运行，不更新 tracker，不代写分析结论。
 - 用户只要求规划时，指向 [experiment-plan](../experiment-plan/SKILL.md)；只要批次管理时，指向 [experiment-queue](../experiment-queue/SKILL.md)。
+- 用户明确要求分析或审计时，执行报告后组合 [analyze-results](../analyze-results/SKILL.md) 和／或 [experiment-audit](../experiment-audit/SKILL.md)，将它们的只读内容作为运行报告章节，不再创建第二份主报告。没有这项委托时，执行报告后停止。
 
 ## 兼容映射
 
