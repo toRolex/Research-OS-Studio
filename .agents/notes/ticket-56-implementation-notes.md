@@ -4,7 +4,8 @@
 
 | Work unit | Status | Deliverable / evidence | Next |
 | --- | --- | --- | --- |
-| #56 experiment execution & remote contract | done | `tests/test_spec48_ticket56.py` (14 passed); 九个实验 Skill、run-experiment 授权/执行/远程参考，checker 与迁移登记；单装及联装资源检查通过 | 无；全套保留基线 7 个失败 / checker 9 条历史断链 |
+| #56 experiment execution & remote contract | 进行中 | 原实现经 `/tmp/research-os-spec48-ticket56-review/REPORT.md` 独立复验为 REJECT（F1–F6）；本 Unit A 只覆盖 F1/F5，不代表整票 ready | F2 自包含、F3 普通重复批准、F4 数学 baseline 分支、F6 死锚点仍未完成，留待后续单元 |
+| Unit A — F1/F5 定向修复 | done | `tests/test_spec48_ticket56.py` 18 passed；F1 stale/failed/success 完整产物反例，F5 空 remote 合同红、缺文件正控及真实 batch marker 检查；历史基线逐项未变 | 无；不合并，交后续单元处理剩余 findings |
 
 ## Red evidence
 
@@ -49,7 +50,7 @@ EXIT=1
   #54 记录为 7 failed, 115 passed，本次多出的 10 passed 即本票测试）
 ```
 
-## Final revalidation evidence
+## Prior implementation final revalidation (before independent #56 review)
 
 ```text
 $ uv run --offline --with pytest python -m pytest tests/test_spec48_ticket56.py -q
@@ -90,7 +91,7 @@ EXIT=0   # Installed 9 skills → /tmp/spec48-56-final.JrGqis/.claude/skills/
 
 限制：九个相关 Skill 联装的 Markdown 链接检查通过，run-experiment 独立安装资源及链接检查通过；未逐个单装其余八个技能。静态/安装验证不代表全宿主行为或科研结论已验证。
 
-## Delivery & merge
+## Prior implementation delivery & merge (historical; before Unit A)
 
 ```text
 Branch/worktree: `t3/spec-56-experiment-workflows` @ `/Users/rolex/.t3/worktrees/Research OS Studio/t3-d1a67b73`
@@ -99,3 +100,30 @@ Initial merge base: `integration/spec-48` @ `e84f779d78755937a59d46364e14cc6496a
 Initial integration check: `integration/spec-48` had not advanced beyond the base. Final pre-merge check: still `e84f779d78755937a59d46364e14cc6496aa2b03`; `git merge --no-edit integration/spec-48` returned “已经是最新的”。
 Final integration check: `git merge --no-edit integration/spec-48` returned “已经是最新的”；`git merge-base --is-ancestor integration/spec-48 HEAD` exited 0. Final commit: `8650ee4be7efeff008c9a54768bcf2398de4f163` (`fix(validation-cycle): complete experiment authorization inheritance`).
 ```
+
+注：以上 merge/commit 仅为旧 implementation notes 的历史记录；独立验收报告确认本次返工起点是 `3ef4721e403b02499a3edefef7d93334a231c5cd`。Unit A 在该指定 worker worktree 上提交，不移动或合入 integration，也不 push、开 PR/issue 或清理 worktree。
+
+## Unit A review remediation — 2026-10-21
+
+**范围仅 F1/F5。** 权威材料为 `/tmp/research-os-spec48-context/spec/#48.md`、`tickets/#56.md`、`retry-ticket-56.json` 与完整 `/tmp/research-os-spec48-ticket56-review/REPORT.md`。入口判定为直接在指定 worker worktree 实现：边界固定，且用户明确禁止继续派发。
+
+- **F1**：队列第 4 节执行、第 5 节停滞、第 6 节恢复共用完成门槛：身份对应本次 attempt、明确成功退出证据/退出码 0、产物关联同一身份且完整性通过。身份或退出证据缺失为 `unknown`；旧 `output.csv` 加本次非零退出为失败；部分/残缺产物不完成；本次成功退出和身份关联完整产物才可 `completed`。`unknown` 不满足后续依赖。会话清理独立检查授权，未获授权不清理，也不宣称资源已释放；OOM 残留清理同样受此约束。
+- **F5**：marker key 含 Skill 前缀，路径统一从 `skills/validation-cycle` base 解析，报告路径不再重复前缀。缺资源会显式失败。batch authorization marker 按现有英文合同的实际语义更新（含 `run_count_basis: planned-run`），不添加伪造中文/错误字面串来填词。测试只豁免 reviewer/source 基线逐字列明的 9 条错误，不再使用通配正则过滤。
+- **新增回归**：queue 的旧输出+本次失败、本次成功+完整产物、成功但部分产物、身份/退出缺证据与清理授权合同；checker 的 remote 文件缺失正控、实际存在但仅标题的空合同反例，以及真实 batch marker 损坏反例。
+
+### Unit A red/green 与基线证据
+
+```text
+RED: uv run --offline --with pytest python -m pytest tests/test_spec48_ticket56.py -q \
+     -k 'completion_distinguishes or detects_missing_remote_execution_resource or detects_empty_remote_execution_contract or builtin_checker_registers_ticket56_contract'
+     2 failed, 2 passed, 13 deselected; EXIT=1
+GREEN: uv run --offline --with pytest python -m pytest tests/test_spec48_ticket56.py -q
+       18 passed; EXIT=0
+CHECKER: uv run --offline python scripts/check-skills.py
+         EXIT=1；仍为 9 条历史 evidence tarball 断链；与 review source 基线逐字 diff exit=0
+FULL: uv run --offline --with pytest python -m pytest tests scripts/test_check_skills_ticket*.py -q
+      7 failed, 133 passed, 44 subtests passed; EXIT=1
+      失败 ID 与 review source 的既有 7 项逐项 diff exit=0（本单元新增 4 个通过测试）
+```
+
+验收限制：没有执行真实 SSH、调度器或生产作业（本票明确不要求作为门槛）。本单元不处理且不宣称完成 F2 自包含、F3 普通重复批准、F4 数学 baseline 分支或 F6 死锚点；故 **#56 整票仍未 ready**。

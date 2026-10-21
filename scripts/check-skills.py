@@ -1037,8 +1037,8 @@ EXPERIMENT_FILE_MARKERS = {
     "run-experiment/references/execution-contract.md": EXPERIMENT_JOB_CONTRACT,
     "run-experiment/references/remote-execution.md": EXPERIMENT_REMOTE,
     "run-experiment/references/batch-authorization.md": (
-        "research-log.md", "valid_until", "scope", "累计额度", "run_count_basis=planned-run",
-        "concurrency_limit", "retry_limit", "worst_case_estimate",
+        "research-log.md", "valid_until", "scope", "cost_limit", "compute_limit", "run_limit",
+        "run_count_basis: planned-run", "concurrency_limit", "retry_limit", "worst_case_estimate",
     ),
     "run-experiment/templates/run-report.md": EXPERIMENT_JOB_CONTRACT,
     "experiment-queue/templates/batch-manifest.md": EXPERIMENT_JOB_CONTRACT,
@@ -1094,13 +1094,17 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
         for rel, markers in EXPERIMENT_FILE_MARKERS.items():
             if not rel.startswith(f"{name}/"):
                 continue
-            path = skill_dir / rel
+            path = base / rel
             if not path.is_file():
+                asset_path = f"skills/validation-cycle/{rel}"
+                message = f"{asset_path}: 缺少实验执行资产"
+                if message not in found:
+                    found.append(message)
                 continue
             body = path.read_text(encoding="utf-8")
             for marker in markers:
                 if marker not in body:
-                    found.append(f"{rel_dir}/{rel}: 缺「{marker}」")
+                    found.append(f"skills/validation-cycle/{rel}: 缺「{marker}」")
     run_text = base / "run-experiment" / "SKILL.md"
     if run_text.is_file():
         run_body = run_text.read_text(encoding="utf-8")

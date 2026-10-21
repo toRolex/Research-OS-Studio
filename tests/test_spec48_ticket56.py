@@ -34,8 +34,18 @@ BOUNDARY = ROOT / "skills/general/research-os/references/migration-boundary.md"
 BRIDGE_PLAYBOOK = ROOT / "skills/general/research-os/playbooks/experiment-bridge.md"
 UPSTREAM = ROOT / "docs/upstream-sources-and-licenses.md"
 
-HISTORICAL = re.compile(
-    r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
+HISTORICAL = frozenset(
+    {
+        "  - docs/acceptance/v2-release-host-regression.md:93: 链接目标不存在或未追踪: evidence/v2-release-host-regression.tar.gz",
+        "  - docs/acceptance/v2-final-contract-fixes.md:53: 链接目标不存在或未追踪: evidence/v2-final-contract-fixes.tar.gz",
+        "  - docs/acceptance/v2-release-gate-combinations.md:49: 链接目标不存在或未追踪: evidence/v2-release-gate-combinations.tar.gz",
+        "  - docs/acceptance/v2-merged-host-smoke.md:54: 链接目标不存在或未追踪: evidence/v2-merged-host-smoke.tar.gz",
+        "  - docs/acceptance/v2-accept-validation.md:98: 链接目标不存在或未追踪: evidence/v2-accept-validation.tar.gz",
+        "  - docs/acceptance/v2-accept-hosts.md:9: 链接目标不存在或未追踪: evidence/v2-accept-hosts.tar.gz",
+        "  - docs/acceptance/v2-final-contract-independent-verify.md:41: 链接目标不存在或未追踪: evidence/v2-final-contract-independent-verify.tar.gz",
+        "  - docs/acceptance/v2-final-contract-independent-verify.md:53: 链接目标不存在或未追踪: evidence/v2-merged-host-smoke.tar.gz",
+        "  - docs/acceptance/v2-accept-remediation.md:92: 链接目标不存在或未追踪: evidence/v2-accept-remediation.tar.gz",
+    }
 )
 MODEL_PIN = re.compile(
     r"(?i)(gpt-[0-9]|claude-[0-9]|gemini-[0-9]|grok-[0-9]|deepseek-[a-z0-9]|glm-[0-9]|opus|sonnet)"
@@ -64,7 +74,7 @@ def problem_lines(root: Path) -> list[str]:
 
 
 def fresh_problems(root: Path) -> list[str]:
-    return [line for line in problem_lines(root) if not HISTORICAL.match(line)]
+    return [line for line in problem_lines(root) if line not in HISTORICAL]
 
 
 def text(path: Path) -> str:
@@ -160,6 +170,19 @@ class ExecutionContract(unittest.TestCase):
         for phrase in ("作业退出", "产物有效", "科学结论", "旧文件"):
             self.assertIn(phrase, run, phrase)
 
+    def test_queue_completion_distinguishes_stale_failed_and_complete_attempts(self):
+        queue = text(QUEUE / "SKILL.md")
+        for case in (
+            "只有同时满足以下条件才标 `completed`",
+            "缺少作业身份或退出证据 → `unknown`",
+            "上次遗留 `output.csv` + 本次 attempt 非零退出 → `failed_other`；旧文件不算本次产物",
+            "本次 attempt 成功退出（退出码为 0）+ 身份关联且完整的预期产物 → `completed`",
+            "成功退出但产物缺失、部分写入或完整性检查失败 → 不得标 `completed`",
+            "会话清理仅在授权明确覆盖该清理动作时执行",
+        ):
+            self.assertIn(case, queue, case)
+        self.assertNotIn("预期输出存在 → 标 `completed`", queue)
+
     def test_plan_does_not_force_training_baseline_on_math(self):
         plan = text(BASE / "experiment-plan/SKILL.md")
         self.assertIn("数学计算", plan)
@@ -212,6 +235,7 @@ class UnifiedController(unittest.TestCase):
 
 class CheckerContract(unittest.TestCase):
     def test_builtin_checker_registers_ticket56_contract(self):
+        self.assertEqual(set(problem_lines(ROOT)), HISTORICAL)
         self.assertEqual(fresh_problems(ROOT), [])
 
     def test_checker_detects_missing_recovery_contract(self):
@@ -233,6 +257,38 @@ class CheckerContract(unittest.TestCase):
             )
             root.stage()
             self.assertIn("已有调度", "\n".join(fresh_problems(root)))
+
+    def test_checker_detects_missing_remote_execution_resource(self):
+        with WorkCopy() as root:
+            remote_path = root.path / RUN.relative_to(ROOT) / "references/remote-execution.md"
+            remote_path.unlink()
+            root.stage()
+            self.assertIn("缺少实验执行资产", "\n".join(fresh_problems(root)))
+
+    def test_checker_detects_empty_remote_execution_contract(self):
+        with WorkCopy() as root:
+            remote_path = root.path / RUN.relative_to(ROOT) / "references/remote-execution.md"
+            remote_path.write_text("# Remote Execution Position\n", encoding="utf-8")
+            root.stage()
+            self.assertIn(
+                "remote-execution.md: 缺「远程只是执行位置」",
+                "\n".join(fresh_problems(root)),
+            )
+
+    def test_checker_detects_missing_real_batch_authorization_marker(self):
+        with WorkCopy() as root:
+            auth_path = root.path / RUN.relative_to(ROOT) / "references/batch-authorization.md"
+            auth_path.write_text(
+                auth_path.read_text(encoding="utf-8").replace(
+                    "run_count_basis: planned-run", "run_count_basis: attempt"
+                ),
+                encoding="utf-8",
+            )
+            root.stage()
+            self.assertIn(
+                "batch-authorization.md: 缺「run_count_basis: planned-run」",
+                "\n".join(fresh_problems(root)),
+            )
 
     def test_checker_detects_missing_batch_authorization_contract(self):
         with WorkCopy() as root:
