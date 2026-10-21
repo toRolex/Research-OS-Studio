@@ -319,4 +319,4 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 | 10 | **审稿、转投、演讲** | `/research-os` 进入 rebuttal、resubmit、paper-talk；策略、措辞、范围、改动、授权、大纲与外发仍停；旧稿保留，三产物是 slides、notes、script | [ ] 通过 |
 | 11 | **工具缺失与边界** | 缺失外部环境（LaTeX/Lean/GPU）如实报告并降级，不假报成功，不自装环境 | [ ] 通过 |
 | 12 | **组合门** | 只读优先于执行词；可逆步骤不停；外发、删覆盖、批次越界、叶审批点停在副作用前 | [ ] 通过 |
-| 13 | **三宿主与串行** | pi / Claude Code / Codex 限定安装副本保留显式调用字段；无子代理时编排者按 playbook 顺序自己做 | [ ] 通过 |
+| 13 | **宿主能力与分派** | pi / Claude Code / Codex 限定安装副本保留显式调用字段；子代理是编排前提，无该工具时需要分派的步骤标 blocked 并只给只读建议，不串行代跑冒充委托已执行 | [ ] 通过 |

@@ -127,12 +127,70 @@ class ContractText(unittest.TestCase):
     def test_entry_points_at_mandate_and_keeps_readonly_and_host_map(self):
         text = ENTRY.read_text(encoding="utf-8")
         self.assertIn("references/mandate.md", text)
-        for kept in ("当前命中路线是 route-only", "无该工具时由编排者串行执行", "保留编号、原句及子列表"):
+        for kept in ("当前命中路线是 route-only", "blocked", "保留编号、原句及子列表"):
             self.assertIn(kept, text, kept)
+
+    def test_mandate_counts_user_stop_as_stop_not_completion(self):
+        text = MANDATE.read_text(encoding="utf-8")
+        section = text.split("## 完成与停止", 1)[1].split("\n## ", 1)[0]
+        lines = [line for line in section.splitlines() if line.strip()]
+        done = next(line for line in lines if line.startswith("- **完成**"))
+        stop = next(line for line in lines if line.startswith("- **停止**"))
+        self.assertNotIn("用户叫停", done, done)
+        self.assertIn("用户叫停", stop, stop)
+        for line in lines:
+            if "用户叫停" in line:
+                self.assertIn("停止", line, line)
+        self.assertIn("子代理", text)
+        self.assertIn("blocked", text)
 
     def test_legacy_leaf_still_declares_its_own_gate(self):
         rebuttal = (SKILLS / "writing-cycle/rebuttal/SKILL.md").read_text(encoding="utf-8")
         self.assertRegex(rebuttal, r"(?m)^Gate: strategy-confirm \|")
+
+
+class NoSubagentCapability(unittest.TestCase):
+    """Spec #48 ID16：子代理是支持前提，缺该能力如实 blocked，不引入串行伪降级。"""
+
+    def test_entry_blocks_delegation_without_subagent_capability(self):
+        module = load()
+        text = ENTRY.read_text(encoding="utf-8")
+        self.assertIn("子代理", text)
+        self.assertIn("blocked", text)
+        self.assertIn("独立调用", text)
+        self.assertEqual(module.host_capability_problems(text), [])
+        for snippet in module.HOST_SERIAL_SUBSTITUTES:
+            self.assertNotIn(snippet, text, snippet)
+
+    def test_entry_drops_serial_stage_execution_promises(self):
+        text = ENTRY.read_text(encoding="utf-8")
+        for snippet in (
+            "无该工具时由编排者串行执行",
+            "编排者按 playbook 顺序自己执行",
+            "由编排者串行完成这些读取与步骤",
+            "请求用户确认串行回退",
+            "无 fresh 能力时串行完成可执行阶段",
+        ):
+            self.assertNotIn(snippet, text, snippet)
+
+    def test_literature_playbook_blocks_instead_of_serial_stepping(self):
+        text = PLAYBOOK.read_text(encoding="utf-8")
+        self.assertIn("blocked", text)
+        self.assertIn("子代理", text)
+        self.assertIn("research-lit", text)
+        for snippet in ("没有时由编排者串行完成同一合同", "由编排者串行完成同一合同"):
+            self.assertNotIn(snippet, text, snippet)
+
+    def test_host_check_is_capability_based_not_brand_pinned(self):
+        module = load()
+        neutral = (
+            "当前会话有子代理工具时按 playbook 分派；没有时该步骤标 blocked，"
+            "入口只给只读建议，底层能力仍可独立调用。\n"
+        )
+        self.assertEqual(module.host_capability_problems(neutral), [])
+        for snippet in module.HOST_SERIAL_SUBSTITUTES:
+            self.assertTrue(module.host_capability_problems(neutral + f"{snippet}。\n"), snippet)
+        self.assertTrue(module.host_capability_problems("| pi | .agents/skills | herdr_spawn_agent | session |\n"))
 
 
 class MigrationBoundary(unittest.TestCase):

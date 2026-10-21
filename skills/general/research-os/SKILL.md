@@ -58,9 +58,9 @@ Role: orchestrator
 
 项目角色表是研究项目里的 `.agents/research-os-models.md`，一行一个角色：`reviewer: provider/model-id | high`。角色只有 orchestrator、literature、ideator、implementer、analyst、prover、writer、reviewer。thinking 只能是 off、minimal、low、medium、high、xhigh、max，而且必须是该模型支持的值。正文引用写成 `Role: reviewer`。
 
-每个执行阶段按 playbook 的独立 `Role:` 声明解析本研究项目已确认的角色行，核实 provider/model-id 可用且支持 thinking；fresh dispatch 显式传入这两个值，并记录角色、解析来源、实际模型与 thinking。Role 管阶段执行者，不只是任务标签。当前宿主进程的 model 不改；orchestrator 配置不同于当前宿主时，把获准编排阶段派到对应 fresh 执行者，当前宿主只监督；没有此能力时明示宿主模型差异并请求用户确认串行回退。
+每个执行阶段按 playbook 的独立 `Role:` 声明解析本研究项目已确认的角色行，核实 provider/model-id 可用且支持 thinking；fresh dispatch 显式传入这两个值，并记录角色、解析来源、实际模型与 thinking。Role 管阶段执行者，不只是任务标签。当前宿主进程的 model 不改；orchestrator 配置不同于当前宿主时，把获准编排阶段派到对应 fresh 执行者，当前宿主只监督；没有该派发能力时如实标 blocked 并说明宿主模型差异，不把当前宿主自己跑说成已派发。
 
-文件或角色行缺失时使用当前 session 实际可用的模型与 thinking，并明示回退及原因，不编造 slug。显式指定模型不可用、thinking 不支持、行重复或格式错误时停下，请用户确认替代，不静默改配置。同上下文里的自审不是 fresh 独立审查；同模型 fresh 上下文可保留独立性，但不得冒充跨家族。无 fresh 能力时串行完成可执行阶段，独立审查明确标 `independent review not performed`，不把串行自查当独立 review。不修改 `~/.agents/pstack-models.md`。
+文件或角色行缺失时使用当前 session 实际可用的模型与 thinking，并明示回退及原因，不编造 slug。显式指定模型不可用、thinking 不支持、行重复或格式错误时停下，请用户确认替代，不静默改配置。同上下文里的自审不是 fresh 独立审查；同模型 fresh 上下文可保留独立性，但不得冒充跨家族。无 fresh 能力时该阶段标 blocked 并写明 `independent review not performed`，不把同上下文自查记成执行或独立 review。不修改 `~/.agents/pstack-models.md`。
 
 ## 算力
 
@@ -73,10 +73,10 @@ Role: orchestrator
 | 宿主 | Skills 位置 | 委派 | 会话 |
 |---|---|---|---|
 | pi | 项目 `.agents/skills/`，也发现用户目录下的 agents skills | `herdr_spawn_agent`；子代理按项目 `.agents/research-os-models.md` 的 `Role:` 选模型 | pi 默认 sessions 目录中的 `--session` 文件 |
-| Claude Code | 项目 `.claude/skills/` | Agent tool 派 subagent；无该工具时由编排者串行执行 | 当前 Claude Code 会话 |
-| Codex | 项目 `.agents/skills/` 或 Codex 实际报告的 skills 目录 | spawn_agent；无该工具时由编排者串行执行 | Codex 当前 thread / session |
+| Claude Code | 项目 `.claude/skills/` | Agent tool 派 subagent | 当前 Claude Code 会话 |
+| Codex | 项目 `.agents/skills/` 或 Codex 实际报告的 skills 目录 | spawn_agent | Codex 当前 thread / session |
 
-命令存在不等于已经登录或具备委派能力。并行 fan-out 只在该宿主当前会话确实有子代理工具时使用；没有时，编排者按 playbook 顺序自己执行。本文件不发明第四种宿主映射。
+命令存在不等于已经登录或具备委派能力。子代理是这条编排路径的支持前提，按当前会话实际可调用的工具判定，不按宿主品牌推定：有子代理工具时才分派 fan-out 与执行阶段；没有时，需要分派的那一步标 blocked，入口只给只读建议（当前路线、下一步、或该直接点名哪个底层能力），不串行代跑整条 playbook，也不把编排者自己跑记成委托已执行。底层单能力的独立调用不受影响：用户直接点名 `research-lit` 之类的能力时，那一次调用自带边界，是能力本身的真实用途，不是入口的降级模式。
 
 ## 级联
 
@@ -84,7 +84,7 @@ Role: orchestrator
 
 级联进入已迁移叶时沿用本次委托，不重复请求批准；进入未迁移叶时仍按该叶自己的门停下确认，处理完该点后同一委托继续。
 
-每步开始前读对应叶 SKILL.md 全文，再按正文的条件读取点名资源并执行；读过入口、playbook 或步骤清单不等于读过叶正文。没有子代理工具时同样由编排者串行完成这些读取与步骤，不缩减叶合同。仓库路径形如 skills/<category>/<skill-name>/SKILL.md；安装扁平布局时映射到 <安装根>/<skill-name>/SKILL.md（安装根取当前入口 SKILL.md 所在 skill 目录的父级或宿主报告的位置），共置资源相对该叶目录解析。先核实实际文件；找不到时标 blocked 与路径缺口，不猜测已读或跳到后续步骤。
+每步开始前读对应叶 SKILL.md 全文，再按正文的条件读取点名资源并执行；读过入口、playbook 或步骤清单不等于读过叶正文。没有子代理工具时，需要分派的那一步按上面「宿主映射」标 blocked 并写明缺子代理能力，不把编排者自己读、自己跑记成已执行；只读建议与底层能力独立调用仍可用。仓库路径形如 skills/<category>/<skill-name>/SKILL.md；安装扁平布局时映射到 <安装根>/<skill-name>/SKILL.md（安装根取当前入口 SKILL.md 所在 skill 目录的父级或宿主报告的位置），共置资源相对该叶目录解析。先核实实际文件；找不到时标 blocked 与路径缺口，不猜测已读或跳到后续步骤。
 
 收到子代理结果后，编排者自己核实实际产物、原始依据、读取覆盖及该步骤完成条件，记录定位与未核实项，再决定接受、在现有预算内修复或标 blocked；子代理总结只作线索，不直接转述为已核实结论。编排者核实不冒充独立 fresh review，保留各叶的独立审查隔离要求。
 

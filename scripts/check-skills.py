@@ -610,7 +610,13 @@ STALE_PROMISE_SNIPPETS = (
     "顶层工作流交付产物后立即结束，不会自动触发后续流程",
     "Top-level workflows stop upon completion and never transition to subsequent stages without explicit instruction",
 )
-HOST_FALLBACK_MARKERS = ("pi", "Claude Code", "Codex", "串行")
+HOST_PREREQUISITE_MARKERS = ("子代理", "blocked", "独立调用")
+HOST_SERIAL_SUBSTITUTES = (
+    "无该工具时由编排者串行执行",
+    "编排者按 playbook 顺序自己执行",
+    "由编排者串行完成",
+    "编排者串行完成同一合同",
+)
 
 
 def release_route_problems(rows: list[dict[str, str]]) -> list[str]:
@@ -633,14 +639,15 @@ def stale_promise_problems(files: dict[str, str]) -> list[str]:
     return found
 
 
-def host_fallback_problems(text: str) -> list[str]:
-    """宿主映射必须点名三宿主，并写明无子代理时串行执行。"""
+def host_capability_problems(text: str) -> list[str]:
+    """宿主映射按会话真实能力判定：子代理是前提，缺它时如实 blocked，不以串行代跑冒充已执行。"""
     found: list[str] = []
-    for marker in HOST_FALLBACK_MARKERS:
+    for marker in HOST_PREREQUISITE_MARKERS:
         if marker not in text:
             found.append(f"宿主映射缺 {marker}")
-    if "无该工具时由编排者串行执行" not in text and "没有时，编排者按 playbook 顺序自己执行" not in text:
-        found.append("宿主映射未写无子代理时的串行降级")
+    for snippet in HOST_SERIAL_SUBSTITUTES:
+        if snippet in text:
+            found.append(f"宿主映射把缺子代理写成串行代跑：{snippet}")
     return found
 
 
@@ -719,7 +726,7 @@ if research_os.exists():
         err(f"skills/general/research-os/SKILL.md: {problem}")
     for problem in release_route_problems(route_rows):
         err(f"skills/general/research-os/SKILL.md: {problem}")
-    for problem in host_fallback_problems(research_os.read_text(encoding="utf-8")):
+    for problem in host_capability_problems(research_os.read_text(encoding="utf-8")):
         err(f"skills/general/research-os/SKILL.md: {problem}")
     HINTS.extend(route_hints)
 

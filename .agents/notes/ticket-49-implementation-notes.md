@@ -21,7 +21,7 @@ Spec #48 / Ticket #49。worktree `/Users/rolex/.t3/worktrees/Research OS Studio/
 5. **迁移边界必须可对照**：`migration_boundary_problems` 检查合同四小节（目标／权限／研究额度／完成与停止）、入口指向合同、每个已迁移技能有合同小节、边界文档含「未迁移」小节并点名 `LEGACY_LEAF_GATES` 为权威且列出每个已迁移技能。删门不能连职责约束一起删。
 6. **最小完整链路选 literature**：`literature` 路由 + `playbooks/literature-review.md` 走完「委托核对 → 读叶正文 → 执行 → 按实际产物验收 → 收束交付」，叶侧用已有 `research-lit`（有独立预算、来源核实、模板与报告契约），不牵入数学／远程／写作实现。`REQUIRED_RELEASE_ROUTES` 增加该行，路由成套性检查覆盖新路径。
 7. **custom 不再等批准**：委托已含授权时，`playbooks/custom.md` 直接开始其中不需越权/超额/破坏性授权的那部分，只在那一步停。否则「无匹配路线」会成为委托语义的例外洞。
-8. **宿主映射不动**：`host_fallback_problems` 要求「无子代理时编排者串行执行」，与 spec ID16「不引入无子代理的伪独立审查降级」仍有张力。该规则不在本票认领范围，改动会让本票变大且无验收依据；入口原文保留，张力记录为 #60 待处理。
+8. **宿主映射不再以串行代跑冒充委托**（初版遗留，已在下一节定向修复解决）：初版 `host_fallback_problems` 要求「无子代理时编排者串行执行」，与 spec ID16 冲突，已改为能力前提 + blocked 语义。
 
 ## Deviations
 
@@ -111,6 +111,61 @@ $ npx --yes skills@latest add "<worktree>" -s '*' -a claude-code -y
 ## 未完成 / 需上位决定
 
 1. 根 `GLOSSARY.md` 与 ADR 0006–0008 仍未提交（用户背景资产），新术语暂无领域词汇真源；是否随合同提交由用户定。
-2. `host_fallback_problems` 与 spec ID16 的张力未解（Deviations 8），#60 需要统一表述，否则条目互相打脸。
+2. ~~`host_fallback_problems` 与 spec ID16 的张力未解~~ → 已在「定向修复」一节解决（缺宿主子代理时统一入口与新路径如实 blocked，不伪称委托已执行）。
 3. README／英文 README／验收指南／`atomic-switch-manifest.md` 的 `39` 数字与终态措辞待 #60 统一。
 4. 本票只做静态合同检查与安装可达性；「模型会用委托语义正确推进真实研究」未验证，也不据此宣称科研质量。
+
+## 定向修复：缺宿主子代理如实 blocked（spec ID16）
+
+复核发现新链路把「无子代理」写成编排者串行代跑同一合同，与本票自己的验收前提冲突：spec ID16 规定 subagent 是支持前提，不引入无子代理的伪独立降级。初版把它记为 #60 待办（原 Deviations 8），实际属于本票「统一入口 + 完整路径」的语义，因此就地修正。
+
+### 决定
+
+1. **能力前提，按能力判定**：是否有子代理工具按当前会话实际可调用的工具判定，不按宿主品牌推定；`host_fallback_problems` 更名为 `host_capability_problems`，不再要求点名三个品牌，改为要求能力前提 + `blocked` + 独立调用边界，并把串行代跑原文列为红。
+2. **缺能力即 blocked，不串行代跑**：入口与新 literature 路径在需要分派的那一步标 `blocked` 并写明缺宿主子代理能力；只读建议（当前路线、下一步、可直接点名哪个能力）仍可给，但不得记成委托已执行。
+3. **保留底层单能力的真实边界**：用户直接点名 `research-lit` 等叶完成那一件事仍是能力本身的用途，不是入口的降级模式；不在这一点上把独立调用一起禁掉。
+4. **完成 ≠ 用户叫停**：`mandate.md` 把「用户叫停」从完成移到停止，并单列一条说明它是停止而非目标达成；literature playbook 的停止行同步加入 blocked。
+5. **顺手同步一处活文档**：`docs/user-acceptance-guide.md` 第 13 行原本写着「无子代理时编排者按 playbook 顺序自己做」，是同一旧语义的用户可见清单，按最小编辑改为能力门表述；`docs/acceptance/**` 历史验收记录未改。
+
+### 改动清单
+
+- `skills/general/research-os/SKILL.md`：宿主映射两处委派列去掉串行降级、补能力门段落；模型段去掉「请求串行回退」「串行完成可执行阶段」；级联段无子代理时改标 blocked。
+- `skills/general/research-os/playbooks/literature-review.md`：步骤 3 与停止行。
+- `skills/general/research-os/references/mandate.md`：权限段新增「子代理前提」；完成与停止段重排 + 新增「用户叫停是停止」。
+- `scripts/check-skills.py`：`HOST_PREREQUISITE_MARKERS` / `HOST_SERIAL_SUBSTITUTES` / `host_capability_problems`。
+- `tests/test_spec48_ticket49.py`：新增 `NoSubagentCapability`（4 例）与 `test_mandate_counts_user_stop_as_stop_not_completion`；`test_entry_points_at_mandate_and_keeps_readonly_and_host_map` 的保留短语由串行降级换成 `blocked`。
+- `scripts/test_check_skills_ticket46.py`：宿主映射两例改名/改期望，新增串行代跑红例。
+
+### 红绿证据
+
+所有命令在 worktree 根目录执行。沙箱无网络，`uv run --with pytest` 拉取失败，改用 uv 解释器 + uv 缓存中的 pytest 9.1.1（`PYTHONPATH` 指向 `~/.cache/uv/archive-v0/…`）离线运行；这只改运行方式，不改测试内容。
+
+```text
+# 红：先写/改测试，源码回到修复前（git stash 仅暂存 5 个源码文件）
+$ /tmp/spec48-49-pytest.sh tests/test_spec48_ticket49.py scripts/test_check_skills_ticket46.py -q
+8 failed, 23 passed, 2 subtests passed
+  failures: test_mandate_counts_user_stop_as_stop_not_completion,
+            NoSubagentCapability::{test_entry_blocks_delegation_without_subagent_capability,
+              test_entry_drops_serial_stage_execution_promises,
+              test_host_check_is_capability_based_not_brand_pinned,
+              test_literature_playbook_blocks_instead_of_serial_stepping},
+            ReleaseGate::{test_host_map_serial_substitute_is_red,
+              test_host_map_states_blocked_without_subagents,
+              test_host_map_without_fallback_is_red}
+
+# 绿：实现后
+$ /tmp/spec48-49-pytest.sh tests/test_spec48_ticket49.py scripts/test_check_skills_ticket46.py -q
+31 passed, 2 subtests passed
+
+$ /tmp/spec48-49-pytest.sh tests scripts/test_check_skills_ticket*.py -q
+7 failed, 90 passed, 44 subtests passed     # 失败仍是基线同一 7 个历史断链测试
+
+$ uv run python scripts/check-skills.py
+FAIL: 9 个问题（全部为 .gitignore 造成的历史 evidence tarball 断链，与基线逐条相同）
+```
+
+### 偏离与剩余
+
+- 未迁移叶的既有串行表述未动（如 `playbooks/proof.md` 的「串行自查明示非独立」）：那是一张如实标签，属于后续迁移范围，不在本次定向修复内。
+- `docs/acceptance/**` 历史验收记录保留旧的串行说法，它们是历史证据，不改写。
+- 仍未验证：模型在真实宿主缺子代理时是否照新语义停下（本票只做静态合同与测试检查）。
