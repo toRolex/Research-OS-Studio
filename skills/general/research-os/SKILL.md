@@ -28,6 +28,8 @@ Gates: none
 
 形式化不是必经路线：需要对关键代码性质、形式模型或定理编码建立或维护检查时，直接点名 `create-formal-verification-skill` 或 `maintain-formal-verification-skill`。它们只在该问题确实需要范围内每种情况时使用，普通测试够用就不升级。
 
+软件、CLI 或服务需要可脚本化运行的行为证明时，直接点名 `create-verification-skill` 建立项目本地 verify skill（启动、doctor、按用户路径驱动、证据与特征覆盖映射），或点名 `maintain-verification-skill` 随应用变化保持映射诚实。行为验证不宣称数学定理成立；定理编码与形式化由上一行两条能力负责。
+
 ## 路由表
 
 | 路线 | 变体 | 触发词 | 适用条件 | 只读约束 | playbook |
