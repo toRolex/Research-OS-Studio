@@ -812,6 +812,7 @@ def migration_contract_problems(root: Path, tracked_paths: set[str]) -> list[str
 MIGRATED_CONTRACT: dict[str, str] = {
     "skills/general/research-os/SKILL.md": "研究委托",
     "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
+    "skills/organization/arena/SKILL.md": "委托继承",
 }
 MANDATE_DOC = "skills/general/research-os/references/mandate.md"
 MIGRATION_DOC = "skills/general/research-os/references/migration-boundary.md"
@@ -872,7 +873,33 @@ for sf in skill_files:
     for problem in gate_problems(sf.parent.name, sf.parent, body, expected, tracked):
         err(f"{rel}: {problem}")
 
+# --- arena 阶段保真（#51）：六阶段机制不得静默丢失 ---
+ARENA_REL = "skills/organization/arena/SKILL.md"
+ARENA_PHASES = ("Frame", "Fan-out", "Cross-judge", "Pick", "Graft", "Verify")
+ARENA_UPSTREAM_REMNANTS = ("~/.cursor", "pstack-models.mdc")
+
+
+def arena_contract_problems(root: Path) -> list[str]:
+    found: list[str] = []
+    path = root / ARENA_REL
+    if not path.is_file():
+        return [f"{ARENA_REL}: arena 技能不存在"]
+    text = path.read_text(encoding="utf-8")
+    for phase in ARENA_PHASES:
+        if phase not in text:
+            found.append(f"{ARENA_REL}: arena 缺阶段 {phase}")
+    for token in ARENA_UPSTREAM_REMNANTS:
+        if token in text:
+            found.append(f"{ARENA_REL}: arena 残留上游宿主绑定 {token}")
+    if "swarm" in text.lower():
+        found.append(f"{ARENA_REL}: arena 引用 swarm，不独立")
+    return found
+
+
 for problem in migration_contract_problems(ROOT, tracked):
+    err(problem)
+
+for problem in arena_contract_problems(ROOT):
     err(problem)
 
 
