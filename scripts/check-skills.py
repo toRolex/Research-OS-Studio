@@ -987,18 +987,20 @@ def formal_verification_problems(root: Path, tracked_paths: set[str]) -> list[st
 # --- #53 项目行为验证资产 ---------------------------------------------------
 # 来源与许可随 Skill 共置（LICENSE/NOTICE.md）。创建侧必须保留真实启动、健康检查、
 # 驱动、证据、清理与特征覆盖映射的机制并带 helper；维护侧必须带三态结果、只改
-# 验证、源读波与现场驱动。未执行的生成资产只能标草稿；不绑定宿主或固定模型，
-# 与形式化能力分工明确：行为验证不冒称定理成立。
+# 验证、源读波与现场驱动。未执行的生成资产只能标草稿；证据须绑定被测对象且在
+# 相关材料变化后失效；不绑定宿主或固定模型，与形式化能力分工明确。
 VERIFICATION_UPSTREAM_REVISION = "88d47514b82e7c44f00f2b2a72ff6dd12158038c"
 VERIFICATION_SKILLS: dict[str, tuple[str, ...]] = {
     "create-verification-skill": (
         "启动", "健康检查", "驱动", "证据", "清理", "覆盖映射", "doctor",
-        "草稿", "blocked", "子代理", "宿主",
+        "草稿", "blocked", "子代理", "宿主", "证据归属与失效", "stale",
+        "不得为新对象背书", "重跑受影响覆盖",
         "create-formal-verification-skill", "不宣称数学定理成立",
     ),
     "maintain-verification-skill": (
         "clean", "changed", "blocked", "只改验证", "源读波", "现场驱动",
         "doctor", "证据", "清理", "verified-unreachable", "子代理", "宿主",
+        "证据归属与失效", "stale", "不得为新对象背书", "重跑受影响覆盖",
         "maintain-formal-verification-skill",
     ),
 }

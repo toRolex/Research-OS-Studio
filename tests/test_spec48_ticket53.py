@@ -48,7 +48,36 @@ def problem_lines(root: Path) -> list[str]:
         capture_output=True,
         text=True,
     )
-    return [line for line in result.stdout.splitlines() if line.startswith("  - ")]
+    output = result.stdout.splitlines()
+    lines = [line for line in output if line.startswith("  - ")]
+    failure = re.fullmatch(r"FAIL: (\d+) 个问题", output[0]) if output else None
+    valid_failure = (
+        result.returncode == 1
+        and failure is not None
+        and int(failure.group(1)) == len(lines)
+        and len(output) == len(lines) + 1
+    )
+    valid_success = (
+        result.returncode == 0
+        and len(output) == 1
+        and output[0].startswith("OK: ")
+    )
+    if result.stderr:
+        raise AssertionError(
+            f"checker wrote to stderr (exit={result.returncode}): {result.stderr!r}"
+        )
+    if result.returncode == 0 and not valid_success:
+        raise AssertionError(f"checker returned success without a valid OK summary: {result.stdout!r}")
+    if result.returncode == 1 and not valid_failure:
+        raise AssertionError(
+            f"checker did not finish with a valid report (exit=1): {result.stdout!r}"
+        )
+    if result.returncode not in (0, 1):
+        raise AssertionError(
+            f"checker exited unexpectedly (exit={result.returncode}): "
+            f"stdout={result.stdout!r}; stderr={result.stderr!r}"
+        )
+    return lines
 
 
 def tracked(root: Path) -> set[str]:
@@ -173,6 +202,25 @@ class FeatureMapLintHelper(unittest.TestCase):
         result = self.run_helper(CREATE / "references" / "feature-map-example")
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_fragment_destinations_and_external_urls(self):
+        fixtures = Path(__file__).parent / "fixtures" / "ticket53"
+        good_anchor = self.run_helper(fixtures / "anchor-good")
+        self.assertEqual(good_anchor.returncode, 0, good_anchor.stderr)
+
+        bad_anchor = self.run_helper(fixtures / "anchor-dead-bad")
+        self.assertEqual(bad_anchor.returncode, 1)
+        self.assertIn("missing.md#details", bad_anchor.stderr)
+
+        external = self.run_helper(fixtures / "external-good")
+        self.assertEqual(external.returncode, 0, external.stderr)
+
+        spaced = self.run_helper(fixtures / "title-good")
+        self.assertEqual(spaced.returncode, 0, spaced.stderr)
+
+        root_relative = self.run_helper(fixtures / "root-relative-bad")
+        self.assertEqual(root_relative.returncode, 1)
+        self.assertIn("account.md", root_relative.stderr)
+
     def test_negative_examples_fail(self):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
@@ -198,6 +246,40 @@ class RegistrationAndEntry(unittest.TestCase):
         lines = problem_lines(ROOT)
         non_historical = [line for line in lines if not HISTORICAL.match(line)]
         self.assertEqual(non_historical, [], "不允许新增 checker 失败")
+
+    def test_checker_crash_is_not_filtered_as_a_historical_failure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            scripts = root / "scripts"
+            scripts.mkdir()
+            for source in (
+                "import sys\nprint('checker crashed', file=sys.stderr)\nsys.exit(2)\n",
+                "import sys\nprint('FAIL: 0 个问题')\nprint('checker crashed', file=sys.stderr)\nsys.exit(1)\n",
+                "print('checker crashed')\nraise SystemExit(1)\n",
+            ):
+                (scripts / "check-skills.py").write_text(source, encoding="utf-8")
+                with self.subTest(source=source), self.assertRaises(AssertionError):
+                    problem_lines(root)
+
+    def test_create_skill_requires_object_bound_evidence_contract(self):
+        text = (CREATE / "SKILL.md").read_text(encoding="utf-8")
+        for marker in (
+            "证据归属与失效", "代码 revision", "工作区脏改动",
+            "关键输入/数据与依赖和工具链版本", "验证资产版本", "适用范围与假设",
+            "stale", "不得为新对象背书", "重跑受影响覆盖",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
+
+    def test_maintain_skill_requires_object_bound_evidence_contract(self):
+        text = (MAINTAIN / "SKILL.md").read_text(encoding="utf-8")
+        for marker in (
+            "证据归属与失效", "代码 revision", "工作区脏改动",
+            "关键输入/数据与依赖和工具链版本", "验证资产版本", "适用范围与假设",
+            "stale", "不得为新对象背书", "重跑受影响覆盖",
+        ):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
 
     def test_migration_boundary_lists_both(self):
         text = BOUNDARY.read_text(encoding="utf-8")

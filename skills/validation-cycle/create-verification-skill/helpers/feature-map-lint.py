@@ -18,8 +18,19 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
-MD_LINK = re.compile(r"\[[^\]]*\]\(([^)#\s]+\.md)\)")
+MD_LINK = re.compile(r"\[[^\]]*\]\(\s*(?:<([^>]+)>|([^\s)]+))(?:\s+[^)]*)?\)")
+
+
+def local_markdown_path(destination: str) -> str | None:
+    parsed = urlsplit(destination)
+    if parsed.scheme or parsed.netloc or not parsed.path.lower().endswith(".md"):
+        return None
+    path = unquote(parsed.path)
+    if not path or Path(path).is_absolute():
+        return None
+    return path
 
 
 def lint(features_dir: Path) -> list[str]:
@@ -29,10 +40,14 @@ def lint(features_dir: Path) -> list[str]:
     text = index.read_text(encoding="utf-8")
     linked = set[str]()
     problems: list[str] = []
-    for target in MD_LINK.findall(text):
+    for match in MD_LINK.finditer(text):
+        destination = match.group(1) or match.group(2)
+        target = local_markdown_path(destination)
+        if target is None:
+            continue
         resolved = (features_dir / target).resolve()
         if not resolved.is_file():
-            problems.append(f"索引链接不存在: {target}")
+            problems.append(f"索引链接不存在: {destination}")
             continue
         linked.add(Path(target).as_posix())
     for feature in sorted(features_dir.glob("*.md")):
