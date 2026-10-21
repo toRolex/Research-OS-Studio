@@ -106,3 +106,24 @@ EXIT=0
 2. 全套 7 失败与 checker 9 断链为既有基线，留给对应历史票；本票未修，也未新增失败。
 3. 红证据为损坏副本重放（历史无首红留证），已如实注明。
 4. skills CLI 缓存路径已失效，安装实测改走 npx skills@latest（票 49 同源先例），不将安装行为当科研真值。
+
+## 合并验证
+
+提交 `9d58ce0` 后 merge `integration/spec-48`（tip `e84f779`，含 #54）。冲突 2 处，双方登记均保留：
+
+- `scripts/check-skills.py` `MIGRATED_CONTRACT`：interrogate + create/maintain-formal-verification-skill 三条并存。
+- `skills/general/research-os/references/migration-boundary.md`：对抗审查 + 形式化检查创建/维护三行并存。
+
+合并后复验（merge commit `33d2e30`）：
+
+```text
+$ PYTHONPATH=… uv run python -m pytest tests/test_spec48_ticket52.py tests/test_spec48_ticket54.py -q
+46 passed
+EXIT=0
+
+$ PYTHONPATH=… uv run python -m pytest tests scripts/test_check_skills_ticket*.py -q
+7 failed, 136 passed, 44 subtests passed   # 仍为同 7 条历史基线失败，无新增
+
+$ uv run python scripts/check-skills.py
+FAIL: 9 个问题   # 输出中 0 条涉及 interrogate 或形式化，全为既有 evidence 断链
+```
