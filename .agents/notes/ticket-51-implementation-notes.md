@@ -9,7 +9,7 @@
 | arena 能力实现 | done | `skills/organization/arena/{SKILL.md,LICENSE,agents/openai.yaml}`；授权范围补足见当前提交 | 无 |
 | 入口指针 + README 清单/徽章 + checker 登记/迁移边界 | done | `skills/general/research-os/SKILL.md`、`README.md`、`skills/README.md`、`scripts/check-skills.py`、`references/migration-boundary.md` | 无 |
 | 定向/全套 pytest、静态合同与安装实证 | done | `.agents/notes/ticket51-evidence/{targeted-final,suite-final,checker-final,ruff-final,diff-check-final,install-arena-delivery,install-suite-delivery}.txt` 与各安装 diff（ignored）；独立首轮审查有 findings，第二轮因上游 503 失败 | 无 |
-| 提交 + merge integration tip 复验 | 进行中 | 原实现 `b17297d`、保留双方登记的 merge `81cc259`；本提交仅修复 #51 自有范围与 README 清点/回归保障 | 验证后提交并复核干净状态 |
+| 提交 + merge integration tip 复验 | done | 原实现 `b17297d`、双方登记 merge `81cc259`、范围/README/回归修复 `d3ca46d`；integration tip `e84f779` 是 merge 父提交且为最新，提交后定向测试/lint/checker/diff/status 复验 | 无
 
 ## 来源亲核（许可与资源）
 
@@ -30,9 +30,9 @@
 
 - 红（实现前）：原笔记记录 `uv run --offline --no-project python -m pytest tests/test_spec48_ticket51.py -q` 为 **14 failed, 1 passed**；当前 worktree 的 uv cache 已不含 pytest，显式 `uv run --no-project --with pytest python -m pytest ...` 已实测可用。
 - 初始交付实证（历史记录）：15 passed；合并后定向 **46 passed, 2 subtests passed**。现状定向重验 **17 passed**，增加了独立调用范围、关键 phase 合同及 README 计数反例。
-- 当前全套重验：**7 failed, 132 passed, 44 subtests passed**。7 项均是既存 `docs/acceptance` evidence tarball 断链让 checker 返回非零引发；与 merge 前保存的 `suite-postmerge.txt` 失败项逐名一致。增加的 README 数量检查现已通过。未屏蔽旧失败，也未将完整测试称为全绿。
-- checker 当前 exit 1，输出仍恰为 9 条历史 `docs/acceptance` 断链；与 merge 前 `checker-postmerge.txt` 逐字 diff 为空。arena 阶段与登记检查无新增问题。
-- 静态：`uv run --no-project ruff check tests/test_spec48_ticket51.py scripts/check-skills.py` 与 `git diff --check` 均通过；证据 `ruff-final.txt`、`diff-check-final.txt`。
+- 当前全套重验：**7 failed, 132 passed, 44 subtests passed**。7 项均是既存 `docs/acceptance` evidence tarball 断链导致 checker 非零引发；与 merge 前 `suite-postmerge.txt` 的失败测试逐名一致，新增两项本票测试通过。未屏蔽历史失败，也未将完整测试称为全绿。
+- checker 当前 exit 1，输出仍恰为 9 条历史 `docs/acceptance` 断链；与 merge 前 `checker-postmerge.txt` 逐字 diff 为空。arena 阶段、README 计数与迁移登记检查均无新增问题。
+- 静态：`uv run --no-project ruff check tests/test_spec48_ticket51.py scripts/check-skills.py` 与 `git diff --check` 均通过；提交 `d3ca46d` 后复跑定向测试 17 passed、ruff 通过、checker 仍只有 9 条历史断链、`git diff --check HEAD^ HEAD` 通过，worktree 干净。证据 `ruff-final.txt`、`diff-check-final.txt` 与 `checker-delivered.txt`。
 
 ## 安装实证
 
