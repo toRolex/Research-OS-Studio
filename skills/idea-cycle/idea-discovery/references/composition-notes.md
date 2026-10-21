@@ -1,6 +1,6 @@
-# 组合说明：阶段映射与缺口降级
+# 组合说明：一次委托内的组合配方与缺口降级
 
-本文件是 `idea-discovery` 的共置方法说明，不是中央协议。各内部能力按自身 SKILL.md 执行；本表只规定阶段顺序、它们向 canonical 报告贡献哪个章节，以及能力缺失时如何降级。章节内容原样合入，不改写。
+本文件是 `idea-discovery` 的共置方法说明，不是中央协议。一次委托连续执行下列组合；**不得跳过**或改变各叶 SKILL.md 自身的职责、来源、检索、评审与预算要求。只有目标替换、越权、超额、既有文件冲突或证据不可达时阻塞对应分支。本表规定阶段顺序、各叶向 canonical 报告贡献哪个章节，以及能力缺失时如何降级；章节内容原样合入，不改写。
 
 ## 阶段映射
 
@@ -8,11 +8,11 @@
 
 | 阶段 | 调用的已交付内部能力 | canonical 章节锚点 |
 |---|---|---|
-| Phase 1 文献 | `research-lit` | `#文献 Landscape` |
-| Phase 2 发散 | `idea-generation`（卡住时在生成职责内用已安装的 `creative-thinking-for-research`） | `#候选池与筛选` |
+| Phase 1 文献 Landscape | `research-lit` | `#文献 Landscape` |
+| Phase 2 候选生成与筛选 | `idea-generation`（卡住时在生成职责内用已安装的 `creative-thinking-for-research`） | `#候选池与筛选` |
 | Phase 3 查新 | `novelty-check`（逐个入围候选） | `#查新结论` |
-| Phase 4 评审 | `idea-review` | `#独立评审` |
-| Phase 4.5 收敛 | `idea-refinement`（另写入获准的 `RESEARCH_PROPOSAL.md`） | `#收敛与 Proposal` |
+| Phase 4 独立评审 | `idea-review` | `#独立评审` |
+| Phase 4.5 固定边界收敛 | `idea-refinement`（另写入获准的 `RESEARCH_PROPOSAL.md`） | `#收敛与 Proposal` |
 
 ## 原文合入检查
 

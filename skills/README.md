@@ -63,14 +63,14 @@ Writing Cycle 审查能力均只读审查研究材料、输出 Markdown 报告�
 
 ## 完整 Idea Discovery Workflow
 
-`/research-os` 的 `idea-discovery` 路线按 playbook 编排同一条主链。叶入口仍可直接点名。Phase 0 读取 brief／参考论文，随后依次执行 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，把各章节合入单一 `IDEA_DISCOVERY.md`，并写入 `RESEARCH_PROPOSAL.md`。默认每阶段停下；用户写明一次走完并给出预算才连续。阶段检查点、写入路径、评审范围和 Problem Anchor 留在叶 skill。不运行 pilot、不制定实验计划、不进入 Validation 或 Writing。阶段间默认停下等用户确认，只有明确授权“一次走完”时才连续执行；工具或材料缺失时按 `idea-cycle/idea-discovery/references/composition-notes.md` 降级并保留缺口。
+`/research-os` 的 `idea-discovery` 路线按 playbook 在一次委托内连续编排主链。叶入口仍可直接点名。Phase 0 读取 brief／参考论文，随后执行 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，把各章节合入单一 `IDEA_DISCOVERY.md`，并写入 `RESEARCH_PROPOSAL.md`。阶段顺序和缺口降级由 `idea-cycle/idea-discovery/references/composition-notes.md` 管理；各叶仍先读自身 SKILL.md，保留检索、生成、查新、独立评审与细化的独立要求。目标替换、越权、超额、既有文件冲突或证据不可达只阻塞对应分支。不运行 pilot、不制定实验计划、不进入 Validation 或 Writing。
 
 在可丢弃项目中手工验收：
 
 1. **完整路径**：给一个真实方向及简短 brief。核对 Phase 1 有真实检索与来源标签，Phase 2 有多视角候选与筛选记录，Phase 3 每个入围候选有 closest prior work 或证据缺口，Phase 4 有独立 reviewer 的原文定位，Phase 4.5 逐字保留 Anchor 并给出双路线取舍；最终得到 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md`。
 2. **禁止自动越权**：全程核对未运行任何 pilot、未生成实验计划／tracker、未进入 Validation／Writing、未安装环境或做远程副作用、未写统一 JSON／状态记录／HTML。
 3. **工具缺失降级**：无检索能力时，阶段 1 降为 supplied-material synthesis 并限定覆盖；无独立 reviewer 时标 REVIEW UNAVAILABLE 并停止裁决；无参考论文全文时保留缺口，不凭记忆补写。
-4. **边界与停止**：已有报告或材料不被覆盖；阶段检查点默认等用户确认；交付后只建议下一步，不自动启动另一顶层 Workflow。
+4. **边界与停止**：已有报告或材料不被覆盖；目标替换、越权、超额或既有文件冲突只阻塞对应分支；交付后只建议下一步，不自动启动另一顶层 Workflow。
 
 ## 普通公式推导与证明生成
 

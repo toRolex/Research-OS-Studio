@@ -811,7 +811,14 @@ def migration_contract_problems(root: Path, tracked_paths: set[str]) -> list[str
 # 移入 MIGRATED_CONTRACT，并在 references/migration-boundary.md 记录同一事实。
 MIGRATED_CONTRACT: dict[str, str] = {
     "skills/general/research-os/SKILL.md": "研究委托",
+    "skills/idea-cycle/creative-thinking-for-research/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-discovery/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-generation/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-refinement/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-review/SKILL.md": "委托继承",
+    "skills/idea-cycle/novelty-check/SKILL.md": "委托继承",
     "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
+    "skills/writing-cycle/academic-plotting/SKILL.md": "委托继承",
     "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
 }
@@ -821,12 +828,6 @@ MANDATE_SECTIONS = ("目标", "权限", "研究额度", "完成与停止")
 
 # --- 未迁移叶 skill 门声明（#39 基线）；入口、setup 与已迁移能力不进这份路径表 ---
 LEGACY_LEAF_GATES: dict[str, set[str]] = {
-    "skills/idea-cycle/creative-thinking-for-research/SKILL.md": {"write-path"},
-    "skills/idea-cycle/idea-discovery/SKILL.md": {"stage-checkpoint", "output-path"},
-    "skills/idea-cycle/idea-generation/SKILL.md": {"write-path"},
-    "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
-    "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
-    "skills/idea-cycle/novelty-check/SKILL.md": set(),
     "skills/validation-cycle/analyze-results/SKILL.md": {"write-path"},
     "skills/validation-cycle/experiment-audit/SKILL.md": {"write-path"},
     "skills/validation-cycle/experiment-bridge/SKILL.md": {"run-authorization"},
@@ -845,7 +846,6 @@ LEGACY_LEAF_GATES: dict[str, set[str]] = {
     "skills/validation-cycle/result-to-claim/SKILL.md": {"write-path"},
     "skills/validation-cycle/run-experiment/SKILL.md": {"run-authorization", "milestone-start"},
     "skills/validation-cycle/training-health-check/SKILL.md": {"write-path"},
-    "skills/writing-cycle/academic-plotting/SKILL.md": {"figure-choice", "external-resource"},
     "skills/writing-cycle/apply-citation-fixes/SKILL.md": {"apply-authorization"},
     "skills/writing-cycle/citation-audit/SKILL.md": {"audit-scope"},
     "skills/writing-cycle/claim-stress-test/SKILL.md": {"report-target"},
@@ -982,6 +982,78 @@ def formal_verification_problems(root: Path, tracked_paths: set[str]) -> list[st
     return found
 
 
+RESEARCH_ASSETS = {
+    "skills/idea-cycle/research-lit": (
+        "LICENSE",
+        "references/source-methods.md",
+        "references/source-verification.md",
+        "templates/literature-report.md",
+    ),
+    "skills/idea-cycle/novelty-check": (
+        "LICENSE",
+        "references/source-verification.md",
+    ),
+    "skills/idea-cycle/creative-thinking-for-research": (
+        "LICENSE-Orchestra.txt",
+        "references/creative-frameworks.md",
+    ),
+    "skills/writing-cycle/academic-plotting": (
+        "LICENSE-ARIS.txt",
+        "LICENSE-Orchestra.txt",
+        "references/data-visualization.md",
+        "references/diagram-generation.md",
+        "references/diagram-styles.md",
+        "references/style-guide.md",
+        "references/table-and-review.md",
+        "templates/figure-note.md",
+    ),
+}
+DISCOVERY_PHASE_LEAVES = (
+    "research-lit",
+    "idea-generation",
+    "novelty-check",
+    "idea-review",
+    "idea-refinement",
+)
+
+
+def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#58 共享检索/来源/绘图资产：复用既有能力，不新增重复 Skill。"""
+    found: list[str] = []
+    for rel_dir, rels in RESEARCH_ASSETS.items():
+        for rel in rels:
+            rel_path = f"{rel_dir}/{rel}"
+            path = root / rel_path
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少随包研究资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+    composition = root / "skills/idea-cycle/idea-discovery/references/composition-notes.md"
+    if not composition.is_file():
+        found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 缺少组合说明")
+    else:
+        text = composition.read_text(encoding="utf-8")
+        for marker in ("组合配方", "各叶 SKILL.md", "不得跳过", "目标替换", *DISCOVERY_PHASE_LEAVES):
+            if marker not in text:
+                found.append(f"skills/idea-cycle/idea-discovery/references/composition-notes.md: 缺「{marker}」")
+        if "stage-checkpoint" in text:
+            found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 残留 stage-checkpoint")
+    discovery = root / "skills/idea-cycle/idea-discovery/SKILL.md"
+    if discovery.is_file():
+        text = discovery.read_text(encoding="utf-8")
+        if "stage-checkpoint" in text or "默认停下" in text:
+            found.append("skills/idea-cycle/idea-discovery/SKILL.md: 残留阶段停点语义")
+    playbook = root / "skills/general/research-os/playbooks/idea-discovery.md"
+    if playbook.is_file():
+        text = playbook.read_text(encoding="utf-8")
+        if "stage-checkpoint" in text:
+            found.append("skills/general/research-os/playbooks/idea-discovery.md: 残留 stage-checkpoint")
+        for rel in DISCOVERY_PHASE_LEAVES:
+            if rel not in text:
+                found.append(f"skills/general/research-os/playbooks/idea-discovery.md: 缺组合叶 {rel}")
+    return found
+
+
 for sf in skill_files:
     rel = sf.relative_to(ROOT).as_posix()
     expected = expected_gates(sf.parent, sf.parent.name)
@@ -995,6 +1067,8 @@ for sf in skill_files:
 for problem in migration_contract_problems(ROOT, tracked):
     err(problem)
 for problem in formal_verification_problems(ROOT, tracked):
+    err(problem)
+for problem in research_asset_problems(ROOT, tracked):
     err(problem)
 
 

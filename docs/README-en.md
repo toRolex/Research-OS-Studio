@@ -167,7 +167,7 @@ playbook idea-discovery
 Deliver IDEA_DISCOVERY.md and RESEARCH_PROPOSAL.md, then stop
 ```
 
-Leaf output-path, stage-checkpoint, review-scope, and problem-anchor gates stay in force. The next turn stays on this route; `new task` rematches. `/idea-discovery` remains the direct leaf entry.
+One mandate runs discovery through literature, candidates, novelty, independent review, and refinement. Leaf retrieval, review-scope, and problem-anchor duties stay in force. Goal replacement, over-authority, over-quota, or file conflict blocks only the affected branch. The next turn stays on this route; `new task` rematches. `/idea-discovery` remains the direct leaf entry.
 
 ### 2. Validation
 ```text

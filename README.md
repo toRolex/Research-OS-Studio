@@ -130,7 +130,7 @@ playbook idea-discovery
 交付 IDEA_DISCOVERY.md 与 RESEARCH_PROPOSAL.md 后停止
 ```
 
-叶上的输出路径、阶段检查点、评审范围和问题锚点仍然生效。下一句延续本路线；说 new task 才重匹配。直接点名 `/idea-discovery` 仍走叶入口。
+一次委托连续走完 Discovery 的文献、候选、查新、独立评审与细化；叶上的检索范围、评审范围和问题锚点仍然生效。目标替换、越权、超额或既有文件冲突只阻塞对应分支。下一句延续本路线；说 new task 才重匹配。直接点名 `/idea-discovery` 仍走叶入口。
 
 ### 2. 实验与推导（Validation）
 ```text

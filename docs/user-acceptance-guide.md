@@ -139,7 +139,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 - **操作**：对 `/research-os` 说「我有方向，没有 idea」，并给出研究方向 brief。不要只把这句话当成推荐请求。
 - **核验**：
   1. 命中路线 `idea-discovery`，按 playbook 读完叶 skill 全文后执行 Phase 0 → 文献 → 候选 → 查新 → 独立评审 → 固定边界收敛；
-  2. 默认每个阶段在叶上的 `stage-checkpoint` 停下。用户在本次调用写明「一次走完」并给出预算时，阶段之间连续执行；输出路径、评审范围、问题锚点仍停；
+  2. 一次委托连续执行，不再在每个阶段默认停下；检索范围、评审范围、问题锚点保留。目标替换、越权、超额或既有文件冲突只阻塞对应分支；
   3. 交付单一 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止，不运行 pilot，不创建实验计划，不进入 Validation；
   4. **粘性**：下一句「继续」或「看下一阶段」仍走本路线；
   5. **new task**：用户说 new task 后，例如「new task 我该从哪开始」，回到入口重匹配，只读请求进 route-only。

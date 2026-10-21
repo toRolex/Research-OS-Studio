@@ -293,7 +293,7 @@ class IdeaDiscoveryRoute(unittest.TestCase):
         for rel in IDEA_SKILLS:
             self.assertIn(f"`{rel}`", body)
             self.assertTrue((ROOT / rel).is_file())
-        self.assertIn("一次走完", body)
+        self.assertIn("一次委托", body)
         self.assertIn("new task", body)
         tracked = set(IDEA_SKILLS) | {"skills/general/research-os/playbooks/idea-discovery.md"}
         clean = mod.backtick_cascade_problems(
