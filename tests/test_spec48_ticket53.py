@@ -193,10 +193,21 @@ class FeatureMapLintHelper(unittest.TestCase):
     """随附 helper 的最小正反例：不建专用科研测试 runtime。"""
 
     def run_helper(self, target: Path) -> subprocess.CompletedProcess:
-        return subprocess.run(
-            [sys.executable, str(HELPER), str(target)],
-            capture_output=True, text=True,
-        )
+        with tempfile.TemporaryDirectory() as tmp:
+            features = Path(tmp) / "features"
+            features.mkdir()
+            if target == CREATE / "references" / "feature-map-example":
+                for source in target.iterdir():
+                    if source.is_file() and source.suffix == ".md":
+                        (features / source.name).write_bytes(source.read_bytes())
+            else:
+                for source in target.glob("*.fixture"):
+                    name = source.name.removesuffix(".fixture") + ".md"
+                    (features / name).write_bytes(source.read_bytes())
+            return subprocess.run(
+                [sys.executable, str(HELPER), str(features)],
+                capture_output=True, text=True,
+            )
 
     def test_positive_example_passes(self):
         result = self.run_helper(CREATE / "references" / "feature-map-example")
@@ -224,15 +235,23 @@ class FeatureMapLintHelper(unittest.TestCase):
     def test_negative_examples_fail(self):
         with tempfile.TemporaryDirectory() as tmp:
             d = Path(tmp)
-            (d / "README.md").write_text("# 索引\n\n- [a](a.md)\n", encoding="utf-8")
-            (d / "a.md").write_text("# a\n", encoding="utf-8")
-            (d / "b.md").write_text("# b\n", encoding="utf-8")  # 孤儿
-            orphan = self.run_helper(d)
+            features = d / "features"
+            features.mkdir()
+            (features / "README.md").write_text("# 索引\n\n- [a](a.md)\n", encoding="utf-8")
+            (features / "a.md").write_text("# a\n", encoding="utf-8")
+            (features / "b.md").write_text("# b\n", encoding="utf-8")  # 孤儿
+            orphan = subprocess.run(
+                [sys.executable, str(HELPER), str(features)],
+                capture_output=True, text=True,
+            )
             self.assertEqual(orphan.returncode, 1)
             self.assertIn("b.md", orphan.stderr)
-            (d / "README.md").write_text("# 索引\n\n- [a](a.md)\n- [死链](missing.md)\n", encoding="utf-8")
-            (d / "b.md").unlink()
-            dead = self.run_helper(d)
+            (features / "README.md").write_text("# 索引\n\n- [a](a.md)\n- [死链](missing.md)\n", encoding="utf-8")
+            (features / "b.md").unlink()
+            dead = subprocess.run(
+                [sys.executable, str(HELPER), str(features)],
+                capture_output=True, text=True,
+            )
             self.assertEqual(dead.returncode, 1)
             self.assertIn("missing.md", dead.stderr)
 
