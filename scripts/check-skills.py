@@ -839,6 +839,8 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/general/research-os/SKILL.md": "研究委托",
     "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
     "skills/general/swarm/SKILL.md": "委托继承",
+    "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
+    "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
 }
 MANDATE_DOC = "skills/general/research-os/references/mandate.md"
 MIGRATION_DOC = "skills/general/research-os/references/migration-boundary.md"
@@ -889,6 +891,124 @@ LEGACY_LEAF_GATES: dict[str, set[str]] = {
 }
 
 
+# --- #54 形式化验证资产与对应审计 -----------------------------------------
+# 来源与许可随 Skill 共置（LICENSE/NOTICE.md），正文必须区分四类对象、记录外部假设与
+# 版本／同步、审计编码与原问题对应、保留故障暴露证据，并且不绑定宿主或个人目录。
+FORMAL_UPSTREAM_REVISION = "88d47514b82e7c44f00f2b2a72ff6dd12158038c"
+FORMAL_SKILLS: dict[str, tuple[str, ...]] = {
+    "create-formal-verification-skill": (
+        "代码性质", "形式模型", "数学定理", "普通测试", "按问题选工具",
+        "外部假设", "同步", "对应审计", "故障暴露", "草稿", "子代理", "blocked",
+        "宿主", "proof 族",
+    ),
+    "maintain-formal-verification-skill": (
+        "in sync", "updated", "bug", "blocked", "同步 commit", "对应审计",
+        "占位符", "子代理", "宿主", "proof 族",
+    ),
+}
+FORMAL_REQUIRED_FILES = {
+    "create-formal-verification-skill": (
+        "LICENSE",
+        "NOTICE.md",
+        "agents/openai.yaml",
+        "references/tool-selection.md",
+        "references/assumption-ledger.md",
+        "references/correspondence-audit.md",
+        "templates/formal-verification-record.md",
+    ),
+    "maintain-formal-verification-skill": (
+        "LICENSE",
+        "NOTICE.md",
+        "agents/openai.yaml",
+    ),
+}
+FORMAL_REFERENCE_MARKERS = {
+    "references/tool-selection.md": (
+        "代码性质", "形式模型", "数学定理", "普通测试", "不强制全链", "没有可用验证器",
+    ),
+    "references/assumption-ledger.md": (
+        "外部假设", "材料", "版本", "覆盖", "同步状态", "重验", "草稿",
+    ),
+    "references/correspondence-audit.md": (
+        "原问题", "编码定义", "定理", "量词", "假设", "边界", "对象", "占位符",
+        "编译成功", "有限数值", "不得冒充",
+    ),
+    "templates/formal-verification-record.md": (
+        "外部假设与材料", "同步状态", "commit", "重验触发条件", "对应审计", "草稿",
+    ),
+}
+FORMAL_HOST_BINDINGS = ("Cursor", "~/.cursor", ".cursor/", "pstack-models", "/loop")
+FORMAL_MODEL_PIN = re.compile(
+    r"(?i)(gpt-[0-9]|claude-[0-9]|gemini-[0-9]|grok-[0-9]|deepseek-[a-z0-9]|glm-[0-9]|opus|sonnet)"
+)
+
+
+def formal_verification_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#54 形式化验证：许可、工具选择、假设与同步、对应审计、故障暴露、宿主中立。"""
+    found: list[str] = []
+    base = root / "skills/validation-cycle"
+    for name, markers in FORMAL_SKILLS.items():
+        skill_dir = base / name
+        rel_dir = f"skills/validation-cycle/{name}"
+        if not skill_dir.is_dir():
+            found.append(f"{rel_dir}: 形式化验证 Skill 不存在")
+            continue
+        for rel in ("SKILL.md", *FORMAL_REQUIRED_FILES[name]):
+            path = skill_dir / rel
+            rel_path = f"{rel_dir}/{rel}"
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少形式化验证资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+        license_path = skill_dir / "LICENSE"
+        if license_path.is_file():
+            license_text = license_path.read_text(encoding="utf-8")
+            for marker in ("MIT License", "Copyright (c) 2026 Lauren Tan"):
+                if marker not in license_text:
+                    found.append(f"{rel_dir}/LICENSE: 缺 MIT 版权文本 {marker}")
+        notice_path = skill_dir / "NOTICE.md"
+        if notice_path.is_file():
+            notice = notice_path.read_text(encoding="utf-8")
+            for marker in ("cursor/plugins", FORMAL_UPSTREAM_REVISION, "MIT"):
+                if marker not in notice:
+                    found.append(f"{rel_dir}/NOTICE.md: 缺来源记录 {marker}")
+        skill_path = skill_dir / "SKILL.md"
+        if not skill_path.is_file():
+            continue
+        text = skill_path.read_text(encoding="utf-8")
+        for marker in markers:
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺「{marker}」")
+        if "委托继承" not in heading_anchors(text):
+            found.append(f"{rel_dir}/SKILL.md: 缺「委托继承」小节")
+        for binding in FORMAL_HOST_BINDINGS:
+            if binding in text:
+                found.append(f"{rel_dir}/SKILL.md: 宿主绑定残留 {binding}")
+        if FORMAL_MODEL_PIN.search(text):
+            found.append(f"{rel_dir}/SKILL.md: 固定模型绑定")
+        yaml_path = skill_dir / "agents" / "openai.yaml"
+        if yaml_path.is_file():
+            if yaml_allow_implicit(yaml_path.read_text(encoding="utf-8")) != "false":
+                found.append(f"{rel_dir}/agents/openai.yaml: allow_implicit_invocation 必须为 false")
+        for rel, required in FORMAL_REFERENCE_MARKERS.items():
+            path = skill_dir / rel
+            if not path.is_file():
+                continue
+            body = path.read_text(encoding="utf-8")
+            for marker in required:
+                if marker not in body:
+                    found.append(f"{rel_dir}/{rel}: 缺「{marker}」")
+        if f"{rel_dir}/SKILL.md" not in MIGRATED_CONTRACT:
+            found.append(f"{rel_dir}/SKILL.md: 未登记迁移状态")
+    boundary = root / MIGRATION_DOC
+    if boundary.is_file():
+        boundary_text = boundary.read_text(encoding="utf-8")
+        for name in FORMAL_SKILLS:
+            if name not in boundary_text:
+                found.append(f"{MIGRATION_DOC}: 未列出形式化验证能力 {name}")
+    return found
+
+
 for sf in skill_files:
     rel = sf.relative_to(ROOT).as_posix()
     expected = expected_gates(sf.parent, sf.parent.name)
@@ -900,6 +1020,8 @@ for sf in skill_files:
         err(f"{rel}: {problem}")
 
 for problem in migration_contract_problems(ROOT, tracked):
+    err(problem)
+for problem in formal_verification_problems(ROOT, tracked):
     err(problem)
 
 
