@@ -51,6 +51,8 @@ Gates: none
 
 已命名、文件未交付：无。
 
+不占路线的独立能力：用户要对抗审查、独立挑战或多模型审查时，委托内由编排者或用户直接点名 [interrogate](../interrogate/SKILL.md)：独立 reviewer 逐模型挑战、findings 去重、分歧保留，主审四桶有据判断；该调用始终只读，修复由委托按授权另行组织（如 proof-repair、research-improvement）。
+
 ## 只读优先
 
 只要用户是在问该从哪开始、该用哪个、或明确不要执行，就打开 [route-only](playbooks/route-only.md)。即使句子里同时出现「写论文」「跑实验」「设计实验」等执行词，当前命中路线是 route-only；执行词只帮助选择推荐对象，不改变当前路线。回复区分「当前路线：route-only」与「推荐入口：…」。route-only 不创建任务、不联网、不写文件、不派子代理。

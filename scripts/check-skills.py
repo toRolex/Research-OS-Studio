@@ -620,6 +620,40 @@ HOST_SERIAL_SUBSTITUTES = (
 )
 
 
+INTERROGATE_BUCKETS = ("Act on", "Consider", "Noted", "Dismissed")
+INTERROGATE_FIXED_MODEL_MARKERS = ("claude-opus", "grok-4", "composer-", "cursor")
+
+
+def interrogate_contract_problems(text: str) -> list[str]:
+    """interrogate 技能的合同检查：只读、独立审查机制与宿主中立。"""
+    found: list[str] = []
+    for marker in (
+        "## 委托继承",
+        "Gates: none",
+        "只读",
+        "不自动",
+        "去重",
+        "分歧",
+        "主审",
+        "子代理",
+        "blocked",
+        ".agents/research-os-models.md",
+    ):
+        if marker not in text:
+            found.append(f"interrogate 正文缺 {marker}")
+    for bucket in INTERROGATE_BUCKETS:
+        if bucket not in text:
+            found.append(f"interrogate 主审四桶缺 {bucket}")
+    for banned in INTERROGATE_FIXED_MODEL_MARKERS:
+        if banned in text.lower():
+            found.append(f"interrogate 残留固定模型/宿主绑定：{banned}")
+    if not (SKILLS / "general" / "interrogate" / "references" / "research-review.md").exists():
+        found.append("interrogate 缺科研审查 lens research-review.md")
+    if not (SKILLS / "general" / "interrogate" / "references" / "PROVENANCE.md").exists():
+        found.append("interrogate 缺来源登记 PROVENANCE.md")
+    return found
+
+
 def release_route_problems(rows: list[dict[str, str]]) -> list[str]:
     """14 个已交付 playbook 必须成套，只读约束与合同一致。"""
     found: list[str] = []
@@ -774,6 +808,11 @@ if research_os.exists():
         err("skills/general/swarm/SKILL.md: swarm 能力缺失")
     HINTS.extend(route_hints)
 
+interrogate_skill = SKILLS / "general" / "interrogate" / "SKILL.md"
+if interrogate_skill.exists():
+    for problem in interrogate_contract_problems(interrogate_skill.read_text(encoding="utf-8")):
+        err(f"skills/general/interrogate/SKILL.md: {problem}")
+
 for md in md_files:
     rel_md = md.relative_to(ROOT).as_posix()
     if rel_md not in tracked or not cascade_scope(rel_md):
@@ -857,6 +896,7 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/general/research-os/SKILL.md": "研究委托",
     "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
     "skills/general/swarm/SKILL.md": "委托继承",
+    "skills/general/interrogate/SKILL.md": "委托继承",
     "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
 }
