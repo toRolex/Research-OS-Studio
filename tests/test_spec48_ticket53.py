@@ -208,8 +208,9 @@ class RegistrationAndEntry(unittest.TestCase):
         for readme in (ROOT / "README.md", ROOT / "skills/README.md"):
             with self.subTest(readme=readme.name):
                 text = readme.read_text(encoding="utf-8")
-                self.assertIn("](skills/validation-cycle/create-verification-skill/SKILL.md)", text.replace("](validation-cycle/", "](skills/validation-cycle/"))
-                self.assertIn("](skills/validation-cycle/maintain-verification-skill/SKILL.md)", text.replace("](validation-cycle/", "](skills/validation-cycle/"))
+                prefix = "skills/validation-cycle/" if readme.parent == ROOT else "validation-cycle/"
+                self.assertIn(f"]({prefix}create-verification-skill/SKILL.md)", text)
+                self.assertIn(f"]({prefix}maintain-verification-skill/SKILL.md)", text)
 
     def test_entry_points_to_new_skills(self):
         entry = (SKILLS / "general/research-os/SKILL.md").read_text(encoding="utf-8")
