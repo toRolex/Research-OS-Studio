@@ -47,6 +47,7 @@ Gates: none
 | improvement | — | 整体改进、有界循环、review 后修复再审 | 用户要在固定轮数和写入范围内改进已有研究整体 | no | [improvement](playbooks/improvement.md) |
 | pickup | — | 接上次会话、从交接恢复、新会话续接 | 已保存交接、批准或作业记录，要在新会话恢复 | no | [pickup](playbooks/pickup.md) |
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
+| swarm | — | 并行覆盖、分片排查、多方案竞赛、全面摸排 | 已有明确问题，要在有界额度内用并行子代理分片、竞赛或混合探索并汇总 | no | [swarm](playbooks/swarm.md) |
 
 已命名、文件未交付：无。
 
