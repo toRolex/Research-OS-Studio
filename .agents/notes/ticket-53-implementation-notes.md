@@ -1,6 +1,6 @@
 # Ticket #53 实现记录：交付可创建、维护的项目行为验证能力
 
-日期：2026-10-21。分支 `t3/spec-53-verification-skills`，worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-a3b0d13a`，基线 integration/spec-48 @ `e84f779`（含 #54 形式化资产，已安全合并、未覆盖其登记）。状态：#53 实现/独立安装复验 done；逐 AC 静态与票测通过；真实应用端到端未执行；待提交并合并最新 integration tip。
+日期：2026-10-21。分支 `t3/spec-53-verification-skills`，worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-a3b0d13a`，基线 integration/spec-48 @ `e84f779`（含 #49 与 #54 已验收合并，未覆盖其登记）。状态：#53 实现、独立安装复验与最新 integration tip 对照 done；逐 AC 静态与票测通过；真实应用端到端未执行；分支无未提交改动。
 
 ## 交付物
 
@@ -42,7 +42,8 @@
 - 原提交缺乏未实现票测基线，不能 stash 移除已提交实现。改在 integration 基线临时 archive 副本放入票测重放：25 failed、4 passed，退出 1；此为损坏副本回放，不追认为当时原始红证据。
 - 绿：`uv run --with pytest python -m pytest tests/test_spec48_ticket53.py -q` → 23 passed、28 subtests passed（退出 0）。
 - `python3 scripts/check-skills.py` → 9 条历史 evidence 断链（退出 1），未增加本票问题。全仓 pytest → 92 passed、7 failed、70 subtests passed；7 个失败与既有票面所述历史组一致，但无修订前同版本全仓运行记录，故不声称严格证明前后无差异。
-- Skills CLI 缓存版本对两个新 Skill 在可丢弃 `/tmp` 项目 `--skill create-verification-skill maintain-verification-skill --agent codex --copy --yes` 安装成功；只测试安装文件与 helper 正例，不代表目标宿主已加载或真实应用行为已验收。
+- Skills CLI 缓存版本对两个新 Skill 在可丢弃 `/tmp` 项目 `--skill create-verification-skill maintain-verification-skill --agent codex --copy --yes` 安装成功；最终副本共 12 个文件，创建 Skill 的 helper 在安装副本内正例 exit 0。只证明文件安装与资源可达，不代表目标宿主已加载或真实应用行为已验收。
+- 最新 integration 验收：`git -C <worktree> rev-parse integration/spec-48` 为 `e84f779d78755937a59d46364e14cc6496aa2b03`；`merge-base HEAD integration/spec-48` 为同一完整 SHA，确认 #49/#54 已在当前分支基线。对照 `tests/test_spec48_ticket49.py` 为 22 passed；`tests/test_spec48_ticket54.py` 为 25 passed；本票 23 passed、28 subtests passed。checker 输出与已记录基线相同 9 条历史 evidence 断链。分支最初 HEAD `19f01db`，含自包含修订 `2e6ff56` 与验收记录 `e61a33f`；本 notes 更新后另有文档提交。没有另造 merge commit，因为 `integration/spec-48` 已是该分支祖先。
 
 ## 简化自检（KISS/YAGNI/DRY）
 
