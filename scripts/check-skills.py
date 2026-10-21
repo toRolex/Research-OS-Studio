@@ -603,6 +603,7 @@ REQUIRED_RELEASE_ROUTES = (
     ("improvement", "—", "no"),
     ("pickup", "—", "no"),
     ("custom", "—", "no"),
+    ("swarm", "—", "no"),
 )
 STALE_PROMISE_SNIPPETS = (
     "完成后立即停止，绝不自动跳转",
@@ -636,6 +637,25 @@ def stale_promise_problems(files: dict[str, str]) -> list[str]:
         for snippet in STALE_PROMISE_SNIPPETS:
             if snippet in text:
                 found.append(f"{rel}: 残留旧停止承诺：{snippet}")
+    return found
+
+
+def swarm_contract_problems(text: str) -> list[str]:
+    """swarm 能力合同：分片/竞赛/混合、预声明规则、输出隔离、有界重派与缺口；无宿主/固定模型绑定。"""
+    found: list[str] = []
+    for marker in (
+        "Frame", "Fan out", "Aggregate", "Report",
+        "分片", "竞赛", "混合", "first pass", "rank all", "best-of",
+        "完成条件", "独立 brief", "输出隔离", "重派",
+        "缺口不算通过", "blocked", "子代理", "Role: implementer",
+        ".agents/research-os-models.md", "88d47514b82e7c44f00f2b2a72ff6dd12158038c",
+    ):
+        if marker not in text:
+            found.append(f"swarm 正文缺 {marker}")
+    lowered = text.lower()
+    for banned in ("~/.cursor", "pstack-models", "grok-4.7", 'environment: "cloud"', "cloud_base_branch"):
+        if banned in lowered:
+            found.append(f"swarm 正文残留固定绑定：{banned}")
     return found
 
 
@@ -728,6 +748,12 @@ if research_os.exists():
         err(f"skills/general/research-os/SKILL.md: {problem}")
     for problem in host_capability_problems(research_os.read_text(encoding="utf-8")):
         err(f"skills/general/research-os/SKILL.md: {problem}")
+    swarm_skill = SKILLS / "general" / "swarm" / "SKILL.md"
+    if swarm_skill.is_file():
+        for problem in swarm_contract_problems(swarm_skill.read_text(encoding="utf-8")):
+            err(f"skills/general/swarm/SKILL.md: {problem}")
+    else:
+        err("skills/general/swarm/SKILL.md: swarm 能力缺失")
     HINTS.extend(route_hints)
 
 for md in md_files:
@@ -812,6 +838,7 @@ def migration_contract_problems(root: Path, tracked_paths: set[str]) -> list[str
 MIGRATED_CONTRACT: dict[str, str] = {
     "skills/general/research-os/SKILL.md": "研究委托",
     "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
+    "skills/general/swarm/SKILL.md": "委托继承",
 }
 MANDATE_DOC = "skills/general/research-os/references/mandate.md"
 MIGRATION_DOC = "skills/general/research-os/references/migration-boundary.md"

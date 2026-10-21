@@ -187,6 +187,7 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 |---|---|---|---|
 | **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | 可建议 | 确认本 session 可用模型、八角色、零授权默认政策与工作区种子；建议本身不是写入授权 |
 | | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口：一次调用是一份研究委托（目标/权限/额度/完成条件见 `references/mandate.md`）；只读走 route-only；literature 是已迁移的最短链路，未迁移路线仍按各自旧门停下（边界见 `references/migration-boundary.md`） |
+| | [swarm](skills/general/swarm/SKILL.md) | 显式 | 并行覆盖：分片、竞赛或混合探索，派发宿主真实子代理并汇总；独立 brief、输出隔离、缺证据有界重派，缺口不算通过（改编自 pstack swarm，MIT，见其 LICENSE） |
 | **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | 显式 | 构思查新工作流：文献检索、生成方案、查新、评审并输出 Proposal |
 | | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | 显式 | 文献检索与综合，标注出处与核实状态；已迁移到研究委托合同，不再有叶级审批门 |
 | | [idea-generation](skills/idea-cycle/idea-generation/SKILL.md) | 显式 | 多视角生成研究候选方案，记录筛选理由 |
