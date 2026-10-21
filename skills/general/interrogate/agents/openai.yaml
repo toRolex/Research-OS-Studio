@@ -1,0 +1,5 @@
+interface:
+  display_name: "interrogate"
+  short_description: "对抗审查：独立 reviewer 挑战材料或变更，主审综合 findings 有据判断。只读。"
+policy:
+  allow_implicit_invocation: false
