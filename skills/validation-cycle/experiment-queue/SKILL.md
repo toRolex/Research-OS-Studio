@@ -9,10 +9,18 @@ disable-model-invocation: true
 
 当单个 [run-experiment](../run-experiment/SKILL.md) 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞清理、状态可恢复。这是 显式调用或已授权正文级联 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停在汇总报告。
 
-与 run-experiment 的分工见 [experiment-bridge 第 4 节](../experiment-bridge/SKILL.md)。进度读状态表，不另开调度时钟。
+Gates: none
 
-## 1. 授权与资源门
-Gate: batch-authorization | before=job-start | approval=explicit-user | source=SKILL.md#1-授权与资源门
+与 run-experiment 的分工见其执行控制。进度读状态表，不另开调度时钟。
+
+## 委托继承
+
+- **委托合同**：目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威；只读或只做清单时不启动。
+- **批次授权**：当前委托和批次授权继续继承，内部级联不重置。付费、远程、上传、下载和清理按批次范围执行；越权只阻塞对应作业。
+- **项目内依赖准备**：可在授权项目目录内检查或准备依赖，复用常规缓存；不改全局配置、用户凭据或其他项目。
+- **停止**：用户叫停、额度耗尽、工具受阻或本批完成即停止；预算跨 worker、重试和恢复不重置。
+
+## 1. 授权与资源边界
 
 在任何作业启动前，列出并让用户确认：
 
@@ -23,7 +31,7 @@ Gate: batch-authorization | before=job-start | approval=explicit-user | source=S
 - 可修改范围、输出/状态位置，以及作业失败时允许的修复动作；
 - 谁可以停止、暂停、重排或清理批次；付费与远程写入是否逐项获批。
 
-缺少确认时只构建清单和预检草案，必须停在授权门。默认不安装环境、不申请新凭据、不上传私有材料、不提交或发布。
+缺少执行授权时只构建清单和预检草案。默认不申请新凭据、不上传私有材料、不提交或发布；项目内依赖准备与远程动作按委托和批次授权边界执行。
 
 **完成条件**：作业数、依赖、并发上限、资源与授权状态明确；未授权集合不会进入执行。
 
@@ -32,6 +40,7 @@ Gate: batch-authorization | before=job-start | approval=explicit-user | source=S
 输入可以是显式清单、grid 规格或自然语言；先用项目已有格式表达，不建立统一 schema。推荐使用 [批次清单模板](templates/batch-manifest.md)，至少记录：
 
 - **project / cwd / 执行入口**：每个作业在哪个项目目录、用哪个已有命令运行；
+- **输入版本 / 工具链 / 独立目录 / 作业身份**：展开每个作业的代码/数据/配置版本、环境、隔离工作目录和稳定 job id；合同细节见 [run-experiment execution contract](../run-experiment/references/execution-contract.md)。
 - **default_cmd 与每作业 args**：把 grid 或模板展开为具体命令；
 - **preconditions**：作业启动前必须存在的文件/检查点/数据（如 teacher checkpoint）；
 - **resources**：允许的资源列表、`max_parallel`、空闲阈值；
@@ -44,7 +53,6 @@ Grid 规格按笛卡尔积展开为明确作业；阶段模板在展开时把变
 **完成条件**：每个作业都有唯一 id、明确命令、预期输出和所属阶段；grid 展开可人工复核；依赖关系无环且指向已声明阶段。
 
 ## 3. 预检
-Gate: precondition-block | before=blocked-job | approval=explicit-user | source=SKILL.md#3-预检
 
 在执行前逐项检查并记录：
 
@@ -72,9 +80,9 @@ Gate: precondition-block | before=blocked-job | approval=explicit-user | source=
 
 - **资源隔离**：同一资源上不重叠启动作业；启动前确认资源空闲，等待而不是抢占。
 - **有限并发**：并发数不超过已确认的 `max_parallel` 或可用资源数。
-- **每作业一个 attempt 记录**：记录 run id、phase、资源、命令、开始/结束时间、状态、expected_output、错误摘要和原始日志位置。
+- **每作业一个 attempt 记录**：记录 job/run id、phase、输入版本、工具链、独立目录、资源、命令、开始/结束时间、退出码、原始日志、产物、状态、expected_output、错误摘要。
 - **状态机**：`pending → running → completed`；OOM 走 `failed_oom → pending`（有限重试）；其他失败进入 `failed_other → stuck`（等待人工检查）；停滞会话按第 5 节处理。
-- **完成判定以预期输出为准**：不只相信会话状态；检查 `expected_output` 文件/结果实际存在且未损坏。
+- **完成判定以作业退出与产物有效为准**：不只相信会话状态；记录退出码，检查 `expected_output` 与作业身份关联、存在且未损坏。产物有效不等于科学结论成立。
 - **依赖在启动时强制**：阶段作业只在所依赖阶段的全部作业到达终态后启动。注意“终态”包含 `stuck`——失败的 teacher 不会永久阻塞 student，因此启动依赖波次前先检查状态表中的 `stuck` 项，不把缺失 precondition 当成通过。
 
 **完成条件**：每个已启动作业都有状态、资源、原始日志与预期输出核对结果；没有跨越未满足依赖或未释放资源的波次。
@@ -101,7 +109,8 @@ Gate: precondition-block | before=blocked-job | approval=explicit-user | source=
 ## 6. 状态、恢复与停止
 
 - **状态持久化**：每次状态变化都写入用户可读的状态表（沿用项目已有 tracker 或清单格式）；包含 meta（project、run 标识、开始时间、执行位置）、phases 状态和逐作业状态。状态表用于恢复和人工核对，不是中央数据库。
-- **可恢复**：批次中断后，读取状态表；`running` 作业先核对其会话/进程是否仍存活，存活则保留，否则按第 5 节重新判定；`pending` 继续；`completed`/`stuck` 不重跑。恢复时复用原有 run 标识与路径，不重新生成清单。
+- **可恢复**：批次中断后，读取状态表；断线先查原作业，不盲重跑。用同一 job id 在调度器、远端主机、原始日志和退出记录中核对：会话/进程仍存活则保留，否则按退出码和产物判定。旧文件不能证明来自本次作业身份或未被取代时保持 `stale`/`unknown`，不当作完成。`pending` 继续；`completed`/`stuck` 不重跑。恢复时复用原有 run 标识与路径，不重新生成清单。
+- **判定分离**：作业退出看调度器/进程/日志终态；产物有效看身份、可读性和完整性；科学结论只由计划成功标准、统计分析和审计判断。
 - **幂等**：恢复只补齐未完成项，不覆盖 manifest、状态历史或已有结果。
 - **停止条件**：以下任一情况立即停止当前职责并报告：授权被撤回、预算耗尽、达到超时、重复失败超过批准的重试/修复上限、资源或副作用超出确认范围、precondition 无法满足、用户要求停止、或全部作业到达终态。
 - **停止与重启权限**：暂停、kill、重启、扩大资源或迁移机器都必须由用户授权；本 Skill 只能建议并分开记录建议与实际动作。

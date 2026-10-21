@@ -26,7 +26,7 @@ fresh 代码审查与实验审计。
 
 ## 步骤
 
-1. 读 `skills/validation-cycle/experiment-bridge/SKILL.md` 全文，并读它点名的 references 与 templates。阶段顺序、子 skill 组合和报告以该正文为准。
+1. 读 `skills/validation-cycle/experiment-bridge/SKILL.md` 确认这是兼容入口，再读 `skills/validation-cycle/run-experiment/SKILL.md` 全文及 execution/remote references。执行控制、批次路由和报告以 run-experiment 为准。
 2. 读工作区 `research-log.md` 里本批授权，并按 [批次授权](../references/batch-authorization.md) 做启动前检查。默认 `compute-policy.md` 不是这张授权。
 3. 检查同时核对：授权是否存在、valid_until 是否已过、scope 是否仍覆盖本次计划与写域、单次额度、累计额度（含仍在跑的预留）、run_count_basis=planned-run 的名额、concurrency_limit、retry_limit。未知消耗不按 0 释放。恰好打到上限可以启动。
 4. 任一项失败：停下说明哪一条，不写 started_at，不跑命令，不改实验产物。
@@ -36,7 +36,7 @@ fresh 代码审查与实验审计。
 
 ## 记账
 
-单编排者追加 attempt：run_id、attempt_id、worst_case_estimate、started_at、finished_at、actual_consumption、result_status、artifact_paths。
+单编排者追加 attempt：run_id、attempt_id、输入版本、工具链、独立目录、作业身份、worst_case_estimate、started_at、finished_at、actual_consumption、退出码、原始日志、result_status、artifact_paths。
 
 获准跑完后，planned-run 次数、费用和算力与授权对得上。被拒场景没有作业产物。
 

@@ -8,8 +8,13 @@ disable-model-invocation: true
 
 将用户给定的问题、Proposal 或方法整理为 **claim → evidence → run order** 路线图。计划服务证据而非预设论文成功。
 
-## 调用与授权
-Gate: output-path | before=plan-write | approval=explicit-user | source=SKILL.md#调用与授权
+Gates: none
+
+## 委托继承
+
+- 目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威；只读或只建议时不落盘。
+- 内部级联不重置授权；计划写盘按委托允许的位置继续。未来实验预算不等于执行授权。
+- 完成计划即停止；关键数据、评价定义或硬预算未知时交付 **BLOCKED 草稿**，不编造数值。
 
 这是 **user-invoked Workflow**：用户显式调用本 Skill 制定实验计划时使用。模型不自动启动它；本 Skill 也不调用其他 Workflow。输入可以是现成研究问题，不要求先运行 Discovery 或 refinement。用户若只给不稳定方向，输出缺口与待确认的假设，不替用户换题。
 
@@ -25,6 +30,7 @@ Gate: output-path | before=plan-write | approval=explicit-user | source=SKILL.md
 - **MAX_CORE_BLOCKS = 5** — keep the must-run experimental story compact.
 - **MAX_BASELINE_FAMILIES = 3** — prefer a few strong baselines over many weak ones.
 - **DEFAULT_SEEDS = 3** — propose 3 seeds when stochastic variance matters and budget allows; this is neither automatic authorization nor a guarantee of statistical power.
+- **对照按问题选**：机器学习用计划声明中的训练 baseline；数学计算采用计划声明的对照（最小对照、已知值、证书重放或独立实现检查），不硬套训练 baseline。
 
 ## Workflow
 

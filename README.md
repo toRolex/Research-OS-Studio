@@ -101,7 +101,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 /research-os 我该从哪开始
 ```
 
-这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。只要一次文献综合走 literature：入口按研究委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度。设计实验走 experiment-plan；跑完已有计划并分析走 experiment-bridge。这两条要占用运行资源，要求研究日志里的本批授权，setup 写下的默认政策不能当运行许可。
+这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。只要一次文献综合走 literature：入口按研究委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度。设计实验走 experiment-plan；跑完已有计划并分析走 experiment-bridge 兼容入口，实际执行控制由 run-experiment 承担。这两条要占用运行资源，要求研究日志里的本批授权，setup 写下的默认政策不能当运行许可。
 
 已有上一轮证明、改进日志或研究作业记录时，不要从零重跑：
 
@@ -195,8 +195,8 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 | | [idea-review](skills/idea-cycle/idea-review/SKILL.md) | 显式 | 独立评审视角，指出方案弱点与潜在问题 |
 | | [idea-refinement](skills/idea-cycle/idea-refinement/SKILL.md) | 显式 | 细化研究方案，输出最小可行路线与拓展路线 |
 | **Validation** | [experiment-plan](skills/validation-cycle/experiment-plan/SKILL.md) | 显式 | 制定包含假设、基线、指标与预算的实验计划 |
-| | [experiment-bridge](skills/validation-cycle/experiment-bridge/SKILL.md) | 显式 | 实验执行工作流：实现、试跑、监控、分析与审计 |
-| | [run-experiment](skills/validation-cycle/run-experiment/SKILL.md) | 显式 | 在指定范围内执行实验代码并记录运行状态 |
+| | [experiment-bridge](skills/validation-cycle/experiment-bridge/SKILL.md) | 显式 | 旧请求兼容入口：映射到 run-experiment，不重复编排 |
+| | [run-experiment](skills/validation-cycle/run-experiment/SKILL.md) | 显式 | 统一实验执行控制；记录输入版本、工具链、目录、作业身份、退出码、日志与产物 |
 | | [experiment-queue](skills/validation-cycle/experiment-queue/SKILL.md) | 显式 | 管理批量实验队列与资源分配 |
 | | [monitor-experiment](skills/validation-cycle/monitor-experiment/SKILL.md) | 显式 | 监控运行进程与状态，不做额外推论 |
 | | [training-health-check](skills/validation-cycle/training-health-check/SKILL.md) | 显式 | 诊断 NaN、显存溢出、loss 停滞等训练异常 |
