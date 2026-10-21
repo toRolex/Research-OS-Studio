@@ -41,10 +41,10 @@ Role: prover
 
 ## 步骤
 
-1. 先过 `research-improvement` 的 loop-authorization 门。scope、写入范围、最大轮数、资源预算、副作用、正面结论标准和停止条件逐项确认。未确认的项不执行。
+1. 完整读 [研究委托合同](../references/mandate.md)，把 scope、写入范围、最大轮数、资源预算、副作用、正面结论标准和停止条件写清；缺项按有界首轮记为显式假设，不默认执行。
 2. 冻结基线：Claims 或草稿、方法与代码、原始结果、当前 diff、历史 findings。已有改进日志是待核实输入，不是已成立结论。
 3. 每一轮由 fresh reviewer 直接读当前 primary artifacts。同上下文自查标成自查，不冒充独立审查。
-4. 只在写入范围内做最小修复，并留下验证证据。补实验另过 experiment-topup 门；进入该分支必须先完整读 [批次授权](../references/batch-authorization.md)，再核本批研究日志，不把 loop 授权或默认政策当运行许可。每次启动同时核 scope、valid_until、per_attempt 单次额度、已消耗＋运行中最坏预留＋本次最坏消耗的累计额度、run_count_basis=attempt 的剩余名额、concurrency_limit 与 retry_limit；无法核实任何一项就停在作业前。名额按 attempt 计，失败、超时、无效也占名额；未知消耗保留预留。单编排者先记预留、结束按原始命令证据补实账。重试额度不代替修复轮数；叶 skill 的科研步骤不在此重写。
+4. 只在写入范围内做最小修复，并留下验证证据。补实验先完整读 [批次授权](../references/batch-authorization.md)，再核本批研究日志，不把委托授权或默认政策当运行许可。每次启动同时核 scope、valid_until、per_attempt 单次额度、已消耗＋运行中最坏预留＋本次最坏消耗的累计额度、run_count_basis=attempt 的剩余名额、concurrency_limit 与 retry_limit；无法核实任何一项就停在作业前。名额按 attempt 计，失败、超时、无效也占名额；wall-clock 与资源跨 reviewer、重试和恢复累计，不重置；未知消耗保留预留。单编排者先记预留、结束按原始命令证据补实账。重试额度不代替修复轮数；叶 skill 的科研步骤不在此重写。
 5. 用 `skills/writing-cycle/research-improvement/templates/improvement-log.md` 的骨架写本轮日志。原始审查回应逐字保留。日志写入用户授权的位置；没有授权时只在对话交付。
 
 ## 完成
