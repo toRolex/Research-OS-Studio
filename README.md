@@ -209,6 +209,8 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 | | [proof-review](skills/validation-cycle/proof-review/SKILL.md) | 显式 | 只读审查证明逻辑与边界反例，不修改文件 |
 | | [proof-repair](skills/validation-cycle/proof-repair/SKILL.md) | 显式 | 在授权范围内有针对性地修复证明断点 |
 | | [proof-orchestrator](skills/validation-cycle/proof-orchestrator/SKILL.md) | 显式 | 管理复杂长定理证明，支持 Lean 辅助推导 |
+| | [create-formal-verification-skill](skills/validation-cycle/create-formal-verification-skill/SKILL.md) | 显式 | 为项目建立可重跑的形式化检查；按问题选工具，记录假设/版本/同步并审计编码与原问题对应 |
+| | [maintain-formal-verification-skill](skills/validation-cycle/maintain-formal-verification-skill/SKILL.md) | 显式 | 代码变化后把形式化检查重新对齐；重跑并区分验证漂移与代码 bug |
 | **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | 显式 | `/research-os` paper-writing / general：通用材料的规划、绘图、起草、真实编译与并列审查；叶 skill 自带授权门 |
 | | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | 显式 | paper-writing / ml：机器学习材料不经通用入口；seeds、error bars、compute、limitations |
 | | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | 显式 | paper-writing / systems：系统设计材料不经通用入口；design rationale、end-to-end、scalability |
