@@ -10,10 +10,10 @@ import importlib.util
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
-import stat
 import unittest
 from pathlib import Path
 
@@ -50,6 +50,7 @@ def problem_lines(root: Path) -> list[str]:
         cwd=root,
         capture_output=True,
         text=True,
+        check=False,
     )
     return [line for line in result.stdout.splitlines() if line.startswith("  - ")]
 
@@ -161,20 +162,53 @@ class ArenaCapabilityTests(unittest.TestCase):
         self.assertIn("organization/arena/SKILL.md", entry_text)
         self.assertIn("arena", entry_text)
 
-    def test_readme_manifests_include_arena(self):
+    def test_readme_manifests_match_skill_directory(self):
+        actual = {
+            path.relative_to(ROOT / "skills").as_posix()
+            for path in (ROOT / "skills").rglob("SKILL.md")
+        }
         for name in ("README.md", "skills/README.md"):
-            text = (ROOT / name).read_text(encoding="utf-8")
-            self.assertIn("organization/arena/SKILL.md", text, name)
-        readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        listed = re.findall(r"\]\((?:skills/)?[a-z-]+/[a-z0-9-]+/SKILL\.md\)", readme)
-        self.assertEqual(len(listed), len(set(listed)))
-        badge = re.search(r"/badge/skills-(\d+)-green\.svg", readme)
-        heading = re.search(r"^## (\d+) 个 Skill 能力清单$", readme, re.M)
-        self.assertIsNotNone(badge)
-        self.assertIsNotNone(heading)
-        if badge is not None and heading is not None:
-            self.assertEqual(int(badge.group(1)), len(listed))
-            self.assertEqual(int(heading.group(1)), len(listed))
+            with self.subTest(readme=name):
+                text = (ROOT / name).read_text(encoding="utf-8")
+                listed = re.findall(
+                    r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+/SKILL\.md)\)", text
+                )
+                self.assertEqual(len(listed), len(set(listed)))
+                self.assertEqual(set(listed), actual)
+                self.assertIn("organization/arena/SKILL.md", text, name)
+
+    def test_count_free_readme_manifest_is_accepted(self):
+        tmp = copy_tree()
+        try:
+            readme = tmp / "README.md"
+            text = readme.read_text(encoding="utf-8")
+            text, badge_count = re.subn(
+                r"https://img\.shields\.io/badge/skills-\d+-green\.svg",
+                "skills",
+                text,
+            )
+            text, toc_count = re.subn(
+                r"(?m)^- \[\d+ 个 Skill 能力清单\]\(#\d+-个-skill-能力清单\)$",
+                "- [Skill 能力清单](#skill-能力清单)",
+                text,
+            )
+            text, heading_count = re.subn(
+                r"(?m)^## \d+ 个 Skill 能力清单$",
+                "## Skill 能力清单",
+                text,
+            )
+            text, description_count = re.subn(
+                r"全套包含 \d+ 个独立技能。",
+                "全套包含可独立使用的技能。",
+                text,
+            )
+            self.assertEqual(
+                (badge_count, toc_count, heading_count, description_count), (1, 1, 1, 1)
+            )
+            readme.write_text(text, encoding="utf-8")
+            self.assertEqual(fresh_problems(tmp), [])
+        finally:
+            shutil.rmtree(tmp.parent, onexc=_force_rmtree)
 
 
 class ArenaCheckerRegressionTests(unittest.TestCase):
@@ -206,14 +240,21 @@ class ArenaCheckerRegressionTests(unittest.TestCase):
         finally:
             shutil.rmtree(tmp.parent, onexc=_force_rmtree)
 
-    def test_stale_skill_badge_is_red(self):
+    def test_missing_skill_from_readme_manifest_is_red(self):
         tmp = copy_tree()
         try:
             readme = tmp / "README.md"
-            text = readme.read_text(encoding="utf-8").replace("/badge/skills-42-green.svg", "/badge/skills-39-green.svg")
+            text = readme.read_text(encoding="utf-8")
+            text, replacement_count = re.subn(
+                r"(?m)^\|[^\n]*\[arena\]\(skills/organization/arena/SKILL\.md\)[^\n]*\n",
+                "",
+                text,
+            )
+            self.assertEqual(replacement_count, 1)
             readme.write_text(text, encoding="utf-8")
             problems = "\n".join(fresh_problems(tmp))
-            self.assertIn("skills 数量徽章", problems)
+            self.assertIn("README.md: 清单缺", problems)
+            self.assertIn("organization/arena", problems)
         finally:
             shutil.rmtree(tmp.parent, onexc=_force_rmtree)
 

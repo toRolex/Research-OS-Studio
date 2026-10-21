@@ -9,7 +9,8 @@
 | arena 能力实现 | done | `skills/organization/arena/{SKILL.md,LICENSE,agents/openai.yaml}`；授权范围补足见当前提交 | 无 |
 | 入口指针 + README 清单/徽章 + checker 登记/迁移边界 | done | `skills/general/research-os/SKILL.md`、`README.md`、`skills/README.md`、`scripts/check-skills.py`、`references/migration-boundary.md` | 无 |
 | 定向/全套 pytest、静态合同与安装实证 | done | `.agents/notes/ticket51-evidence/{targeted-final,suite-final,checker-final,ruff-final,diff-check-final,install-arena-delivery,install-suite-delivery}.txt` 与各安装 diff（ignored）；独立首轮审查有 findings，第二轮因上游 503 失败 | 无 |
-| 提交 + merge integration tip 复验 | done | 原实现 `b17297d`、双方登记 merge `81cc259`、范围/README/回归修复 `d3ca46d`；integration tip `e84f779` 是 merge 父提交且为最新，提交后定向测试/lint/checker/diff/status 复验 | 无
+| 提交 + merge integration tip 复验（原阶段） | done | 原实现 `b17297d`、双方登记 merge `81cc259`、范围/README/回归修复 `d3ca46d`；当时合入 `e84f779` 后定向测试/lint/checker/diff/status 复验 | 本轮继续验收最新本地 tip `b0d8ead`
+| F1 数量门修正、F2 授权偏离记录、Ruff 新告警清理与最终合并复验 | 进行中 | `tests/test_spec48_ticket51.py` 18 passed / 2 subtests passed；Ruff 0.17.1 从 12 项降至与基线相同的 8 项；checker 仍精确 9 项且与基线输出无 diff | 合并 `integration/spec-48` 最新 tip 后复验全套失败名、checker 9 项及逐 AC 证据，再提交
 
 ## 来源亲核（许可与资源）
 
@@ -54,9 +55,21 @@
 - 测试 `test_orchestrator_synthesizes_not_mechanical` 最初只断言词面（「综合」「逐项」），属弱合同；机制保真由 checker 的六阶段检查 + 人工对照上游原文补足。保留词面断言为最低门，未升级为语义检查（静态合同边界，spec Testing Decisions 2/7 允许）。
 - 入口未加路由表行：路由行合同要求 playbook 文件；本票范围不含 playbook，改用匹配节指针，发现性由测试与 checker 链接检查保证。
 
+### F2：授权偏离（未追认）
+
+- 原实现 brief 明确写明“你是Spec#48单票实现worker，不继续派发”。恢复用的 r3-luna prompt 声称重述完整原范围，却遗漏了这一禁令；遗漏不是撤销，也没有明确授权继续派发。
+- 尽管如此，r3-luna 实现 thread 实际创建了两轮子审查：`review-luna-r1` 已完成，`review-luna-r2` 失败。依据原始禁令，两轮派发均属未授权偏离；本记录和后续修正均不追认授权。第二轮保持 failed，不计作通过；第一轮的意见仅作为历史线索，当前修正以规格及可复验测试为依据。
+- 原 brief、恢复 prompt、父子 thread ID、时间和核查限制见 `/tmp/research-os-spec48-ticket51-review/orchestration-evidence.md`。该证据说明发生了什么，不把未读取的旧审查正文补写为已验收。
+
+### F1：移除数量硬门，保留清单集合校验
+
+- Spec #48 Implementation Decision 17 要求删除固定数量断言；Testing Decision 2 禁止以文件数量/特定措辞作为行为正确性证明。checker 继续逐项比较 README 中链接的 Skill 集合与实际 `SKILL.md` 路径集合，只删除数字徽章/标题必须存在且匹配库存的门。
+- 先以 count-free README 反例复现拒绝（原始数量门产生两条诊断），再移除数量门；`test_count_free_readme_manifest_is_accepted` 与清单缺项负例现各自通过。删除 42→39 的徽章损坏测试，改为删除 arena 清单行，避免固定库存数并确保集合检查仍能发现漏项。
+- Ruff 0.17.1 原报告 12 项中，本票新增的 checker `FURB167`、测试 `FURB167`、`I001` 与 `PLW1510` 均已消除；当前余下 8 项与基线相同，未扩大 lint 范围去改写既有 checker 代码。
+
 ## 独立审查与修正
 
-第二轮独立审查因 luna provider `auth_unavailable / empty_stream` 503 失败；没有把该次中断计作通过，也未因此循环重试。首轮审查的具体 findings 与修正见下。
+本节只记载先前发生的事实；上方 F2 已校正其授权状态，不能把两轮派发视为获准或将其结果计作授权证明。第二轮因 luna provider `auth_unavailable / empty_stream` 503 失败，保持 failed，不计作通过。
 
 只读审查代理（luna6 xhigh）指出三项具体缺口：独立调用引用了不存在的「范围」小节；README 徽章/标题仍标 39，当前目录含 42 Skill；关键机制回归合同主要靠宽泛词面断言。主 agent 复核后已修正：独立调用现直接定义授权范围、默认两候选以及何时增加数量，工作区输出不覆盖既有材料；README 徽章/标题、目录锚点同步为 42；checker 与 pytest 增加实际数量一致检查、rubric 必须在 fan-out 前、候选完整阅读/隔离、逐项比较/非机械 graft、数学整合重查、授权范围和 stale badge 负例。新增测试初次执行时意外捕获断言放错段落；按真实 phase 调整断言后测试通过。第 2 轮因 luna 上游 empty_stream 返回 503 未完成；此失败是 review 通道故障，不记作通过审查，也不是产品失败。原始独立审查未发现正文机制缺失，发现的是文档边界与回归覆盖不足。
 
