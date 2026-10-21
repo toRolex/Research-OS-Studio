@@ -363,7 +363,7 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 
 - **采用机制**：持续执行保留可检查完成谓词、最小步进、验证、检查点、停滞换方法与死路如实停止；暂停保留安全边界、可恢复交接与“磁盘状态优先于会话记忆”；过程改进保留按重复错误和流程摩擦提炼可执行改进，以及公共行为改动先确认。
 - **本仓适配**：删除 Cursor `/loop`、云端 worker、固定模型、transcript 目录与个人目录绑定；不承诺后台进程。时间、费用、算力、子代理、重试与恢复改按研究委托合同累计，不重置；批次作业走批次授权；恢复核对原始产物、义务与活跃作业；外部 tracker 与公共套件行为必须用户确认。
-- **共置资源与许可**：`research-improvement` 携带 `NOTICE.md` 与 `UPSTREAM-LICENSE.md`，完整 MIT 文本为 `Copyright (c) 2026 Lauren Tan`。`continuation.md` 位于自带许可证与来源文档随包的 `research-os` 套件内；扁平安装不依赖 `/tmp/research-os-spec48-upstream` 或其他开发者材料。
+- **共置资源与许可**：`research-improvement` 携带 `NOTICE.md` 与 `UPSTREAM-LICENSE.md`；独立安装的 `research-os` 入口包也在 `skills/general/research-os/` 共置 `NOTICE-PSTACK.md` 与完整 `LICENSE-PSTACK`（Copyright (c) 2026 Lauren Tan，SHA256 `bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`）。入口包保留原有 `LICENSE`，不依赖另装 `research-improvement`；两种安装均不依赖 `/tmp/research-os-spec48-upstream` 或其他开发者材料。
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
 

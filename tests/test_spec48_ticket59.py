@@ -25,6 +25,9 @@ CHECK = ROOT / "scripts/check-skills.py"
 LOOP_METHODS = ROOT / "skills/writing-cycle/research-improvement/references/loop-methods.md"
 COMPOSITION = ROOT / "skills/writing-cycle/research-improvement/references/composition-map.md"
 LICENSE = ROOT / "skills/writing-cycle/research-improvement/UPSTREAM-LICENSE.md"
+IMPROVEMENT_NOTICE = ROOT / "skills/writing-cycle/research-improvement/NOTICE.md"
+ENTRY_NOTICE = ROOT / "skills/general/research-os/NOTICE-PSTACK.md"
+ENTRY_LICENSE = ROOT / "skills/general/research-os/LICENSE-PSTACK"
 
 CONTRACT_FILES = (
     CONTINUATION,
@@ -34,6 +37,9 @@ CONTRACT_FILES = (
     LOOP_METHODS,
     COMPOSITION,
     LICENSE,
+    IMPROVEMENT_NOTICE,
+    ENTRY_NOTICE,
+    ENTRY_LICENSE,
 )
 
 
@@ -238,6 +244,36 @@ class CheckerRegistration(unittest.TestCase):
         self.assertIn("NOTICE.md: 缺来源记录 cursor/plugins", joined)
         self.assertIn("UPSTREAM-LICENSE.md: 许可证不存在", joined)
         self.assertIn("dependencies.md: 安装依赖映射不存在", joined)
+
+    def test_checker_rejects_missing_entry_package_pstack_assets(self):
+        module = load_checker()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tracked = copy_contract_fixture(root)
+            (root / ENTRY_LICENSE.relative_to(ROOT)).unlink()
+            (root / ENTRY_NOTICE.relative_to(ROOT)).unlink()
+            problems = module.continuation_contract_problems(root, tracked)
+        joined = "\n".join(problems)
+        self.assertIn("LICENSE-PSTACK: 许可证不存在", joined)
+        self.assertIn("NOTICE-PSTACK.md: 来源说明不存在", joined)
+
+    def test_entry_package_license_is_complete_and_byte_identical(self):
+        module = load_checker()
+        entry_license_rel = ENTRY_LICENSE.relative_to(ROOT)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            tracked = copy_contract_fixture(root)
+            entry_license = root / entry_license_rel
+            source_license = root / LICENSE.relative_to(ROOT)
+            self.assertEqual(entry_license.read_bytes(), source_license.read_bytes())
+            self.assertEqual(module.continuation_contract_problems(root, tracked), [])
+
+            # Truncate the shipped copy: marker-only checks must not accept it.
+            entry_license.write_bytes(entry_license.read_bytes()[:-1])
+            problems = module.continuation_contract_problems(root, tracked)
+            joined = "\n".join(problems)
+            self.assertIn("完整 pstack MIT 字节不一致", joined)
+            self.assertIn("research-improvement 上游 MIT 字节不一致", joined)
 
     def test_continuation_checker_rejects_missing_quota_and_host_neutrality(self):
         module = load_checker()

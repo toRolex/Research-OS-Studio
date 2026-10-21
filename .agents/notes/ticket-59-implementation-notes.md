@@ -96,3 +96,11 @@ node /Users/rolex/.npm/_npx/5606f1555d02ef53/node_modules/skills/bin/cli.mjs \
 - No real research execution, model behavior, long-running host service, production server job, or mathematical result was verified. Static text contracts and installation prove package structure/resource reachability only.
 - The full suite and checker still return non-zero because of the exact nine historical untracked acceptance archive links; no workaround or test skip was added.
 - No PR, issue write, cleanup or worktree removal was done.
+
+## R5 入口单包来源与许可修复（2026-10-21；此前 REJECT 保留）
+
+- **入口与范围**：本轮只处理独立 review 的唯一剩余 R5；起始为原 worktree `t3/a14e0648`、tip `af5e3864bf41c02c9bbf034411b4faebf1546a8f`。按用户明确禁止继续派发，在一个小型、可单独验收的包资产/检查器/反例测试切片内直接完成；不重审、不重写 R1–R4，也不编辑原拒绝报告。已读 `~/.agents/Multi-Agent.md`、`model-availability.md`、`CODING_STANDARDS.md`，遵守当前 luna6 xhigh 与禁用模型约束；加载主仓 `.pi/skills/tdd/SKILL.md` 和 `/Users/rolex/.pi/agent/skills/writing-for-agents/SKILL.md`。测试 seam 取自已批准的 #48/#59 安装、结构与文本合同范围。
+- **TDD 红**：新增入口单包来源/许可缺失守护后、修 checker 前运行 `uv run --offline --with pytest pytest -q -p no:cacheprovider tests/test_spec48_ticket59.py -k checker_rejects_missing_entry_package_pstack_assets`，`1 failed`（期望诊断 `LICENSE-PSTACK: 许可证不存在`，实际 checker 输出为空），确认 R5 漏检。
+- **最小修复与绿**：`skills/general/research-os/` 新增 `NOTICE-PSTACK.md` 与完整 `LICENSE-PSTACK`，保留原有 Matt Pocock `LICENSE`。Notice 标固定 revision `88d47514b82e7c44f00f2b2a72ff6dd12158038c`、上游来源路径、适配范围、MIT/Lauren Tan，并明确独立安装不要求 `research-improvement`；集中来源登记同步到实际文件位置。checker 新增入口资产存在/追踪/来源标记检查、固定许可证 SHA256 与和现有上游许可证逐字节比较。R5 测试含缺失 notice/许可证与截断字节 mutant；`uv run --offline --with pytest pytest -q -p no:cacheprovider tests/test_spec48_ticket59.py -k "entry_package or continuation_checker_reports_missing_assets"` → `3 passed, 17 deselected`。完整许可 1067 bytes，SHA256 `bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`，与 `research-improvement/UPSTREAM-LICENSE.md` byte-identical。
+- **Checker**：`uv run --offline python scripts/check-skills.py` 最终仍 `FAIL: 9`，仅为已报告的九条旧 acceptance archive 链接；本轮中间版本因上游路径未标注 upstream 多报一条级联诊断，调整来源表述后消除，本次无新 checker 诊断。
+- **整合与最终安装复验待记**：当前集成 tip 为 `8b21f78385d89b5f600ccbef7843278a048be0fa`，仅新增 review-only 拒绝记录；提交后需将其合入本 worktree，并在合入后重跑相关测试与真实 Skills CLI 单装/全文件字节及资源可达核验，再补记最终证据。未 push/PR/写 issue/清理 worktree。

@@ -906,6 +906,11 @@ CONTINUATION_MARKERS = (
 CONTINUATION_HOST_BINDINGS = ("~/.cursor", "/loop", "agent-transcripts")
 CONTINUATION_NOTICE = "skills/writing-cycle/research-improvement/NOTICE.md"
 CONTINUATION_LICENSE = "skills/writing-cycle/research-improvement/UPSTREAM-LICENSE.md"
+CONTINUATION_ENTRY_NOTICE = "skills/general/research-os/NOTICE-PSTACK.md"
+CONTINUATION_ENTRY_LICENSE = "skills/general/research-os/LICENSE-PSTACK"
+CONTINUATION_PSTACK_LICENSE_SHA256 = (
+    "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
+)
 CONTINUATION_DEPENDENCIES = "skills/writing-cycle/research-improvement/references/dependencies.md"
 
 
@@ -927,6 +932,28 @@ def continuation_contract_problems(root: Path, tracked_paths: set[str]) -> list[
     required_assets = (
         (CONTINUATION_NOTICE, "来源说明", ("cursor/plugins", FORMAL_UPSTREAM_REVISION, "MIT", "Lauren Tan"), "缺来源记录"),
         (CONTINUATION_LICENSE, "许可证", ("MIT License", "Copyright (c) 2026 Lauren Tan"), "缺 MIT 版权文本"),
+        (
+            CONTINUATION_ENTRY_NOTICE,
+            "来源说明",
+            (
+                "cursor/plugins",
+                FORMAL_UPSTREAM_REVISION,
+                "pstack/skills/poteto-mode/playbooks/",
+                "pstack/LICENSE",
+                "continuation.md",
+                "适配范围",
+                "MIT",
+                "Lauren Tan",
+                "LICENSE-PSTACK",
+            ),
+            "缺入口包来源记录",
+        ),
+        (
+            CONTINUATION_ENTRY_LICENSE,
+            "许可证",
+            ("MIT License", "Copyright (c) 2026 Lauren Tan"),
+            "缺完整 MIT 版权文本",
+        ),
         (CONTINUATION_DEPENDENCIES, "安装依赖映射", ("research-os/references/mandate.md", "research-os/references/batch-authorization.md", "<skills-root>/research-os/", "实际存在且可读", "composition-map.md"), "缺依赖声明"),
     )
     for rel, label, markers, detail in required_assets:
@@ -940,6 +967,14 @@ def continuation_contract_problems(root: Path, tracked_paths: set[str]) -> list[
         for marker in markers:
             if marker not in body:
                 found.append(f"{rel}: {detail} {marker}")
+    entry_license = root / CONTINUATION_ENTRY_LICENSE
+    if entry_license.is_file():
+        entry_license_bytes = entry_license.read_bytes()
+        if hashlib.sha256(entry_license_bytes).hexdigest() != CONTINUATION_PSTACK_LICENSE_SHA256:
+            found.append(f"{CONTINUATION_ENTRY_LICENSE}: 与固定 revision 的完整 pstack MIT 字节不一致")
+        source_license = root / CONTINUATION_LICENSE
+        if source_license.is_file() and entry_license_bytes != source_license.read_bytes():
+            found.append(f"{CONTINUATION_ENTRY_LICENSE}: 与 research-improvement 上游 MIT 字节不一致")
     return found
 
 
