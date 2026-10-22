@@ -183,23 +183,23 @@ class ArenaCapabilityTests(unittest.TestCase):
             readme = tmp / "README.md"
             text = readme.read_text(encoding="utf-8")
             text, badge_count = re.subn(
-                r"https://img\.shields\.io/badge/skills-\d+-green\.svg",
-                "skills",
+                r"https://img\.shields\.io/badge/skills-(?:\d+|suite)-green\.svg",
+                "https://img.shields.io/badge/skills-suite-green.svg",
                 text,
             )
             text, toc_count = re.subn(
-                r"(?m)^- \[\d+ 个 Skill 能力清单\]\(#\d+-个-skill-能力清单\)$",
+                r"(?m)^- \[(?:\d+ 个 )?Skill 能力清单\]\(#(?:\d+-个-)?skill-能力清单\)$",
                 "- [Skill 能力清单](#skill-能力清单)",
                 text,
             )
             text, heading_count = re.subn(
-                r"(?m)^## \d+ 个 Skill 能力清单$",
+                r"(?m)^## (?:\d+ 个 )?Skill 能力清单$",
                 "## Skill 能力清单",
                 text,
             )
             text, description_count = re.subn(
-                r"全套包含 \d+ 个独立技能。",
-                "全套包含可独立使用的技能。",
+                r"(?:全套包含 \d+ 个独立技能。根据触发机制分为两类：|本仓库提供可独立使用的技能，按触发机制分为两类：)",
+                "本仓库提供可独立使用的技能，按触发机制分为两类：",
                 text,
             )
             self.assertEqual(

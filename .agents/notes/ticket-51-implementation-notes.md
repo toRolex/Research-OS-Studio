@@ -10,7 +10,7 @@
 | 入口指针 + README 清单/徽章 + checker 登记/迁移边界 | done | `skills/general/research-os/SKILL.md`、`README.md`、`skills/README.md`、`scripts/check-skills.py`、`references/migration-boundary.md` | 无 |
 | 定向/全套 pytest、静态合同与安装实证 | done | `.agents/notes/ticket51-evidence/{targeted-final,suite-final,checker-final,ruff-final,diff-check-final,install-arena-delivery,install-suite-delivery}.txt` 与各安装 diff（ignored）；独立首轮审查有 findings，第二轮因上游 503 失败 | 无 |
 | 提交 + merge integration tip 复验（原阶段） | done | 原实现 `b17297d`、双方登记 merge `81cc259`、范围/README/回归修复 `d3ca46d`；当时合入 `e84f779` 后定向测试/lint/checker/diff/status 复验 | 本轮继续验收最新本地 tip `b0d8ead`
-| F1 数量门修正、F2 授权偏离记录、Ruff 新告警清理与最终合并复验 | 进行中 | `tests/test_spec48_ticket51.py` 18 passed / 2 subtests passed；Ruff 0.17.1 从 12 项降至与基线相同的 8 项；checker 仍精确 9 项且与基线输出无 diff | 合并 `integration/spec-48` 最新 tip 后复验全套失败名、checker 9 项及逐 AC 证据，再提交
+| F1 数量门修正、F2 授权偏离记录、Ruff 新告警清理与最终合并复验 | done | 2026-10-22 最终复验见文末；merge commit `1006d9e4` 合入 `b0d8ead` | 无
 
 ## 来源亲核（许可与资源）
 
@@ -31,9 +31,9 @@
 
 - 红（实现前）：原笔记记录 `uv run --offline --no-project python -m pytest tests/test_spec48_ticket51.py -q` 为 **14 failed, 1 passed**；当前 worktree 的 uv cache 已不含 pytest，显式 `uv run --no-project --with pytest python -m pytest ...` 已实测可用。
 - 初始交付实证（历史记录）：15 passed；合并后定向 **46 passed, 2 subtests passed**。现状定向重验 **17 passed**，增加了独立调用范围、关键 phase 合同及 README 计数反例。
-- 当前全套重验：**7 failed, 132 passed, 44 subtests passed**。7 项均是既存 `docs/acceptance` evidence tarball 断链导致 checker 非零引发；与 merge 前 `suite-postmerge.txt` 的失败测试逐名一致，新增两项本票测试通过。未屏蔽历史失败，也未将完整测试称为全绿。
-- checker 当前 exit 1，输出仍恰为 9 条历史 `docs/acceptance` 断链；与 merge 前 `checker-postmerge.txt` 逐字 diff 为空。arena 阶段、README 计数与迁移登记检查均无新增问题。
-- 静态：`uv run --no-project ruff check tests/test_spec48_ticket51.py scripts/check-skills.py` 与 `git diff --check` 均通过；提交 `d3ca46d` 后复跑定向测试 17 passed、ruff 通过、checker 仍只有 9 条历史断链、`git diff --check HEAD^ HEAD` 通过，worktree 干净。证据 `ruff-final.txt`、`diff-check-final.txt` 与 `checker-delivered.txt`。
+- 上一轮全套重验（旧树，非本次最终 merge tip）：**7 failed, 132 passed, 44 subtests passed**。当时 7 项均由既存 `docs/acceptance` evidence tarball 断链导致 checker 非零引发；本轮未在整合 tip 重跑全套，不把旧树结果冒称为当前通过。
+- checker 在上一轮及本次最终树均 exit 1，输出 9 条既存 `docs/acceptance` evidence tarball 断链；本轮定向合同测试将这些历史问题排除后通过。尚未证明全仓库 checker 全绿。
+- 上一轮静态记录：Ruff 新增告警已从 12 项降到 8 项；本次最终树复验见文末，`tests/test_spec48_ticket51.py` 单独 Ruff 通过，checker 文件的 8 项为已有基线告警。历史记录路径 `ruff-final.txt`、`diff-check-final.txt` 与 `checker-delivered.txt`。
 
 ## 安装实证
 
@@ -41,7 +41,7 @@
 
 - `add <worktree> -s arena -a claude-code -y` → exit 0；`.claude/skills/arena` 与源目录 `diff -r` 完全一致（SKILL.md/LICENSE/agents/openai.yaml）。
 - 原实现实证：缓存 CLI `skills@1.7.4` 对 arena 单项及当时 40 项全集安装均 exit 0；修改前的历史日志 `install-arena-selected.txt`、`install-arena-all.txt` 保留在 ignored evidence 目录。用户全局安装未触碰。
-- 当前最终修订后复验：arena 单项安装 exit 0，隔离临时项目中的安装副本与源目录 `diff -r` 为空；42 项完整套件安装 exit 0，输出确认 `Found 42 / Installing all 42 / Installed 42`，实际 42 个安装 Skill，安装后的 arena 与源目录精确一致。证据：`install-arena-delivery.txt`、`install-arena-delivery-diff.txt`、`install-suite-delivery.txt`、`install-suite-delivery-diff.txt`；旧套件日志只证明发现/安装清单，未用于声称逐字匹配。
+- 上一轮最终修订后复验：arena 单项安装 exit 0，42 项完整套件安装 exit 0；这是旧树历史证据，不表示最新整合树仍有 42 项。
 
 ## 过程坑（供下一次尝试）
 
@@ -67,11 +67,22 @@
 - 先以 count-free README 反例复现拒绝（原始数量门产生两条诊断），再移除数量门；`test_count_free_readme_manifest_is_accepted` 与清单缺项负例现各自通过。删除 42→39 的徽章损坏测试，改为删除 arena 清单行，避免固定库存数并确保集合检查仍能发现漏项。
 - Ruff 0.17.1 原报告 12 项中，本票新增的 checker `FURB167`、测试 `FURB167`、`I001` 与 `PLW1510` 均已消除；当前余下 8 项与基线相同，未扩大 lint 范围去改写既有 checker 代码。
 
-## 独立审查与修正
+## 独立审查与修正（历史记录）
 
 本节只记载先前发生的事实；上方 F2 已校正其授权状态，不能把两轮派发视为获准或将其结果计作授权证明。第二轮因 luna provider `auth_unavailable / empty_stream` 503 失败，保持 failed，不计作通过。
 
-只读审查代理（luna6 xhigh）指出三项具体缺口：独立调用引用了不存在的「范围」小节；README 徽章/标题仍标 39，当前目录含 42 Skill；关键机制回归合同主要靠宽泛词面断言。主 agent 复核后已修正：独立调用现直接定义授权范围、默认两候选以及何时增加数量，工作区输出不覆盖既有材料；README 徽章/标题、目录锚点同步为 42；checker 与 pytest 增加实际数量一致检查、rubric 必须在 fan-out 前、候选完整阅读/隔离、逐项比较/非机械 graft、数学整合重查、授权范围和 stale badge 负例。新增测试初次执行时意外捕获断言放错段落；按真实 phase 调整断言后测试通过。第 2 轮因 luna 上游 empty_stream 返回 503 未完成；此失败是 review 通道故障，不记作通过审查，也不是产品失败。原始独立审查未发现正文机制缺失，发现的是文档边界与回归覆盖不足。
+只读审查代理（luna6 xhigh）当时指出三项缺口：独立调用引用了不存在的「范围」小节；README 徽章/标题数量过期；关键机制回归合同主要靠宽泛词面断言。早期曾临时同步 README 数量，后续 F1 复核确认不应把数量化表达立为门槛，最终移除 README 数字表达。独立调用范围与 arena 关键机制合同另有修正。第 2 轮因 luna 上游 empty_stream 返回 503 未完成；此失败是 review 通道故障，不记作通过审查，也不是产品失败。原审查发现的是文档边界与回归覆盖不足，不证明数学科研质量。
+
+## 2026-10-22 收尾验收
+
+- 入口判定：这是单票 agent 指令、脚本与合同测试实现；用户明确禁止继续派发，因此当前 worker 直接执行 F1/F2/lint 收尾，不拆分、不创建子任务。`writing-for-agents`、`pre-implement` 与 TDD 的 `SKILL.md` 在本机已配置 skill 根目录中均不存在，无法加载；不将未加载技能描述为已遵循。
+- Git-only 整合：进入时工作区 index 有 67 个 staged 路径、无 unmerged path，但实际 `.git/MERGE_HEAD` 不存在。逐项核对 index 与 `integration/spec-48`：除 #51 的 10 个文件外，staged tree 与 integration tip 一致；四个自动合并冲突的人工并集保留 arena 登记/入口/README/ checker 机制且不覆盖其它票内容。用已核对 tree `c3bb2f3e` 形成双父 merge commit `1006d9e4`（parents：`5e8b255`、`b0d8ead`）；未 reset/clean、未改主目录或 integration。
+- F1 最终行为：README badge、目录锚点/标题及介绍已去掉 Skill 数量；checker 不再要求数字表达或固定库存数，只校验清单中 Skill 路径集合与实际 `SKILL.md` 路径集合相等。正例 `test_count_free_readme_manifest_is_accepted` 在不删清单项的 count-free README 上要求 checker 无新增问题；反例 `test_missing_skill_from_readme_manifest_is_red` 删除 arena 清单行并要求 checker 报清单缺项，未使用 `42→39` 数值反例。
+- F2：本次不追认旧实现两轮子派发。原禁止派发、恢复 brief 漏项、两轮 ID/状态与第二轮 503 failed 已如实记于上方 F2；第二轮不计通过，详见 `/tmp/research-os-spec48-ticket51-review/orchestration-evidence.md`。
+- 测试：`uv run --no-project --with pytest --with pytest-subtests python -m pytest -q tests/test_spec48_ticket51.py` → **18 passed, 2 subtests passed**（最终 README 修改后重跑）。`uv run --no-project python scripts/check-skills.py` → exit 1，仍为 9 条缺失的历史 `docs/acceptance/*.tar.gz` 链接，不属于 #51 新增问题；全仓库 pytest 未在此 merge tip 重跑。
+- Ruff：`ruff==0.17.1` 对 `tests/test_spec48_ticket51.py` → clean；对 `scripts/check-skills.py` → 8 个已有基线告警（EXE001、5×FURB167、SIM102、FURB162），与既有基线同数。本票此前新引入的 FURB167 / I001 / PLW1510 已清除；不为清除无关旧告警扩大 checker 重构范围。
+- 通用 CLI 实证：实际调用缓存 `skills@1.7.4` 对本 worktree 执行 `add <source> -s arena -a claude-code -y`，Found 46 skills、Installed 1 arena；安装副本有 3 个文件，`diff -r` exit 0。隔离项目路径：`/tmp/research-os-spec48-ticket51-cli-BJLEbu/project/.claude/skills/arena`。未触碰用户全局安装。
+- 限制：安装只证明 arena 单项可由通用 CLI 安装且文件精确；未在最新整合 tip 重跑全套安装、全仓库 pytest，亦不证明真实数学研究正确性或所有宿主交互。
 
 ## 边界
 
