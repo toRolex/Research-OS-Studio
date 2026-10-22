@@ -60,7 +60,7 @@ $ git diff --check
 exit 0
 ```
 
-另外运行更广 `tests/test_spec48_ticket58.py tests scripts/test_check_skills_ticket*.py` 曾得 9 failed / 134 passed / 90 subtests：其中 8 项是 checker 固定要求历史九条断链为零导致的基线失败；另 1 项既有全项目角色表断言要求 idea-discovery 保留 `ideator`。新增 playbook 为避免固定分工改为 orchestrator only，独立职责按缺口按需委派；已用有差异的 ticket/checker 范围 67 pass 与 Discovery legacy tests 24 pass 验证。非本票多个旧 contract 测试同样调用全仓 checker 并与历史断链冲突。本次未改这些无关测试或断链材料。
+早期较广 `tests/test_spec48_ticket58.py tests scripts/test_check_skills_ticket*.py` 曾得 9 failed / 134 passed / 90 subtests：8 项源于 checker 所报历史九条断链；另有当时的角色表断言失败，要求 Discovery playbook 保留 `ideator`。该失败记录来自早期 playbook 快照；当前 playbook 明确将 literature、ideator、reviewer 映射为按需职责，并非固定分工。本次没有重跑全项目 tests，故不把历史角色断言外推为当前全绿；已通过的相关 ticket/checker 范围为 69 passed，Discovery legacy 联测为 26 passed。非本票旧 contract 测试可能继续调用 checker 并受历史断链影响；未改无关测试或证据包。
 
 ## F1–F4 定向修复记录（2026-10-21）
 
