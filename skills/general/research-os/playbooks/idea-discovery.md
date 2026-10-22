@@ -1,44 +1,42 @@
 # idea-discovery
 
-只有方向或 brief，要走到 Proposal。本文件编排，不替代叶 skill。
+本 playbook 将一次委托接入可组合的发现能力，不固化路线或阶段顺序。匹配后持续的是用户目标、授权与额度；新证据可改变能力选择，局部工作完成不要求切换用户目标。用户明确说 new task 时，返回入口重匹配，不把旧目标带入新委托。
 
-Gates: none
-
-匹配后跨 turn 保持本路线。用户说 new task 时停止本文件，回到 [入口](../SKILL.md) 重匹配。
-
-## 阶段角色
+## 按需角色
 
 Role: orchestrator
 
-Phase 0、组合配方与Phase 5汇总。
+负责盘点目标、已有材料、已完成成果及未解缺口；按需选择职责并协调交付。下列角色映射供缺口委派使用，不要求每次都调用，也不构成阶段顺序。
 
 Role: literature
 
-Phase 1文献与Phase 3查新。
+按需承担文献范围、来源证据或 prior-work 核对，对应 `research-lit` 与 `novelty-check`。
 
 Role: ideator
 
-Phase 2候选与Phase 4.5细化。
+按需承担候选生成、视角扩展或方法收敛，对应 `idea-generation` 与 `idea-refinement`。
 
 Role: reviewer
 
-Phase 4 fresh 独立评审。
+仅在需要独立挑战时委派给真实独立评审者，对应 `idea-review`；生成者自查不替代该角色。
 
-## 步骤
+按安装后的 Skill 名称定位其目录；读取其完整 `SKILL.md`，并从该 Skill 目录解析共置 `references/`、`templates/` 和许可文件。下表的资源文件名相对于所选 Skill 的对应目录，不依赖仓库源码目录布局。
 
-1. 读完 `skills/idea-cycle/idea-discovery/SKILL.md` 与 `skills/idea-cycle/idea-discovery/references/composition-notes.md`。一次委托内按组合配方连续执行；阶段顺序、章节锚点和缺口降级以 composition-notes 为准。
-2. 按 idea-discovery 做 Phase 0。既有输出路径冲突先保留原件并询问。brief 用 `skills/idea-cycle/idea-discovery/templates/research-brief.md`。
-3. 进入下一阶段前，读完该阶段 skill 全文，再读该文点名且本步要执行的 reference。阶段之间不设默认停点；目标替换、越权、超额、既有文件冲突或证据不可达仍阻塞对应分支。
-4. 按阶段读这些全文：
-   - Phase 1：`skills/idea-cycle/research-lit/SKILL.md`，检索时再读 `skills/idea-cycle/research-lit/references/source-methods.md`
-   - Phase 2：`skills/idea-cycle/idea-generation/SKILL.md`、`skills/idea-cycle/idea-generation/references/generation-methods.md`、`skills/idea-cycle/idea-generation/references/ideation-frameworks.md`。单一表述卡住时再读 `skills/idea-cycle/creative-thinking-for-research/SKILL.md` 与 `skills/idea-cycle/creative-thinking-for-research/references/creative-frameworks.md`
-   - Phase 3：`skills/idea-cycle/novelty-check/SKILL.md`
-   - Phase 4：`skills/idea-cycle/idea-review/SKILL.md` 与 `skills/idea-cycle/idea-review/references/review-task.md`
-   - Phase 4.5：`skills/idea-cycle/idea-refinement/SKILL.md`、`skills/idea-cycle/idea-refinement/references/method-development.md`、`skills/idea-cycle/idea-refinement/references/method-review.md`、`skills/idea-cycle/idea-refinement/templates/proposal.md`
-5. Phase 5 按 `skills/idea-cycle/idea-discovery/templates/discovery-report.md` 合入 `IDEA_DISCOVERY.md` 与获准的 `RESEARCH_PROPOSAL.md`，然后停止。
+| 缺口 | 可选职责 | 读取材料 |
+|---|---|---|
+| 文献覆盖/来源证据不足 | `research-lit` | 读取其 `SKILL.md`；检索时按需读 references/source-methods.md、references/source-verification.md，文件处理时读 references/file-capability-audit.md |
+| 候选不足/视角单一 | `idea-generation`；卡在单一表述时可选 `creative-thinking-for-research` | 读取 `idea-generation` 的 `SKILL.md`，按需读 references/generation-methods.md、references/ideation-frameworks.md；创意能力只在已安装时调用，需用时读 references/creative-frameworks.md |
+| prior work 未核对 | `novelty-check` | 读取其 `SKILL.md` 与本次实际使用的 references/source-verification.md |
+| 需要独立挑战 | `idea-review` | 读取其 `SKILL.md` 与其点名的 references/review-task.md |
+| 需要方法收敛/Proposal | `idea-refinement` | 读取其 `SKILL.md`，按需读 references/method-development.md、references/method-review.md，需要 Proposal 时读模板 templates/proposal.md |
 
-**完成条件**：每个已进入阶段的 skill 正文和本步 reference 都已读完；未读文件不出现在执行记录里。阶段结果、阻塞点和写入路径可核对。
+## 执行与交付
 
-## 停止
+1. 将用户目标拆成可检查缺口，并标出已有材料已经覆盖的职责。
+2. 选择与缺口对应的能力子集；进入每项能力前读取其完整 SKILL.md 与当次所需 reference。叶能力保留自身的来源、独立评审、预算和写入要求。
+3. 可依现有证据重排、跳过已满足职责，或在新增证据后回访前项；记录选择理由、未覆盖范围和每项真实结果。缺少依赖或真实独立 reviewer 时如实 blocked/unavailable。
+4. 按用户要求交付局部结果或综合报告。只有目标包括 Proposal 时才运行 refinement 并交付 Proposal；不默认制造完整流水线产物。
 
-Proposal 交付后停止。不启动 pilot、`experiment-plan`、Validation 或 Writing。目标替换、越权、超额或既有文件冲突仍按委托合同阻塞对应分支。
+**完成条件**：用户本次目标达到，或未达成部分均有可核对的缺口/阻塞；实际读取的文件、完成/省略/blocked 的职责和写入路径可核对。目标替换、越权、超额、既有冲突保留决定门，仅阻塞对应工作。
+
+完成后停止，不自动启动 pilot、实验计划、Validation 或 Writing。

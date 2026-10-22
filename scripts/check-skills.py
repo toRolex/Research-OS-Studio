@@ -986,6 +986,7 @@ RESEARCH_ASSETS = {
     "skills/idea-cycle/research-lit": (
         "LICENSE",
         "references/source-methods.md",
+        "references/file-capability-audit.md",
         "references/source-verification.md",
         "templates/literature-report.md",
     ),
@@ -1033,7 +1034,7 @@ def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
         found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 缺少组合说明")
     else:
         text = composition.read_text(encoding="utf-8")
-        for marker in ("组合配方", "各叶 SKILL.md", "不得跳过", "目标替换", *DISCOVERY_PHASE_LEAVES):
+        for marker in ("组合配方", "Required skills", "DEPENDENCY MISSING / BLOCKED", "子集", "重排", "回访", "目标替换", "候选池与筛选", "收敛与 Proposal", *DISCOVERY_PHASE_LEAVES):
             if marker not in text:
                 found.append(f"skills/idea-cycle/idea-discovery/references/composition-notes.md: 缺「{marker}」")
         if "stage-checkpoint" in text:
@@ -1041,16 +1042,67 @@ def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
     discovery = root / "skills/idea-cycle/idea-discovery/SKILL.md"
     if discovery.is_file():
         text = discovery.read_text(encoding="utf-8")
-        if "stage-checkpoint" in text or "默认停下" in text:
-            found.append("skills/idea-cycle/idea-discovery/SKILL.md: 残留阶段停点语义")
+        if "stage-checkpoint" in text or "一次委托按下方 Phase 1–4.5 连续执行" in text:
+            found.append("skills/idea-cycle/idea-discovery/SKILL.md: 残留路线锁定语义")
+        for marker in ("目标缺口", "子集", "重排", "回访", "全链 Discovery 只是适用时的参考配方"):
+            if marker not in text:
+                found.append(f"skills/idea-cycle/idea-discovery/SKILL.md: 缺组合行为 {marker}")
     playbook = root / "skills/general/research-os/playbooks/idea-discovery.md"
     if playbook.is_file():
         text = playbook.read_text(encoding="utf-8")
-        if "stage-checkpoint" in text:
-            found.append("skills/general/research-os/playbooks/idea-discovery.md: 残留 stage-checkpoint")
+        if "stage-checkpoint" in text or "匹配后跨 turn 保持本路线" in text:
+            found.append("skills/general/research-os/playbooks/idea-discovery.md: 残留路线锁定语义")
+        if "skills/idea-cycle/" in text:
+            found.append("skills/general/research-os/playbooks/idea-discovery.md: 使用仓库源码路径，无法解析安装后的 Skill 资源")
+        if "按安装后的 Skill 名称定位其目录" not in text:
+            found.append("skills/general/research-os/playbooks/idea-discovery.md: 缺安装后 Skill 目录解析规则")
+        for marker in ("缺口", "子集", "重排", "回访"):
+            if marker not in text:
+                found.append(f"skills/general/research-os/playbooks/idea-discovery.md: 缺组合行为 {marker}")
         for rel in DISCOVERY_PHASE_LEAVES:
             if rel not in text:
                 found.append(f"skills/general/research-os/playbooks/idea-discovery.md: 缺组合叶 {rel}")
+    plotting = root / "skills/writing-cycle/academic-plotting/SKILL.md"
+    if plotting.is_file():
+        text = plotting.read_text(encoding="utf-8")
+        if "没有计划时" in text and ("确认选择" in text or "确认候选" in text):
+            found.append("skills/writing-cycle/academic-plotting/SKILL.md: 无条件要求确认普通选图")
+        if "已授权目录内" not in text or "新文件路径" not in text:
+            found.append("skills/writing-cycle/academic-plotting/SKILL.md: 缺授权目录内自主选择新路径")
+    if discovery.is_file():
+        text = discovery.read_text(encoding="utf-8")
+        if "路径由用户确认" in text:
+            found.append("skills/idea-cycle/idea-discovery/SKILL.md: 授权目录内仍要求逐路径批准")
+    if composition.is_file():
+        text = composition.read_text(encoding="utf-8")
+        if "一次委托连续执行下列组合" in text or "不得跳过" in text:
+            found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 固定顺序强制所有职责")
+        install_line = next((line for line in text.splitlines() if "--skill idea-discovery" in line), "")
+        missing = [name for name in DISCOVERY_PHASE_LEAVES if name not in install_line]
+        if missing:
+            found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 成组安装命令缺 Required skills " + ", ".join(missing))
+    audit = root / "skills/idea-cycle/research-lit/references/file-capability-audit.md"
+    if not audit.is_file():
+        found.append("skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺文件能力缺口审计")
+    else:
+        audit_text = audit.read_text(encoding="utf-8")
+        for marker in ("plain text", "PDF", "OCR", "connector", "plotting", "export", "host prerequisite", "not bundled", "No additional external asset is selected in this ticket", "license", "dependencies"):
+            if marker not in audit_text:
+                found.append(f"skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺「{marker}」")
+        audit_rows = (
+            "Search plain text / Markdown",
+            "Read and extract born-digital PDF text",
+            "Read scanned PDFs / image-only documents",
+            "Reference-manager and notes connectors",
+            "Plotting and diagram production",
+            "Figure export and visual inspection",
+        )
+        for topic in audit_rows:
+            prefix = f"| {topic} |"
+            row = next((line for line in audit_text.splitlines() if line.startswith(prefix)), None)
+            cells = row.strip().strip("|").split("|") if row else []
+            if len(cells) != 4 or any(not cell.strip() for cell in cells):
+                found.append(f"skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺文件能力审计条目或覆盖信息 {topic}")
     return found
 
 

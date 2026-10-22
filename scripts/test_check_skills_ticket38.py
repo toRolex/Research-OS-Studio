@@ -267,13 +267,12 @@ class Invocation(unittest.TestCase):
 
 
 IDEA_SKILLS = (
-    "skills/idea-cycle/idea-discovery/SKILL.md",
-    "skills/idea-cycle/research-lit/SKILL.md",
-    "skills/idea-cycle/idea-generation/SKILL.md",
-    "skills/idea-cycle/creative-thinking-for-research/SKILL.md",
-    "skills/idea-cycle/novelty-check/SKILL.md",
-    "skills/idea-cycle/idea-review/SKILL.md",
-    "skills/idea-cycle/idea-refinement/SKILL.md",
+    "research-lit",
+    "idea-generation",
+    "creative-thinking-for-research",
+    "novelty-check",
+    "idea-review",
+    "idea-refinement",
 )
 
 
@@ -290,12 +289,15 @@ class IdeaDiscoveryRoute(unittest.TestCase):
         self.assertEqual(problems, [])
         playbook = ROOT / "skills/general/research-os/playbooks/idea-discovery.md"
         body = playbook.read_text(encoding="utf-8")
+        self.assertNotIn("skills/idea-cycle/", body)
+        self.assertIn("按安装后的 Skill 名称定位其目录", body)
+        self.assertIn("# idea-discovery", body)
         for rel in IDEA_SKILLS:
             self.assertIn(f"`{rel}`", body)
-            self.assertTrue((ROOT / rel).is_file())
+            self.assertTrue((ROOT / "skills/idea-cycle" / rel / "SKILL.md").is_file())
         self.assertIn("一次委托", body)
         self.assertIn("new task", body)
-        tracked = set(IDEA_SKILLS) | {"skills/general/research-os/playbooks/idea-discovery.md"}
+        tracked = {"skills/general/research-os/playbooks/idea-discovery.md"}
         clean = mod.backtick_cascade_problems(
             "skills/general/research-os/playbooks/idea-discovery.md",
             body,

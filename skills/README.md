@@ -5,6 +5,8 @@
 ```bash
 npx skills@latest add toRolex/Research-OS-Studio --list
 npx skills@latest add toRolex/Research-OS-Studio --all
+# Discovery 独立使用须同时安装五个 Required skills（下方逐项说明）
+npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
 ```
 
 这些远程命令读取 GitHub 已发布版本，不会包含尚未合并或 push 的本地修改。验证本地分支时，在一个临时科研项目目录中运行（将绝对路径替换为当前 checkout）：
@@ -33,9 +35,13 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 | 分类 | 目录 | 当前正式 Skill |
 |---|---|---|
 | General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)（可被模型建议；写入仍须确认）、[research-os](general/research-os/SKILL.md)（显式；旧入口 ask-research-os 已删除） |
-| Idea Cycle | `idea-cycle/` | [idea-discovery](idea-cycle/idea-discovery/SKILL.md)（user-invoked 完整 Workflow：方向→检索→候选→查新→独立评审→固定边界收敛，交付 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止）、[research-lit](idea-cycle/research-lit/SKILL.md)、[idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)、[idea-review](idea-cycle/idea-review/SKILL.md)、[idea-refinement](idea-cycle/idea-refinement/SKILL.md)（除 setup 外全部显式调用；用户点名或父流程按路径级联；支持 standalone / composed） |
+| Idea Cycle | `idea-cycle/` | [idea-discovery](idea-cycle/idea-discovery/SKILL.md)（user-invoked 可组合入口：按目标缺口组合必要叶能力，可从现成候选局部开始或回访；仅按用户目标交付报告和/或 Proposal。独立安装需同时装 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，见上方 CLI 命令）、[research-lit](idea-cycle/research-lit/SKILL.md)、[idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)、[idea-review](idea-cycle/idea-review/SKILL.md)、[idea-refinement](idea-cycle/idea-refinement/SKILL.md)（除 setup 外全部显式调用；用户点名或父流程按路径级联；支持 standalone / composed） |
 | Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[experiment-bridge](validation-cycle/experiment-bridge/SKILL.md)（user-invoked；已批准现成计划的一次授权实现到分析审计，不要求先用本产品规划）、[run-experiment](validation-cycle/run-experiment/SKILL.md)、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[proof-orchestrator](validation-cycle/proof-orchestrator/SKILL.md)（user-invoked；单 obligation 长期续接）、[create-formal-verification-skill](validation-cycle/create-formal-verification-skill/SKILL.md)（user-invoked；按问题选工具建立可重跑形式化检查，记录假设/版本/同步与编码对应审计，不强制全链形式化）、[maintain-formal-verification-skill](validation-cycle/maintain-formal-verification-skill/SKILL.md)（user-invoked；代码变化后重新对齐检查，重跑并区分漂移与 bug）、[proof-review](validation-cycle/proof-review/SKILL.md)（显式调用，用户可点名或级联；只读，支持 standalone / composed）、[proof-repair](validation-cycle/proof-repair/SKILL.md)（user-invoked；显式授权的有界修复）、[analyze-results](validation-cycle/analyze-results/SKILL.md)、[result-to-claim](validation-cycle/result-to-claim/SKILL.md)（user-invoked；把已有结果转为范围受限的候选 Claim，产出后停止）、[formula-derivation](validation-cycle/formula-derivation/SKILL.md)、[proof-writer](validation-cycle/proof-writer/SKILL.md)（除 setup 外全部显式调用；用户点名或父流程按路径级联；支持 standalone / composed） |
 | Writing Cycle | `writing-cycle/` | [paper-writing](writing-cycle/paper-writing/SKILL.md)（`/research-os` 的 paper-writing / general；叶 skill 自带授权门，交付候选稿与审查报告后停止）、[ml-paper-writing](writing-cycle/ml-paper-writing/SKILL.md)（paper-writing / ml，不经通用入口；seeds、error bars、compute、limitations；叶 skill 自带授权门）、[systems-paper-writing](writing-cycle/systems-paper-writing/SKILL.md)（paper-writing / systems，不经通用入口；design rationale、end-to-end、scalability；缺扩展性记缺口；叶 skill 自带授权门）、[paper-plan](writing-cycle/paper-plan/SKILL.md)（显式调用；用户点名或父流程按路径级联；支持 standalone / composed）、[paper-drafting](writing-cycle/paper-drafting/SKILL.md)（显式调用；用户点名或父流程按路径级联；支持 standalone / composed；从现成计划与原始证据起草，不代替总 Workflow）、[academic-plotting](writing-cycle/academic-plotting/SKILL.md)（显式调用；用户点名或父流程按路径级联；支持 standalone / composed）、[paper-compile](writing-cycle/paper-compile/SKILL.md)（check-only，显式调用，用户可点名或级联；standalone / composed）、[paper-compile-repair](writing-cycle/paper-compile-repair/SKILL.md)（user-invoked，显式授权修复）、[citation-audit](writing-cycle/citation-audit/SKILL.md)（显式调用，支持 standalone / composed；仅检测与报告）、[apply-citation-fixes](writing-cycle/apply-citation-fixes/SKILL.md)（user-invoked；精确 diff 后授权应用及复验）、[paper-claim-audit](writing-cycle/paper-claim-audit/SKILL.md)、[claim-stress-test](writing-cycle/claim-stress-test/SKILL.md)（后两者均显式调用，用户可点名或级联；支持 standalone / composed）、[rebuttal](writing-cycle/rebuttal/SKILL.md)（user-invoked 叶入口，也由 `/research-os` rebuttal 路线级联；策略与措辞门保留，不自动补实验或外发）、[paper-talk](writing-cycle/paper-talk/SKILL.md)（user-invoked 叶入口，也由 paper-talk 路线级联；授权与大纲门保留，产出 slides、notes、script，不自动发布）、[resubmit-pipeline](writing-cycle/resubmit-pipeline/SKILL.md)（user-invoked 叶入口，也由 resubmit 路线级联；范围与改动门保留，新目录适配并完整保留旧稿，不自动投稿）、[research-improvement](writing-cycle/research-improvement/SKILL.md)（跨流程 user-invoked：对 Claims/草稿、方法与代码、原始结果、当前 diff 与历史 findings 做一次授权内的有界 review／repair／re-review；可在批准范围内修代码、补分析、改稿，并在另行授权下补实验；不是只读审计，不自动启动 experiment-bridge、paper-writing 或专项修复入口） |
+
+## idea-discovery 单项安装依赖
+
+通用 Skills CLI 的 --skill 多选只安装列出的 Skill，不会自动解析 idea-discovery 的逻辑兄弟依赖。单独安装它时，必须同时安装五个 Required skills；见上方可复制的成组 CLI 命令。若 CLI 版本不支持多选，可分次安装或安装整包。安装后按宿主实际目录核对 Skill 正文与共置资源；只安装入口时，依赖能力工作必须保持 blocked。
 
 只有实际含 `SKILL.md` 的目录才是可安装 Skill。不为分类创建占位 Skill，不把保留的旧工程纳入这份清单。
 
@@ -61,9 +67,9 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 
 Writing Cycle 审查能力均只读审查研究材料、输出 Markdown 报告与建议：`paper-claim-audit` 核对数字、比较、配置、图表/caption 和实验覆盖；`claim-stress-test` 由两个 fresh reviewer 分别构造整篇拒稿攻击、对照原材料逐点裁决。standalone 独立交付报告，composed 贡献父 Workflow 的 canonical report；默认不改稿，报告后停止。Claim / Citation / Proof / Stress 并列按需，不自动串联；Citation 与 Proof 不由这两项替代，其入口由独立票交付。
 
-## 完整 Idea Discovery Workflow
+## Idea Discovery 组合验收
 
-`/research-os` 的 `idea-discovery` 路线按 playbook 在一次委托内连续编排主链。叶入口仍可直接点名。Phase 0 读取 brief／参考论文，随后执行 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，把各章节合入单一 `IDEA_DISCOVERY.md`，并写入 `RESEARCH_PROPOSAL.md`。阶段顺序和缺口降级由 `idea-cycle/idea-discovery/references/composition-notes.md` 管理；各叶仍先读自身 SKILL.md，保留检索、生成、查新、独立评审与细化的独立要求。目标替换、越权、超额、既有文件冲突或证据不可达只阻塞对应分支。不运行 pilot、不制定实验计划、不进入 Validation 或 Writing。
+`/research-os` 的 `idea-discovery` 路线先依目标缺口和已有材料选择需要的能力子集，并可重排或回访。全链 Discovery 是适用时的参考，不要求每次完成 Proposal。各叶仍先读自身 SKILL.md，保留检索、生成、查新、独立评审与细化的独立要求。目标替换、越权、超额、既有文件冲突或证据不可达只阻塞对应工作；缺少 Required skill 则标记 blocked 并给成组安装命令。除非用户目标包含，否则不强制产出完整报告或 Proposal；不自动运行 pilot、不制定实验计划、不进入 Validation 或 Writing。
 
 在可丢弃项目中手工验收：
 

@@ -34,11 +34,11 @@ MIGRATED_TICKET58 = (
 )
 
 PHASE_LEAVES = {
-    "文献 Landscape": "research-lit",
-    "候选生成与筛选": "idea-generation",
-    "查新": "novelty-check",
-    "独立评审": "idea-review",
-    "固定边界收敛": "idea-refinement",
+    "文献范围或来源证据不足": "research-lit",
+    "缺少候选或探索视角不足": "idea-generation",
+    "候选主张尚未对照 prior work": "novelty-check",
+    "需要独立挑战与裁决": "idea-review",
+    "方法选择/收敛或 Proposal 未完成": "idea-refinement",
 }
 
 
@@ -57,7 +57,7 @@ def discovered() -> set[str]:
 
 def checker_problems(root: Path) -> list[str]:
     result = subprocess.run(
-        [sys.executable if False else "uv", "run", "python", str(root / "scripts/check-skills.py")],
+        ["uv", "run", "python", str(root / "scripts/check-skills.py")],
         cwd=root,
         capture_output=True,
         text=True,
@@ -117,30 +117,30 @@ class MigratedSet(unittest.TestCase):
 
 
 class DiscoveryRecipe(unittest.TestCase):
-    def test_discovery_is_composable_in_one_mandate(self):
+    def test_discovery_composes_from_current_gaps_and_existing_results(self):
         text = (DISCOVERY / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("一次委托", text)
         self.assertIn("组合配方", text)
-        self.assertNotIn("stage-checkpoint", text)
-        self.assertNotIn("默认停下", text)
-        self.assertIn("Phase 1", text)
-        self.assertIn("Phase 4.5", text)
+        self.assertIn("目标缺口", text)
+        self.assertIn("子集", text)
+        self.assertIn("重排", text)
+        self.assertIn("回访", text)
+        self.assertIn("已有成果", text)
+        self.assertNotIn("一次委托按下方 Phase", text)
 
-    def test_recipe_preserves_independent_leaf_requirements(self):
+    def test_recipe_preserves_independent_leaf_responsibilities(self):
         text = COMPOSITION.read_text(encoding="utf-8")
-        self.assertIn("各叶 SKILL.md", text)
-        for phase, leaf in PHASE_LEAVES.items():
-            with self.subTest(phase=phase):
-                self.assertIn(phase, text)
+        self.assertIn("Required skills", text)
+        self.assertNotIn("不得跳过", text)
+        for label, leaf in PHASE_LEAVES.items():
+            with self.subTest(responsibility=label):
+                self.assertIn(label, text)
                 self.assertIn(leaf, text)
-        self.assertIn("不得跳过", text)
-        self.assertIn("目标替换", text)
 
-    def test_entry_playbook_follows_mandate_and_real_leaves(self):
+    def test_entry_playbook_follows_current_goal_and_real_leaves(self):
         text = PLAYBOOK.read_text(encoding="utf-8")
-        self.assertIn("Gates: none", text)
-        self.assertIn("一次委托", text)
-        self.assertNotIn("stage-checkpoint", text)
+        self.assertIn("缺口", text)
+        self.assertIn("重排", text)
+        self.assertIn("回访", text)
         for leaf in PHASE_LEAVES.values():
             self.assertIn(leaf, text)
 
@@ -209,6 +209,79 @@ class SharedAssets(unittest.TestCase):
         self.assertIn("已有环境", plotting)
 
 
+class Ticket58ReviewRegressions(unittest.TestCase):
+    def test_discovery_recipe_is_gap_driven_not_a_locked_route(self):
+        text = (DISCOVERY / "SKILL.md").read_text(encoding="utf-8")
+        for marker in ("目标缺口", "适用职责的子集", "重排", "回访", "全链 Discovery 只是适用时的参考配方"):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, text)
+        self.assertNotIn("按下方 Phase 1–4.5 连续执行", text)
+        composition = COMPOSITION.read_text(encoding="utf-8")
+        self.assertNotIn("不得跳过", composition)
+        playbook = PLAYBOOK.read_text(encoding="utf-8")
+        self.assertNotIn("匹配后跨 turn 保持本路线", playbook)
+
+    def test_discovery_playbook_resolves_required_reads_from_installed_skill_roots(self):
+        playbook = PLAYBOOK.read_text(encoding="utf-8")
+        self.assertNotIn("skills/idea-cycle/", playbook)
+        self.assertIn("按安装后的 Skill 名称定位其目录", playbook)
+        roots = {
+            "research-lit": SKILLS / "idea-cycle/research-lit",
+            "idea-generation": SKILLS / "idea-cycle/idea-generation",
+            "creative-thinking-for-research": SKILLS / "idea-cycle/creative-thinking-for-research",
+            "novelty-check": SKILLS / "idea-cycle/novelty-check",
+            "idea-review": SKILLS / "idea-cycle/idea-review",
+            "idea-refinement": SKILLS / "idea-cycle/idea-refinement",
+        }
+        resources = {
+            "research-lit": ("SKILL.md", "references/source-methods.md", "references/source-verification.md", "references/file-capability-audit.md"),
+            "idea-generation": ("SKILL.md", "references/generation-methods.md", "references/ideation-frameworks.md"),
+            "creative-thinking-for-research": ("SKILL.md", "references/creative-frameworks.md"),
+            "novelty-check": ("SKILL.md", "references/source-verification.md"),
+            "idea-review": ("SKILL.md", "references/review-task.md"),
+            "idea-refinement": ("SKILL.md", "references/method-development.md", "references/method-review.md", "templates/proposal.md"),
+        }
+        for skill, required in resources.items():
+            with self.subTest(skill=skill):
+                self.assertIn(f"`{skill}`", playbook)
+                for resource in required:
+                    self.assertIn(resource, playbook)
+                    candidate = roots[skill] / ("SKILL.md" if resource == "SKILL.md" else resource)
+                    self.assertTrue(candidate.is_file(), f"{skill}/{resource}")
+
+    def test_composed_plotting_and_discovery_paths_inherit_authorization(self):
+        plotting = (SKILLS / "writing-cycle/academic-plotting/SKILL.md").read_text(encoding="utf-8")
+        discovery = (DISCOVERY / "SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("已授权材料位置自行确定有依据的图表", plotting)
+        self.assertIn("已授权目录内可自行选择不冲突的新文件名", discovery)
+        self.assertNotIn("提出候选图表并确认选择", plotting)
+        self.assertNotIn("路径由用户确认", discovery)
+
+    def test_dependency_contract_and_group_install_are_user_reachable(self):
+        text = (DISCOVERY / "references/composition-notes.md").read_text(encoding="utf-8")
+        readme = (SKILLS / "README.md").read_text(encoding="utf-8")
+        dependencies = ("research-lit", "idea-generation", "novelty-check", "idea-review", "idea-refinement")
+        for name in dependencies:
+            with self.subTest(dependency=name):
+                self.assertIn("## Required skills", text)
+                self.assertIn(name, text)
+                self.assertIn(name, readme)
+                self.assertIn(name, (DISCOVERY / "references/composition-notes.md").read_text(encoding="utf-8"))
+        self.assertIn("DEPENDENCY MISSING / BLOCKED", text)
+        install = next(line for line in readme.splitlines() if "--skill idea-discovery" in line)
+        self.assertIn("--skill 多选只安装列出的 Skill", readme)
+        for name in dependencies:
+            self.assertIn(name, install)
+
+    def test_file_capability_audit_covers_scope_and_host_prerequisites(self):
+        audit = (SKILLS / "idea-cycle/research-lit/references/file-capability-audit.md").read_text(encoding="utf-8")
+        for marker in ("plain text", "PDF", "OCR", "connector", "plotting", "export", "host prerequisite", "not bundled"):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, audit)
+        self.assertIn("No additional external asset is selected in this ticket", audit)
+        self.assertIn("a target host and concrete gap", audit)
+        self.assertIn("license, resource reachability and dependencies", audit)
+
 class CheckerCounterexamples(unittest.TestCase):
     def test_current_tree_has_no_new_breakage(self):
         self.assertEqual(fresh_problems(ROOT), [])
@@ -228,6 +301,73 @@ class CheckerCounterexamples(unittest.TestCase):
             stage_skill(work.path)
             problems = fresh_problems(work.path)
             self.assertTrue(any("source-methods.md" in item for item in problems), problems)
+
+    def test_locked_discovery_route_is_red(self):
+        with WorkCopy() as work:
+            path = work.path / "skills/idea-cycle/idea-discovery/SKILL.md"
+            text = path.read_text(encoding="utf-8").replace(
+                "先据目标和已有成果列出待解决缺口，再选择适用职责的子集；可按问题需要重排、回访或结束某项职责。",
+                "一次委托按下方 Phase 1–4.5 连续执行。",
+            )
+            path.write_text(text, encoding="utf-8")
+            stage_skill(work.path)
+            problems = fresh_problems(work.path)
+            self.assertTrue(any("组合行为" in item or "固定顺序" in item for item in problems), problems)
+
+    def test_unapproved_plot_choice_is_red(self):
+        with WorkCopy() as work:
+            path = work.path / "skills/writing-cycle/academic-plotting/SKILL.md"
+            text = path.read_text(encoding="utf-8").replace(
+                "composed 遵循父委托内的图数与范围，在已授权材料位置自行确定有依据的图表并记录选择理由；",
+                "没有计划时提出候选图表并确认选择。composed 遵循父委托内的图数与范围，在已授权材料位置自行确定有依据的图表并记录选择理由；",
+            )
+            path.write_text(text, encoding="utf-8")
+            stage_skill(work.path)
+            problems = fresh_problems(work.path)
+            self.assertTrue(any("无条件要求确认普通选图" in item for item in problems), problems)
+
+    def test_incomplete_discovery_install_command_is_red(self):
+        with WorkCopy() as work:
+            path = work.path / COMPOSITION.relative_to(ROOT)
+            text = path.read_text(encoding="utf-8").replace(
+                "--skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement",
+                "--skill idea-discovery research-lit idea-generation novelty-check idea-review",
+            )
+            path.write_text(text, encoding="utf-8")
+            stage_skill(work.path)
+            problems = fresh_problems(work.path)
+            self.assertTrue(any("成组安装命令缺 Required skills" in item for item in problems), problems)
+
+    def test_missing_file_capability_audit_is_red(self):
+        with WorkCopy() as work:
+            path = work.path / "skills/idea-cycle/research-lit/references/file-capability-audit.md"
+            path.unlink()
+            stage_skill(work.path)
+            problems = fresh_problems(work.path)
+            self.assertTrue(any("缺文件能力缺口审计" in item or "file-capability-audit.md" in item for item in problems), problems)
+
+    def test_missing_scanned_pdf_audit_row_is_red(self):
+        with WorkCopy() as work:
+            path = work.path / "skills/idea-cycle/research-lit/references/file-capability-audit.md"
+            lines = path.read_text(encoding="utf-8").splitlines()
+            removed = [line for line in lines if line.startswith("| Read scanned PDFs / image-only documents |")]
+            self.assertEqual(len(removed), 1)
+            path.write_text("\n".join(line for line in lines if line not in removed) + "\n", encoding="utf-8")
+            stage_skill(work.path)
+            problems = fresh_problems(work.path)
+            self.assertTrue(any("缺文件能力审计条目" in item and "scanned PDFs" in item for item in problems), problems)
+
+    def test_discovery_playbook_source_tree_path_is_red(self):
+        with WorkCopy() as work:
+            path = work.path / "skills/general/research-os/playbooks/idea-discovery.md"
+            text = path.read_text(encoding="utf-8").replace(
+                "## 执行与交付",
+                "读取 `skills/idea-cycle/research-lit/SKILL.md`。\n\n## 执行与交付",
+            )
+            path.write_text(text, encoding="utf-8")
+            stage_skill(work.path)
+            problems = fresh_problems(work.path)
+            self.assertTrue(any("仓库源码路径" in item for item in problems), problems)
 
 
 class FlatInstall(unittest.TestCase):

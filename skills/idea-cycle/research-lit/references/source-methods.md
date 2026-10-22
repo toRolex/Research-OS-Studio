@@ -1,5 +1,7 @@
 # Literature source methods
 
+For the supported file types, extraction boundaries, connector prerequisites and bundled-versus-host capabilities, consult the [file capability audit](file-capability-audit.md). It documents coverage and limits; it is not a converter/OCR implementation.
+
 ## Existing materials
 
 ### Reference-manager library
