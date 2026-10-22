@@ -20,8 +20,10 @@ REQUIRED_ROUTES = (
     ("resubmit", "—", "no"),
     ("paper-talk", "—", "no"),
     ("improvement", "—", "no"),
+    ("continuation", "—", "no"),
     ("pickup", "—", "no"),
     ("custom", "—", "no"),
+    ("swarm", "—", "no"),  # #50：新增并行覆盖路线
 )
 
 

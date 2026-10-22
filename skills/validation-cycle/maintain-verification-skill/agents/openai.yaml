@@ -1,0 +1,5 @@
+interface:
+  display_name: "maintain-verification-skill"
+  short_description: "把项目行为验证 Skill 与特征覆盖映射对齐当前应用：按特征源读、真实驱动、区分漂移与产品缺陷。"
+policy:
+  allow_implicit_invocation: false
