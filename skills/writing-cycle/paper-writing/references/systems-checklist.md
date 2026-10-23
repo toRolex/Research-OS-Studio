@@ -1,6 +1,6 @@
 # 系统论文投稿前自检清单
 
-供 [SKILL.md](../SKILL.md) 第 5、9 节使用：投稿前按阶段自检。改编自 Orchestra `systems-paper-writing/references/checklist.md`，许可见共置 `LICENSE-Orchestra.txt`。venue 专属项按 [venue 与 reviewer 方法](venue-and-reviewer.md) 现场核对当前官方 CFP，不缓存年度规则。
+供统一 `paper-writing` 的 Systems 分支在投稿前按阶段自检。改编自 Orchestra `systems-paper-writing/references/checklist.md`，许可见本 Skill 共置 `../LICENSE-Orchestra.txt`。venue 专属项按 [venue 与 reviewer 方法](systems-venue-and-reviewer.md) 现场核对当前官方 CFP，不缓存年度规则。
 
 ## Stage 1 结构完整
 

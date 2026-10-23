@@ -140,7 +140,7 @@ class Cascade(unittest.TestCase):
     def test_outside_research_os_not_scanned_by_repo_helper(self):
         mod = load()
         self.assertFalse(
-            mod.cascade_scope("skills/writing-cycle/ml-paper-writing/references/sources.md")
+            mod.cascade_scope("skills/writing-cycle/paper-writing/references/sources.md")
         )
         self.assertTrue(mod.cascade_scope("skills/general/research-os/playbooks/custom.md"))
 

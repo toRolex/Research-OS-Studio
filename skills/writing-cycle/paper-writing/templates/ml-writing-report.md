@@ -1,6 +1,6 @@
 # ML Paper Writing 报告
 
-这是 [ML Paper Writing](../SKILL.md) 的自然 Markdown 报告骨架，不是机器 schema，也不替代候选稿与审查报告本身。按实际读到的原始材料填写；无法定位的项写 `unknown`，缺失的科学事实写可见缺口，不要省略。被组合能力贡献对应章节，不另建重复主报告。
+这是统一 [paper-writing](../SKILL.md) 的 ML/AI 专项自然 Markdown 报告骨架，不是机器 schema，也不替代候选稿与审查报告本身。按实际读到的原始材料填写；无法定位的项写 `unknown`，缺失的科学事实写可见缺口，不要省略。被组合能力贡献对应章节，不另建重复主报告。
 
 **Input / 材料范围**：[实际读取的路径：结果表、日志、配置、代码、已有计划／稿件]
 **Venue**：[用户指定值；未指定写「未指定，不设默认 venue，合规未核对」]
@@ -88,7 +88,7 @@
 - 需要补实验的 Claim：[未授权，交用户决定]
 - 停止原因：[授权到期／轮数到限／预算耗尽／材料不足／关键事实缺失／用户要求停止／完成]
 - 已写入清单 vs 批准清单：[一致／差异]
-- 未启动的 Workflow（`paper-writing`、`systems-paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement` 均未启动）：[实际逐项核对]
+- 未启动的其他 Workflow（`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement`）：[实际逐项核对]
 - User options：[接受候选稿 / 继续修订 / 将需补实验的 Claim 交用户另行处理（如转交 `research-improvement`） / 显式调用专用修复或转投入口 / 停止]
 
 > 本报告只记录事实、审查发现与修订记录。编译成功与审查通过不证明论文论断成立、可投稿或已被接受；是否投稿、发布或接受由用户决定。

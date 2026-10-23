@@ -21,37 +21,40 @@ DOMAIN_RESOURCES = {
         "skills/writing-cycle/paper-writing/SKILL.md",
     ),
     "ml": (
-        "skills/writing-cycle/paper-writing/references/standards.md",
         "skills/writing-cycle/paper-writing/references/ml-ai-standards.md",
+        "skills/writing-cycle/paper-writing/references/ml-experiment-reporting.md",
+        "skills/writing-cycle/paper-writing/references/ml-reviewer-expectations.md",
+        "skills/writing-cycle/paper-writing/references/ml-venue-checklists.md",
+        "skills/writing-cycle/paper-writing/templates/ml-writing-report.md",
+        "skills/writing-cycle/paper-writing/references/sources.md",
+        "skills/writing-cycle/paper-writing/LICENSE-ML.txt",
     ),
     "systems": (
-        "skills/writing-cycle/paper-writing/references/standards.md",
         "skills/writing-cycle/paper-writing/references/systems-standards.md",
+        "skills/writing-cycle/paper-writing/references/systems-writing-methods.md",
+        "skills/writing-cycle/paper-writing/references/systems-evaluation-methods.md",
+        "skills/writing-cycle/paper-writing/references/systems-checklist.md",
+        "skills/writing-cycle/paper-writing/references/systems-venue-and-reviewer.md",
+        "skills/writing-cycle/paper-writing/templates/systems-paper-writing-report.md",
+        "skills/writing-cycle/paper-writing/references/sources.md",
+        "skills/writing-cycle/paper-writing/LICENSE-ARIS.txt",
+        "skills/writing-cycle/paper-writing/LICENSE-Orchestra.txt",
     ),
 }
-DOMAIN_TARGETS = (
-    "skills/writing-cycle/paper-writing/references/ml-ai-standards.md",
-    "skills/writing-cycle/paper-writing/references/systems-standards.md",
+DOMAIN_TARGETS = tuple(
+    dict.fromkeys(path for variant in ("ml", "systems") for path in DOMAIN_RESOURCES[variant])
 )
 STANDARDS_TEXT = (
     "# Standards\n\n"
     "| Domain | Reference |\n|---|---|\n"
-    "| ML / AI | [ML/AI standards](ml-ai-standards.md) |\n"
-    "| Systems | [Systems standards](systems-standards.md) |\n"
+    "| ML / AI | [ML/AI standards](ml-ai-standards.md); [experiment reporting](ml-experiment-reporting.md); "
+    "[reviewer expectations](ml-reviewer-expectations.md); [venue checklist](ml-venue-checklists.md); "
+    "[report template](../templates/ml-writing-report.md) |\n"
+    "| Systems | [Systems standards](systems-standards.md); [writing methods](systems-writing-methods.md); "
+    "[evaluation](systems-evaluation-methods.md); [checklist](systems-checklist.md); "
+    "[venue/reviewer](systems-venue-and-reviewer.md); [report template](../templates/systems-paper-writing-report.md) |\n"
+    "\n[Sources and licenses](sources.md)\n"
 )
-COMPATIBILITY_RESOURCES = {
-    "ml-paper-writing": (
-        "experiment-reporting.md",
-        "reviewer-expectations.md",
-        "venue-checklists.md",
-    ),
-    "systems-paper-writing": (
-        "systems-writing-methods.md",
-        "evaluation-methods.md",
-        "checklist.md",
-        "venue-and-reviewer.md",
-    ),
-}
 HARD_STOPS = ("paper-compile-repair", "apply-citation-fixes")
 
 
@@ -84,7 +87,12 @@ def touch_tree(root: Path, paths: tuple[str, ...]) -> None:
     for path in paths:
         target = root / path
         target.parent.mkdir(parents=True, exist_ok=True)
-        content = STANDARDS_TEXT if path.endswith("references/standards.md") else "leaf\n"
+        if path.endswith("references/standards.md"):
+            content = STANDARDS_TEXT
+        elif path.endswith("references/sources.md"):
+            content = "../LICENSE-ML.txt ../LICENSE-ARIS.txt ../LICENSE-Orchestra.txt\n"
+        else:
+            content = "leaf\n"
         target.write_text(content, encoding="utf-8")
 
 
@@ -115,7 +123,7 @@ class PaperWritingRoutes(unittest.TestCase):
             for path in DOMAIN_RESOURCES[variant]:
                 target = ROOT / path
                 self.assertTrue(target.is_file(), path)
-                if path.startswith(("skills/writing-cycle/ml-paper-writing/references/", "skills/writing-cycle/systems-paper-writing/references/")):
+                if variant != "general" and path in DOMAIN_TARGETS and "/LICENSE-" not in path:
                     self.assertIn(Path(path).name, standards_text, path)
             self.assertIn("授权", body)
 
@@ -182,13 +190,11 @@ class PaperWritingRoutes(unittest.TestCase):
                 for path in resources:
                     self.assertTrue((ROOT / path).is_file(), path)
 
-    def test_specialist_compatibility_skills_keep_their_full_resources(self):
-        for name, resources in COMPATIBILITY_RESOURCES.items():
-            for resource in resources:
-                path = ROOT / "skills/writing-cycle" / name / "references" / resource
-                self.assertTrue(path.is_file(), str(path))
-            skill = ROOT / "skills/writing-cycle" / name / "SKILL.md"
-            self.assertTrue(skill.is_file(), name)
+    def test_professional_resources_and_licenses_have_one_owner(self):
+        for path in DOMAIN_TARGETS:
+            self.assertTrue((ROOT / path).is_file(), path)
+        for name in ("ml-paper-writing", "systems-paper-writing"):
+            self.assertFalse((ROOT / "skills/writing-cycle" / name / "SKILL.md").exists(), name)
 
 
 if __name__ == "__main__":

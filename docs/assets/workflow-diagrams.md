@@ -76,11 +76,11 @@ mindmap
       proof-writer
       proof-review
       proof-repair
-      proof-orchestrator
+      /research-os proof (method references on demand)
     Writing Cycle
       paper-writing
-      ml-paper-writing
-      systems-paper-writing
+      ML/AI professional references
+      Systems professional references
       paper-plan
       paper-drafting
       academic-plotting

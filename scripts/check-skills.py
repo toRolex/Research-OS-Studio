@@ -358,15 +358,32 @@ PAPER_WRITING_REQUIRED = (
     "skills/writing-cycle/paper-writing/references/standards.md",
 )
 PAPER_WRITING_DOMAIN_RESOURCES = {
-    "ml": "ml-ai-standards.md",
-    "systems": "systems-standards.md",
+    "ml": (
+        "ml-ai-standards.md",
+        "ml-experiment-reporting.md",
+        "ml-reviewer-expectations.md",
+        "ml-venue-checklists.md",
+        "../templates/ml-writing-report.md",
+    ),
+    "systems": (
+        "systems-standards.md",
+        "systems-writing-methods.md",
+        "systems-evaluation-methods.md",
+        "systems-checklist.md",
+        "systems-venue-and-reviewer.md",
+        "../templates/systems-paper-writing-report.md",
+    ),
+}
+PAPER_WRITING_SOURCE_LICENSES = {
+    "ml": ("LICENSE-ML.txt",),
+    "systems": ("LICENSE-ARIS.txt", "LICENSE-Orchestra.txt"),
 }
 
 
 def paper_writing_domain_standard_problems(variant: str, root: Path) -> list[str]:
     """专业标准必须从统一 Skill 的安装包内真实可达。"""
-    resource = PAPER_WRITING_DOMAIN_RESOURCES.get(variant)
-    if resource is None:
+    resources = PAPER_WRITING_DOMAIN_RESOURCES.get(variant)
+    if resources is None:
         return []
     standards = root / "skills/writing-cycle/paper-writing/references/standards.md"
     if not standards.is_file():
@@ -378,13 +395,27 @@ def paper_writing_domain_standard_problems(variant: str, root: Path) -> list[str
         for target in re.findall(r"\[[^\]]+\]\(([^)\s]+)", text)
         if not target.startswith(("http:", "https:", "mailto:"))
     }
-    if resource not in links:
-        return [f"paper-writing/{variant} standards.md 缺专业参考链接：{resource}"]
+    found: list[str] = []
+    for resource in resources:
+        if resource not in links:
+            found.append(f"paper-writing/{variant} standards.md 缺专业资源链接：{resource}")
+            continue
+        target = (standards.parent / resource).resolve()
+        package = (root / "skills/writing-cycle/paper-writing").resolve()
+        if package not in target.parents or not target.is_file():
+            found.append(f"paper-writing/{variant} 专业资源不可达：{resource}")
 
-    target = (standards.parent / resource).resolve()
-    if root.resolve() not in target.parents or not target.is_file():
-        return [f"paper-writing/{variant} 专业参考不可达：{resource}"]
-    return []
+    sources = standards.parent / "sources.md"
+    source_text = sources.read_text(encoding="utf-8") if sources.is_file() else ""
+    if "sources.md" not in links:
+        found.append(f"paper-writing/{variant} standards.md 缺来源许可记录链接：sources.md")
+    for license_name in PAPER_WRITING_SOURCE_LICENSES[variant]:
+        license_path = standards.parent.parent / license_name
+        if not license_path.is_file():
+            found.append(f"paper-writing/{variant} 缺共置来源许可：{license_name}")
+        if f"../{license_name}" not in source_text:
+            found.append(f"paper-writing/{variant} sources.md 未指向共置许可：{license_name}")
+    return found
 
 
 def paper_writing_variant_problems(variant: str, text: str, root: Path) -> list[str]:
@@ -1169,7 +1200,6 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/validation-cycle/formula-derivation/SKILL.md": "委托继承",
     "skills/validation-cycle/proof-writer/SKILL.md": "委托继承",
     "skills/validation-cycle/proof-repair/SKILL.md": "委托继承",
-    "skills/validation-cycle/proof-orchestrator/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-writing/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-plan/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-drafting/SKILL.md": "委托继承",
@@ -1179,8 +1209,6 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/writing-cycle/apply-citation-fixes/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-claim-audit/SKILL.md": "委托继承",
     "skills/writing-cycle/claim-stress-test/SKILL.md": "委托继承",
-    "skills/writing-cycle/ml-paper-writing/SKILL.md": "委托继承",
-    "skills/writing-cycle/systems-paper-writing/SKILL.md": "委托继承",
     "skills/writing-cycle/rebuttal/SKILL.md": "委托继承",
     "skills/writing-cycle/resubmit-pipeline/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-talk/SKILL.md": "委托继承",

@@ -17,3 +17,7 @@
 被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。审查能力之间并列按需，不由本 Workflow 自动串联成线性通过链。
 
 审查输入：按被调用的 audit skill 自己的输入契约读，不在编排器里另定输入范围。**委托内继承**：`paper-compile-repair` 和 `apply-citation-fixes` 在当前委托已授权该职责、文件和副作用时直接承接，不要求再次独立点名；只读审查仍只读，越权修复停那一步。`proof-repair` 的迁移由证明能力票处理，本入口只记录缺口。跨研究改进循环由 `research-improvement` 独立负责，本 Workflow 不启动、不重复其入口。
+
+## 专业分支
+
+依据用户请求和论文主要贡献选 General、ML/AI、Systems；混合论文只读取对应分支资源。ML/AI 的实验报告、reviewer 期望、venue checklist 与报告模板见 [专业资源索引](standards.md)；Systems 的逐节写作、评价、checklist、venue/reviewer 方法与报告模板也由该索引按需指向。领域参考不启动实验或补证流程；需要新实验时走相应 Validation 路线并遵守运行授权。
