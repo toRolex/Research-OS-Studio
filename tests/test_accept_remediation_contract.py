@@ -15,11 +15,12 @@ class AcceptRemediationContract(unittest.TestCase):
 
     def test_idea_dispatch_and_canonical_keep_original_feedback(self):
         review = (ROOT / 'skills/idea-cycle/idea-review/SKILL.md').read_text()
-        composition = (ROOT / 'skills/idea-cycle/idea-discovery/references/composition-notes.md').read_text()
+        composition = (ROOT / 'skills/general/research-os/references/discovery-composition.md').read_text()
         self.assertIn('派发前逐字段核对', review)
         self.assertIn('移除排名', review)
         self.assertIn('逐字完整内联', composition)
         self.assertIn('链接或摘要不替代', composition)
+        self.assertIn('fresh 独立评审', composition)
 
     def test_talk_severe_gate_build_bucket_and_review_version(self):
         text = (ROOT / 'skills/writing-cycle/paper-talk/SKILL.md').read_text()

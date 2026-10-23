@@ -1,4 +1,4 @@
-# Idea Discovery 报告 — [方向]
+# Discovery 报告 — [方向]
 
 默认文件名 `IDEA_DISCOVERY.md`，是本次 Discovery 的单一权威报告。此模板是自然语言检查单，不是统一 schema。填写实际内容；未知写明未知。各内部能力在 composed 模式下贡献对应章节，不另建重复主报告。只链接最终 `RESEARCH_PROPOSAL.md`，不复制其全文。
 
@@ -10,10 +10,10 @@
 ## 元信息
 
 - 方向 / 输入材料及实际读到范围：
-- 日期；各阶段预算消耗与停止位置：
+- 日期；各已选职责的预算消耗与停止位置：
 - 本次授权的读取 / 检索 / 写入范围；实际输出路径：
-- 各阶段实际执行者与独立性限制：
-- 检查点策略与用户阶段确认记录（每阶段继续 / 调整 / 停止）：
+- 各已选能力的实际执行者与独立性限制：
+- 能力选择、顺序、回访理由与未覆盖范围：
 
 ## 方向与边界
 
@@ -22,33 +22,33 @@
 - 已有尝试 / 失败记录 / 矛盾证据：
 - 数据 / 算力 / 时间约束；未知约束显式列出：
 
-## 文献 Landscape（`research-lit` composed 章节）
+## 文献 Landscape（`research-lit` 贡献）
 
 - 检索边界、实际来源与预算；不可用来源及缺失覆盖：
 - 主题分组、共识 / 分歧、结构性 gap；每条结论给出候选定位：
 - 候选 / 已核实 / 未核实标签与阅读范围；未核实材料不承载无保留结论：
 
-## 候选池与筛选（`idea-generation` composed 章节）
+## 候选池与筛选（`idea-generation` 贡献）
 
 - 执行方式（各视角并行生成者 / 单上下文顺序生成）与各视角返回或缺口：
 - 完整原始候选池（每张卡保留问题、核心 Claim、方法草图、可验证性）：
 - 筛选记录：每个原始候选的去向（保留 / 合并 / 暂存）及具体理由与依据：
 - 非重复可行池及实质差异说明；认知转换洞见（如使用 `creative-thinking-for-research`）单列：
 
-## 查新结论（`novelty-check` composed 章节）
+## 查新结论（`novelty-check` 贡献）
 
 - 每个入围候选的核心 Claim、实际检索覆盖与阅读范围：
 - Closest prior work 比较（Claim → 具体位置 → 重叠 → 关键区别 → 未知）：
 - 逐候选裁决（PROCEED / PROCEED WITH CAUTION / ABANDON / EVIDENCE GAP）及依据；ABANDON 必须点名具体已发表工作：
 - 证据缺口与最小补证动作：
 
-## 独立评审（`idea-review` composed 章节）
+## 独立评审（fresh `idea-review` 贡献）
 
 - 实际评审者身份、角色分离、访问限制；缺独立评审者时标 REVIEW UNAVAILABLE 并停止裁决：
 - Findings（含原文定位）、逐轮回应与复核、裁决依据：
 - 条件性 Claim 矩阵与未解决问题：
 
-## 收敛与 Proposal（`idea-refinement` composed 章节）
+## 收敛与 Proposal（`idea-refinement` 贡献）
 
 - Problem Anchor（逐字复制）：
 - 最小可行与前沿路线比较、选用与舍弃理由：
@@ -57,11 +57,11 @@
 
 ## 淘汰与未解决问题
 
-- 各阶段淘汰候选及理由；暂存候选的恢复条件：
+- 各项职责淘汰候选及理由；暂存候选的恢复条件：
 - 关键缺口、待用户决定的事项：
 
 ## 交付与停止
 
 - 实际交付：本报告路径、RESEARCH_PROPOSAL.md 路径、失败的写入：
-- 未启动：pilot 实验、experiment-plan、Validation、Writing 及原因（本流程到 Proposal 停止）：
+- 未启动：pilot 实验、experiment-plan、Validation、Writing 及原因（本委托按用户目标停止）：
 - 下一步只建议，由用户决定；不自动启动另一顶层 Workflow：

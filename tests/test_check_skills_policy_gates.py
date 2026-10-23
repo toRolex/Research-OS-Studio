@@ -117,11 +117,13 @@ class PolicyAndGates(unittest.TestCase):
         idea_cycle_skills = {
             f"skills/idea-cycle/{name}/SKILL.md"
             for name in (
-                "creative-thinking-for-research", "idea-discovery", "idea-generation",
+                "creative-thinking-for-research", "idea-generation",
                 "idea-refinement", "idea-review", "novelty-check",
             )
         }
         self.assertTrue(idea_cycle_skills <= migrated)
+        self.assertNotIn("skills/idea-cycle/idea-discovery/SKILL.md", migrated)
+        self.assertFalse((ROOT / "skills/idea-cycle/idea-discovery/SKILL.md").exists())
         academic_plotting = "skills/writing-cycle/academic-plotting/SKILL.md"
         self.assertIn(academic_plotting, migrated)
         self.assertNotIn(academic_plotting, module.LEGACY_LEAF_GATES)

@@ -9,7 +9,7 @@
 | 委托入口 | `skills/general/research-os/SKILL.md` | 「研究委托」小节 + 本目录合同与 `playbooks/literature-review.md` |
 | 数学研究证明配方 | `skills/general/research-os/playbooks/proof.md` | #55/#60 唯一证明总控；按证据交替使用独立能力，不设固定阶段；proof-orchestrator 控制器已删除，原数学方法与交接资源归 proof-review 随包按需读取；缺少某 slug 只阻塞其依赖分支 |
 | 认知转换 | `skills/idea-cycle/creative-thinking-for-research/SKILL.md` | 「委托继承」小节；只贡献洞见，不裁决候选池 |
-| Discovery 配方 | `skills/idea-cycle/idea-discovery/SKILL.md` | 「委托继承」小节；一次委托内组合文献、生成、查新、评审与细化 |
+| Discovery 配方 | `skills/general/research-os/playbooks/discovery.md` | `research-os` 唯一入口内的完整方向→Proposal 用户目标；按缺口组合 Required 能力子集，支持重排/回访与分支阻塞；fresh 独立评审不退化为自查 |
 | 候选生成 | `skills/idea-cycle/idea-generation/SKILL.md` | 「委托继承」小节；多视角、去重与硬约束筛选 |
 | 候选细化 | `skills/idea-cycle/idea-refinement/SKILL.md` | 「委托继承」小节；保留 Problem Anchor，目标替换仍停 |
 | 独立评审 | `skills/idea-cycle/idea-review/SKILL.md` | 「委托继承」小节；评审者直达原始材料 |

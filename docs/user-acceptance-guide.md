@@ -28,7 +28,7 @@ git init
 使用通用 Skills CLI（不使用自建安装器，不要求 clone 本仓库、不要求 Python wheel / UV）：
 
 ```bash
-# 1. 检查 GitHub 仓库可发现的 Skills 清单（应与本次 checkout 的 skills/ 目录一致）
+# 1. 检查 GitHub 仓库可发现的 Skills 清单（应覆盖当前产品树中的全部 Skill）
 npx skills@latest add toRolex/Research-OS-Studio --list
 
 # 2. 安装全部 Skills 到当前测试项目
@@ -82,7 +82,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 - **场景 2.1：从不同科研起点咨询**
   - **操作**：分别输入三种常见起点向 `/research-os` 提问，并保持只读意图：
-    1. “我只有一个模糊的研究想法，想找文献并形成方案” → 应推荐 `idea-discovery` 或 `research-lit`；
+    1. “我只有一个模糊的研究想法，想找文献并形成方案” → 应推荐 `/research-os` 的 Discovery recipe 或 `research-lit`；
     2. “我已有实验代码和跑出来的 CSV 数据，想知道能得出什么结论” → 应推荐 `analyze-results`、`experiment-audit` 或 `result-to-claim`；
     3. “我已有初稿，但投 NeurIPS 需要检查实验报告和算力说明” → 应推荐 `/research-os` 的 `paper-writing / ml` 路线或对应只读专项审计。
 - **场景 2.2：只读与零执行边界核验**
@@ -135,14 +135,14 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
   2. **固定问题锚点**：Refinement 在修改方案时，必须严格保留原始 **Problem Anchor**（研究核心问题），防止在迭代过程中“偷偷换题”；
   3. **双路线取舍**：对比最小可行验证路线（MVP）与前沿进阶路线（Frontier），给出权衡依据。
 
-### 5. `idea-discovery` 路线（#41；叶 Workflow 为 #8）
-- **操作**：给出研究目标、已有材料或现成候选，使用 `/research-os` 或直接点名 `idea-discovery`。
+### 5. Research OS Discovery recipe
+- **操作**：给出研究方向、已有材料或现成候选，直接向 `/research-os` 说明本次目标；Discovery 是入口内的配方，不是独立 Skill。
 - **核验**：
   1. 按目标缺口和已完成材料选必要能力子集；允许局部开始、重排与回访，完整方向到 Proposal 仅是可选配方；
   2. 叶的检索范围、独立评审、问题锚点与预算保持有效。目标替换、越权、超额或既有文件冲突只阻塞对应分支；
-  3. 按研究委托交付目标要求的报告和/或 Proposal；若目标止于候选方案则收束，不因普通阶段边界阻止更广委托内已授权的后续工作，也不擅自替换主要目标；
-  4. 独立安装 `idea-discovery` 时同时安装五个 Required skills；缺少任一项应将依赖工作标 blocked，并给补装说明。
-- CLI 安装可使用 `skills add <package> --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y`。
+  3. 按研究委托交付用户本次目标要求的报告和/或 Proposal；不因普通阶段边界阻止更广委托内已授权的后续工作，也不擅自替换主要目标；若目标止于候选方案，不自动运行 pilot、创建实验计划或进入 Validation；
+  4. 单独安装 `research-os` 并要求 Discovery 时，同时安装五个 Required skills；缺少任一项只将依赖该能力的职责标 blocked，并给补装说明。`creative-thinking-for-research` 保持可选。
+- CLI 安装可使用 `skills add <package> --skill research-os research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y`。
 
 ---
 
@@ -300,10 +300,10 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 | 序号 | 验证项 | 预期表现 | 验收判定 |
 |---|---|---|---|
-| 1 | **CLI 清单发现** | `skills add ... --list` 与本次被测源目录的 `skills/` 清单逐项相符，无遗漏、无重复、无幽灵入口；记录实际数量及 CLI 版本 | [ ] 通过 |
+| 1 | **CLI 清单发现** | `skills add ... --list` 覆盖当前产品树中的全部 Skill，无遗漏、无重复、无幽灵入口；记录实际数量及 CLI 版本 | [ ] 通过 |
 | 2 | **Setup 不覆盖** | `setup-research-os` 沿用既有材料且不改研究日志；零授权政策不是运行许可；清单外模型停下；冲突展示 diff，拒绝或外部新建 `CLAUDE.md` 则零改动并重新确认 | [ ] 通过 |
 | 3 | **route-only 只读导航** | `/research-os` 在只读意图下推荐切入点，零文件写入、零联网、不自动触发任何工作流 | [ ] 通过 |
-| 4 | **Discovery 组合与局部回访** | `idea-discovery` 按缺口选择子集、重排或回访；依赖缺失时明确 blocked，仅交付本次目标要求的报告/Proposal | [ ] 通过 |
+| 4 | **Discovery 组合与局部回访** | `/research-os` Discovery recipe 按缺口选择子集、重排或回访；依赖缺失时仅相关职责 blocked，fresh 独立评审不由自查替代，仅交付本次目标要求的报告/Proposal | [ ] 通过 |
 | 5 | **实验执行有界** | `experiment-bridge` 严格限制在批准预算和文件范围内，保留全部 attempts 历史 | [ ] 通过 |
 | 6 | **结果审计与 Claim** | `experiment-audit` 独立查作弊/幻觉；`result-to-claim` 收窄不确定结论 | [ ] 通过 |
 | 7 | **数学证明与修复** | `proof-review` 只读报告；`proof-repair` 遇反例不擅改命题，无 Lean 安全降级 | [ ] 通过 |

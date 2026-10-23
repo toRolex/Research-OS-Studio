@@ -9,7 +9,7 @@
 
   <p>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
-    <a href="../skills/README.md"><img src="https://img.shields.io/badge/skills-43-green.svg" alt="Skills"></a>
+    <a href="../skills/README.md"><img src="https://img.shields.io/badge/skills-42-green.svg" alt="Skills"></a>
     <a href="user-acceptance-guide.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
     <a href="https://github.com/toRolex/Research-OS-Studio/stargazers"><img src="https://img.shields.io/github/stars/toRolex/Research-OS-Studio.svg?style=social" alt="GitHub stars"></a>
   </p>
@@ -61,8 +61,8 @@ npx skills@latest add toRolex/Research-OS-Studio --list
 # Install all skills to current project
 npx skills@latest add toRolex/Research-OS-Studio --all
 
-# Discovery requires its five sibling capabilities when installed alone
-npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
+# For the discovery route, install `research-os` and its five Required capabilities together
+npx skills@latest add toRolex/Research-OS-Studio --skill research-os research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
 ```
 
 ### 2. Workspace Setup
@@ -111,7 +111,7 @@ The inventory below follows the current `skills/` tree; its size is not a produc
 |---|---|---|---|
 | **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Optional workspace bootstrap for live-model role mappings, a zero-grant default policy, and workspace seeds; a suggestion is not write authorization |
 | | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified research-delegation entry; route-only is read-only; use real host subagent capability when delegating. `experiment-bridge` remains a compatibility entry for `run-experiment`; this inventory does not claim #55B/C has merged |
-| **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Composable entry: select needed capabilities by goal gap; reorder or revisit; full Discovery is optional |
+| **Idea Cycle** | [research-os Discovery recipe](../skills/general/research-os/playbooks/discovery.md) | Via `/research-os` | A user can give a research direction and ask for a complete Proposal; choose, reorder, or revisit the five Required capabilities by gap, preserving fresh independent review |
 | | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
 | | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Explicit | Multi-angle research candidate generation with filtering logs |
 | | [creative-thinking-for-research](../skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Explicit | Cognitive shifts and orthogonal exploration for ideation bottlenecks |
@@ -158,7 +158,7 @@ Provide a research direction
       ↓
 /research-os I have a direction and no idea
       ↓
-playbook idea-discovery
+research-os Discovery recipe
   Select needed capabilities from goal gaps; start locally, reorder, or revisit
   ├─ Literature gap: research-lit
   ├─ Candidate gap: idea-generation (creative-thinking if useful)
