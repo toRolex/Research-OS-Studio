@@ -132,9 +132,7 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 | | [proof-review](../skills/validation-cycle/proof-review/SKILL.md) | Explicit | Read-only check for proof structure, lemmas, and counterexamples |
 | | [proof-repair](../skills/validation-cycle/proof-repair/SKILL.md) | Explicit | Targeted repair of proof gaps within authorized scope |
 | | [proof-orchestrator](../skills/validation-cycle/proof-orchestrator/SKILL.md) | Explicit | Legacy alias into `/research-os` proof; preserves optional Lean, audit, and handoff methods without a second round/quota controller |
-| **Writing Cycle** | [paper-writing](../skills/writing-cycle/paper-writing/SKILL.md) | Explicit | `/research-os` paper-writing / general: planning, plotting, drafting, a real compile, and parallel audits; the leaf keeps its own authorization gate |
-| | [ml-paper-writing](../skills/writing-cycle/ml-paper-writing/SKILL.md) | Explicit | paper-writing / ml: ML materials skip the general entry; seeds, error bars, compute, limitations |
-| | [systems-paper-writing](../skills/writing-cycle/systems-paper-writing/SKILL.md) | Explicit | paper-writing / systems: systems materials skip the general entry; design rationale, end-to-end, scalability |
+| **Writing Cycle** | [paper-writing](../skills/writing-cycle/paper-writing/SKILL.md) | Explicit | The single writing organizer; general, ML/AI, and Systems are professional options with on-demand references and templates shipped together |
 | | [paper-plan](../skills/writing-cycle/paper-plan/SKILL.md) | Explicit | Outlines paper structure and builds Claim-Evidence matrices |
 | | [paper-drafting](../skills/writing-cycle/paper-drafting/SKILL.md) | Explicit | Drafts academic manuscripts grounded in experimental data |
 | | [academic-plotting](../skills/writing-cycle/academic-plotting/SKILL.md) | Explicit | Generates academic figures with reproducible plotting scripts |
@@ -197,8 +195,8 @@ Provide data or theoretical findings
       ↓
 /research-os matches paper-writing from the materials
   ├─ General: general → paper-writing
-  ├─ Machine learning: ml → ml-paper-writing (not via general)
-  └─ Systems design: systems → systems-paper-writing (not via general)
+  ├─ Machine learning: ml → paper-writing + ML reporting/reviewer/venue references
+  └─ Systems design: systems → paper-writing + Systems methods/evaluation/venue references
       ↓
 The leaf skill keeps its authorization gate before planning, figures, drafting, and a real compile
 Parallel audits: paper-claim-audit, citation-audit, claim-stress-test

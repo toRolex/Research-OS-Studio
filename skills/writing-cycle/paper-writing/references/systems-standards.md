@@ -1,6 +1,6 @@
 # Systems Writing and Evaluation Standards
 
-按需用于以系统设计、实现或实测为主要贡献的论文。此摘要依据仓库独立 Systems 写作参考整理：Orchestra Research `systems-paper-writing` 与 ARIS `writing-systems-papers`；相应 MIT notice 随本 Skill 安装于 `LICENSE-Orchestra.txt` 与 `LICENSE-ARIS.txt`。详细的独立 Systems 写作入口仍保留在 `systems-paper-writing`。
+按需用于以系统设计、实现或实测为主要贡献的论文。此摘要依据同包 Systems 专业参考整理：Orchestra Research `systems-paper-writing` 与 ARIS `writing-systems-papers`；相应 MIT notice 随本 Skill 安装于 `LICENSE-Orchestra.txt` 与 `LICENSE-ARIS.txt`。逐节写作、评价、checklist、venue/reviewer 方法分别见同包 `systems-writing-methods.md`、`systems-evaluation-methods.md`、`systems-checklist.md`、`systems-venue-and-reviewer.md`，报告骨架见 `../templates/systems-paper-writing-report.md`。
 
 ## 设计叙事
 

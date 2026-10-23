@@ -1,6 +1,6 @@
 # 系统评价方法与证据缺口
 
-供 [SKILL.md](../SKILL.md) 第 5 节使用：判断系统论文的评价面是否完整、公平、可复现，并给出缺失证据时的正确处理。改编自 Orchestra `systems-paper-writing/references/{section-blueprints,checklist,reviewer-guidelines}.md`，许可见共置 `LICENSE-Orchestra.txt`。
+供统一 `paper-writing` 的 Systems 分支判断系统论文评价面是否完整、公平、可复现，并正确处理缺失证据。改编自 Orchestra `systems-paper-writing/references/{section-blueprints,checklist,reviewer-guidelines}.md`，许可见本 Skill 共置 `../LICENSE-Orchestra.txt`。
 
 ## 系统证据面
 

@@ -94,7 +94,7 @@ Role: orchestrator
 
 ### 统一写作入口与兼容路由
 
-`paper-writing` 是唯一写作组织入口；general、ML 与 Systems 仅用于选择领域标准。所有写作变体都走 [paper-writing-general](playbooks/paper-writing-general.md) 及其 `skills/writing-cycle/paper-writing/SKILL.md`；该入口按 `skills/writing-cycle/paper-writing/references/standards.md` 按需加载专业资源。旧 `ml-paper-writing` 与 `systems-paper-writing` 名称保留为可直接调用的兼容层，不再由入口分流到独立控制流程。审稿回复、转投和演讲仍是独立目的路线，但其 playbook 服从各自 Skill 中的委托继承合同；授权内修复不要求二次点名。
+`paper-writing` 是唯一写作组织入口；general、ML 与 Systems 仅选择领域分支和按需资源。对应主路由及专业 playbook 都进入 `skills/writing-cycle/paper-writing/SKILL.md`，由该入口与 `skills/writing-cycle/paper-writing/references/standards.md` 组织统一写作；ML/Systems 意图仍可由用户明确表达。审稿回复、转投和演讲仍是独立目的路线，但其 playbook 服从各自 Skill 中的委托继承合同；授权内修复不要求二次点名。
 
 级联进入已迁移叶时沿用本次委托，不重复请求批准；进入未迁移叶时仍按该叶自己的门停下确认，处理完该点后同一委托继续。写作范围内的编译修复与引用修复按委托继承调用，不要求用户另行点名。
 

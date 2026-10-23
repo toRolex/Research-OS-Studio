@@ -1,6 +1,6 @@
 # 系统论文写作方法
 
-Writer 侧的系统论文逐节执行方法，供 [SKILL.md](../SKILL.md) 第 4 节使用。规划槽位（尚未填写的 outline worksheet）在 [paper-plan 的 systems-blueprints](../../paper-plan/references/systems-blueprints.md) 与 [systems-patterns](../../paper-plan/references/systems-patterns.md)——本文件负责把已有材料写成稿，不重复规划模板。
+Writer 侧的系统论文逐节执行方法，供统一 `paper-writing` 的 Systems 分支按需使用。规划槽位（尚未填写的 outline worksheet）在 [paper-plan 的 systems-blueprints](../../paper-plan/references/systems-blueprints.md) 与 [systems-patterns](../../paper-plan/references/systems-patterns.md)——本文件负责把已有材料写成稿，不重复规划模板。
 
 改编自 Orchestra `systems-paper-writing`（`SKILL.md`、`references/section-blueprints.md`、`references/writing-patterns.md`、`references/checklist.md`）与 ARIS `writing-systems-papers`，许可见共置 `LICENSE-Orchestra.txt`／`LICENSE-ARIS.txt`；采用边界记录在仓库 `docs/upstream-sources-and-licenses.md`。所有页数区间为历史示例，投稿前现场核对当前官方 CFP。
 
@@ -87,12 +87,12 @@ S5 影响或可得性：开源、部署或后续价值。
 
 ## S5 Evaluation 写作（3–4 页）
 
-完整方法（baseline 公平性、复现、统计、结果诚实性）见 [系统评价方法](evaluation-methods.md)；本节只定写作结构。
+完整方法（baseline 公平性、复现、统计、结果诚实性）见 [系统评价方法](systems-evaluation-methods.md)；本节只定写作结构。
 
 1. **Setup**（~0.5 页）：testbed 硬件、baseline、负载、metric、关键配置，足以复现。
 2. **End-to-end 对比**（~1–1.5 页）：X 对 baseline 在真实负载上的整体行为。
 3. **Microbenchmark／Ablation**（~1–1.5 页）：逐个隔离设计决策的贡献。
-4. **Scalability**（~0.5 页）：规模维度增大时的行为；无证据时按 [evaluation-methods](evaluation-methods.md) 记缺口。
+4. **Scalability**（~0.5 页）：规模维度增大时的行为；无证据时按 [systems-evaluation-methods](systems-evaluation-methods.md) 记缺口。
 
 每个实验块都用 **三处一致** 规则（Irene Zhang）：
 
@@ -144,4 +144,4 @@ Conclusion：[系统] 在 [metric] 上相对 [baseline] [优于／持平] [实�
 - 不编造观测、trace、部署经验、实验数字或 venue 规则；所有数字来自实际运行或引用来源。
 - 不凭记忆生成引用；未核实引用标 `[CITATION NEEDED]`，交由 `citation-audit` 核实。
 - 结构性借鉴（如某个 pattern 来自某论文）在文中致谢式标注；不复制他人段落级文字。
-- 当前 venue 是否要求披露 LLM 使用、是否允许 AI 署名，按 [venue 与 reviewer 方法](venue-and-reviewer.md) 现场核对。
+- 当前 venue 是否要求披露 LLM 使用、是否允许 AI 署名，按 [venue 与 reviewer 方法](systems-venue-and-reviewer.md) 现场核对。

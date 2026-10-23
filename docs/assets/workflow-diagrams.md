@@ -79,8 +79,8 @@ mindmap
       proof-orchestrator
     Writing Cycle
       paper-writing
-      ml-paper-writing
-      systems-paper-writing
+      ML/AI professional references
+      Systems professional references
       paper-plan
       paper-drafting
       academic-plotting

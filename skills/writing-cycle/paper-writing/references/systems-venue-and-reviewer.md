@@ -1,6 +1,6 @@
 # 系统会议 venue 与 reviewer 判据
 
-供 [SKILL.md](../SKILL.md) 第 5、7、8 节使用：理解系统会议 reviewer 如何评价论文，以及投稿前必须现场核对哪些规则。改编自 Orchestra `systems-paper-writing/references/{systems-conferences,reviewer-guidelines}.md`，许可见共置 `LICENSE-Orchestra.txt`。
+供统一 `paper-writing` 的 Systems 分支理解系统会议 reviewer 如何评价论文，以及投稿前必须现场核对哪些规则。改编自 Orchestra `systems-paper-writing/references/{systems-conferences,reviewer-guidelines}.md`，许可见本 Skill 共置 `../LICENSE-Orchestra.txt`。
 
 ## 规则现场核对，不缓存
 

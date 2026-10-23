@@ -1,6 +1,6 @@
 # Systems Paper Writing 报告
 
-这是 [Systems Paper Writing](../SKILL.md) 的自然 Markdown 报告骨架，不是机器 schema，也不替代候选稿与审查报告本身。按实际读到的原始材料填写；无法定位的项写 `unknown`，不要省略。被组合能力贡献对应章节，不另建重复主报告。
+这是统一 [paper-writing](../SKILL.md) 的 Systems 专项自然 Markdown 报告骨架，不是机器 schema，也不替代候选稿与审查报告本身。按实际读到的原始材料填写；无法定位的项写 `unknown`，不要省略。被组合能力贡献对应章节，不另建重复主报告。
 
 **Input / 材料范围**：[实际读取的路径]
 **Venue**：[用户指定值；未指定写「未指定，不设默认 venue」]
@@ -93,7 +93,7 @@
 - 未完成／失败项：[状态 · 材料定位 · 最小下一步]
 - 停止原因：[授权到期／轮数到限／预算耗尽／材料不足／关键证据缺口／用户要求停止／完成]
 - 已写入清单 vs 批准清单：[一致／差异]
-- 未启动的 Workflow（`paper-writing`、`ml-paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement` 均未启动）：[实际逐项核对]
+- 未启动的其他 Workflow（`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement`）：[实际逐项核对]
 - User options：[接受候选稿 / 授权补做缺失证据后重跑 / 继续修订 / 显式调用专用修复入口 / 停止]
 
 > 本报告只记录事实、审查发现与修订记录。编译成功与审查通过不证明系统论断成立、可投稿或已被接受；是否投稿、发布或接受由用户决定。

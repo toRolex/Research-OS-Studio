@@ -108,9 +108,9 @@ class PolicyAndGates(unittest.TestCase):
             f"skills/writing-cycle/{name}/SKILL.md"
             for name in (
                 "apply-citation-fixes", "citation-audit", "claim-stress-test",
-                "ml-paper-writing", "paper-claim-audit", "paper-compile-repair",
+                "paper-claim-audit", "paper-compile-repair",
                 "paper-compile", "paper-drafting", "paper-plan", "paper-talk",
-                "paper-writing", "rebuttal", "resubmit-pipeline", "systems-paper-writing",
+                "paper-writing", "rebuttal", "resubmit-pipeline",
             )
         }
         self.assertTrue(writing_skills <= migrated)
