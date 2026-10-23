@@ -5,7 +5,7 @@
 - 活文档合同对齐（README、中英清单、skills 索引、用户验收指南、GLOSSARY）：done；五个指定活文档通过差异审阅，未改控制器/Skill 正文/历史验收资料。
 - 静态核验与差异记录：done；`git diff --check` 与 `uv run python -m unittest scripts.test_check_skills_ticket46` 通过。`uv run python scripts/check-skills.py` 仅报 9 个 `docs/acceptance/**` 历史归档包链接缺失/未追踪；按范围未触碰这些链接或 checker。
 - integration 合并与提交：done；提交在 `t3/update-live-docs`，并显式核对/合并 `integration/spec-48` tip（`0bd38385b9a7b3aa51872af415aee78ef2778bcf`，已包含）；未改 integration 或主目录。
-- 交付报告：进行中；`/tmp/spec48-ticket60-docs/REPORT.md` 已写，待最后状态同步 commit 后补确切最终 SHA 与差异范围；不表述为 #60 完成。
+- 交付报告：done；`/tmp/spec48-ticket60-docs/REPORT.md` 含完整 worktree/branch/commit 及精确差异重现命令；报告只确认本活文档子切片，不表述为 #60 完成。
 
 ## 入口与范围
 
