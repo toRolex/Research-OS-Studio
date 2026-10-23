@@ -14,7 +14,7 @@
 ## 已读规则与输入
 
 - 已读 `~/.agents/Multi-Agent.md`、`~/.agents/model-availability.md`、`~/.agents/CODING_STANDARDS.md`，仓库 `AGENTS.md`，`writing-for-agents`、`SKILL-MECHANICS.md`、`pre-implement`。
-- 指定 TDD skill 在 `/Users/rolex/.agents/skills/tdd/SKILL.md` 不存在，且 `~/.agents/skills`、`~/.codex/skills` 未找到 TDD 资源；依用户要求以安装后可观察合同执行显式 red→green。
+- 已完整读取实际安装路径 `/Users/rolex/Library/Application Support/com.ai-toolbox/skills/tdd/SKILL.md` 及其 `tests.md`、`mocking.md`；用户明确指定了“安装后合同 seam”，因此直接在 Skills CLI 安装后的公共接口做集成风格 red→green，不 mock 内部实现。
 - 已完整读取 `/tmp/spec48-ticket60-final-contracts/FINDINGS.md`、`COVERAGE-41.md` 和 `/tmp/spec48-goal-preflight/spec.json`。C01 是自然语言合同矛盾，不推断真实 agent 曾如何行动。spec ID3/4/17、TD5 及 #60 AC3 要求授权继承，同时保留安全边界。
 - 已检查 `paper-writing/SKILL.md` 的委托内修复条款、TeX 构建安全参考、共享研究委托额度/授权合同与目标替换门。TDD 操作按 tracked `tests/spec48_workcopy.py` 建 fixture；Python 运行使用 `uv`。
 
@@ -38,4 +38,4 @@
 
 ## Deviations
 
-- TDD skill 缺失，因此不声称已加载该 skill；遵循用户明确指定的最小垂直 red→green 验收约束执行。
+- 初次查找 TDD skill 时只检查了 `~/.agents/skills` 与 `~/.codex/skills`，后续在 app-managed skill 目录找到并完整读取。未因此改变用户指定的安装后 seam、测试实现或验证范围；无需更改产品代码。
