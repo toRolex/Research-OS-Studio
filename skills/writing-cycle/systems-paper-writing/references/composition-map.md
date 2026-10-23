@@ -1,6 +1,6 @@
 # Composition Map
 
-`systems-paper-writing` 在一次授权内组合哪些已交付内部能力、在哪一步、以何种产出贡献正文报告。被组合能力只在本次确认的职责、写入范围和资源授权内工作；本映射不是自动调用链，不授予被组合能力之外的权限，也不允许本 Workflow 启动任何其他 user-invoked 顶层 Workflow。
+`systems-paper-writing` 在一次授权内组合哪些已交付内部能力、在哪一步、以何种产出贡献正文报告。被组合能力在委托合同授权内工作；本映射只授权写作职责内的组合，不自动启动 [research-improvement](../../research-improvement/SKILL.md)。
 
 | 本 Workflow 阶段 | 组合的内部能力 | 贡献的正文报告章节 | 不做的事 |
 |---|---|---|---|
@@ -9,7 +9,7 @@
 | 正文起草 | [paper-drafting](../../paper-drafting/SKILL.md)（写作纪律见 [systems-writing-methods](systems-writing-methods.md)） | 系统论文逐节候选正文与可追溯映射 | 不改证据，不编造数字／引用，不代替总 Workflow |
 | 评价面与就绪自检 | 本 Workflow 自身 + [evaluation-methods](evaluation-methods.md) | 系统证据面状态、缺口清单、fairness／复现／三处一致核对 | 不补做实验，不外推缺失数据 |
 | Venue 现场核对 | 本 Workflow 自身 + [venue-and-reviewer](venue-and-reviewer.md) | 当期官方规则来源、track、匿名与披露状态 | 不缓存年度规则，不代用户选择 track |
-| 编译检查 | [paper-compile](../../paper-compile/SKILL.md) | 真实构建状态、错误位置、PDF 核验 | 不改源码，不安装工具，不用旧 PDF 冒充成功 |
+| 编译检查与委托内修复 | [paper-compile](../../paper-compile/SKILL.md) → 授权内 [paper-compile-repair](../../paper-compile-repair/SKILL.md) | 真实构建状态、错误位置、精确修复 diff、改动文件、复编译结果 | 不改源码范围外的文件，不安装工具，不用旧 PDF 冒充成功 |
 | 数字／比较审查 | [paper-claim-audit](../../paper-claim-audit/SKILL.md) | 逐 Claim 数字、配置、聚合、delta、caption、覆盖范围对账 | 不替代引用／证明／整篇论证，不自动改稿 |
 | 引用审查 | [citation-audit](../../citation-audit/SKILL.md) | 身份、元数据、语境三轴逐条发现 | 默认不改 bib／正文；改动需写入授权与逐项批准 |
 | 证明审查 | [proof-review](../../../validation-cycle/proof-review/SKILL.md)（仅含定理／引理／证明时） | 证明义务、逻辑缺口、反例、影响范围 | 不修证明，不编译，不自动调用 `proof-repair` |
@@ -20,4 +20,4 @@
 
 审查输入：按被调用的 audit skill 自己的输入契约读，不在编排器里另定输入范围。
 
-`paper-writing`（通用 W3，#25）与 `ml-paper-writing`（#26）是并列的 user-invoked 顶层入口，本 Workflow 不调用它们，它们也不调用本 Workflow。`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement` 同样需要用户另行点名，本 Workflow 不启动它们。
+`paper-writing` 是统一入口，`ml-paper-writing` 与本入口是旧平行入口兼容层；三者都可独立调用，互不自动启动。**委托内继承**：`paper-compile-repair` 和 `apply-citation-fixes` 在当前委托已授权该职责、文件和副作用时直接承接，不要求再次独立点名；`proof-repair` 由证明能力票处理，`research-improvement` 仍独立负责。

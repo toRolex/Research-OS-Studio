@@ -153,18 +153,18 @@ playbook idea-discovery
 ```text
 输入实验数据或理论成果
       ↓
-/research-os 按材料匹配 paper-writing
-  ├─ 通用材料：general → paper-writing
-  ├─ 机器学习材料：ml → ml-paper-writing（不经通用入口）
-  └─ 系统设计与实现：systems → systems-paper-writing（不经通用入口）
+/research-os 将写作请求统一路由到 paper-writing
+  ├─ 通用写作：general
+  ├─ ML：按需读取 ML/AI 专业标准
+  └─ Systems：按需读取 Systems 专业标准
       ↓
-叶 skill 自带授权门；门内才规划、绘图、起草、真实编译
+按委托范围规划、绘图、起草、真实编译
 并列审查：paper-claim-audit、citation-audit、claim-stress-test
 证明稿件才读 proof-review
       ↓
 交付候选稿与审查报告
 投稿、上传不在写作路线
-paper-compile-repair 与 apply-citation-fixes 须另行点名
+委托内已授权的编译与引用修复继承该授权
       ↓
 投后管理与衍生（/research-os 编排；叶入口仍可点名）
   ├─ 审稿回复：/research-os 回复审稿 → rebuttal
@@ -214,29 +214,29 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 | | [maintain-formal-verification-skill](skills/validation-cycle/maintain-formal-verification-skill/SKILL.md) | 显式 | 代码变化后把形式化检查重新对齐；重跑并区分验证漂移与代码 bug |
 | | [create-verification-skill](skills/validation-cycle/create-verification-skill/SKILL.md) | 显式 | 为项目建立可运行的行为验证 Skill：启动、doctor、按用户路径驱动、证据与清理，播种特征覆盖映射；未执行的生成资产标草稿 |
 | | [maintain-verification-skill](skills/validation-cycle/maintain-verification-skill/SKILL.md) | 显式 | 随应用变化维护行为验证 Skill：按特征源读与真实驱动，区分文档漂移与产品缺陷，交付已证明修正 |
-| **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | 显式 | `/research-os` paper-writing / general：通用材料的规划、绘图、起草、真实编译与并列审查；叶 skill 自带授权门 |
-| | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | 显式 | paper-writing / ml：机器学习材料不经通用入口；seeds、error bars、compute、limitations |
-| | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | 显式 | paper-writing / systems：系统设计材料不经通用入口；design rationale、end-to-end、scalability |
+| **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | 显式 | 统一写作入口：general／ML／Systems 标准；委托内编译与引用修复继承授权，不自动投稿 |
+| | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | 显式 | 旧平行入口兼容层：ML experiment reporting、reviewer expectations、venue checklists；继承同一委托 |
+| | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | 显式 | 旧平行入口兼容层：Systems writing methods、evaluation methods、venue and reviewer；继承同一委托 |
 | | [paper-plan](skills/writing-cycle/paper-plan/SKILL.md) | 显式 | 规划论文大纲与 Claim-Evidence 证据对应矩阵 |
 | | [paper-drafting](skills/writing-cycle/paper-drafting/SKILL.md) | 显式 | 依据实验数据与推导记录起草论文正文 |
 | | [academic-plotting](skills/writing-cycle/academic-plotting/SKILL.md) | 显式 | 绘制学术图表并保留可复现绘图脚本 |
 | | [paper-compile](skills/writing-cycle/paper-compile/SKILL.md) | 显式 | 调用本地 LaTeX 环境执行编译检查并报告警告 |
-| | [paper-compile-repair](skills/writing-cycle/paper-compile-repair/SKILL.md) | 显式 | 展示 diff 并经确认后修复 LaTeX 编译错误 |
+| | [paper-compile-repair](skills/writing-cycle/paper-compile-repair/SKILL.md) | 显式 | 精确 diff 修复 LaTeX 编译错误；委托内继承授权，不要求再次独立点名 |
 | | [citation-audit](skills/writing-cycle/citation-audit/SKILL.md) | 显式 | 检查引用的准确性与上下文匹配度 |
-| | [apply-citation-fixes](skills/writing-cycle/apply-citation-fixes/SKILL.md) | 显式 | 确认后更新 BibTeX 条目或正文引用标记 |
+| | [apply-citation-fixes](skills/writing-cycle/apply-citation-fixes/SKILL.md) | 显式 | 通过精确 diff 修复 BibTeX 条目或正文引用标记；委托已授权时继承范围 |
 | | [paper-claim-audit](skills/writing-cycle/paper-claim-audit/SKILL.md) | 显式 | 校验正文数字、图表与原始实验数据的一致性 |
 | | [claim-stress-test](skills/writing-cycle/claim-stress-test/SKILL.md) | 显式 | 模拟同行评审视角，针对论点薄弱处提出质疑 |
 | | [research-improvement](skills/writing-cycle/research-improvement/SKILL.md) | 显式 | 对代码、论点或草稿进行有限轮次的评审与修改 |
-| | [rebuttal](skills/writing-cycle/rebuttal/SKILL.md) | 显式 | 审稿回复叶入口；`/research-os` 的 rebuttal 路线按路径级联。策略与最终措辞仍停 |
-| | [resubmit-pipeline](skills/writing-cycle/resubmit-pipeline/SKILL.md) | 显式 | 转投叶入口；resubmit 路线在新目录适配并保留旧稿。范围与改动仍停 |
-| | [paper-talk](skills/writing-cycle/paper-talk/SKILL.md) | 显式 | 演讲叶入口；paper-talk 路线产出 slides、notes、script。授权与大纲仍停 |
+| | [rebuttal](skills/writing-cycle/rebuttal/SKILL.md) | 显式 | 审稿回复叶入口；`/research-os` 的 rebuttal 路线按路径级联，不自动投稿或外发 |
+| | [resubmit-pipeline](skills/writing-cycle/resubmit-pipeline/SKILL.md) | 显式 | 转投叶入口；resubmit 路线在新目录适配并保留旧稿，不自动投稿 |
+| | [paper-talk](skills/writing-cycle/paper-talk/SKILL.md) | 显式 | 演讲叶入口；paper-talk 路线产出 slides、notes、script，不自动发布 |
 
 ---
 
 ## 安全与控制原则
 
 1. **不修改系统环境**：不会擅自配置 Python、Lean、LaTeX、CUDA 驱动或云端凭证。依赖工具缺失时会明确提示。
-2. **显式路线与副作用门**：用户显式调用才进入路线；可逆步骤不中断，直接执行并事后呈现。三类门在副作用之前停下：不可逆动作（对外发送、删除或覆盖既有实验数据）、批次授权缺失或越界、叶 skill 自带审批点。一次调用若明确授权跨阶段并给出边界，编排可以继续；未授权时，不启动下一主流程。
+2. **显式路线与副作用门**：用户显式调用才进入路线；授权内可逆步骤直接执行并事后呈现。越权、超额、破坏性与对外动作仍在执行前停下；叶 skill 只保留其真实副作用与独立调用边界。当前委托已授权的内部修复不要求再次点名。
 3. **操作预先确认**：消耗大量算力、重写文件或调用付费 API 之前，会先声明范围并征求同意。
 
 ---

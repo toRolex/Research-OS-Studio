@@ -1,6 +1,6 @@
 # Composition Map
 
-`ml-paper-writing` 在一次授权内组合哪些内部能力、在哪一步、以何种产出贡献正文报告。被组合能力只在本次已确认的职责、写入范围和资源授权内工作；本映射不是自动调用链，不授予被组合能力之外的权限，也不允许本 Workflow 启动任何其他 user-invoked 顶层 Workflow（含通用 `paper-writing`）。
+`ml-paper-writing` 在一次授权内组合哪些内部能力、在哪一步、以何种产出贡献正文报告。被组合能力在委托合同授权内工作；本映射只授权写作职责内的组合，不自动启动 [research-improvement](../../research-improvement/SKILL.md)。
 
 | 本 Workflow 阶段 | 组合的内部能力 | 贡献的正文报告章节 | 不做的事 |
 |---|---|---|---|
@@ -26,4 +26,4 @@
 
 审查输入：按被调用的 audit skill 自己的输入契约读，不在编排器里另定输入范围。
 
-被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。审查能力之间并列按需，不由本 Workflow 自动串联成线性通过链。`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk` 与跨研究有界改进循环 `research-improvement`（#28）都是独立 user-invoked 入口，本 Workflow 不启动它们。
+被组合能力不可用或超出本次授权时，在正文报告对应章节如实标注缺口并停止该分支，不伪造其输出，不以执行者摘要代替其直接读取。审查能力之间并列按需，不由本 Workflow 自动串联成线性通过链。**委托内继承**：`paper-compile-repair` 和 `apply-citation-fixes` 在当前委托已授权该职责、文件和副作用时直接承接，不要求再次独立点名；`proof-repair` 由证明能力票处理，`research-improvement` 仍独立负责。

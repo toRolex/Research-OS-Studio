@@ -330,78 +330,53 @@ def route_table_problems(rows: list[dict[str, str]], skill_dir: Path) -> tuple[l
     return problems_out, hints
 
 
-PAPER_WRITING_SHARED = (
-    "skills/writing-cycle/paper-plan/SKILL.md",
-    "skills/writing-cycle/academic-plotting/SKILL.md",
-    "skills/writing-cycle/paper-drafting/SKILL.md",
-    "skills/writing-cycle/paper-compile/SKILL.md",
-    "skills/writing-cycle/paper-claim-audit/SKILL.md",
-    "skills/writing-cycle/citation-audit/SKILL.md",
-    "skills/writing-cycle/claim-stress-test/SKILL.md",
-    "skills/validation-cycle/proof-review/SKILL.md",
+PAPER_WRITING_VARIANTS = ("general", "ml", "systems")
+PAPER_WRITING_REQUIRED = (
+    "skills/writing-cycle/paper-writing/SKILL.md",
+    "skills/writing-cycle/paper-writing/references/composition-map.md",
+    "skills/writing-cycle/paper-writing/references/standards.md",
 )
-PAPER_WRITING_REQUIRED: dict[str, tuple[str, ...]] = {
-    "general": PAPER_WRITING_SHARED
-    + (
-        "skills/writing-cycle/paper-writing/SKILL.md",
-        "skills/writing-cycle/paper-writing/references/composition-map.md",
-    ),
-    "ml": PAPER_WRITING_SHARED
-    + (
-        "skills/writing-cycle/ml-paper-writing/SKILL.md",
-        "skills/writing-cycle/ml-paper-writing/references/composition-map.md",
-        "skills/writing-cycle/ml-paper-writing/references/experiment-reporting.md",
-        "skills/writing-cycle/ml-paper-writing/references/reviewer-expectations.md",
-        "skills/writing-cycle/ml-paper-writing/references/venue-checklists.md",
-    ),
-    "systems": PAPER_WRITING_SHARED
-    + (
-        "skills/writing-cycle/systems-paper-writing/SKILL.md",
-        "skills/writing-cycle/systems-paper-writing/references/composition-map.md",
-        "skills/writing-cycle/systems-paper-writing/references/systems-writing-methods.md",
-        "skills/writing-cycle/systems-paper-writing/references/evaluation-methods.md",
-        "skills/writing-cycle/systems-paper-writing/references/checklist.md",
-        "skills/writing-cycle/systems-paper-writing/references/venue-and-reviewer.md",
-        "skills/writing-cycle/paper-plan/references/systems-blueprints.md",
-        "skills/writing-cycle/paper-plan/references/systems-patterns.md",
-    ),
+PAPER_WRITING_DOMAIN_RESOURCES = {
+    "ml": "ml-ai-standards.md",
+    "systems": "systems-standards.md",
 }
-PAPER_WRITING_FORBIDDEN: dict[str, tuple[str, ...]] = {
-    "general": (
-        "skills/writing-cycle/ml-paper-writing/SKILL.md",
-        "skills/writing-cycle/systems-paper-writing/SKILL.md",
-    ),
-    "ml": (
-        "skills/writing-cycle/paper-writing/SKILL.md",
-        "skills/writing-cycle/systems-paper-writing/SKILL.md",
-    ),
-    "systems": (
-        "skills/writing-cycle/paper-writing/SKILL.md",
-        "skills/writing-cycle/ml-paper-writing/SKILL.md",
-    ),
-}
-PAPER_WRITING_HARD_STOPS = ("paper-compile-repair", "apply-citation-fixes")
+
+
+def paper_writing_domain_standard_problems(variant: str, root: Path) -> list[str]:
+    """专业标准必须从统一 Skill 的安装包内真实可达。"""
+    resource = PAPER_WRITING_DOMAIN_RESOURCES.get(variant)
+    if resource is None:
+        return []
+    standards = root / "skills/writing-cycle/paper-writing/references/standards.md"
+    if not standards.is_file():
+        return []
+
+    text = standards.read_text(encoding="utf-8")
+    links = {
+        target.split("#", 1)[0]
+        for target in re.findall(r"\[[^\]]+\]\(([^)\s]+)", text)
+        if not target.startswith(("http:", "https:", "mailto:"))
+    }
+    if resource not in links:
+        return [f"paper-writing/{variant} standards.md 缺专业参考链接：{resource}"]
+
+    target = (standards.parent / resource).resolve()
+    if root.resolve() not in target.parents or not target.is_file():
+        return [f"paper-writing/{variant} 专业参考不可达：{resource}"]
+    return []
 
 
 def paper_writing_variant_problems(variant: str, text: str, root: Path) -> list[str]:
-    """单个 paper-writing playbook：本变体级联存在，且不经其他写作入口。"""
-    found: list[str] = []
-    required = PAPER_WRITING_REQUIRED.get(variant)
-    if required is None:
+    """写作变体必须到达唯一总控；专业差异在总控的按需资源中表达。"""
+    if variant not in PAPER_WRITING_VARIANTS:
         return [f"paper-writing 变体未知：{variant}"]
-    for path in required:
+    found: list[str] = []
+    for path in PAPER_WRITING_REQUIRED:
         if f"`{path}`" not in text:
-            found.append(f"paper-writing/{variant} 缺级联 {path}")
+            found.append(f"paper-writing/{variant} 缺统一入口 {path}")
         elif not (root / path).is_file():
-            found.append(f"paper-writing/{variant} 级联目标不存在：{path}")
-    for path in PAPER_WRITING_FORBIDDEN[variant]:
-        if f"`{path}`" in text:
-            found.append(f"paper-writing/{variant} 不得级联其他写作入口：{path}")
-    for name in PAPER_WRITING_HARD_STOPS:
-        if f"`{name}`" not in text:
-            found.append(f"paper-writing/{variant} 缺另行点名硬停止：{name}")
-    if "授权" not in text:
-        found.append(f"paper-writing/{variant} 未保留叶授权门")
+            found.append(f"paper-writing/{variant} 统一入口目标不存在：{path}")
+    found.extend(paper_writing_domain_standard_problems(variant, root))
     return found
 
 
@@ -416,7 +391,7 @@ def paper_writing_route_problems(rows: list[dict[str, str]], root: Path) -> list
         if variant in seen:
             found.append(f"paper-writing 变体重复：{variant}")
         seen[variant] = row
-    for variant in ("general", "ml", "systems"):
+    for variant in PAPER_WRITING_VARIANTS:
         row = seen.get(variant)
         if row is None:
             found.append(f"缺 paper-writing/{variant} 路由行")
@@ -1153,6 +1128,20 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
     "skills/writing-cycle/research-improvement/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-writing/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-plan/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-drafting/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-compile/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-compile-repair/SKILL.md": "委托继承",
+    "skills/writing-cycle/citation-audit/SKILL.md": "委托继承",
+    "skills/writing-cycle/apply-citation-fixes/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-claim-audit/SKILL.md": "委托继承",
+    "skills/writing-cycle/claim-stress-test/SKILL.md": "委托继承",
+    "skills/writing-cycle/ml-paper-writing/SKILL.md": "委托继承",
+    "skills/writing-cycle/systems-paper-writing/SKILL.md": "委托继承",
+    "skills/writing-cycle/rebuttal/SKILL.md": "委托继承",
+    "skills/writing-cycle/resubmit-pipeline/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-talk/SKILL.md": "委托继承",
 }
 MANDATE_DOC = "skills/general/research-os/references/mandate.md"
 MIGRATION_DOC = "skills/general/research-os/references/migration-boundary.md"
@@ -1185,20 +1174,6 @@ LEGACY_LEAF_GATES: dict[str, set[str]] = {
     "skills/validation-cycle/run-experiment/SKILL.md": {"run-authorization", "milestone-start"},
     "skills/validation-cycle/training-health-check/SKILL.md": {"write-path"},
     "skills/writing-cycle/academic-plotting/SKILL.md": {"figure-choice", "external-resource"},
-    "skills/writing-cycle/apply-citation-fixes/SKILL.md": {"apply-authorization"},
-    "skills/writing-cycle/citation-audit/SKILL.md": {"audit-scope"},
-    "skills/writing-cycle/claim-stress-test/SKILL.md": {"report-target"},
-    "skills/writing-cycle/ml-paper-writing/SKILL.md": {"workflow-authorization"},
-    "skills/writing-cycle/paper-claim-audit/SKILL.md": {"report-target"},
-    "skills/writing-cycle/paper-compile-repair/SKILL.md": {"repair-scope", "round-diff"},
-    "skills/writing-cycle/paper-compile/SKILL.md": {"build-scope"},
-    "skills/writing-cycle/paper-drafting/SKILL.md": {"boundary-confirm", "venue-conflict"},
-    "skills/writing-cycle/paper-plan/SKILL.md": {"write-authorization", "framing-confirm"},
-    "skills/writing-cycle/paper-talk/SKILL.md": {"talk-authorization", "outline-confirm"},
-    "skills/writing-cycle/paper-writing/SKILL.md": {"workflow-authorization"},
-    "skills/writing-cycle/rebuttal/SKILL.md": {"strategy-confirm", "wording-confirm"},
-    "skills/writing-cycle/resubmit-pipeline/SKILL.md": {"adaptation-scope", "change-confirm"},
-    "skills/writing-cycle/systems-paper-writing/SKILL.md": {"workflow-authorization"},
 }
 
 
