@@ -4,7 +4,7 @@
 
 - 候选/来源合并：done；`64278eb1969b897079ef1716770541c6cf30757` 已快进合入，C 源 `b8ca00f38ff085ab923adf528ba75e7a3a80c135` 已 no-ff 合入；无文件冲突、无重叠路径。
 - 适用串行验证：done；C 安装态 7/7、Discovery 2/2、W3 3/3、#45/#55/M/policy 29/29、全包 diff-check 通过；checker 仍为原 9 条且与基线逐字节相同。完整命令、真实 rc 与日志见 `/tmp/spec48-contract-fix-merger-2/REPORT.md`。
-- notes 小提交与完整候选报告：进行中；最终 merge 候选为 `405838e54d06e4125807b82ad8697b592a26df60`（双亲为候选 `64278...` 与 C 源 `b8ca00...`），仅此处待交付记录。
+- notes 小提交与完整候选报告：done；最终 merge 候选 `405838e54d06e4125807b82ad8697b592a26df60`（双亲为候选 `64278...` 与 C 源 `b8ca00...`），报告 `/tmp/spec48-contract-fix-merger-2/REPORT.md`。
 
 ## 入口判定与边界
 
