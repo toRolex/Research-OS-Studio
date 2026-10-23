@@ -355,6 +355,14 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **共置资源与许可**：创建侧携带 `references/tool-selection.md`、`references/assumption-ledger.md`、`references/correspondence-audit.md`、`templates/formal-verification-record.md`，维护侧为单文件正文；两者各自携带完整 MIT 文本与 `NOTICE.md` 来源记录，扁平安装后不依赖本文件、开发者目录或临时调查快照。
 - **验收层级**：本票只做静态合同、检查器与可丢弃目录安装验证；不声称真实数学定理已被形式化，也不声称模型在真实研究中会正确使用该能力。
 
+## 已采用的候选比较与整合能力
+
+`skills/organization/arena/` 改编自 cursor/plugins 的 `pstack/` 子树，固定 revision `88d47514b82e7c44f00f2b2a72ff6dd12158038c`。2026-10-24 复核离线归档：实际采用的唯一上游资产是 `pstack/skills/arena/SKILL.md`（4511B，git blob `b198b9e425c6b3e6ff01ca789b97ca5b4abb7ce2`）；该目录没有其他 references、templates、assets 或 scripts。上游正文引用的 Cursor 模型规则与原则 Skills 是宿主绑定指令，不作为本产品依赖或随包资源。
+
+- **保留与适配**：保留 Frame、Fan-out、Cross-judge、Pick、Graft、Verify 的职责、候选全文阅读、先声明 rubric、隔离输出、综合交叉评判、手工 graft，以及数学整合后的假设／记号／依赖闭合重查；胜出不证明命题成立。固定模型与个人目录替换为宿主中立的能力协商及研究委托边界。正文唯一共置文件引用为 `LICENSE`。
+- **来源与许可**：作者 Lauren Tan；许可来自插件级 `pstack/LICENSE`（MIT，`Copyright (c) 2026 Lauren Tan`），不是仓库根许可。随包 `skills/organization/arena/LICENSE` 与上游许可逐字一致（SHA256 `bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`）；Skill 正文保留来源仓库、revision、原路径与 attribution。
+- **安装边界**：`arena` 与入口 `research-os` 各自经 Skills CLI 扁平安装；入口按安装 slug `arena` 发现独立能力，不依赖 `/tmp` 归档或开发者目录。安装、结构合同与检查不证明真实科研或数学质量。
+
 ## 已解决的 revision／路径矛盾
 
 ## 已采用的持续推进、暂停恢复与项目流程改进机制
