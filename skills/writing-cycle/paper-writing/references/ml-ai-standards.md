@@ -1,6 +1,6 @@
 # ML/AI Writing and Experiment Reporting
 
-按需用于机器学习与 AI 论文。此摘要依据仓库独立 ML 写作参考整理；其上游方法归属为 Orchestra Research `AI-Research-SKILLs` 的 `20-ml-paper-writing/ml-paper-writing/`。完整 MIT notice 随本 Skill 安装于 `LICENSE-ML.txt`。详细的独立 ML 写作入口仍保留在 `ml-paper-writing`。
+按需用于机器学习与 AI 论文。此摘要依据同包 ML 专业参考整理；上游方法归属为 Orchestra Research `AI-Research-SKILLs` 的 `20-ml-paper-writing/ml-paper-writing/`。完整 MIT notice 随本 Skill 安装于 `LICENSE-ML.txt`。实验报告、审稿期望与 venue 清单分别见同包 `ml-experiment-reporting.md`、`ml-reviewer-expectations.md`、`ml-venue-checklists.md`，报告骨架见 `../templates/ml-writing-report.md`。
 
 ## 论点与比较
 

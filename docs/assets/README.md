@@ -16,15 +16,13 @@ $ /setup-research-os
 ❓ 是否继续? (y/n): y
 ✅ 初始化完成！
 
-# 场景2: Idea Discovery 工作流
-$ /idea-discovery
-🎯 请输入研究方向: "基于深度学习的蛋白质结构预测"
-📚 Phase 1: 文献调研中...
-💡 Phase 2: 生成 5 个候选 Idea
-🔍 Phase 3: 查新检查
-👥 Phase 4: 独立评审
-📋 交付: IDEA_DISCOVERY.md
-✅ 工作流完成，等待用户决策
+# 场景2: Research OS Discovery 配方
+$ /research-os
+🎯 用户目标: "从这个研究方向出发，结合已有材料形成 Proposal"
+🧭 先核对目标、材料与授权，再按证据选择需要的发现能力
+📚 可重排或回访文献、候选、查新与收敛职责；fresh 独立评审由独立 reviewer 执行
+📋 按用户目标交付发现报告和/或 Proposal；缺失依赖只阻塞相关职责
+✅ 完成后停止，不自动启动 pilot、实验计划或其他主流程
 
 # 场景3: 实验计划
 $ /experiment-plan

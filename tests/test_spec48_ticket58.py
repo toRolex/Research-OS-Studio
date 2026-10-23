@@ -17,9 +17,9 @@ from spec48_workcopy import copy_tracked_tree
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts" / "check-skills.py"
 SKILLS = ROOT / "skills"
-DISCOVERY = SKILLS / "idea-cycle/idea-discovery"
-COMPOSITION = DISCOVERY / "references/composition-notes.md"
-PLAYBOOK = SKILLS / "general/research-os/playbooks/idea-discovery.md"
+DISCOVERY = SKILLS / "general/research-os"
+COMPOSITION = DISCOVERY / "references/discovery-composition.md"
+PLAYBOOK = DISCOVERY / "playbooks/discovery.md"
 BOUNDARY = SKILLS / "general/research-os/references/migration-boundary.md"
 HISTORICAL = re.compile(
     r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
@@ -27,7 +27,6 @@ HISTORICAL = re.compile(
 
 MIGRATED_TICKET58 = (
     "skills/idea-cycle/creative-thinking-for-research/SKILL.md",
-    "skills/idea-cycle/idea-discovery/SKILL.md",
     "skills/idea-cycle/idea-generation/SKILL.md",
     "skills/idea-cycle/idea-refinement/SKILL.md",
     "skills/idea-cycle/idea-review/SKILL.md",
@@ -116,8 +115,8 @@ class MigratedSet(unittest.TestCase):
 
 class DiscoveryRecipe(unittest.TestCase):
     def test_discovery_composes_from_current_gaps_and_existing_results(self):
-        text = (DISCOVERY / "SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("组合配方", text)
+        text = PLAYBOOK.read_text(encoding="utf-8")
+        self.assertIn("组合参考", COMPOSITION.read_text(encoding="utf-8"))
         self.assertIn("目标缺口", text)
         self.assertIn("子集", text)
         self.assertIn("重排", text)
@@ -147,7 +146,7 @@ class SharedAssets(unittest.TestCase):
     def test_existing_retrieval_and_plotting_assets_are_reused(self):
         module = load()
         names = {Path(rel).parent.name for rel in MIGRATED_TICKET58}
-        self.assertEqual(names, {"creative-thinking-for-research", "idea-discovery", "idea-generation", "idea-refinement", "idea-review", "novelty-check", "academic-plotting"})
+        self.assertEqual(names, {"creative-thinking-for-research", "idea-generation", "idea-refinement", "idea-review", "novelty-check", "academic-plotting"})
         self.assertIn("skills/idea-cycle/research-lit/SKILL.md", module.MIGRATED_CONTRACT)
         self.assertIn("skills/writing-cycle/academic-plotting/SKILL.md", module.MIGRATED_CONTRACT)
 
@@ -167,6 +166,12 @@ class SharedAssets(unittest.TestCase):
                 "LICENSE-Orchestra.txt",
                 "references/creative-frameworks.md",
             ],
+            "research-os": [
+                "references/discovery-composition.md",
+                "templates/research-brief.md",
+                "templates/discovery-report.md",
+                "licenses/idea-cycle/LICENSE",
+            ],
             "academic-plotting": [
                 "LICENSE-ARIS.txt",
                 "LICENSE-Orchestra.txt",
@@ -182,6 +187,7 @@ class SharedAssets(unittest.TestCase):
             "research-lit": SKILLS / "idea-cycle/research-lit",
             "novelty-check": SKILLS / "idea-cycle/novelty-check",
             "creative-thinking-for-research": SKILLS / "idea-cycle/creative-thinking-for-research",
+            "research-os": SKILLS / "general/research-os",
             "academic-plotting": SKILLS / "writing-cycle/academic-plotting",
         }
         for name, rels in required.items():
@@ -192,6 +198,9 @@ class SharedAssets(unittest.TestCase):
             license_text = (roots[name] / "LICENSE").read_text(encoding="utf-8")
             self.assertIn("MIT License", license_text)
             self.assertIn("Copyright (c) 2026 wanshuiyin", license_text)
+        discovery_license = (roots["research-os"] / "licenses/idea-cycle/LICENSE").read_text(encoding="utf-8")
+        self.assertIn("MIT License", discovery_license)
+        self.assertIn("Copyright (c) 2026 wanshuiyin", discovery_license)
 
     def test_external_services_and_writes_stay_authorized(self):
         research = (SKILLS / "idea-cycle/research-lit/SKILL.md").read_text(encoding="utf-8")
@@ -209,11 +218,11 @@ class SharedAssets(unittest.TestCase):
 
 class Ticket58ReviewRegressions(unittest.TestCase):
     def test_discovery_recipe_is_gap_driven_not_a_locked_route(self):
-        text = (DISCOVERY / "SKILL.md").read_text(encoding="utf-8")
-        for marker in ("目标缺口", "适用职责的子集", "重排", "回访", "全链 Discovery 只是适用时的参考配方"):
+        text = PLAYBOOK.read_text(encoding="utf-8")
+        for marker in ("目标缺口", "子集", "重排", "回访"):
             with self.subTest(marker=marker):
-                self.assertIn(marker, text)
-        self.assertNotIn("按下方 Phase 1–4.5 连续执行", text)
+                self.assertIn(marker, text + COMPOSITION.read_text(encoding="utf-8"))
+        self.assertNotIn("固定顺序", text)
         composition = COMPOSITION.read_text(encoding="utf-8")
         self.assertNotIn("不得跳过", composition)
         playbook = PLAYBOOK.read_text(encoding="utf-8")
@@ -249,14 +258,14 @@ class Ticket58ReviewRegressions(unittest.TestCase):
 
     def test_composed_plotting_and_discovery_paths_inherit_authorization(self):
         plotting = (SKILLS / "writing-cycle/academic-plotting/SKILL.md").read_text(encoding="utf-8")
-        discovery = (DISCOVERY / "SKILL.md").read_text(encoding="utf-8")
+        discovery = PLAYBOOK.read_text(encoding="utf-8")
         self.assertIn("已授权材料位置自行确定有依据的图表", plotting)
-        self.assertIn("已授权目录内可自行选择不冲突的新文件名", discovery)
+        self.assertIn("只在授权目录写入不冲突的新产物", discovery)
         self.assertNotIn("提出候选图表并确认选择", plotting)
         self.assertNotIn("路径由用户确认", discovery)
 
     def test_dependency_contract_and_group_install_are_user_reachable(self):
-        text = (DISCOVERY / "references/composition-notes.md").read_text(encoding="utf-8")
+        text = COMPOSITION.read_text(encoding="utf-8")
         readme = (SKILLS / "README.md").read_text(encoding="utf-8")
         dependencies = ("research-lit", "idea-generation", "novelty-check", "idea-review", "idea-refinement")
         for name in dependencies:
@@ -264,10 +273,10 @@ class Ticket58ReviewRegressions(unittest.TestCase):
                 self.assertIn("## Required skills", text)
                 self.assertIn(name, text)
                 self.assertIn(name, readme)
-                self.assertIn(name, (DISCOVERY / "references/composition-notes.md").read_text(encoding="utf-8"))
+                self.assertIn(name, COMPOSITION.read_text(encoding="utf-8"))
         self.assertIn("DEPENDENCY MISSING / BLOCKED", text)
-        install = next(line for line in readme.splitlines() if "--skill idea-discovery" in line)
-        self.assertIn("--skill 多选只安装列出的 Skill", readme)
+        install = next(line for line in readme.splitlines() if "--skill research-os" in line)
+        self.assertIn("多选只安装列出的 Skills", readme)
         for name in dependencies:
             self.assertIn(name, install)
 
@@ -302,10 +311,10 @@ class CheckerCounterexamples(unittest.TestCase):
 
     def test_locked_discovery_route_is_red(self):
         with WorkCopy() as work:
-            path = work.path / "skills/idea-cycle/idea-discovery/SKILL.md"
+            path = work.path / "skills/general/research-os/playbooks/discovery.md"
             text = path.read_text(encoding="utf-8").replace(
-                "先据目标和已有成果列出待解决缺口，再选择适用职责的子集；可按问题需要重排、回访或结束某项职责。",
-                "一次委托按下方 Phase 1–4.5 连续执行。",
+                "按缺口组合五项 Required 能力",
+                "固定顺序执行五个阶段",
             )
             path.write_text(text, encoding="utf-8")
             stage_skill(work.path)
@@ -328,8 +337,8 @@ class CheckerCounterexamples(unittest.TestCase):
         with WorkCopy() as work:
             path = work.path / COMPOSITION.relative_to(ROOT)
             text = path.read_text(encoding="utf-8").replace(
-                "--skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement",
-                "--skill idea-discovery research-lit idea-generation novelty-check idea-review",
+                "--skill research-os research-lit idea-generation novelty-check idea-review idea-refinement",
+                "--skill research-os research-lit idea-generation novelty-check idea-review",
             )
             path.write_text(text, encoding="utf-8")
             stage_skill(work.path)
@@ -357,7 +366,7 @@ class CheckerCounterexamples(unittest.TestCase):
 
     def test_discovery_playbook_source_tree_path_is_red(self):
         with WorkCopy() as work:
-            path = work.path / "skills/general/research-os/playbooks/idea-discovery.md"
+            path = work.path / "skills/general/research-os/playbooks/discovery.md"
             text = path.read_text(encoding="utf-8").replace(
                 "## 执行与交付",
                 "读取 `skills/idea-cycle/research-lit/SKILL.md`。\n\n## 执行与交付",
@@ -374,7 +383,6 @@ class FlatInstall(unittest.TestCase):
             root = Path(tmp)
             for rel in (
                 "general/research-os",
-                "idea-cycle/idea-discovery",
                 "idea-cycle/research-lit",
                 "idea-cycle/idea-generation",
                 "idea-cycle/novelty-check",
@@ -385,14 +393,17 @@ class FlatInstall(unittest.TestCase):
             ):
                 parts = Path(rel).parts
                 shutil.copytree(SKILLS / rel, root / parts[-1])
-            discovery = root / "idea-discovery"
+            discovery = root / "research-os"
             plotting = root / "academic-plotting"
             research = root / "research-lit"
-            self.assertTrue((discovery / "references/composition-notes.md").is_file())
+            self.assertTrue((discovery / "references/discovery-composition.md").is_file())
+            self.assertTrue((discovery / "templates/research-brief.md").is_file())
+            self.assertTrue((discovery / "templates/discovery-report.md").is_file())
+            self.assertTrue((discovery / "licenses/idea-cycle/LICENSE").is_file())
             self.assertTrue((plotting / "references/data-visualization.md").is_file())
             self.assertTrue((research / "references/source-methods.md").is_file())
             self.assertTrue((research / "LICENSE").is_file())
-            text = (discovery / "references/composition-notes.md").read_text(encoding="utf-8")
+            text = (discovery / "references/discovery-composition.md").read_text(encoding="utf-8")
             self.assertNotIn("skills/", text)
 
 

@@ -60,11 +60,11 @@ Research OS Studio 将科研过程拆解为边界明确的工作流。AI 在单�
 ## 核心设计原则
 
 - **纯 Agent Skills**：无需安装独立 CLI、Python 包或后台服务，安装即用。
-- **三大科研阶段**：
+- **三类科研能力地图（不是固定阶段顺序）**：
   1. **Idea Cycle（构思与查新）**：文献检索、多视角构思、新颖性核查、独立评审与方案收敛。
   2. **Validation Cycle（实验与理论验证）**：实证路径管理实验计划、执行监控、统计分析与审计；理论路径负责推导记录、证明起草、审查与修复。
   3. **Writing Cycle（论文写作与打磨）**：正文起草、学术绘图、LaTeX 编译检查、引用与结论一致性审计、审稿回复及转投适配。
-- **人在回路**：用户显式调用才进入路线。可逆步骤直接做完并事后呈现。对外发送、删除或覆盖既有实验数据、批次授权越界，以及叶 skill 自己的审批点，停在副作用之前。一次调用若写明跨阶段并给出边界，编排可以继续；没有这句授权时，不自行跳到下一主流程。
+- **研究委托与硬门**：一次入口请求形成有界委托（研究目标、授权范围与额度、完成条件）；入口可据此组合和重排能力，不因普通阶段转换、输出路径或每轮修复重复请求批准。用户要求只读时保持只读；替换主要目标须等目标所有者确认，超出授权或额度、对外发送、破坏性操作及具体能力声明的硬门仍须停下并只阻塞相关工作。缺少 setup 或明确预算时可以有界开始，不把缺失预算当作资源授权。只有宿主确实提供子代理能力时才派发；不支持时只做当前环境可完成的部分，并如实报告未执行的委托工作。
 - **原生文件格式**：成果直接以 Markdown、LaTeX、脚本和数据文件交付。
 
 ---
@@ -82,13 +82,13 @@ npx skills@latest add toRolex/Research-OS-Studio --list
 # 安装全部技能到当前项目
 npx skills@latest add toRolex/Research-OS-Studio --all
 
-# 仅装 Discovery 时也安装五个必需兄弟能力
-npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
+# 仅用 Research OS Discovery 时，同时安装入口和五项 Required 能力
+npx skills@latest add toRolex/Research-OS-Studio --skill research-os research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
 ```
 
-### 2. 初始化工作区
+### 2. 可选：初始化工作区
 
-安装后，在 Agent 中运行初始化命令。以下 `/name` 示例是逻辑点名；pi 原生命令为 `/skill:name`（setup：`/skill:setup-research-os`；入口：`/skill:research-os 我该从哪开始`），Claude Code 用 `/name`，Codex 用 `$name` 或明确点名已安装技能。pi 的普通 `/name` 文本不保证加载隐藏的显式 Skill：
+安装后可运行初始化命令；它不是开始研究的前置条件。缺少 setup 或明确预算时，`/research-os` 仍可在当前能力与授权允许范围内有界开始，不擅自消耗未授权资源。以下 `/name` 示例是逻辑点名；pi 原生命令为 `/skill:name`（setup：`/skill:setup-research-os`；入口：`/skill:research-os 我该从哪开始`），Claude Code 用 `/name`，Codex 用 `$name` 或明确点名已安装技能。pi 的普通 `/name` 文本不保证加载隐藏的显式 Skill：
 
 ```bash
 /setup-research-os
@@ -98,13 +98,13 @@ npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research
 
 ### 3. 选择技能
 
-如果你不确定当前阶段该用哪个技能，直接问统一入口，并说明只要推荐：
+如果你不确定从哪里切入，直接问统一入口，并说明只要推荐：
 
 ```bash
 /research-os 我该从哪开始
 ```
 
-这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。只要一次文献综合走 literature：入口按研究委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度。设计实验走 experiment-plan；跑完已有计划并分析走 experiment-bridge 兼容入口，实际执行控制由 run-experiment 承担。这两条要占用运行资源，要求研究日志里的本批授权，setup 写下的默认政策不能当运行许可。
+这进入 route-only：按研究方向或已有材料给推荐，不修改文件、不联网，也不自动执行推荐任务。旧入口 `ask-research-os` 已删除。目标明确时，可直接点名底层技能，或让 `/research-os` 按研究委托组合能力。委托给出目标、授权范围、可用资源额度与完成条件；普通能力/阶段转换不逐次停下请批。没有 setup 或明确预算时可先做有界且不越权的工作；需要消耗运行资源的步骤只在有效额度内执行，缺少或超出额度时停在该分支。`experiment-bridge` 仍是兼容入口，实际执行控制由 `run-experiment` 承担；本说明不表示其他兼容入口已被替代或迁移完成。
 
 已有上一轮证明、改进日志或研究作业记录时，不要从零重跑：
 
@@ -116,13 +116,15 @@ npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research
 
 ## 典型科研流程
 
+以下是按常见目标组织的参考配方，不是必须依次通过的阶段或固定流水线。统一入口依照研究委托在能力间组合、重排与回访；完成条件满足后再收束。
+
 ### 1. 构思与立项（Idea Discovery）
 ```text
 输入研究方向
       ↓
 /research-os 我有方向，没有 idea
       ↓
-playbook idea-discovery
+research-os Discovery 配方
   按目标缺口选择必要能力，可局部开始、重排与回访
   ├─ 文献范围不足：research-lit
   ├─ 候选不足：idea-generation（必要时 creative-thinking）
@@ -148,7 +150,7 @@ playbook idea-discovery
   └─ 独立审计代码与结果真实性             ↓
       ↓                             /proof-repair（有界修复）
 /result-to-claim（提取约束结论）          ↓
-      ↓                             proof-orchestrator（旧名称兼容到 /research-os；Lean 按需）
+      ↓                             /research-os proof 配方（按需使用 proof-review 方法资源）
 交付实验审计与 Claim 报告（停止）    交付完整证明记录（停止）
 ```
 
@@ -186,16 +188,16 @@ playbook idea-discovery
 
 本仓库提供可独立使用的技能，按触发机制分为两类：
 - **除 setup 外全部显式调用**：用户直接点名，或父流程按路径级联读取全文。模型不因描述自动触发。
-- **`setup-research-os`**：唯一允许模型主动建议的例外。写入前仍要逐角色确认模型和整份草稿。
+- **`setup-research-os`**：唯一允许模型主动建议的例外。它是可选初始化；被建议本身不是写入授权，写入前仍确认草稿及其中的角色映射。
 
 | 分类 | 技能名称 | 调用方式 | 说明 |
 |---|---|---|---|
-| **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | 可建议 | 确认本 session 可用模型、八角色、零授权默认政策与工作区种子；建议本身不是写入授权 |
-| | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口：一次调用是一份研究委托（目标/权限/额度/完成条件见 `references/mandate.md`）；只读走 route-only；literature 是已迁移的最短链路，未迁移路线仍按各自旧门停下（边界见 `references/migration-boundary.md`） |
+| **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | 可建议 | 可选的项目初始化：确认本 session 可用模型的角色映射、零授权默认政策与工作区种子；建议本身不是写入授权，也不是开始研究的前置条件 |
+| | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口：一次调用是一份研究委托（目标/权限/额度/完成条件见 `references/mandate.md`）；只读走 route-only；仅在宿主具备真实子代理能力时委托。兼容入口和未迁移路线仍按其当前合同工作；此清单不表示 #55B/C 已合入（边界见 `references/migration-boundary.md`） |
 | | [swarm](skills/general/swarm/SKILL.md) | 显式 | 并行覆盖：分片、竞赛或混合探索，派发宿主真实子代理并汇总；独立 brief、输出隔离、缺证据有界重派，缺口不算通过（改编自 pstack swarm，MIT，见其 LICENSE） |
 | | [interrogate](skills/general/interrogate/SKILL.md) | 显式 | 对抗审查：独立 reviewer 逐模型挑战研究材料或变更，findings 去重、分歧保留，主审四桶有据判断；始终只读，修复由委托按授权另行组织 |
 | **Organization** | [arena](skills/organization/arena/SKILL.md) | 显式 | 候选比较与整合：同一任务并行独立候选，预先 rubric、交叉评判、主编排者逐项选基座并手工整合，数学整合后重查假设/记号/依赖闭合；胜出不等于原命题成立；已迁移到研究委托合同，缺子代理时标 blocked |
-| **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | 显式 | 可组合发现能力：按目标缺口选择、重排或回访；完整 Discovery/Proposal 为可选目标 |
+| **Idea Cycle** | [research-os Discovery 配方](skills/general/research-os/playbooks/discovery.md) | 通过 `/research-os` 路由 | 用户可直接给研究方向并要求完整 Proposal；按缺口选择、重排或回访五项 Required 能力，保留 fresh 独立评审 |
 | | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | 显式 | 文献检索与综合，标注出处与核实状态；已迁移到研究委托合同，不再有叶级审批门 |
 | | [idea-generation](skills/idea-cycle/idea-generation/SKILL.md) | 显式 | 多视角生成研究候选方案，记录筛选理由 |
 | | [creative-thinking-for-research](skills/idea-cycle/creative-thinking-for-research/SKILL.md) | 显式 | 构思瓶颈时的认知转换与正交发散 |
@@ -215,14 +217,11 @@ playbook idea-discovery
 | | [proof-writer](skills/validation-cycle/proof-writer/SKILL.md) | 显式 | 起草数学证明，保留未完成的尝试与断点 |
 | | [proof-review](skills/validation-cycle/proof-review/SKILL.md) | 显式 | 只读审查证明逻辑与边界反例，不修改文件 |
 | | [proof-repair](skills/validation-cycle/proof-repair/SKILL.md) | 显式 | 在授权范围内有针对性地修复证明断点 |
-| | [proof-orchestrator](skills/validation-cycle/proof-orchestrator/SKILL.md) | 显式 | 旧名称兼容入口，转入 `/research-os` proof；保留可选 Lean、审计和交接方法，不另建轮次/额度总控 |
 | | [create-formal-verification-skill](skills/validation-cycle/create-formal-verification-skill/SKILL.md) | 显式 | 为项目建立可重跑的形式化检查；按问题选工具，记录假设/版本/同步并审计编码与原问题对应 |
 | | [maintain-formal-verification-skill](skills/validation-cycle/maintain-formal-verification-skill/SKILL.md) | 显式 | 代码变化后把形式化检查重新对齐；重跑并区分验证漂移与代码 bug |
 | | [create-verification-skill](skills/validation-cycle/create-verification-skill/SKILL.md) | 显式 | 为项目建立可运行的行为验证 Skill：启动、doctor、按用户路径驱动、证据与清理，播种特征覆盖映射；未执行的生成资产标草稿 |
 | | [maintain-verification-skill](skills/validation-cycle/maintain-verification-skill/SKILL.md) | 显式 | 随应用变化维护行为验证 Skill：按特征源读与真实驱动，区分文档漂移与产品缺陷，交付已证明修正 |
 | **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | 显式 | 统一写作入口：general／ML／Systems 标准；委托内编译与引用修复继承授权，不自动投稿 |
-| | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | 显式 | 旧平行入口兼容层：ML experiment reporting、reviewer expectations、venue checklists；继承同一委托 |
-| | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | 显式 | 旧平行入口兼容层：Systems writing methods、evaluation methods、venue and reviewer；继承同一委托 |
 | | [paper-plan](skills/writing-cycle/paper-plan/SKILL.md) | 显式 | 规划论文大纲与 Claim-Evidence 证据对应矩阵 |
 | | [paper-drafting](skills/writing-cycle/paper-drafting/SKILL.md) | 显式 | 依据实验数据与推导记录起草论文正文 |
 | | [academic-plotting](skills/writing-cycle/academic-plotting/SKILL.md) | 显式 | 绘制学术图表并保留可复现绘图脚本 |

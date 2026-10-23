@@ -94,7 +94,6 @@ class PolicyAndGates(unittest.TestCase):
             "skills/validation-cycle/formula-derivation/SKILL.md",
             "skills/validation-cycle/proof-writer/SKILL.md",
             "skills/validation-cycle/proof-repair/SKILL.md",
-            "skills/validation-cycle/proof-orchestrator/SKILL.md",
         }
         self.assertTrue(migrated_proof_skills <= migrated)
         self.assertTrue(migrated_proof_skills.isdisjoint(module.LEGACY_LEAF_GATES))
@@ -104,24 +103,27 @@ class PolicyAndGates(unittest.TestCase):
             self.assertNotRegex(text, r"(?m)^Gate:")
             self.assertRegex(text, r"(?m)^Gates: none$")
             self.assertRegex(text, r"(?m)^## 委托继承$")
+        self.assertNotIn("skills/validation-cycle/proof-orchestrator/SKILL.md", migrated)
         writing_skills = {
             f"skills/writing-cycle/{name}/SKILL.md"
             for name in (
                 "apply-citation-fixes", "citation-audit", "claim-stress-test",
-                "ml-paper-writing", "paper-claim-audit", "paper-compile-repair",
+                "paper-claim-audit", "paper-compile-repair",
                 "paper-compile", "paper-drafting", "paper-plan", "paper-talk",
-                "paper-writing", "rebuttal", "resubmit-pipeline", "systems-paper-writing",
+                "paper-writing", "rebuttal", "resubmit-pipeline",
             )
         }
         self.assertTrue(writing_skills <= migrated)
         idea_cycle_skills = {
             f"skills/idea-cycle/{name}/SKILL.md"
             for name in (
-                "creative-thinking-for-research", "idea-discovery", "idea-generation",
+                "creative-thinking-for-research", "idea-generation",
                 "idea-refinement", "idea-review", "novelty-check",
             )
         }
         self.assertTrue(idea_cycle_skills <= migrated)
+        self.assertNotIn("skills/idea-cycle/idea-discovery/SKILL.md", migrated)
+        self.assertFalse((ROOT / "skills/idea-cycle/idea-discovery/SKILL.md").exists())
         academic_plotting = "skills/writing-cycle/academic-plotting/SKILL.md"
         self.assertIn(academic_plotting, migrated)
         self.assertNotIn(academic_plotting, module.LEGACY_LEAF_GATES)

@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parent.parent
 REQUIRED_ROUTES = (
     ("route-only", "—", "yes"),
     ("literature", "—", "no"),
-    ("idea-discovery", "—", "no"),
+    ("discovery", "—", "no"),
     ("experiment-plan", "—", "no"),
     ("experiment-bridge", "—", "no"),
     ("paper-writing", "general", "no"),

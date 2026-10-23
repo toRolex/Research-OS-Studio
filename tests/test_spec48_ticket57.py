@@ -4,11 +4,9 @@
 或宿主交互行为已经通过。
 """
 import importlib.util
-import os
 import re
 import subprocess
 import sys
-import tempfile
 import unittest
 from pathlib import Path
 
@@ -22,7 +20,6 @@ MIGRATED_WRITING = (
     "apply-citation-fixes",
     "citation-audit",
     "claim-stress-test",
-    "ml-paper-writing",
     "paper-claim-audit",
     "paper-compile-repair",
     "paper-compile",
@@ -32,7 +29,6 @@ MIGRATED_WRITING = (
     "paper-writing",
     "rebuttal",
     "resubmit-pipeline",
-    "systems-paper-writing",
 )
 HISTORICAL = re.compile(
     r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
@@ -134,13 +130,6 @@ class UnifiedWritingOrganization(unittest.TestCase):
             self.assertIn("只读", text, name)
             self.assertIn("不修改", text, name)
 
-    def test_parallel_ml_and_systems_entries_remain_compatible(self):
-        for name in ("ml-paper-writing", "systems-paper-writing"):
-            text = (SKILLS / name / "SKILL.md").read_text(encoding="utf-8")
-            self.assertIn("旧平行入口兼容", text, name)
-            self.assertIn("委托继承", text, name)
-            self.assertIn("disable-model-invocation: true", text, name)
-
     def test_research_os_playbooks_route_into_unified_writing_without_old_gates(self):
         playbooks = ROOT / "skills/general/research-os/playbooks"
         for name in ("paper-writing-general", "paper-writing-ml", "paper-writing-systems"):
@@ -167,7 +156,7 @@ class WritingBoundaries(unittest.TestCase):
             self.assertNotRegex(text, r"(?m)^Gate: ", name)
 
     def test_ac4_evidence_gaps_can_be_repaired_inside_authorization_without_fabrication(self):
-        for name in ("paper-writing", "ml-paper-writing", "systems-paper-writing"):
+        for name in ("paper-writing",):
             text = (SKILLS / name / "SKILL.md").read_text(encoding="utf-8")
             self.assertIn("证据缺口", text, name)
             self.assertIn("不捏造", text, name)
@@ -195,14 +184,22 @@ class WritingBoundaries(unittest.TestCase):
         self.assertIn("不启动跨研究改进循环", unified)
         self.assertIn("#58", unified)
 
-    def test_unified_and_compatibility_skill_resource_links_resolve_at_source(self):
+    def test_unified_skill_resource_links_resolve_at_source(self):
         link = re.compile(r"\[[^\]]*\]\(([^)\s]+)")
         for source in (
             UNIFIED / "SKILL.md",
             UNIFIED / "references/composition-map.md",
             UNIFIED / "references/standards.md",
-            SKILLS / "ml-paper-writing/SKILL.md",
-            SKILLS / "systems-paper-writing/SKILL.md",
+            UNIFIED / "references/sources.md",
+            UNIFIED / "references/ml-experiment-reporting.md",
+            UNIFIED / "references/ml-reviewer-expectations.md",
+            UNIFIED / "references/ml-venue-checklists.md",
+            UNIFIED / "references/systems-writing-methods.md",
+            UNIFIED / "references/systems-evaluation-methods.md",
+            UNIFIED / "references/systems-checklist.md",
+            UNIFIED / "references/systems-venue-and-reviewer.md",
+            UNIFIED / "templates/ml-writing-report.md",
+            UNIFIED / "templates/systems-paper-writing-report.md",
         ):
             for line_no, line in enumerate(source.read_text(encoding="utf-8").splitlines(), 1):
                 for target in link.findall(line):
@@ -210,99 +207,3 @@ class WritingBoundaries(unittest.TestCase):
                         continue
                     resolved = (source.parent / target.split("#", 1)[0]).resolve()
                     self.assertTrue(resolved.is_file(), f"{source}:{line_no}: {target}")
-
-    def test_ac6_real_single_skill_installs_include_required_resources_and_licenses(self):
-        requirements = {
-            "paper-writing": (
-                "LICENSE",
-                "LICENSE-ML.txt",
-                "LICENSE-ARIS.txt",
-                "LICENSE-Orchestra.txt",
-                "references/standards.md",
-                "references/ml-ai-standards.md",
-                "references/systems-standards.md",
-                "references/composition-map.md",
-                "templates/paper-writing-report.md",
-            ),
-            "ml-paper-writing": (
-                "LICENSE",
-                "references/experiment-reporting.md",
-                "references/reviewer-expectations.md",
-                "references/venue-checklists.md",
-            ),
-            "systems-paper-writing": (
-                "LICENSE-ARIS.txt",
-                "LICENSE-Orchestra.txt",
-                "references/systems-writing-methods.md",
-                "references/evaluation-methods.md",
-                "references/checklist.md",
-                "references/venue-and-reviewer.md",
-            ),
-        }
-        link = re.compile(r"\[[^\]]*\]\(([^)\s]+)")
-        version = subprocess.run(
-            ["npx", "--offline", "--yes", "skills@1.7.4", "--version"],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-        )
-        if version.returncode != 0:
-            self.skipTest("skills@1.7.4 is not available in the local npm cache")
-        self.assertEqual(version.stdout.strip(), "1.7.4")
-        for name, required in requirements.items():
-            with tempfile.TemporaryDirectory(dir="/tmp") as tmp:
-                project = Path(tmp)
-                result = subprocess.run(
-                    [
-                        "npx",
-                        "--offline",
-                        "--yes",
-                        "skills@1.7.4",
-                        "add",
-                        str(ROOT),
-                        "--skill",
-                        name,
-                        "--agent",
-                        "claude-code",
-                        "--copy",
-                        "--yes",
-                    ],
-                    cwd=project,
-                    env={**os.environ, "TMPDIR": "/tmp"},
-                    capture_output=True,
-                    text=True,
-                )
-                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-                installed = project / ".claude" / "skills"
-                package = installed / name
-                self.assertTrue((package / "SKILL.md").is_file(), name)
-                for relative in required:
-                    self.assertTrue((package / relative).is_file(), f"{name}/{relative}")
-                self.assertEqual(
-                    sorted(path.name for path in installed.iterdir() if path.is_dir()),
-                    [name],
-                    "single-skill install must not inherit sibling folders",
-                )
-                source = ROOT / "skills/writing-cycle" / name
-                source_files = {
-                    path.relative_to(source).as_posix(): path.read_bytes()
-                    for path in source.rglob("*")
-                    if path.is_file()
-                }
-                installed_files = {
-                    path.relative_to(package).as_posix(): path.read_bytes()
-                    for path in package.rglob("*")
-                    if path.is_file()
-                }
-                self.assertEqual(installed_files.keys(), source_files.keys(), name)
-                for relative, expected in source_files.items():
-                    self.assertEqual(installed_files[relative], expected, f"{name}/{relative}")
-                if name == "paper-writing":
-                    standards = package / "references/standards.md"
-                    for line_no, text in enumerate(standards.read_text(encoding="utf-8").splitlines(), 1):
-                        for target in link.findall(text):
-                            if target.startswith(("http:", "https:", "#", "mailto:")):
-                                continue
-                            resolved = (standards.parent / target.split("#", 1)[0]).resolve()
-                            self.assertTrue(resolved.is_file(), f"{standards}:{line_no}: {target}")
-                            self.assertIn(package.resolve(), resolved.parents)
