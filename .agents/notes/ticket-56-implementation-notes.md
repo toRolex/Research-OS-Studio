@@ -4,8 +4,9 @@
 
 | Work unit | Status | Deliverable / evidence | Next |
 | --- | --- | --- | --- |
-| #56 experiment execution & remote contract | 进行中 | 原实现经 `/tmp/research-os-spec48-ticket56-review/REPORT.md` 独立复验为 REJECT（F1–F6）；本 Unit A 只覆盖 F1/F5，不代表整票 ready | F2 自包含、F3 普通重复批准、F4 数学 baseline 分支、F6 死锚点仍未完成，留待后续单元 |
-| Unit A — F1/F5 定向修复 | done | `tests/test_spec48_ticket56.py` 18 passed；F1 stale/failed/success 完整产物反例，F5 空 remote 合同红、缺文件正控及真实 batch marker 检查；历史基线逐项未变 | 无；不合并，交后续单元处理剩余 findings |
+| #56 experiment execution & remote contract | done（等待 parent 后续合并） | F1–F6 逐项核验；目标测试 27 passed、15 subtests passed；9 个真实单装全部 `mode=copy`，39 条本地链接无断链；详见本轮记录与 `/tmp/spec48-56-resume/REPORT.md` | 由 parent 后续合并；本单元不推送/开 PR/写 tracker |
+| Unit A — F1/F5 定向修复 | done | 已合并保留原提交历史；目标测试覆盖 stale/failed/complete 与 checker 负例 | 无 |
+| Unit B — F2/F3/F4/F6 与 Unit A 回归 | done | 单装、合同、fragment 与数学/非训练结构检查通过；九个单装证据见 `/tmp/spec48-56-resume/cli-installs/audit.json` | 无；全库历史失败与归档断链交 #60 |
 
 ## Red evidence
 
@@ -127,3 +128,47 @@ FULL: uv run --offline --with pytest python -m pytest tests scripts/test_check_s
 ```
 
 验收限制：没有执行真实 SSH、调度器或生产作业（本票明确不要求作为门槛）。本单元不处理且不宣称完成 F2 自包含、F3 普通重复批准、F4 数学 baseline 分支或 F6 死锚点；故 **#56 整票仍未 ready**。
+
+## Unit B review remediation — 2026-10-22
+
+**入口判定：直接在获准的唯一 worker worktree 实现**：这是边界明确的单票返修，用户明令禁止继续派发。模型可用性已按 `~/.agents/model-availability.md` 核对；不调用任何其他模型。已加载 writing-for-agents 与 pre-implement；本环境无可用 TDD skill。
+
+- 开始状态：`HEAD=c1b26a2`，分支 `t3/spec-56-experiment-workflows`；基线 `integration/spec-48=b0d8ead`，共享祖先仍是 `e84f779`。已有 15 个未提交文件编辑，无 staged/冲突文件；本单元保留并在此基础上修订，不 reset/clean、不改 integration。
+- 本轮边界为 review F2/F3/F4/F6 及回归 F1/F5；权威范围为 `/tmp/research-os-spec48-context/spec/#48.md`、`tickets/#56.md`、`retry-ticket-56.json` 和完整 review `/tmp/research-os-spec48-ticket56-review/REPORT.md`。
+- Skills CLI 1.7.4 已对九个技能分别运行单技能安装，使用 `--copy` 而非联装或源码链接。安装根目录：`/tmp/spec48-56-b-single-installs.5WDbdW`。安装成功仅为起点，引用、fragment、共置资源及显式条件依赖须逐目录审查后再报验收。
+- 当前 ticket 测试通过不能覆盖 F4：需要验证数学/非训练分支没有被后续步骤或模板中的无条件 baseline 要求抵消。对 F2 不以新增依赖标记本身证明可用；以每个真实单装目录中的可达文件、锚点和缺失依赖的明确 blocked/resolution 合同为证。
+
+### Decisions / deviations
+
+- **F2 分发方式（偏离原 Unit A 的“不复制 mandate”决定）**：Skills CLI 的 `-s` 只安装所选 Skill，不解析跨 Skill 依赖。为满足真实单装可执行且不让叶依赖开发仓库，九个实验叶都携带同一份精简委托合同分发摘录；完整规范源仍只在 `skills/general/research-os/references/mandate.md`。checker 校验摘录的关键授权规则仍存在于规范源、九份副本彼此一致且各自已追踪。额外依赖能力（bridge 的各路由、queue 的执行、claim 的统计细则）单装时仍缺席，但明确标 blocked/unknown 并给出补装命令；没有以联装冒充单装。
+- **F3**：计划、Claim 报告及批次清单在既授权写域创建新文件时直接交付；仅写域未知、冲突/覆盖、目标替换或越权时停下确认。执行授权仍保留原有边界。
+- **F4**：Phase 4 的 baseline-first 只属于 training branch；数学/非训练分支有自己的对照/证书 gate。模板 checklist 改为分支条件，不再让所有候选运行先过训练 baseline。
+- **F6**：checker 现核实验叶全部 Markdown 的本地 fragment 和跨叶引用；安装副本实测包含 plan 的 `#委托继承`，无坏锚点。
+- **真实单装证据**：最终根目录 `/tmp/spec48-56-b-final-single-installs.DyWA3V`。九个调用分别只选一个 Skill，CLI JSON 均显示 `status=installed`, `mode=copy`; 每目录仅安装目标叶。九叶 Markdown 链接共 39 条，断文件路径 0、失效 fragment 0、跨叶 Markdown 链接 0；每个单装实际含 mandate 摘录及该叶注册的所有必需参考/模板。bridge/queue/claim 的条件 sibling 在单装中确实不存在，正文分别声明缺项时 blocked/unknown；该限制是显式能力依赖，而非声称其在单装目录中已安装。
+
+## Resume verification — 2026-10-24
+
+**入口与边界**：直接在当前 T3 隔离 worktree 收束；用户明确禁止继续派发。已读 Multi-Agent、model-availability、适用 CODING_STANDARDS、仓库 AGENTS/GLOSSARY/ADR-0005、pre-implement、writing-for-agents 与指定 TDD `SKILL.md`/`tests.md`/`mocking.md`。不新增行为 runtime、不扩展 seam；没有发现需要另开 TDD 修复切片的缺口。
+
+- **base/sync**：当前分支 `t3/complete-ticket-56` 起于 `integration/spec-48=b0d8eadc171435896bc2b7bef76bbc54722b797c`。将旧分支 `t3/spec-56-experiment-workflows`（`c1b26a2caeb25003e8c9f1ce11815c91fe596b07`）的全部提交历史 merge，形成 merge commit `eba172e`；解决冲突时保留当前 integration 的 #53/#59 项及本票 #56 项。交付前执行 `git merge --no-ff integration/spec-48`，结果 `Already up to date`；实际 sync tip 仍为 `b0d8eadc171435896bc2b7bef76bbc54722b797c`。
+- **旧目录保护**：旧 worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-d1a67b73` 未改动。提交前快照在 `/tmp/spec48-56-resume-snapshot/`，包括状态、二进制 patch、9 个 untracked 文件副本和 SHA-256；旧目录状态与快照逐字节相同。16 个 tracked 改动全部由 patch clean replay，9 个 untracked 文件逐个 `cmp`/SHA-256 一致，无遗漏。
+- **F1**：保留 Unit A 合同；缺身份/退出为 unknown，旧文件+本次失败不完成，成功退出且本次完整产物才 completed；清理授权独立。队列测试正反例通过。
+- **F2**：九叶各自携带相同的委托规则分发摘录；完整 mandate 仍为唯一规范源。bridge/queue/claim 的可选兄弟能力在单装缺失时明确 blocked 并给补装命令，不把缺失当通过。Skills CLI 实装单装与 hash/引用审计通过。
+- **F3**：已授权写域内新文件不再重复询问普通路径；未知写域、覆盖/冲突仍停。计划、Claim 与清单结构测试通过。
+- **F4**：baseline 约束仅在训练路线；数学/非训练路线使用声明的对照、已知值/证书/独立检查。测试检查 Phase 3/4 与模板，含阻止无条件 baseline checklist 的反例。
+- **F5**：保留 Unit A 正确 base-path marker 检查；缺文件与“文件存在但合同内容被清空”均由 helper 检出，批次 marker 使用合同真实字段。
+- **F6**：九叶 Markdown 本地路径、fragment 检查；死锚点反例通过。
+
+### 本轮复验
+
+| 命令 | 退出码 | 结果 |
+| --- | ---: | --- |
+| `uv run --offline --with pytest python -m pytest tests/test_spec48_ticket56.py -q` | 0 | 27 passed, 15 subtests passed |
+| `uv run --offline python -m py_compile scripts/check-skills.py` | 0 | 编译通过 |
+| `uv run --offline python scripts/check-skills.py` | 1 | 仅 9 条既有 ignored acceptance tarball 链接错误，无 #56 新增错误；该全库问题交 #60 |
+| `uv run --offline --with pytest python -m pytest tests scripts/test_check_skills_ticket*.py -q` | 1 | 7 failed, 231 passed, 120 subtests passed；失败 ID 与已记录的 integration 基线完全相同，无 #56 新增失败；全库失败交 #60 |
+| `git diff --cached --check` | 0 | 无空白错误 |
+| Skills CLI 1.7.4：九次分别运行 `node "$CLI" add "$ROOT" -s <skill> -a claude-code --copy -g -y --json` | 九次均 0 | 每次只安装一个叶，JSON 为 `installed`/`copy`；独立 HOME 在 `/tmp/spec48-56-resume/cli-installs/` |
+| `uv run --offline python -c '<installed package/hash/local-link and fragment audit>'` | 0 | 每叶文件哈希与源码一致；合计 39 条本地 Markdown 链接，坏路径/fragment/跨叶引用均为 0；JSON 在 `/tmp/spec48-56-resume/cli-installs/audit.json` |
+
+没有验证真实 SSH、调度器或科研结论；不属于本票合同静态结构/安装 seam 的验收声称。全库 7 个历史测试失败与 9 个归档断链不在本票扩查或修复范围，留给 #60。

@@ -11,6 +11,11 @@ disable-model-invocation: true
 
 Gates: none
 
+## 委托合同依赖
+
+- 单装包随本叶携带 [委托合同分发摘录](references/mandate.md)，覆盖目标、权限、额度、完成/停止与验收的必需规则；完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`。
+- 分发摘录缺失、与完整规范冲突或本次动作超出摘录时，标为 `blocked` 并停止受影响动作；不得从开发仓库路径或其他叶推断授权。
+
 ## 核心原则：执行者只收集路径，独立审查者判定
 
 - **执行者**只定位本次可读的材料路径和审查范围，不预先读取、总结、解释或筛选内容，也不参与完整性判定。

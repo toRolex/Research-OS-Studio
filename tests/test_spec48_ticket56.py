@@ -132,7 +132,8 @@ class OwnershipAndMandate(unittest.TestCase):
         bridge = text(BRIDGE / "SKILL.md")
         run = text(RUN / "SKILL.md")
         self.assertIn("兼容入口", bridge)
-        self.assertIn("../run-experiment/SKILL.md", bridge)
+        self.assertIn("`run-experiment`", bridge)
+        self.assertNotIn("](../run-experiment/SKILL.md)", bridge)
         self.assertIn("不再重复执行控制", bridge)
         self.assertNotRegex(bridge, r"(?m)^Gate:", bridge)
         for phrase in ("正式与批量运行", "分析审计与 tracker 更新", "授权门"):
@@ -233,6 +234,123 @@ class UnifiedController(unittest.TestCase):
         self.assertIn("run_count_basis", text(RUN / "SKILL.md"))
 
 
+class WorkflowRemediation(unittest.TestCase):
+    def test_each_single_install_bundles_core_mandate_rules(self):
+        authority = text(ROOT / "skills/general/research-os/references/mandate.md")
+        required_files = {
+            "experiment-plan": ("references/block-checks.md", "templates/experiment-plan.md"),
+            "experiment-bridge": ("references/composition-map.md", "templates/bridge-report.md"),
+            "run-experiment": (
+                "references/execution-contract.md", "references/remote-execution.md",
+                "references/batch-authorization.md", "templates/run-report.md",
+            ),
+            "experiment-queue": ("templates/batch-manifest.md",),
+            "monitor-experiment": (
+                "references/observation-sources.md", "templates/run-status-report.md",
+            ),
+            "training-health-check": ("references/health-signals.md", "templates/health-report.md"),
+            "analyze-results": ("references/statistical-checks.md", "templates/analysis-report.md"),
+            "experiment-audit": ("references/integrity-checks.md", "templates/audit-report.md"),
+            "result-to-claim": ("references/claim-judgment.md", "templates/claim-report.md"),
+        }
+        core_rules = (
+            "叶能力、下一阶段或一次审查完成都不重置授权",
+            "用户明确只要推荐、只审查、只规划或不要执行时，保持该范围",
+            "越权、超额、未授权的破坏性动作",
+            "项目内的依赖、工具与缓存可在授权内自动准备",
+            "有界首轮",
+            "并行、换线程、重试与恢复都消耗同一份额度，不重置",
+            "用户叫停是停止，不是完成",
+            "委托的验收看实际产物，不看执行者的自述",
+            "额度、权限与目标互不推导",
+        )
+        reference_contract = None
+        for name in EXPERIMENT_SKILLS:
+            skill = BASE / name
+            body = text(skill / "SKILL.md")
+            bundled = skill / "references/mandate.md"
+            self.assertTrue(bundled.is_file(), f"{name}: missing packaged mandate rules")
+            contract = text(bundled)
+            with self.subTest(skill=name):
+                self.assertIn("references/mandate.md", body)
+                for rel in required_files[name]:
+                    self.assertTrue((skill / rel).is_file(), f"{name}: missing {rel}")
+                if reference_contract is None:
+                    reference_contract = contract
+                else:
+                    self.assertEqual(contract, reference_contract)
+                for rule in core_rules:
+                    self.assertIn(rule, authority, f"canonical mandate missing {rule}")
+                    self.assertIn(rule, contract, f"{name}: packaged mandate missing {rule}")
+                self.assertIn("不覆盖本叶以外的授权", contract)
+
+    def test_cross_skill_references_declare_group_dependencies_and_blocking(self):
+        dependencies = {
+            "experiment-bridge": (
+                "run-experiment", "experiment-plan", "experiment-queue",
+                "monitor-experiment", "training-health-check", "analyze-results",
+                "experiment-audit",
+            ),
+            "experiment-queue": ("run-experiment",),
+            "result-to-claim": ("analyze-results",),
+        }
+        for name, companions in dependencies.items():
+            body = text(BASE / name / "SKILL.md")
+            with self.subTest(skill=name):
+                self.assertTrue("## 联装能力依赖" in body, f"{name}: missing dependency section")
+                section = body.split("## 联装能力依赖", 1)[1].split("\n## ", 1)[0]
+                for companion in companions:
+                    self.assertTrue(f"`{companion}`" in section, f"{name}: missing {companion}")
+                self.assertTrue("缺失时标为 `blocked`" in section, f"{name}: missing blocked behavior")
+                self.assertTrue("npx skills add <repo>" in section, f"{name}: missing install command")
+
+    def test_authorized_new_outputs_do_not_request_redundant_path_confirmation(self):
+        plan = text(BASE / "experiment-plan/SKILL.md")
+        claim = text(BASE / "result-to-claim/SKILL.md")
+        queue_template = text(
+            BASE / "experiment-queue/templates/batch-manifest.md"
+        )
+        for name, body in (
+            ("experiment-plan", plan),
+            ("result-to-claim", claim),
+            ("batch-manifest", queue_template),
+        ):
+            with self.subTest(document=name):
+                for marker in ("已授权写域内", "新文件", "直接写", "写域不明", "覆盖既有成果"):
+                    self.assertTrue(marker in body, f"{name}: missing {marker}")
+        self.assertNotIn("提出具体路径并确认", plan)
+        self.assertNotIn("提出具体路径并确认", claim)
+        self.assertNotIn("实际执行前与用户确认", queue_template)
+
+    def test_math_plan_never_inherits_training_baseline_gate(self):
+        plan = text(BASE / "experiment-plan/SKILL.md")
+        template = text(BASE / "experiment-plan/templates/experiment-plan.md")
+        phase3 = plan.split("### Phase 3:", 1)[1].split("### Phase 4:", 1)[0]
+        phase4 = plan.split("### Phase 4:", 1)[1].split("### Phase 5:", 1)[0]
+        training = phase4.split("2. **Training branch", 1)[1].split(
+            "3. **Math/non-training branch", 1
+        )[0]
+        math = phase4.split("3. **Math/non-training branch", 1)[1].split(
+            "4. **Main method", 1
+        )[0]
+        self.assertIn("strongest baseline", training)
+        self.assertIn("valid baseline", training)
+        self.assertIn("same evaluation surface", training)
+        self.assertIn("certificate", math.lower())
+        self.assertIn("不要求训练 baseline", math)
+        self.assertIn("数学/非训练", phase3)
+        self.assertIn("training fields not applicable", phase3)
+        self.assertIn("仅训练实验填写", template)
+        self.assertIn("数学/非训练工作不要求训练 baseline", template)
+        self.assertNotIn(
+            "Sanity and valid baseline gate candidate runs",
+            template,
+            "the checklist must not impose the training-only gate on math work",
+        )
+        self.assertIn("Training-route candidate runs have valid same-surface baseline evidence", template)
+        self.assertIn("without requiring a training baseline", template)
+
+
 class CheckerContract(unittest.TestCase):
     def test_builtin_checker_registers_ticket56_contract(self):
         self.assertEqual(set(problem_lines(ROOT)), HISTORICAL)
@@ -309,6 +427,70 @@ class CheckerContract(unittest.TestCase):
             )
             root.stage()
             self.assertIn("桥接 playbook 重复执行控制合同", "\n".join(fresh_problems(root)))
+
+    def test_checker_detects_dead_experiment_plan_fragment(self):
+        with WorkCopy() as root:
+            plan_path = root.path / (BASE / "experiment-plan/SKILL.md").relative_to(ROOT)
+            plan_path.write_text(
+                plan_path.read_text(encoding="utf-8").replace(
+                    "#委托继承", "#missing-authorization-anchor"
+                ),
+                encoding="utf-8",
+            )
+            root.stage()
+            self.assertIn("无效 Markdown fragment", "\n".join(fresh_problems(root)))
+
+    def test_checker_detects_missing_packaged_mandate_resource(self):
+        with WorkCopy() as root:
+            mandate_path = root.path / (
+                BASE / "experiment-plan/references/mandate.md"
+            ).relative_to(ROOT)
+            mandate_path.unlink()
+            root.stage()
+            self.assertIn(
+                "references/mandate.md: 缺少实验执行资产",
+                "\n".join(fresh_problems(root)),
+            )
+
+    def test_checker_detects_missing_other_single_install_resource(self):
+        with WorkCopy() as root:
+            resource = root.path / (
+                BASE / "experiment-bridge/references/composition-map.md"
+            ).relative_to(ROOT)
+            resource.unlink()
+            root.stage()
+            self.assertIn(
+                "experiment-bridge/references/composition-map.md: 缺少实验执行资产",
+                "\n".join(fresh_problems(root)),
+            )
+
+    def test_checker_detects_damaged_packaged_mandate_contract(self):
+        with WorkCopy() as root:
+            mandate_path = root.path / (
+                BASE / "experiment-plan/references/mandate.md"
+            ).relative_to(ROOT)
+            mandate_path.write_text(
+                mandate_path.read_text(encoding="utf-8").replace(
+                    "用户叫停是停止，不是完成", "用户叫停代表完成"
+                ),
+                encoding="utf-8",
+            )
+            root.stage()
+            self.assertIn(
+                "单装合同缺「用户叫停是停止，不是完成」",
+                "\n".join(fresh_problems(root)),
+            )
+
+    def test_checker_detects_cross_skill_markdown_links_that_break_single_installs(self):
+        with WorkCopy() as root:
+            plan_path = root.path / (BASE / "experiment-plan/SKILL.md").relative_to(ROOT)
+            with plan_path.open("a", encoding="utf-8") as stream:
+                stream.write("\n参见 [run-experiment](../run-experiment/SKILL.md)。\n")
+            root.stage()
+            self.assertIn(
+                "单装时不可解析的跨叶 Markdown 引用",
+                "\n".join(fresh_problems(root)),
+            )
 
 
 if __name__ == "__main__":

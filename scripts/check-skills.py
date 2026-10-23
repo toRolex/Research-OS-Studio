@@ -17,6 +17,7 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "skills"
@@ -1431,13 +1432,35 @@ EXPERIMENT_REMOTE = (
     "凭据", "独立目录", "作业身份", "原作业",
 )
 EXPERIMENT_REQUIRED_FILES = {
+    "experiment-plan": (
+        "references/mandate.md", "references/block-checks.md", "templates/experiment-plan.md",
+    ),
+    "experiment-bridge": (
+        "references/mandate.md", "references/composition-map.md", "templates/bridge-report.md",
+    ),
     "run-experiment": (
+        "references/mandate.md",
         "references/execution-contract.md",
         "references/remote-execution.md",
         "references/batch-authorization.md",
         "templates/run-report.md",
     ),
-    "experiment-queue": ("templates/batch-manifest.md",),
+    "experiment-queue": ("references/mandate.md", "templates/batch-manifest.md"),
+    "monitor-experiment": (
+        "references/mandate.md", "references/observation-sources.md", "templates/run-status-report.md",
+    ),
+    "training-health-check": (
+        "references/mandate.md", "references/health-signals.md", "templates/health-report.md",
+    ),
+    "analyze-results": (
+        "references/mandate.md", "references/statistical-checks.md", "templates/analysis-report.md",
+    ),
+    "experiment-audit": (
+        "references/mandate.md", "references/integrity-checks.md", "templates/audit-report.md",
+    ),
+    "result-to-claim": (
+        "references/mandate.md", "references/claim-judgment.md", "templates/claim-report.md",
+    ),
 }
 EXPERIMENT_TEXT_MARKERS = {
     "run-experiment": (
@@ -1459,6 +1482,31 @@ EXPERIMENT_TEXT_MARKERS = {
     "analyze-results": ("委托继承",),
     "experiment-audit": ("委托继承", "作业退出", "产物有效", "科学结论", "unknown"),
     "result-to-claim": ("委托继承", "作业退出", "产物有效", "科学结论", "旧文件"),
+}
+EXPERIMENT_MANDATE_MARKERS = (
+    "references/mandate.md",
+    "完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`",
+    "分发摘录缺失",
+    "本次动作超出摘录",
+)
+EXPERIMENT_MANDATE_PACKAGE_MARKERS = (
+    "叶能力、下一阶段或一次审查完成都不重置授权",
+    "用户明确只要推荐、只审查、只规划或不要执行时，保持该范围",
+    "未授权的破坏性动作",
+    "项目内的依赖、工具与缓存可在授权内自动准备",
+    "有界首轮",
+    "并行、换线程、重试与恢复都消耗同一份额度，不重置",
+    "用户叫停是停止，不是完成",
+    "委托的验收看实际产物，不看执行者的自述",
+    "额度、权限与目标互不推导",
+)
+EXPERIMENT_COMPANION_DEPENDENCIES = {
+    "experiment-bridge": (
+        "run-experiment", "experiment-plan", "experiment-queue", "monitor-experiment",
+        "training-health-check", "analyze-results", "experiment-audit",
+    ),
+    "experiment-queue": ("run-experiment",),
+    "result-to-claim": ("analyze-results",),
 }
 EXPERIMENT_FILE_MARKERS = {
     "run-experiment/references/execution-contract.md": EXPERIMENT_JOB_CONTRACT,
@@ -1484,6 +1532,7 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
     """#56 实验执行：委托继承、桥接合流、运行/恢复/远程合同与宿主中立。"""
     found: list[str] = []
     base = root / "skills" / "validation-cycle"
+    packaged_mandate_text: str | None = None
     for name in EXPERIMENT_SKILLS:
         rel_dir = f"skills/validation-cycle/{name}"
         skill_dir = base / name
@@ -1504,6 +1553,43 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
         for marker in EXPERIMENT_TEXT_MARKERS.get(name, ()):
             if marker not in text:
                 found.append(f"{rel_dir}/SKILL.md: 缺「{marker}」")
+        for marker in EXPERIMENT_MANDATE_MARKERS:
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺单装委托合同引用/失效处理「{marker}」")
+        mandate_copy = skill_dir / "references" / "mandate.md"
+        canonical_mandate = root / "skills/general/research-os/references/mandate.md"
+        if mandate_copy.is_file() and canonical_mandate.is_file():
+            copy_text = mandate_copy.read_text(encoding="utf-8")
+            canonical_text = canonical_mandate.read_text(encoding="utf-8")
+            if packaged_mandate_text is None:
+                packaged_mandate_text = copy_text
+            elif copy_text != packaged_mandate_text:
+                found.append(f"{rel_dir}/references/mandate.md: 分发副本与其他实验叶不一致")
+            for marker in EXPERIMENT_MANDATE_PACKAGE_MARKERS:
+                if marker not in canonical_text:
+                    found.append(f"skills/general/research-os/references/mandate.md: 权威合同缺「{marker}」")
+                if marker not in copy_text:
+                    found.append(f"{rel_dir}/references/mandate.md: 单装合同缺「{marker}」")
+            if "本文件摘录自唯一规范源 `skills/general/research-os/references/mandate.md`" not in copy_text:
+                found.append(f"{rel_dir}/references/mandate.md: 缺规范源与分发副本关系")
+        elif not mandate_copy.is_file():
+            found.append(f"{rel_dir}/references/mandate.md: 缺单装委托合同资源")
+        elif not canonical_mandate.is_file():
+            found.append("skills/general/research-os/references/mandate.md: 委托唯一权威缺失或未追踪")
+        companions = EXPERIMENT_COMPANION_DEPENDENCIES.get(name, ())
+        if companions:
+            dependency_header = "## 联装能力依赖"
+            if dependency_header not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺联装能力依赖声明")
+            else:
+                dependency_body = text.split(dependency_header, 1)[1].split("\n## ", 1)[0]
+                for companion in companions:
+                    if f"`{companion}`" not in dependency_body:
+                        found.append(f"{rel_dir}/SKILL.md: 未声明联装依赖 {companion}")
+                if "缺失时标为 `blocked`" not in dependency_body:
+                    found.append(f"{rel_dir}/SKILL.md: 缺联装能力缺失时的 blocked 行为")
+                if "npx skills add <repo>" not in dependency_body:
+                    found.append(f"{rel_dir}/SKILL.md: 缺联装能力补装命令")
         if "委托继承" not in heading_anchors(text):
             found.append(f"{rel_dir}/SKILL.md: 缺「委托继承」小节")
         if re.search(r"(?m)^Gate:", text):
@@ -1532,6 +1618,48 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
             for marker in markers:
                 if marker not in body:
                     found.append(f"skills/validation-cycle/{rel}: 缺「{marker}」")
+    mandate = root / "skills/general/research-os/references/mandate.md"
+    if not mandate.is_file() or "skills/general/research-os/references/mandate.md" not in tracked_paths:
+        found.append("skills/general/research-os/references/mandate.md: 委托唯一权威缺失或未追踪")
+
+    # The repository-wide link check validates files; validate fragments as well
+    # for all nine shipped experiment skills, including same-file anchors.
+    for name in EXPERIMENT_SKILLS:
+        skill_dir = base / name
+        if not skill_dir.is_dir():
+            continue
+        for markdown in skill_dir.rglob("*.md"):
+            rel_markdown = markdown.relative_to(root).as_posix()
+            lines = markdown.read_text(encoding="utf-8").splitlines()
+            for line_number, line in enumerate(lines, 1):
+                for target in link_re.findall(line):
+                    if target.startswith(("http://", "https://", "mailto:")):
+                        continue
+                    file_part, separator, fragment = target.partition("#")
+                    if not separator or not fragment:
+                        fragment = ""
+                    if not file_part:
+                        target_markdown = markdown
+                    else:
+                        resolved = lexical_relative(markdown.parent, unquote(file_part))
+                        if resolved is None:
+                            continue
+                        target_markdown = Path(resolved)
+                    try:
+                        target_markdown.relative_to(skill_dir)
+                    except ValueError:
+                        found.append(
+                            f"{rel_markdown}:{line_number}: 单装时不可解析的跨叶 Markdown 引用 {target}"
+                        )
+                    if not target_markdown.is_file():
+                        continue  # Missing paths are reported by the repository-wide link check.
+                    if not fragment:
+                        continue
+                    anchor = unquote(fragment)
+                    if anchor not in heading_anchors(target_markdown.read_text(encoding="utf-8")):
+                        found.append(
+                            f"{rel_markdown}:{line_number}: 无效 Markdown fragment #{anchor}"
+                        )
     run_text = base / "run-experiment" / "SKILL.md"
     if run_text.is_file():
         run_body = run_text.read_text(encoding="utf-8")

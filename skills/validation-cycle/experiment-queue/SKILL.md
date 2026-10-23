@@ -7,9 +7,19 @@ disable-model-invocation: true
 
 # Experiment Queue
 
-当单个 [run-experiment](../run-experiment/SKILL.md) 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞判定与授权内清理、状态可恢复。这是 显式调用或已授权正文级联 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停在汇总报告。
+当单个 `run-experiment` 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞判定与授权内清理、状态可恢复。这是 显式调用或已授权正文级联 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停在汇总报告。
 
 Gates: none
+
+## 委托合同依赖
+
+- 单装包随本叶携带 [委托合同分发摘录](references/mandate.md)，覆盖目标、权限、额度、完成/停止与验收的必需规则；完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`。
+- 分发摘录缺失、与完整规范冲突或本次动作超出摘录时，标为 `blocked` 并停止受影响动作；不得从开发仓库路径或其他叶推断授权。
+
+## 联装能力依赖
+
+- 可独立构建、检查批次清单；实际执行合同与报告模板来自 `run-experiment`。伴随能力缺失时标为 `blocked`，只交付清单/预检，不执行批次。
+- 补装执行依赖：`npx skills add <repo> -s research-os -s experiment-queue -s run-experiment -a claude-code -y`。
 
 与 run-experiment 的分工见其执行控制。进度读状态表，不另开调度时钟。
 
@@ -40,7 +50,7 @@ Gates: none
 输入可以是显式清单、grid 规格或自然语言；先用项目已有格式表达，不建立统一 schema。推荐使用 [批次清单模板](templates/batch-manifest.md)，至少记录：
 
 - **project / cwd / 执行入口**：每个作业在哪个项目目录、用哪个已有命令运行；
-- **输入版本 / 工具链 / 独立目录 / 作业身份**：展开每个作业的代码/数据/配置版本、环境、隔离工作目录和稳定 job id；合同细节见 [run-experiment execution contract](../run-experiment/references/execution-contract.md)。
+- **输入版本 / 工具链 / 独立目录 / 作业身份**：展开每个作业的代码/数据/配置版本、环境、隔离工作目录和稳定 job id；实际执行合同来自 `run-experiment`，其未安装时按“联装能力依赖”补装并复用，不从本叶摘要推断缺失规则。
 - **default_cmd 与每作业 args**：把 grid 或模板展开为具体命令；
 - **preconditions**：作业启动前必须存在的文件/检查点/数据（如 teacher checkpoint）；
 - **resources**：允许的资源列表、`max_parallel`、空闲阈值；
@@ -121,7 +131,7 @@ Grid 规格按笛卡尔积展开为明确作业；阶段模板在展开时把变
 
 ## 7. 汇总与交回
 
-批次全部到达终态或被停止后，读取状态表和原始日志，生成自然格式汇总（沿用 [run-experiment 报告模板](../run-experiment/templates/run-report.md) 的 attempts 表）：
+批次全部到达终态或被停止后，读取状态表和原始日志，生成自然格式汇总；若已联装 `run-experiment`，沿用其 attempts 表，避免重复定义作业报告合同：
 
 - 逐阶段/逐作业状态统计：completed、failed、invalid、timeout、oom、cancelled、stuck、not-run；
 - 成功、失败、无效、超时与重试的完整历史，不只列出成功项；

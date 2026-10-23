@@ -13,6 +13,11 @@ disable-model-invocation: true
 
 Gates: none
 
+## 委托合同依赖
+
+- 单装包随本叶携带 [委托合同分发摘录](references/mandate.md)，覆盖目标、权限、额度、完成/停止与验收的必需规则；完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`。
+- 分发摘录缺失、与完整规范冲突或本次动作超出摘录时，标为 `blocked` 并停止受影响动作；不得从开发仓库路径或其他叶推断授权。
+
 方法主顺序是：读取计划 → 实现代码 → review → sanity → collect。保留这条顺序；启动资格来自当前委托和批次授权，不按 milestone 重复索取同一授权。固定 provider、运行队列、无限重试和跨 Workflow handoff 改为当前项目中的自然文件与用户可见步骤。
 
 付费、算力或作业名额运行批次的授权账本，是工作区 `research-log.md`；字段和单次启动核验见共置的 [批次授权参考](references/batch-authorization.md)。该参考在独立安装中自包含，research-os suite 中的完整合同仍是共享授权政策的权威来源。

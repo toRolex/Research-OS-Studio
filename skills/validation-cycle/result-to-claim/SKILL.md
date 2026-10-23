@@ -10,6 +10,16 @@ disable-model-invocation: true
 
 Gates: none
 
+## 委托合同依赖
+
+- 单装包随本叶携带 [委托合同分发摘录](references/mandate.md)，覆盖目标、权限、额度、完成/停止与验收的必需规则；完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`。
+- 分发摘录缺失、与完整规范冲突或本次动作超出摘录时，标为 `blocked` 并停止受影响动作；不得从开发仓库路径或其他叶推断授权。
+
+## 联装能力依赖
+
+- 本叶包含 Claim 判定细则；统计子步骤优先采用已有 `analyze-results` 报告。需要其共置统计细则或委托该能力而伴随 Skill 缺失时标为 `blocked`/`unknown`，不能以缺席视为通过。
+- 补装统计依赖：`npx skills add <repo> -s research-os -s result-to-claim -s analyze-results -a claude-code -y`。
+
 ## 委托继承
 
 - 目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威。
@@ -24,7 +34,7 @@ Gates: none
 - **前置解决**：先确定待判定 Claim 集合、结果集合与输出模式。Claim 含糊、结果集不明或两者无法对应时，提一个聚焦问题并停止；不替用户选 Claim，不从目录猜测结果集。
 - **复用内部能力**：统计与完整性判断复用已安装的 `analyze-results` 与 `experiment-audit` 的方法——已有它们的报告时直接采用其结论（注明出处与版本）；没有时按本 Skill 共置 [判定细则](references/claim-judgment.md) 自查。经用户明确授权，也可在本次职责内请二者贡献对应检查（它们支持 composed）；无论哪种方式，都不启动其他 user-invoked Workflow，不把它们的缺席当作通过。
 - **资源**：仅使用已有且获授权的读取与比较能力。简单描述统计沿用宿主已有工具；算不出的保留 `reported` 并记缺口，不安装环境或服务。
-- **写入范围**：默认在对话返回候选报告。落盘只写用户明确允许的报告文件：提出具体路径并确认，沿用现有 Research Workspace，不另建中央目录。已有文件先读，冲突时展示差异并询问。不改结果、日志、配置、代码、数据、evaluator、真值来源或论文正文。
+- **写入范围**：默认在对话返回候选报告。落盘只写本次委托已授权的写域；已授权写域内的新文件/新报告直接写入，不再为普通文件路径重复确认。沿用现有 Research Workspace，不另建中央目录。先读同名目标；写域不明、外部变化或覆盖既有成果时停止该写入并询问。不改结果、日志、配置、代码、数据、evaluator、真值来源或论文正文。
 - **预算**：一次有界判定。读到账本、存在性、统计检查与逐 Claim 判定所需的材料即止；优先读尾部与定位，避免整 log 加载。首个耗尽的限制即停，保留未审 Claim 与缺口，另行请求扩展而非循环。
 - **停止条件**：报告交付即停止。不运行、重跑、修复或扩展实验；不改 ground truth、metric 或选择规则；不启动 Writing、补实验或任何其他 Workflow。需要的补证只是提议。
 
