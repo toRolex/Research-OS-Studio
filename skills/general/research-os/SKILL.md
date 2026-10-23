@@ -24,6 +24,8 @@ Gates: none
 
 用户意图和只读约束优先，材料状态限定入口，规模决定编排方式。任意大任务不等于 improvement。命中的是起点：同一委托内可来回调用多项能力；用户说 new task 或替换主要目标时重新匹配。
 
+用户点名 arena 或要比较多候选方案时，打开 [arena](../../organization/arena/SKILL.md)：它按委托合同迁移，继承本次委托的权限与额度，缺子代理工具时需要的阶段标 blocked。它不依赖其他组织能力，也不进路由表。
+
 无已交付路线时打开 [custom](playbooks/custom.md)：先写出有界流程，再按委托直接开始其中不需要额外授权的步骤，只有真歧义才问。不要把未交付路线的文件写成已经存在。
 
 形式化不是必经路线：需要对关键代码性质、形式模型或定理编码建立或维护检查时，直接点名 `create-formal-verification-skill` 或 `maintain-formal-verification-skill`。它们只在该问题确实需要范围内每种情况时使用，普通测试够用就不升级。
