@@ -94,14 +94,16 @@
 
 场景材料（公开现成候选、论文、原实验代码）仅临时用于实现期验证，不随产品分发；用户真实研究效果与端到端体验仍待用户验收。
 
-## 已采用的 Idea Discovery Workflow
+## 已采用的 Idea Discovery Workflow（历史来源沿革与现行落点）
 
-`skills/idea-cycle/idea-discovery/` 是本仓当前的 Idea Discovery 主入口，user-invoked 顶层 Workflow；在一次显式调用内组合已交付的 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，交付单一 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止。
+**现行落点**：统一入口是 `skills/general/research-os/SKILL.md`；其中 `discovery` 路线进入 `skills/general/research-os/playbooks/discovery.md`，组合规则见 `skills/general/research-os/references/discovery-composition.md`。该配方按目标缺口组合文献、候选、查新、fresh 独立评审与方案收敛，可重排、跳过已满足职责或回访，不要求普通阶段转换另行确认。专业写作统一由 `skills/writing-cycle/paper-writing/SKILL.md` 组织，general、ML 与 Systems 仅选择专业分支和资源。Discovery 所需许可随 Research OS 资源位于 `skills/general/research-os/licenses/idea-cycle/LICENSE`。
+
+**历史范围**：以下是旧 `idea-discovery` 控制器的来源、采用和迁移记录。`skills/idea-cycle/idea-discovery/` 是当时的本地产品路径，已不再作为现行入口或兼容调用；下列旧工作流与阶段门描述的是历史合同，不覆盖现行研究委托和 discovery 配方。
 
 - **来源与复核**：2026-09-15 通过官方 GitHub API 重新解析 ARIS／wanshuiyin revision `0472e530251cdbd3364c33b110063c58f819edd7`，全文读取 `skills/idea-discovery/SKILL.md`（527 行）、递归目录树（该目录仅 `SKILL.md`，无共置 references/templates/assets）、根 MIT 许可及它引用的 `templates/RESEARCH_BRIEF_TEMPLATE.md`。本次采用固定 revision，不声称最新 HEAD。
 - **完整方法采用**：保留 Phase 0 的 research brief 加载与一行方向合并、Phase 0.5 的参考论文摘要、Phase 1–4.5 的组合顺序（`research-lit` → `idea-creator` → `novelty-check` → `research-review` → `research-refine`）、逐候选查新与 closest prior work、独立 adversarial 评审、固定 Problem Anchor 收敛、单一权威交付物与逐阶段淘汰记录、阶段间检查点与诚实报告要求。brief 模板按上游 `RESEARCH_BRIEF_TEMPLATE.md` 适配为共置 `templates/research-brief.md`；报告结构落地为共置 `templates/discovery-report.md`；阶段—能力—章节映射与降级规则落地为共置 `references/composition-notes.md`。
 - **组合与真实调用核对**：上游 Phase 1/2/4 分别以 `— composed: idea-stage/IDEA_REPORT.md` 调用 `research-lit`、`idea-creator`、`research-review`，Phase 3 逐候选调用 `novelty-check`，Phase 4.5 调用 `research-refine-pipeline`（后者再调用 `research-refine` 与 `experiment-plan`）；本仓把已交付的同职责能力 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement` 按同一顺序组合，各贡献命名 canonical 章节。上游记录在 `shared-references/{output-composition,citation-discipline,reviewer-independence,review-tracing,integration-contract,resumable-runs}.md` 与 `tools/{run_state.py,idea_discovery_gate.py,iteration_log.py}`；本票已阅读并只采纳 output-composition 的“单一权威交付物”与 reviewer-independence 的原始材料直达原则。
-- **删除与校准**：删除 pilot 实验与全部 GPU／时长常量、`AUTO_PROCEED` 自动推进、外部 Feishu 通知、`research_contract.md` 与实验计划／tracker、`run_state`／证据门／`.aris` tracing、`RENDER_HTML`、`COMPACT` 与 provider/MCP 绑定、自动跨主流程调用。阶段间默认阻塞等用户确认，仅用户明确授权“一次走完”时才连续执行；不写统一 JSON、状态机、receipt、HTML 或 manifest。
+- **历史阶段门（已被取代）**：旧控制器曾设置阶段检查点，并把跨阶段推进设为等待用户确认；这属于当时控制器的流程，不是当前合同。迁移后，现行 Discovery 配方按研究委托中的目标缺口选择能力并可重排或回访，普通阶段转换不重复请求批准。其余当时删除的 pilot 实验与 GPU／时长常量、`AUTO_PROCEED` 自动推进、外部 Feishu 通知、`research_contract.md` 与实验计划／tracker、`run_state`／证据门／`.aris` tracing、`RENDER_HTML`、`COMPACT` 与 provider/MCP 绑定、自动跨主流程调用，以及统一 JSON、状态机、receipt、HTML 或 manifest，均作为历史适配记录保留。
 - **Orchestra 互补方法**：不新增独立编排；Orchestra 的 `21-research-ideation` 构思框架已由 `idea-generation`（十个操作框架）与 `creative-thinking-for-research`（八框架）承载，本文档在生成职责内调用它们，不另建薄弱 charter→literature→gap→idea 单线。
 - **许可与验证**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随本 Skill 的 `LICENSE` 发行。实现期以公开方向、公开材料及缺工具场景做静态与场景核对；未运行 pilot、未执行用户真实科研，不代表端到端体验或科研质量已验收。
 

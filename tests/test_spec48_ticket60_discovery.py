@@ -1,6 +1,10 @@
 """#60 discovery slice: the installed research-os package is the public seam."""
 
 import hashlib
+import os
+import shutil
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -45,6 +49,76 @@ ACTIVE_CALLER_FILES = (
 class DiscoveryPackageContract(unittest.TestCase):
     def assertContains(self, text: str, marker: str) -> None:
         self.assertTrue(marker in text, f"missing public contract marker: {marker}")
+
+    def test_installed_entry_and_source_record_use_only_current_routes(self):
+        if shutil.which("npx") is None:
+            self.skipTest("npx is not installed")
+
+        with tempfile.TemporaryDirectory(dir="/tmp") as tmp:
+            project = Path(tmp)
+            home = project / "home"
+            home.mkdir()
+            env = {
+                **os.environ,
+                "HOME": str(home),
+                "TMPDIR": "/tmp",
+                "npm_config_cache": str(Path.home() / ".npm"),
+            }
+            version = subprocess.run(
+                ["npx", "--offline", "--yes", "skills@1.7.4", "--version"],
+                cwd=project,
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=180,
+            )
+            if version.returncode != 0:
+                self.skipTest("skills@1.7.4 is not available in the npm cache")
+            self.assertEqual(version.stdout.strip(), "1.7.4")
+
+            install = subprocess.run(
+                [
+                    "npx", "--offline", "--yes", "skills@1.7.4", "add", str(ROOT),
+                    "--skill", "research-os", "--agent", "claude-code", "--copy", "--yes",
+                ],
+                cwd=project,
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=180,
+            )
+            self.assertEqual(install.returncode, 0, install.stdout + install.stderr)
+
+            installed = project / ".claude/skills/research-os"
+            self.assertTrue((installed / "SKILL.md").is_file())
+            installed_entry = (installed / "SKILL.md").read_text(encoding="utf-8")
+            self.assertNotIn("旧专业入口作为兼容调用保留", installed_entry)
+            self.assertContains(installed_entry, "| discovery |")
+            self.assertContains(installed_entry, "[discovery](playbooks/discovery.md)")
+            self.assertContains(installed_entry, "paper-writing")
+            self.assertTrue((installed / "playbooks/discovery.md").is_file())
+            self.assertTrue((installed / "references/discovery-composition.md").is_file())
+            self.assertTrue((installed / "licenses/idea-cycle/LICENSE").is_file())
+
+            source_record = (ROOT / "docs/upstream-sources-and-licenses.md").read_text(
+                encoding="utf-8"
+            )
+            idea_history = source_record.split("## 已采用的 Idea Discovery Workflow", 1)[1]
+            idea_history = idea_history.split("\n## ", 1)[0]
+            self.assertContains(idea_history, "0472e530251cdbd3364c33b110063c58f819edd7")
+            self.assertContains(idea_history, "skills/idea-cycle/idea-discovery/")
+            self.assertNotIn("本仓当前的 Idea Discovery 主入口", idea_history)
+            self.assertNotIn("阶段间默认阻塞等用户确认", idea_history)
+            for current_path in (
+                "skills/general/research-os/SKILL.md",
+                "skills/general/research-os/playbooks/discovery.md",
+                "skills/general/research-os/references/discovery-composition.md",
+                "skills/writing-cycle/paper-writing/SKILL.md",
+                "skills/general/research-os/licenses/idea-cycle/LICENSE",
+            ):
+                with self.subTest(current_path=current_path):
+                    self.assertContains(idea_history, current_path)
+                    self.assertTrue((ROOT / current_path).is_file(), current_path)
 
     def test_research_os_reaches_complete_gap_composable_discovery(self):
         entry = ENTRY.read_text(encoding="utf-8")
