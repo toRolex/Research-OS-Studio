@@ -7,7 +7,7 @@
 | 能力 | 正文 | 委托落点 |
 | --- | --- | --- |
 | 委托入口 | `skills/general/research-os/SKILL.md` | 「研究委托」小节 + 本目录合同与 `playbooks/literature-review.md` |
-| 数学研究证明配方 | `skills/general/research-os/playbooks/proof.md` | #55 唯一证明总控；按证据交替使用独立能力，不设固定阶段；缺少某 slug 只阻塞其依赖分支 |
+| 数学研究证明配方 | `skills/general/research-os/playbooks/proof.md` | #55/#60 唯一证明总控；按证据交替使用独立能力，不设固定阶段；proof-orchestrator 控制器已删除，原数学方法与交接资源归 proof-review 随包按需读取；缺少某 slug 只阻塞其依赖分支 |
 | 认知转换 | `skills/idea-cycle/creative-thinking-for-research/SKILL.md` | 「委托继承」小节；只贡献洞见，不裁决候选池 |
 | Discovery 配方 | `skills/idea-cycle/idea-discovery/SKILL.md` | 「委托继承」小节；一次委托内组合文献、生成、查新、评审与细化 |
 | 候选生成 | `skills/idea-cycle/idea-generation/SKILL.md` | 「委托继承」小节；多视角、去重与硬约束筛选 |
@@ -37,7 +37,7 @@
 | 证明构造 | `skills/validation-cycle/proof-writer/SKILL.md` | 「委托继承」小节；保留原命题、假设、失败路线和有限尝试；不自动进入审查或修复 |
 | 证明审查 | `skills/validation-cycle/proof-review/SKILL.md` | 独立 fresh 只读返回 findings；不修改证明或替代修复授权；能力不可用时标明限制 |
 | 证明修复 | `skills/validation-cycle/proof-repair/SKILL.md` | 「委托继承」小节；修复限于 finding 和委托写域，命题/假设变化仍需决定，编译命令及副产物范围单独核对 |
-| 长期证明兼容入口 | `skills/validation-cycle/proof-orchestrator/SKILL.md` | 「委托继承」小节；旧名称路由到 research-os proof 配方，不重复控制轮次、额度、暂停恢复或停止；原方法资源随包保留 |
+| Proof 审计/数学方法资源 | `skills/validation-cycle/proof-review/SKILL.md` 与其 `references/` | 旧控制器已删除；审计、独立意见、压力测试、记号、Lean、提示/交接模板与 EtaSkill NOTICE 随 proof-review 包共置，按审查分支披露 |
 | 统一写作 | `skills/writing-cycle/paper-writing/SKILL.md` | 「委托继承」小节；ML/Systems 标准按需引用，委托内编译与引用修复继承授权，不自动投稿 |
 | 论文规划 | `skills/writing-cycle/paper-plan/SKILL.md` | 「委托继承」小节；写入与报告路径由委托覆盖 |
 | 论文起草 | `skills/writing-cycle/paper-drafting/SKILL.md` | 「委托继承」小节；证据缺口在授权内处理且不捏造 |

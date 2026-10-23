@@ -213,8 +213,8 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     1. 必须先明确修复范围、最大轮数与允许修改的文件段落；
     2. **反例推翻原则**：若命题被已确认的反例推翻，严禁在未经用户允许的情况下擅自修改命题或暗中添加条件，必须停止并提示用户重新审视命题；
     3. 修复后调用内部复审，未通过则如实标记未解决。
-- **`proof-orchestrator`（#18 长期复杂证明管理与可选 Lean）**
-  - **操作**：针对单个复杂长期义务（Single Obligation），调用 `/proof-orchestrator`，或经 `/research-os` proof 进入。新会话恢复时走 pickup。
+- **`/research-os` proof（长期证明、续接与可选 Lean）**
+  - **操作**：针对已有证明、复杂义务或推广障碍，从 `/research-os` proof 进入；新会话恢复时走 pickup。旧 proof-orchestrator Skill 控制器已移除。
   - **核验**：
     1. 在新目录中记录继承状态与尝试历史，不污染旧轮次；
     2. **无 Lean 环境降级**：无 Lean 工具链时，正常执行普通数学推导，并显式标注“未执行 Lean 形式化验证”，绝不强行安装工具链；

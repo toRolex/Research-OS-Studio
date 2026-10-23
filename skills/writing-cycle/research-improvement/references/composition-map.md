@@ -29,6 +29,6 @@
 - `ml-paper-writing`（ML 专业写作流程 #26）、`systems-paper-writing`（Systems 专业写作流程 #27）
 - `paper-compile-repair`、`apply-citation-fixes`、`proof-repair`（专项修复入口）
 - `result-to-claim`（#14）、`rebuttal`（#29）、`resubmit-pipeline`（#30）、`paper-talk`（#31）
-- `proof-orchestrator`、`setup-research-os`、`research-os`
+- `/research-os` 的 proof 路线、`setup-research-os`、`research-os`
 
 需要上述顶层能力时，把精确问题、当前材料定位与建议范围交回用户，由用户另行点名；委托级联到未迁移叶时，则按该叶自身声明的门处理。

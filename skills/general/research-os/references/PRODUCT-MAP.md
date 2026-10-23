@@ -20,7 +20,7 @@
 
 上述是可选路径，不是线性通关表。任意外部材料都能成为切入点；有结果不必先跑 Discovery，有稿件不必重新实验或起草，普通证明无需 Lean。
 
-数学／理论证明路线（#55）由 `/research-os` 的 proof 配方作为唯一总控，按当前证据在推导、构造、计算、并行候选、独立审查、finding 修复与按需形式化之间交替；这些是职责独立的 Skill slug，不是固定阶段。旧 `proof-orchestrator` 只作兼容入口；要继续使用旧名称时须同时安装 `research-os`，否则它按自身合同停止并请求安装，不启动第二套控制器。
+数学／理论证明路线（#55）由 `/research-os` 的 proof 配方作为唯一总控，按当前证据在推导、构造、计算、并行候选、独立审查、finding 修复与按需形式化之间交替；这些是职责独立的 Skill slug，不是固定阶段。长期证明的旧总控已移除；原有数学审计、Lean、记号、压力测试与交接资源归入 `proof-review` 的按需参考及其随包许可，未复制第二套轮次控制器。
 
 `research-os`（U，已实现，#38）：唯一编排入口。只读请求走 route-only，零副作用。已交付 playbook：route-only、literature、custom、idea-discovery、experiment-plan、experiment-bridge、paper-writing 的 general / ml / systems、proof、rebuttal、resubmit、paper-talk、improvement、pickup。入口已按研究委托合同迁移（#49）：目标、权限、额度与完成条件见 [mandate.md](mandate.md)；literature 与 proof 是已迁移路线，其余路线仍属未迁移批次，边界与清单见 [migration-boundary.md](migration-boundary.md)。experiment-plan 与 experiment-bridge 在计划获准时确认本批授权；默认算力政策不是运行许可。已保存的证明轮次走 proof，已有研究整体的有界改进走 improvement，新会话恢复已保存交接走 pickup（#45）。pickup 重读批准、授权和作业记录，不延长授权。`setup-research-os`（U，已实现，#3）：用户确实想初始化或补齐人类可读工作区；探索、逐问、完整草稿确认后补缺。**不是咨询或其他入口的前置门槛**。
 
