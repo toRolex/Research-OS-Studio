@@ -64,4 +64,4 @@ standalone 交付独立 Markdown 报告，composed 把完整攻击、逐点裁�
 
 ## 委托继承
 
-本能力保持只读，不修改研究材料；报告路径、reviewer 能力与预算继承[研究委托](../../general/research-os/references/mandate.md)。缺证据时保留缺口，不捏造；修改由用户或委托明确授权。
+本能力保持只读，不修改研究材料；报告路径、reviewer 能力与预算继承[研究委托](references/mandate.md)。缺证据时保留缺口，不捏造；修改由用户或委托明确授权。
