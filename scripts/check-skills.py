@@ -221,7 +221,27 @@ for sf in skill_files:
     skill_bodies.append((name, rel, sf.parent, skill_text, explicit, yaml_text))
 
 # --- 4: markdown 相对链接 -------------------------------------------------
-md_files = [p for p in ROOT.rglob("*.md") if ".git" not in p.parts]
+def tracked_markdown_files() -> list[Path]:
+    """只访问 tracked Markdown 的祖先目录，保留目录枚举与栈遍历顺序。"""
+    candidates = {ROOT / rel for rel in tracked
+                  if rel.endswith(".md") and ".git" not in Path(rel).parts}
+    parents = {ROOT / parent for path in candidates
+               for parent in path.relative_to(ROOT).parents}
+    found: list[Path] = []
+    pending = [ROOT]
+    while pending:
+        directory = pending.pop()
+        try:
+            entries = list(directory.iterdir())
+        except OSError:
+            continue  # 与 rglob 一样跳过不可读／已消失的目录。
+        found.extend(path for path in entries if path in candidates)
+        pending.extend(path for path in entries
+                       if path in parents and path.is_dir() and not path.is_symlink())
+    return found
+
+
+md_files = tracked_markdown_files()
 link_re = re.compile(r"\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 
 
