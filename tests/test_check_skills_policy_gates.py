@@ -94,7 +94,6 @@ class PolicyAndGates(unittest.TestCase):
             "skills/validation-cycle/formula-derivation/SKILL.md",
             "skills/validation-cycle/proof-writer/SKILL.md",
             "skills/validation-cycle/proof-repair/SKILL.md",
-            "skills/validation-cycle/proof-orchestrator/SKILL.md",
         }
         self.assertTrue(migrated_proof_skills <= migrated)
         self.assertTrue(migrated_proof_skills.isdisjoint(module.LEGACY_LEAF_GATES))
@@ -104,6 +103,7 @@ class PolicyAndGates(unittest.TestCase):
             self.assertNotRegex(text, r"(?m)^Gate:")
             self.assertRegex(text, r"(?m)^Gates: none$")
             self.assertRegex(text, r"(?m)^## 委托继承$")
+        self.assertNotIn("skills/validation-cycle/proof-orchestrator/SKILL.md", migrated)
         writing_skills = {
             f"skills/writing-cycle/{name}/SKILL.md"
             for name in (

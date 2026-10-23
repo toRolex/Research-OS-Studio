@@ -1169,7 +1169,6 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/validation-cycle/formula-derivation/SKILL.md": "委托继承",
     "skills/validation-cycle/proof-writer/SKILL.md": "委托继承",
     "skills/validation-cycle/proof-repair/SKILL.md": "委托继承",
-    "skills/validation-cycle/proof-orchestrator/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-writing/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-plan/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-drafting/SKILL.md": "委托继承",
