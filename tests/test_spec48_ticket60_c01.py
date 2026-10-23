@@ -22,6 +22,18 @@ class InstalledCompileRepairAuthorization(unittest.TestCase):
             temp_root = Path(scratch)
             source = temp_root / "source"
             copy_tracked_tree(ROOT, source)
+            baseline = os.environ.get("SPEC48_C01_BASELINE")
+            if baseline:
+                for relative in (Path("SKILL.md"), Path("references/bounded-repair.md")):
+                    repository_path = (SKILL_REL / relative).as_posix()
+                    content = subprocess.run(
+                        ["git", "show", f"{baseline}:{repository_path}"],
+                        cwd=ROOT,
+                        capture_output=True,
+                        check=True,
+                        timeout=15,
+                    ).stdout
+                    (source / SKILL_REL / relative).write_bytes(content)
             project = temp_root / "project"
             project.mkdir()
             home = temp_root / "home"
@@ -65,6 +77,21 @@ class InstalledCompileRepairAuthorization(unittest.TestCase):
             self.assertTrue(bounded.is_file())
             skill_text = skill.read_text(encoding="utf-8")
             bounded_text = bounded.read_text(encoding="utf-8")
+
+            # Reject the old universal gate before checking replacement wording.
+            # SPEC48_C01_BASELINE runs the same install seam against tracked source.
+            stale_universal_gates = (
+                "原稿仅应用本轮用户明确认可的具体 diff",
+                "先让用户单独认可命令",
+                "展示并等待用户明确认可",
+                "尚未形成的后续 diff 必须当轮展示再认可",
+                "本轮所有拟修改文件、完整 diff、构建和剩余预算均由用户明确认可",
+                "缺任何一项即停在这里，零应用",
+                "用户认可 → 应用",
+            )
+            for stale in stale_universal_gates:
+                self.assertNotIn(stale, skill_text + "\n" + bounded_text, stale)
+
             self.assertIn("[有界修复](references/bounded-repair.md)", skill_text)
             source_skill = source / SKILL_REL
             expected_files = {
@@ -100,19 +127,6 @@ class InstalledCompileRepairAuthorization(unittest.TestCase):
                 "不要求未来每个普通 diff 再获用户批准",
             ):
                 self.assertIn(required, authorization_step, required)
-
-            # Reject the old universal gate even if a new inheritance paragraph is added.
-            stale_universal_gates = (
-                "原稿仅应用本轮用户明确认可的具体 diff",
-                "先让用户单独认可命令",
-                "展示并等待用户明确认可",
-                "尚未形成的后续 diff 必须当轮展示再认可",
-                "本轮所有拟修改文件、完整 diff、构建和剩余预算均由用户明确认可",
-                "缺任何一项即停在这里，零应用",
-                "用户认可 → 应用",
-            )
-            for stale in stale_universal_gates:
-                self.assertNotIn(stale, skill_text + "\n" + bounded_text, stale)
 
             # Ordinary in-scope work is executable under a live parent grant;
             # changes of target/effects/scope still stop for a decision.
