@@ -5,7 +5,7 @@
 | Work unit | 状态 | 产物与验收 | 下一步 |
 |---|---|---|---|
 | W1：统一 paper-writing 迁移 ML/Systems 专业资源，移除旧平行控制器 | done | 产品 commit `8a00c4bb51654c6c1e83c0cf477e7366a4458de0`；迁移映射及安装后合同完成；证据见下方日志 | `/tmp/spec48-ticket60-contract-W/REPORT.md` 汇总并交 parent |
-| W2：experiment-bridge 兼容壳收缩至 run-experiment | done | 产品 commit `bf50d4324fcf79d01dcd5c106f040ef9586e3593`；TDD、CLI 与验收细节见 `/tmp/spec48-ticket60-bridge/REPORT.md` | 仅本报告声明的边界和 9 条历史 archive 诊断留待后续整体验收 |
+| W2：experiment-bridge 兼容壳收缩至 run-experiment | done | 产品 commit `bf50d4325604f2c981b8c4a4df1b89bef441d338`；TDD、CLI 与验收细节见 `/tmp/spec48-ticket60-bridge/REPORT.md` | 仅本报告声明的边界和 9 条历史 archive 诊断留待后续整体验收 |
 
 ## W1 资源迁移映射（实施前）
 
@@ -57,7 +57,7 @@
 - **真实最终 CLI 安装**：`skills@1.7.4 add <worktree> --skill run-experiment --agent claude-code --copy --yes --json` exit 0，选中 1 个、状态 installed、mode copy；独立 HOME/cwd 在 `/tmp/spec48-ticket60-bridge/final-cli-json/`。九个包文件的集合与字节哈希与源码一致；7 个 Markdown 内链全部闭合，无跨包依赖。包清单聚合 SHA-256 `a7bf613a69a3a603cf7186f518570325bb0d22da109058e9850c8e8d9373528d`；逐文件散列与 CLI 日志在 `/tmp/spec48-ticket60-bridge/logs/`，实际安装输出、许可与 mandate 哈希详见 `/tmp/spec48-ticket60-bridge/REPORT.md`。
 - **安全合同保留**：#56 测试继续核查作业身份、退出码/日志/产物有效性、断线查原任务后不盲重跑、数学/非训练对照与本批额度。研究配方没有第二授权账本或作业状态机；计划、队列、监控、健康、分析、审计与 Claim 判断仍由独立职责承担。
 - **integration-tip 复验**：最终核对 `integration/spec-48=14d9c6ef6ca7411dad1ac779647ba1a7cfb7603e`，在任务分支执行 `git merge --no-edit integration/spec-48` 得 `Already up to date`；合并后按上述顺序串行复跑 bridge 4/13、ticket56 27/13、ticket42 4、ticket46 9/2、ticket43 8/3，均 exit 0。checker 仍仅有原 9 条归档断链。diff check exit 0。
-- W2 已按原范围完成；产品提交为 `bf50d4324fcf79d01dcd5c106f040ef9586e3593`。最终验收报告与 CLI 证据位于 `/tmp/spec48-ticket60-bridge/REPORT.md` 及同目录 `logs/`。此状态不外推为 #60 全票完成。
+- W2 已按原范围完成；产品提交为 `bf50d4325604f2c981b8c4a4df1b89bef441d338`。最终验收报告与 CLI 证据位于 `/tmp/spec48-ticket60-bridge/REPORT.md` 及同目录 `logs/`。此状态不外推为 #60 全票完成。
 
 ## Deviations
 
