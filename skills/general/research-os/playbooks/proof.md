@@ -1,41 +1,61 @@
 # proof
 
-跨会话续接一个已固定的证明 obligation。本路线只调度已有证明合同，不重写证明引擎，也不另建状态机。
+从已有数学成果、证明材料或推广障碍继续研究。保持原委托目标；局部 obligation 帮助拆解工作，但不能替代或暗中缩小总目标。本配方按当前证据选择和交替方法，不是一串每项必经的阶段。
 
 ## 先读
 
-按路径读完这些正文，再动手：
+1. 读取[研究委托合同](../references/mandate.md)，以用户原问题确定目标、授权、额度和停止条件。
+2. 直接核对原命题、定义、量词、假设、依赖来源、已有推导/证明、计算和审查产物、失败路线与开放义务。旧总结是线索，不替代原文；不把尚未验证的结果当事实。区分原问题与推广问题。
+3. 只读当前证据需要的能力正文与其共置参考/模板；每个能力仍按自己的职责交付。已有证明轮次或旧交接时，可从 `skills/validation-cycle/proof-orchestrator/SKILL.md` 追到其审计、Lean、符号和交接资源；把旧轮次材料当作待核输入，不恢复旧控制器为总控。
 
-1. `skills/validation-cycle/proof-orchestrator/SKILL.md`
-2. `skills/validation-cycle/proof-writer/SKILL.md`
-3. `skills/validation-cycle/proof-review/SKILL.md`
-4. `skills/validation-cycle/proof-repair/SKILL.md`
+## 总控与角色
 
-续接还要读用户指定的旧轮次目录里实际存在的 `task.md`、`local-proof.md`、`audit.md`、`next.md`、`handoff.md`。文件名不同时按内容角色定位。缺文件就列出缺口，不按记忆补。
-
-## 阶段角色
+本次 `/research-os` 委托是唯一总控：目标、写入范围、额度、授权继承、目标替换和停止规则以 [mandate.md](../references/mandate.md) 为准。内部能力交接、重试、暂停和恢复不重开或重置额度；长任务用 [continuation](continuation.md) 收束或续接，用 [pickup](pickup.md) 重查原始产物与开放义务。只有整体材料确需一轮有界 review—repair—re-review 时，才按 [improvement](improvement.md) 组合 `skills/writing-cycle/research-improvement/SKILL.md`，不把它变成证明的固定前置阶段。
 
 Role: orchestrator
 
-轮次授权与交接。
+保持原目标、证据/方法记录和总额度；按当前缺口选择下一项能力。
 
 Role: prover
 
-固定命题的本地证明与获准修复。
+在其声明范围内推导、构造证明或执行获准修复；交付具体命题、依赖和未解义务。
 
 Role: reviewer
 
-fresh 只读证明审查；串行自查明示非独立。
+对原命题及其依赖作 fresh 只读审查；自查不冒充独立审查。
 
-## 步骤
+## 按证据选择方法
 
-1. 固定命题、量词、假设和允许引用的来源。新增假设或弱化结论只提议。旧轮次授权不继承。
-2. 经过 `proof-orchestrator` 的 round-scope 门：本轮唯一 obligation、新输出目录、有限尝试预算，都要本轮明确授权。旧目录只读。
-3. 有上一轮材料时，只继承已经核对过的结论、失败路线和未解决项。上轮写着「完成」不能盖住缺口。外部答案原文保持未审，直到相关步骤被重新核对。
-4. 本轮本地尝试沿 `proof-writer` 的固定命题合同：命题不变，缺口、失败路线和教训留下。自查沿 `proof-review` 的只读义务，自查不写成独立审查。
-5. 用户另行授权修复时才进入 `proof-repair`。反例成立时停止，不改命题、不加隐藏条件。
-6. 阻塞或用户要求交接时，才按 `proof-orchestrator` 第 5 节准备手动交接包。远程、上传、付费先过 external-action 门。
+每次获得新材料、遇到缺口或发现方法失效后，判断哪类工作最能回答原问题；可以交替、并行或返回已走过的路线。下面是可组合分支，不规定统一顺序，也不要求每次全部调用。
 
-## 完成
+| 当前需要 | 使用已有能力 | 保持的边界 |
+| --- | --- | --- |
+| 将代数关系、记号或局部恒等式化为可核查推导 | `skills/validation-cycle/formula-derivation/SKILL.md`；需要严格证明时另由 `skills/validation-cycle/proof-writer/SKILL.md` 处理 | 公式推导不自动等于证明；推导与证明构造各守其职责。 |
+| 寻找证明、显式构造、特殊情形或反例 | `skills/validation-cycle/proof-writer/SKILL.md`；保留其 proof package 与失败记录模板 | 固定原命题及假设；构造物须检查是否满足原问题条件。 |
+| 局部精确/符号/数值计算有望区分候选或暴露缺口 | 依实际问题做有界计算；需要项目内可重跑代码检查时，使用 `skills/validation-cycle/create-verification-skill/SKILL.md` 或变化后的 `skills/validation-cycle/maintain-verification-skill/SKILL.md` | 记录输入、覆盖范围与假设。有限计算可发现线索或反例候选，不证明未覆盖的无限命题。 |
+| 多条实质不同的路线需要并行覆盖 | `skills/general/swarm/SKILL.md`；需要让同一任务产生并比较多个完整候选时用 `skills/organization/arena/SKILL.md` | 复用各自的分片、候选、证据和比较合同，不另造并行机制；缺少所需子代理能力时只阻塞该分支，不由编排者串行扮演。候选胜出或共识不证明命题。 |
+| 需要证明层的义务审查或更广的独立挑战 | 数学证明义务用 `skills/validation-cycle/proof-review/SKILL.md`；多 reviewer 的研究挑战与主审综合用 `skills/general/interrogate/SKILL.md` | 保持只读与独立性；审查报告是 findings，不是修复授权或数学证据本身。 |
+| 现有 finding 需要有限修改 | `skills/validation-cycle/proof-repair/SKILL.md` | 以 finding 和原命题为界；修复者不取代 reviewer，不得静默改假设或结论。 |
+| 形式化可能显著检查全称性质、形式模型或定理编码 | 无既有项目检查时评估并按需用 `skills/validation-cycle/create-formal-verification-skill/SKILL.md`；资产随对象变化时用 `skills/validation-cycle/maintain-formal-verification-skill/SKILL.md` | 评估并尝试有价值的范围，不强制全链形式化。审计形式化陈述与原问题、外部假设及实际覆盖；普通测试足够时说明理由，不升级工具链。 |
 
-本轮目录里能读到精确命题、继承状态、唯一 obligation、已核对结论和停止原因。没有这些文件时，只在对话交付诊断并停止。不自动进入论文或改进路线。
+以上 Skills 是独立、可安装的能力。进入某一分支前读取其完整正文与已声明依赖；缺少某能力只阻塞依赖它的分支，并如实标注。不要把 Skill 里的 prompt 或内部流程复制成第二套工具合同。
+
+## 义务、方法与失败记录
+
+- 对每项局部 obligation 记录准确命题、假设、依赖、现有证据和关闭条件，并说明它如何支持原目标。比较辅助引理的适用域、假设和结论强度；等强未证引理仍是开放义务，改名或移到依赖图里不算进展。
+- 先比较真正不同且适合当前目标的方法族，例如结构/归纳、估计/变换、显式构造/反例、精确/数值计算；按需扩展、交替或放弃，不设固定数量，不把改名或换符号算成新方法。保留实际考虑或执行的方法族及其理由。每条失败路线记下尝试到的具体步骤、失败原因/证据，以及什么新证据、新工具或新机制足以支持重开；没有新信息时不重复原样尝试。方法记录沿用 proof、derivation、review、repair 各自的包与模板，不创建新的控制账本。
+- 需要新的审查、计算或独立挑战时按证据加入；新结论回到原命题与依赖核对。某个局部路线受阻，只停止或改换该路线，不把它升级成整个委托的停止条件。
+
+## 反例与目标边界
+
+严格反例若逐项满足原命题假设并否定原结论，就是对原问题的有效回答；准确说明它反驳的结论和覆盖范围，不为保留预期答案而隐藏它。数值异常、浮点近似或有限采样结果仍是候选，直到有针对原命题的严格论证或可复核证书。构造的反例也须独立核对定义与条件。
+
+改变路线、局部 obligation 或辅助命题可在原目标内进行。若要替换主要目标、结论、范围或交付物，按委托合同等待用户确认；等待只阻塞目标替换分支，其他原目标工作继续。不得以推广问题、等强引理或较弱结论静默替换原问题。
+
+## 完成与停止
+
+报告原目标及已回答部分、每项结论的来源/推导/计算/审查/形式化证据、适用范围与假设、未验证部分、失败路线和开放义务。区分严格证明、严格反例、候选、数值结果、审查判断与形式化/程序运行结果；编译通过、模型共识或有限计算都不单独代表原数学命题成立。
+
+按[研究委托合同](../references/mandate.md)的完成与停止条件收束。达到有界停止点或工具受阻时，交付可核查进展及下一步重开条件；不宣称已穷尽数学可能。修复、推导或 proof-writer 仍受各自尚未迁移的叶级门约束：本 slice 不覆盖叶 Skill 的显式审批，也不改变[迁移边界](../references/migration-boundary.md)或 checker 登记；该授权迁移留待 Slice B。
+
+案例只提供方法启发，不认证候选证明。本配方未阅读或复制未缓存的 Crouzeix 原文，也不据案例声称任何证明有效。
