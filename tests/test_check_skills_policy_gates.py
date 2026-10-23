@@ -35,15 +35,7 @@ HISTORICAL_CHECKER_PROBLEMS = frozenset(
     }
 )
 # 本票拥有的叶。入口与 setup 基线由后续票并入同一 checker。
-# #49 起 research-lit 已迁移；#57 起 writing-cycle 中 academic-plotting/#58 与 research-improvement/#59 外的写作能力已迁移；
-# 迁移状态由对应票测试与 check-skills.py 的 MIGRATED_CONTRACT 校验。
 LEAF_GATES = {
-    "skills/idea-cycle/creative-thinking-for-research/SKILL.md": {"write-path"},
-    "skills/idea-cycle/idea-discovery/SKILL.md": {"stage-checkpoint", "output-path"},
-    "skills/idea-cycle/idea-generation/SKILL.md": {"write-path"},
-    "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
-    "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
-    "skills/idea-cycle/novelty-check/SKILL.md": set(),
     "skills/validation-cycle/formula-derivation/SKILL.md": {"write-authorization"},
     "skills/validation-cycle/proof-orchestrator/SKILL.md": {"round-scope", "external-action"},
     "skills/validation-cycle/proof-repair/SKILL.md": {
@@ -53,7 +45,6 @@ LEAF_GATES = {
     },
     "skills/validation-cycle/proof-review/SKILL.md": set(),
     "skills/validation-cycle/proof-writer/SKILL.md": {"write-authorization"},
-    "skills/writing-cycle/academic-plotting/SKILL.md": {"figure-choice", "external-resource"},
 }
 
 
@@ -117,7 +108,17 @@ class PolicyAndGates(unittest.TestCase):
             )
         }
         self.assertTrue(writing_skills <= migrated)
-        self.assertIn("skills/writing-cycle/academic-plotting/SKILL.md", module.LEGACY_LEAF_GATES)
+        idea_cycle_skills = {
+            f"skills/idea-cycle/{name}/SKILL.md"
+            for name in (
+                "creative-thinking-for-research", "idea-discovery", "idea-generation",
+                "idea-refinement", "idea-review", "novelty-check",
+            )
+        }
+        self.assertTrue(idea_cycle_skills <= migrated)
+        academic_plotting = "skills/writing-cycle/academic-plotting/SKILL.md"
+        self.assertIn(academic_plotting, migrated)
+        self.assertNotIn(academic_plotting, module.LEGACY_LEAF_GATES)
         improvement = "skills/writing-cycle/research-improvement/SKILL.md"
         self.assertIn(improvement, migrated)
         self.assertNotIn(improvement, module.LEGACY_LEAF_GATES)
@@ -154,27 +155,27 @@ class PolicyAndGates(unittest.TestCase):
 
     def test_damaged_copies_fail(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
-            self._damaged(Path(tmp))
+            self._damaged(Path(tmp) / "repo")
 
     def _damaged(self, work: Path) -> None:
-        # #57 迁移 rebuttal；损坏副本反例改用仍由 #58 负责的未迁移绘图叶。
-        leaf = SKILLS / "writing-cycle" / "academic-plotting" / "SKILL.md"
+        # 反例固定在仍未迁移的 proof-repair，避免把已迁移的写作/绘图叶当旧门。
+        leaf = SKILLS / "validation-cycle" / "proof-repair" / "SKILL.md"
         cases = {
             "drop-one-gate": lambda text: text.replace(
-                "Gate: figure-choice |", "Gate-removed: figure-choice |", 1
+                "Gate: repair-contract |", "Gate-removed: repair-contract |", 1
             ),
             "all-none": lambda text: "\n".join(
                 line for line in text.splitlines() if not line.startswith("Gate:")
             )
             + "\nGates: none\n",
-            "rename-id": lambda text: text.replace("figure-choice", "figure-ok", 1),
+            "rename-id": lambda text: text.replace("repair-contract", "repair-ok", 1),
             "duplicate-id": lambda text: text.replace(
-                "Gate: figure-choice |",
-                "Gate: figure-choice |\nGate: figure-choice | before=figure-select | approval=explicit-user | source=SKILL.md#盘点并选图",
+                "Gate: repair-contract |",
+                "Gate: repair-contract |\nGate: repair-contract | before=repair-write | approval=explicit-user | source=SKILL.md#1-确认修复契约",
                 1,
             ),
             "bad-source": lambda text: text.replace(
-                "source=SKILL.md#1-盘点并选图",
+                "source=SKILL.md#1-确认修复契约",
                 "source=SKILL.md#不存在的锚点",
                 1,
             ),
@@ -187,7 +188,7 @@ class PolicyAndGates(unittest.TestCase):
         }
         copy_worktree(work)
         original = (work / leaf.relative_to(ROOT)).read_text(encoding="utf-8")
-        yaml = work / "skills/writing-cycle/academic-plotting/agents/openai.yaml"
+        yaml = work / "skills/validation-cycle/proof-repair/agents/openai.yaml"
         yaml_original = yaml.read_text(encoding="utf-8")
         for name, mutate in cases.items():
             target = work / leaf.relative_to(ROOT)
@@ -201,7 +202,7 @@ class PolicyAndGates(unittest.TestCase):
             result = run_check(work)
             self.assertNotEqual(result.returncode, 0, name)
             blob = result.stdout + result.stderr
-            self.assertTrue("academic-plotting" in blob or "allow_implicit_invocation" in blob, name + blob)
+            self.assertTrue("proof-repair" in blob or "allow_implicit_invocation" in blob, name + blob)
 
 
 if __name__ == "__main__":
