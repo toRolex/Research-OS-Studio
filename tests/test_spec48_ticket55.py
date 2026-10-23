@@ -150,7 +150,7 @@ class MathRecipeComposition(unittest.TestCase):
             skill_path = ROOT / relative_path
             with self.subTest(skill=slug):
                 self.assertTrue(skill_path.is_file(), f"missing installable Skill: {relative_path}")
-                self.assertIn(f"`{relative_path}`", self.recipe)
+                self.assertIn(f"`{slug}`", self.recipe)
                 frontmatter = skill_path.read_text(encoding="utf-8").split("---", 2)[1]
                 self.assertRegex(frontmatter, rf"(?m)^name:\s*{re.escape(slug)}\s*$")
 
@@ -300,6 +300,13 @@ class MathRecipeComposition(unittest.TestCase):
                 self.assertIn(control, compat)
         self.assertTrue(contains_any(compat, ("references/dispatch-prompts.md", "提示模板")))
 
+    def test_missing_capabilities_block_only_their_branch_and_compat_fails_closed(self):
+        self.assertIn("缺少某能力只阻塞依赖它的分支", self.recipe)
+        compat = (ROOT / MIGRATED_COMPAT_SKILL).read_text(encoding="utf-8")
+        self.assertIn("无法到达 `/research-os`", compat)
+        self.assertIn("请求调用/安装该入口", compat)
+        self.assertIn("不要在此重建旧总控", compat)
+
     def test_revised_skills_keep_their_local_resources_reachable_when_flat_installed(self):
         with tempfile.TemporaryDirectory(prefix="ticket55-install-") as temporary:
             install_root = Path(temporary)
@@ -325,6 +332,18 @@ class MathRecipeComposition(unittest.TestCase):
             for relative in PROOF_ORCHESTRATOR_REFERENCES:
                 with self.subTest(reference=relative):
                     self.assertIn(Path(os.path.abspath(compat_root / relative)), reachable)
+
+    def test_research_os_flat_install_has_no_cross_skill_file_link(self):
+        with tempfile.TemporaryDirectory(prefix="ticket55-entry-install-") as temporary:
+            installed = install_tracked_skill(
+                "skills/general/research-os", Path(temporary) / "flat"
+            )
+            for document in reachable_markdown_files(installed):
+                for target in local_markdown_links(document):
+                    self.assertTrue(
+                        target.is_file(),
+                        f"research-os standalone package links outside its bundle: {target}",
+                    )
 
     def test_product_recipe_has_no_slice_status_or_unread_case_implementation_copy(self):
         self.assertNotRegex(self.recipe, r"(?i)\bSlice\s+[ABC]\b")

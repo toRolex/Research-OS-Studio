@@ -7,6 +7,8 @@ npx skills@latest add toRolex/Research-OS-Studio --list
 npx skills@latest add toRolex/Research-OS-Studio --all
 ```
 
+Skills CLI 按独立 slug 安装，不会解析跨 Skill 依赖。选择性安装 proof 配方时，按需同时选择 `research-os` 与所用能力（如 `arena`、`swarm`、`interrogate`、`formula-derivation`、`proof-writer`、`proof-review`、`proof-repair` 及验证 Skill）；旧 `proof-orchestrator` 只有在 `research-os` 也安装时才可转入新配方。缺少能力只阻塞依赖它的分支，不用自审或串行扮演替代。
+
 这些远程命令读取 GitHub 已发布版本，不会包含尚未合并或 push 的本地修改。验证本地分支时，在一个临时科研项目目录中运行（将绝对路径替换为当前 checkout）：
 
 ```bash

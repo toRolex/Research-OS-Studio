@@ -56,7 +56,7 @@ Gates: none
 
 已命名、文件未交付：无。写作请求统一进入 `paper-writing`；general、ml、systems 仅选专业标准，旧专业入口作为兼容调用保留。
 
-不占路线的独立能力：用户要对抗审查、独立挑战或多模型审查时，委托内由编排者或用户直接点名 [interrogate](../interrogate/SKILL.md)：独立 reviewer 逐模型挑战、findings 去重、分歧保留，主审四桶有据判断；该调用始终只读，修复由委托按授权另行组织（如 proof-repair、research-improvement）。
+不占路线的独立能力：用户要对抗审查、独立挑战或多模型审查时，委托内由编排者或用户直接点名 `interrogate`：独立 reviewer 逐模型挑战、findings 去重、分歧保留，主审四桶有据判断；该调用始终只读，修复由委托按授权另行组织（如 `proof-repair`、`research-improvement`）。独立能力未安装时只阻塞依赖它的分支，不阻塞其他委托工作。
 
 ## 只读优先
 

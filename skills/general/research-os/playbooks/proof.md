@@ -6,11 +6,11 @@
 
 1. 读取[研究委托合同](../references/mandate.md)，以用户原问题确定目标、授权、额度和停止条件。
 2. 直接核对原命题、定义、量词、假设、依赖来源、已有推导/证明、计算和审查产物、失败路线与开放义务。旧总结是线索，不替代原文；不把尚未验证的结果当事实。区分原问题与推广问题。
-3. 只读当前证据需要的能力正文与其共置参考/模板；每个能力仍按自己的职责交付。已有证明轮次或旧交接时，可从 `skills/validation-cycle/proof-orchestrator/SKILL.md` 追到其审计、Lean、符号和交接资源；把旧轮次材料当作待核输入，不恢复旧控制器为总控。
+3. 只读当前证据需要的能力正文与其共置参考/模板；每个能力仍按自己的职责交付。需要旧证明轮次或交接方法材料时，且 `proof-orchestrator` 已安装，再从该 Skill 的随包索引读取；否则把旧材料作为待核输入，不查开发者目录，也不恢复旧控制器为总控。
 
 ## 总控与角色
 
-本次 `/research-os` 委托是唯一总控：目标、写入范围、额度、授权继承、目标替换和停止规则以 [mandate.md](../references/mandate.md) 为准。内部能力交接、重试、暂停和恢复不重开或重置额度；长任务用 [continuation](continuation.md) 收束或续接，用 [pickup](pickup.md) 重查原始产物与开放义务。只有整体材料确需一轮有界 review—repair—re-review 时，才按 [improvement](improvement.md) 组合 `skills/writing-cycle/research-improvement/SKILL.md`，不把它变成证明的固定前置阶段。
+本次 `/research-os` 委托是唯一总控：目标、写入范围、额度、授权继承、目标替换和停止规则以 [mandate.md](../references/mandate.md) 为准。内部能力交接、重试、暂停和恢复不重开或重置额度；长任务用 [continuation](continuation.md) 收束或续接，用 [pickup](pickup.md) 重查原始产物与开放义务。只有整体材料确需一轮有界 review—repair—re-review 时，才按 [improvement](improvement.md) 组合独立能力 `research-improvement`，不把它变成证明的固定前置阶段。
 
 Role: orchestrator
 
@@ -30,15 +30,15 @@ Role: reviewer
 
 | 当前需要 | 使用已有能力 | 保持的边界 |
 | --- | --- | --- |
-| 将代数关系、记号或局部恒等式化为可核查推导 | `skills/validation-cycle/formula-derivation/SKILL.md`；需要严格证明时另由 `skills/validation-cycle/proof-writer/SKILL.md` 处理 | 公式推导不自动等于证明；推导与证明构造各守其职责。 |
-| 寻找证明、显式构造、特殊情形或反例 | `skills/validation-cycle/proof-writer/SKILL.md`；保留其 proof package 与失败记录模板 | 固定原命题及假设；构造物须检查是否满足原问题条件。 |
-| 局部精确/符号/数值计算有望区分候选或暴露缺口 | 依实际问题做有界计算；需要项目内可重跑代码检查时，使用 `skills/validation-cycle/create-verification-skill/SKILL.md` 或变化后的 `skills/validation-cycle/maintain-verification-skill/SKILL.md` | 记录输入、覆盖范围与假设。有限计算可发现线索或反例候选，不证明未覆盖的无限命题。 |
-| 多条实质不同的路线需要并行覆盖 | `skills/general/swarm/SKILL.md`；需要让同一任务产生并比较多个完整候选时用 `skills/organization/arena/SKILL.md` | 复用各自的分片、候选、证据和比较合同，不另造并行机制；缺少所需子代理能力时只阻塞该分支，不由编排者串行扮演。候选胜出或共识不证明命题。 |
-| 需要证明层的义务审查或更广的独立挑战 | 数学证明义务用 `skills/validation-cycle/proof-review/SKILL.md`；多 reviewer 的研究挑战与主审综合用 `skills/general/interrogate/SKILL.md` | 保持只读与独立性；审查报告是 findings，不是修复授权或数学证据本身。 |
-| 现有 finding 需要有限修改 | `skills/validation-cycle/proof-repair/SKILL.md` | 以 finding 和原命题为界；修复者不取代 reviewer，不得静默改假设或结论。 |
-| 形式化可能显著检查全称性质、形式模型或定理编码 | 无既有项目检查时评估并按需用 `skills/validation-cycle/create-formal-verification-skill/SKILL.md`；资产随对象变化时用 `skills/validation-cycle/maintain-formal-verification-skill/SKILL.md` | 评估并尝试有价值的范围，不强制全链形式化。审计形式化陈述与原问题、外部假设及实际覆盖；普通测试足够时说明理由，不升级工具链。 |
+| 将代数关系、记号或局部恒等式化为可核查推导 | `formula-derivation`；需要严格证明时另由 `proof-writer` 处理 | 公式推导不自动等于证明；推导与证明构造各守其职责。 |
+| 寻找证明、显式构造、特殊情形或反例 | `proof-writer`；保留其 proof package 与失败记录模板 | 固定原命题及假设；构造物须检查是否满足原问题条件。 |
+| 局部精确/符号/数值计算有望区分候选或暴露缺口 | 依实际问题做有界计算；需要项目内可重跑代码检查时，使用 `create-verification-skill` 或变化后的 `maintain-verification-skill` | 记录输入、覆盖范围与假设。有限计算可发现线索或反例候选，不证明未覆盖的无限命题。 |
+| 多条实质不同的路线需要并行覆盖 | `swarm`；需要让同一任务产生并比较多个完整候选时用 `arena` | 复用各自的分片、候选、证据和比较合同，不另造并行机制；缺少所需子代理能力时只阻塞该分支，不由编排者串行扮演。候选胜出或共识不证明命题。 |
+| 需要证明层的义务审查或更广的独立挑战 | 数学证明义务用 `proof-review`；多 reviewer 的研究挑战与主审综合用 `interrogate` | 保持只读与独立性；审查报告是 findings，不是修复授权或数学证据本身。 |
+| 现有 finding 需要有限修改 | `proof-repair` | 以 finding 和原命题为界；修复者不取代 reviewer，不得静默改假设或结论。独立复审能力缺失时报告未完成，不声称已通过复审。 |
+| 形式化可能显著检查全称性质、形式模型或定理编码 | 无既有项目检查时评估并按需用 `create-formal-verification-skill`；资产随对象变化时用 `maintain-formal-verification-skill` | 评估并尝试有价值的范围，不强制全链形式化。审计形式化陈述与原问题、外部假设及实际覆盖；普通测试足够时说明理由，不升级工具链。 |
 
-以上 Skills 是独立、可安装的能力。进入某一分支前读取其完整正文与已声明依赖；缺少某能力只阻塞依赖它的分支，并如实标注。不要把 Skill 里的 prompt 或内部流程复制成第二套工具合同。
+以上是彼此独立、按 slug 发现和安装的能力；Skills CLI 不会替用户解析或安装跨 Skill 依赖。进入分支前确认所需 slug 已安装并读取其完整正文与共置资源；缺少某能力只阻塞依赖它的分支，并如实标注，不以自审、串行扮演或开发者目录补位。不要把 Skill 里的 prompt 或内部流程复制成第二套工具合同。
 
 ## 义务、方法与失败记录
 
