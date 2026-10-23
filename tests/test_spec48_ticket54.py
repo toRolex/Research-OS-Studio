@@ -83,7 +83,7 @@ class WorkCopy:
         copy_tracked_tree(ROOT, self.path)
         for command in (
             ["git", "init"],
-            ["git", "add", "-A"],
+            ["git", "add", "-f", "."],
             ["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-m", "base"],
         ):
             subprocess.run(command, cwd=self.path, check=True, capture_output=True)

@@ -48,6 +48,17 @@ LEAF_GATES = {
 }
 
 
+def copy_worktree(work: Path) -> None:
+    """Prepare the tracked workcopy used by both damaged-checker entry points."""
+    copy_tracked_tree(ROOT, work)
+    for command in (
+        ["git", "init"],
+        ["git", "add", "-f", "."],
+        ["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-m", "base"],
+    ):
+        subprocess.run(command, cwd=work, check=True, capture_output=True)
+
+
 def run_check(root: Path) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         ["uv", "run", "python", str(root / "scripts" / "check-skills.py")],
@@ -117,15 +128,7 @@ class PolicyAndGates(unittest.TestCase):
     def test_checker_historical_allowlist_rejects_replaced_diagnostic(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp) / "repo"
-            copy_tracked_tree(ROOT, work)
-            subprocess.run(["git", "init"], cwd=work, check=True, capture_output=True)
-            subprocess.run(["git", "add", "-A"], cwd=work, check=True, capture_output=True)
-            subprocess.run(
-                ["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-m", "base"],
-                cwd=work,
-                check=True,
-                capture_output=True,
-            )
+            copy_worktree(work)
             doc = work / "docs/acceptance/v2-release-host-regression.md"
             original = doc.read_text(encoding="utf-8")
             replaced = original.replace(
@@ -183,15 +186,7 @@ class PolicyAndGates(unittest.TestCase):
             "yaml-true": None,
             "drop-disable": lambda text: text.replace("disable-model-invocation: true\n", "", 1),
         }
-        copy_tracked_tree(ROOT, work)
-        subprocess.run(["git", "init"], cwd=work, check=True, capture_output=True)
-        subprocess.run(["git", "add", "-A"], cwd=work, check=True, capture_output=True)
-        subprocess.run(
-            ["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-m", "base"],
-            cwd=work,
-            check=True,
-            capture_output=True,
-        )
+        copy_worktree(work)
         original = (work / leaf.relative_to(ROOT)).read_text(encoding="utf-8")
         yaml = work / "skills/validation-cycle/proof-repair/agents/openai.yaml"
         yaml_original = yaml.read_text(encoding="utf-8")

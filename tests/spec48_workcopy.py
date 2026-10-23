@@ -11,7 +11,8 @@ def copy_tracked_tree(source: Path, dest: Path) -> None:
         ["git", "ls-files", "-z"], cwd=source,
         check=True, capture_output=True, timeout=30,
     ).stdout.split(b"\0")
-    dest.mkdir()
+    # Some callers pass the already-created, empty TemporaryDirectory itself.
+    dest.mkdir(exist_ok=True)
     for entry in paths:
         if not entry:
             continue
