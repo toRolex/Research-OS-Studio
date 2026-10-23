@@ -9,7 +9,7 @@
 | 整合旧源历史 | done | 在指定基线分支保留并合并源分支历史；冲突仅在本 worktree 解决，保留 #53 检查与 #58 资产检查两套 checker、#53/其他集成目录条目与 #58 新安装合同。四个冲突文件无残留标记，`git diff --check` 通过。 | 后续作为 merge commit 提交。 |
 | #58 兼容与必要修复 | done | 当前候选树下 `tests/test_spec48_ticket58.py`：23 passed / 52 subtests；checker 仍只报基线 9 个 archive 断链；未扩大到 #57 citation/write-control 文件。本轮未新增产品实现或补造历史 TDD 红灯证据。 | — |
 | 安装与回归验收 | 待验收 | `tests/test_spec48_ticket58.py` exit 0：23 passed / 52 subtests；全套 exit 1：7 failed / 227 passed / 157 subtests，7 个失败 ID 与 `/tmp/spec48-closed-baseline/comparison.json::head.failed_nodes` 完全一致；checker exit 1，仅有基线 9 条 archive 链接缺失。Skills CLI 1.7.4 整包 exit 0：45 个已安装 Skill 目录与源码内容逐目录 `diff -qr` exit 0。 | 真实单项和 Discovery 五依赖成组安装尚未运行；在本票范围内列为未完成切片。 |
-| 最终同步、提交与报告 | 进行中 | integration ref 核实为 `b0d8eadc171435896bc2b7bef76bbc54722b797c`，已是本分支 merge 第一父提交；待在提交前确认 refs 未移动并提交。 | 写出 `/tmp/spec48-58-resume/REPORT.md`，逐 AC 标明独立安装缺口。 |
+| 最终同步、提交与报告 | done | merge commit `5252bc4845b10565fff78d61058c983b657453d2` 保留基线与源分支双父历史；integration ref 未移动。逐 AC 交接报告已保存 `/tmp/spec48-58-resume/REPORT.md`，明确列出 AC5 独立/成组安装缺口。 | #58 整体仍待上表验收切片完成，不将本单元 done 外推为整票 done。 |
 
 ## 决策与边界
 
