@@ -42,7 +42,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 | Organization | `organization/` | [arena](organization/arena/SKILL.md)（显式；候选比较与整合：Frame→Fan-out→Cross-judge→Pick→Graft→Verify；预先 rubric、输出隔离、完整阅读候选、主编排者逐项综合；已迁移到研究委托合同，缺子代理标 blocked；独立于其他组织能力） |
 | Idea Cycle | `idea-cycle/` | [idea-discovery](idea-cycle/idea-discovery/SKILL.md)（user-invoked 可组合入口：按目标缺口组合必要叶能力，可从现成候选局部开始或回访；仅按用户目标交付报告和/或 Proposal。独立安装需同时装 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，见上方 CLI 命令）、[research-lit](idea-cycle/research-lit/SKILL.md)、[idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)、[idea-review](idea-cycle/idea-review/SKILL.md)、[idea-refinement](idea-cycle/idea-refinement/SKILL.md)（除 setup 外全部显式调用；用户点名或父流程按路径级联；支持 standalone / composed） |
 | Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[experiment-bridge](validation-cycle/experiment-bridge/SKILL.md)（兼容入口；映射到 run-experiment，不重复编排）、[run-experiment](validation-cycle/run-experiment/SKILL.md)（统一执行控制；记录输入版本、工具链、目录、作业身份、退出码、日志与产物）、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[create-formal-verification-skill](validation-cycle/create-formal-verification-skill/SKILL.md)（user-invoked；按问题选工具建立可重跑形式化检查，记录假设/版本/同步与编码对应审计，不强制全链形式化）、[maintain-formal-verification-skill](validation-cycle/maintain-formal-verification-skill/SKILL.md)（user-invoked；代码变化后重新对齐检查，重跑并区分漂移与 bug）、[create-verification-skill](validation-cycle/create-verification-skill/SKILL.md)（user-invoked；建立可运行的行为验证 Skill：启动/doctor/驱动/证据/清理与特征覆盖映射，未执行的生成资产标草稿，不冒称形式化）、[maintain-verification-skill](validation-cycle/maintain-verification-skill/SKILL.md)（user-invoked；随应用变化按特征源读与真实驱动，区分文档漂移与产品缺陷）、[proof-review](validation-cycle/proof-review/SKILL.md)（显式调用，用户可点名或级联；只读，支持 standalone / composed，随包提供按需数学审计与交接方法）、[proof-repair](validation-cycle/proof-repair/SKILL.md)（user-invoked；显式授权的有界修复）、[analyze-results](validation-cycle/analyze-results/SKILL.md)、[result-to-claim](validation-cycle/result-to-claim/SKILL.md)（user-invoked；把已有结果转为范围受限的候选 Claim，产出后停止）、[formula-derivation](validation-cycle/formula-derivation/SKILL.md)、[proof-writer](validation-cycle/proof-writer/SKILL.md)（除 setup 外全部显式调用；用户点名或父流程按路径级联；支持 standalone / composed） |
-| Writing Cycle | `writing-cycle/` | [paper-writing](writing-cycle/paper-writing/SKILL.md)（统一写作入口：general／ML／Systems，交付候选稿与审查报告后停止）、[ml-paper-writing](writing-cycle/ml-paper-writing/SKILL.md)（旧平行入口兼容层：seeds、error bars、compute、limitations）、[systems-paper-writing](writing-cycle/systems-paper-writing/SKILL.md)（旧平行入口兼容层：design rationale、end-to-end、scalability）、[paper-plan](writing-cycle/paper-plan/SKILL.md)、[paper-drafting](writing-cycle/paper-drafting/SKILL.md)（均显式调用，可独立或级联）、[academic-plotting](writing-cycle/academic-plotting/SKILL.md)（显式调用；#58 负责其迁移与实现）、[paper-compile](writing-cycle/paper-compile/SKILL.md)（check-only）、[paper-compile-repair](writing-cycle/paper-compile-repair/SKILL.md)（精确 diff；委托内继承授权）、[citation-audit](writing-cycle/citation-audit/SKILL.md)（只读）、[apply-citation-fixes](writing-cycle/apply-citation-fixes/SKILL.md)（精确 diff；委托内继承已授权范围）、[paper-claim-audit](writing-cycle/paper-claim-audit/SKILL.md)（只读）、[claim-stress-test](writing-cycle/claim-stress-test/SKILL.md)（只读；最强拒稿论点与独立裁决）、[rebuttal](writing-cycle/rebuttal/SKILL.md)（不自动补实验或外发）、[paper-talk](writing-cycle/paper-talk/SKILL.md)（不自动发布）、[resubmit-pipeline](writing-cycle/resubmit-pipeline/SKILL.md)（保留旧稿，不自动投稿）、[research-improvement](writing-cycle/research-improvement/SKILL.md)（#59 总控，有界 review／repair／re-review；不自动启动 experiment-bridge、paper-writing 或专项修复入口） |
+| Writing Cycle | `writing-cycle/` | [paper-writing](writing-cycle/paper-writing/SKILL.md)（唯一写作入口：general／ML／Systems 专业选项，分支方法、reviewer/venue 参考与报告模板按需共置随包）、[paper-plan](writing-cycle/paper-plan/SKILL.md)、[paper-drafting](writing-cycle/paper-drafting/SKILL.md)（均显式调用，可独立或级联）、[academic-plotting](writing-cycle/academic-plotting/SKILL.md)（显式调用；#58 负责其迁移与实现）、[paper-compile](writing-cycle/paper-compile/SKILL.md)（check-only）、[paper-compile-repair](writing-cycle/paper-compile-repair/SKILL.md)（精确 diff；委托内继承授权）、[citation-audit](writing-cycle/citation-audit/SKILL.md)（只读）、[apply-citation-fixes](writing-cycle/apply-citation-fixes/SKILL.md)（精确 diff；委托内继承已授权范围）、[paper-claim-audit](writing-cycle/paper-claim-audit/SKILL.md)（只读）、[claim-stress-test](writing-cycle/claim-stress-test/SKILL.md)（只读；最强拒稿论点与独立裁决）、[rebuttal](writing-cycle/rebuttal/SKILL.md)（不自动补实验或外发）、[paper-talk](writing-cycle/paper-talk/SKILL.md)（不自动发布）、[resubmit-pipeline](writing-cycle/resubmit-pipeline/SKILL.md)（保留旧稿，不自动投稿）、[research-improvement](writing-cycle/research-improvement/SKILL.md)（#59 总控，有界 review／repair／re-review；不自动启动 experiment-bridge、paper-writing 或专项修复入口） |
 
 ## idea-discovery 单项安装依赖
 
@@ -150,18 +150,18 @@ setup 是可选的项目初始化：先探索现有项目，再读取本 session
 
 ## Systems 专业写作与人工验收
 
-`systems-paper-writing` 由用户显式启动，面向系统设计与实现为核心贡献的论文：按 Abstract（5 句）→ Introduction（问题→Gap G1–Gn→洞见→贡献）→ Background & Motivation（观测→设计推论）→ Design（架构→逐模块 choice／alternatives／why→取舍表）→ Implementation → Evaluation（setup→end-to-end→microbenchmark／ablation→scalability）→ Related Work → Conclusion 组织正文，并核对系统评价面。它直接组合已交付的 `paper-plan`、`paper-drafting`、`academic-plotting`、`paper-compile` 与并列审查能力，**不调用通用 `paper-writing`（#25）或 ML 入口（#26）**，也不自动启动 `paper-compile-repair`、`apply-citation-fixes`、`proof-repair` 等独立修复入口。
+`paper-writing` 的 Systems 专业选项面向系统设计与实现为核心贡献的论文：按 Abstract（5 句）→ Introduction（问题→Gap G1–Gn→洞见→贡献）→ Background & Motivation（观测→设计推论）→ Design（架构→逐模块 choice／alternatives／why→取舍表）→ Implementation → Evaluation（setup→end-to-end→microbenchmark／ablation→scalability）→ Related Work → Conclusion 组织正文，并核对系统评价面。它组合已交付的 `paper-plan`、`paper-drafting`、`academic-plotting`、`paper-compile` 与并列审查能力，按需读取 Systems 专业参考，不启动额外的写作总控。
 
-也可从 `/research-os` 的 paper-writing / systems 进入。该变体只级联本入口，不读通用 `paper-writing`。叶 skill 的授权门保持有效。
+从 `/research-os` 的 paper-writing / systems 路线或直接显式调用 `paper-writing` 并表达 Systems 需求；两者共用同一入口，按需读取 `systems-writing-methods`、`systems-evaluation-methods`、`systems-checklist` 与 `systems-venue-and-reviewer`。授权沿用委托。
 
 在可丢弃项目副本中手工验收：
 
 1. **现成系统材料到专业产物**：给出已有设计说明、原型与结果、部分观测。核对 Gap 与设计 alternatives 可追溯、end-to-end 与 microbenchmark／ablation 分列、架构图前 3 页出现、每条实验结论三处一致（段首假设／段尾结论／caption）、Related Work 按方法分组；交付候选稿与审查报告后停止。
 2. **缺少扩展性证据**：故意不提供 scalability 数据。核对系统证据面标为 `MISSING SCALABILITY EVIDENCE`，依赖扩展性的主张未进入 `submission-candidate` 就绪判定，未编造或外推曲线，也未运行实验或部署；给出最小补证动作与用户选项。
 3. **只有 microbenchmark**：不给端到端结果。核对 microbenchmark 结论未被升级为系统整体更优，缺口如实保留。
-4. **venue 与入口边界**：不指定 venue 时不得假定页数／模板；指定时要求现场核对当前 CFP 并记录来源。核对全程未调用通用 W3／ML／修复入口，未投稿、未发布、未安装环境。
+4. **venue 与入口边界**：不指定 venue 时不得假定页数／模板；指定时要求现场核对当前 CFP 并记录来源。核对 Systems 专业选项只调用唯一 `paper-writing` 组织入口，未投稿、未发布、未安装环境。
 
-宿主须保留 `systems-paper-writing` 的显式调用策略；文件安装成功不等于宿主已加载或权限已强制执行。Skills CLI 的 Eve 转换历史会移除 `disable-model-invocation`，未在目标宿主核实前暂停使用该入口。静态检查与合成场景审查不构成真实科研验收；缺独立 reviewer 时相应就绪判定如实降级。
+宿主须保留 `paper-writing` 的显式调用策略；文件安装成功不等于宿主已加载或权限已强制执行。静态检查与合成场景审查不构成真实科研验收；缺独立 reviewer 时相应就绪判定如实降级。
 
 ## 论文编译与显式修复
 
@@ -208,16 +208,16 @@ Skills CLI 1.5.26 的本票本地安装中，Claude Code / Codex 副本完整；
 
 ## ML 专业写作与人工验收
 
-`ml-paper-writing` 是 `/research-os` 的 paper-writing / ml，也仍可用户点名。从现成 ML 研究材料完成规划、实验报告核对、图表、起草、真实编译、并列适用审查与授权修订，交付候选稿与报告后停止。它复用内部资产，保留 seeds／runs、error bars、compute、limitations，但不读通用 `paper-writing`，也不启动 `paper-compile-repair`、`apply-citation-fixes`、`rebuttal`、`resubmit-pipeline` 或 `research-improvement`。叶 skill 的授权门保持有效。不分发会议模板；venue 规则以当前官方 edition 现场核对为准。
+`paper-writing` 的 ML/AI 专业选项通过 `/research-os` 的 paper-writing / ml 路线或直接显式请求 ML/AI 材料触发。从现成研究材料完成规划、实验报告核对、图表、起草、真实编译、并列适用审查与授权修订，交付候选稿与报告后停止。保留 seeds／runs、error bars、compute、limitations 方法，并按需读取实验报告、reviewer、venue 清单与模板；不自动投稿或启动跨流程改进。不分发会议模板；venue 规则以当前官方 edition 现场核对为准。
 
 在可丢弃项目副本中手工验收：
 
 1. **完整路径**：给一个含真实结果、日志、配置和代码的 ML 研究目录。显式调用并核对：规划 Claim—Evidence、实验报告核对（每次比较给出 runs／seeds 数量与不确定性方法、超参与选择、compute、Limitations、失败结果）、图表、真实编译、并列审查与独立评审及有界修订；最终得到候选稿与自然 Markdown 报告。
 2. **报告不完整场景**：拿掉部分 seeds、error bars 或 compute 记录。核对缺失处出现 `[SEED COUNT NEEDED]`／`[COMPUTE NEEDED]` 一类可见缺口，而不是默认值（如“3 seeds”“A100”）；相关 Claim 被收窄或交用户决定，**零实验执行**。
 3. **venue 与模板**：指定一个 venue 年份与 track；核对官方 author guide／checklist 的来源与访问日期、模板冲突的用户决定，以及未指定 venue 时不设默认会议、报告写“合规未核对”。
-4. **分工与越权**：核对 description 与 SKILL.md 第 4 节和 `paper-writing`／`systems-paper-writing`（#27）清楚区分；全程未自动启动其他顶层 Workflow、未安装 LaTeX／GPU 环境、未投稿或发布；需要补实验的 Claim 停在未授权状态。
+4. **分工与越权**：核对唯一 `paper-writing` 入口按 ML/AI 专业资源分支组织，委托内修复不越范围；全程未自动启动其他顶层 Workflow、未安装 LaTeX／GPU 环境、未投稿或发布；需要补实验的 Claim 停在未授权状态。
 
-以上是用户手工验收步骤，不是已完成真实科研验收的声明。宿主须保留 `ml-paper-writing` 的显式调用策略；文件安装成功不等于宿主已加载或权限已强制执行。
+以上是用户手工验收步骤，不是已完成真实科研验收的声明。宿主须保留 `paper-writing` 的显式调用策略；文件安装成功不等于宿主已加载或权限已强制执行。
 
 ## 研究工作有界改进循环与人工验收
 
@@ -229,6 +229,6 @@ Skills CLI 1.5.26 的本票本地安装中，Claude Code / Codex 副本完整；
 2. **轮数/预算上限**：把轮数设为 1 且预算极小；核对达到上限后停止、报告剩余 findings，不自动续轮或扩预算。
 3. **未授权补实验**：给出一个必须补实验才能解决的 finding 且不授权实验；核对记为 unresolved/blocked、零运行、零外部副作用，并给出最小决策。
 4. **未解决 findings 与可写声明**：混合一个可修与一个不可修的 finding；核对照实列出已解决/未解决、实际写入的文件与验证，不把「未发现阻断问题」写成通过。
-5. **不越权**：给出需要完整新实验或重写的情形；核对只交回用户，不自动启动 `experiment-bridge`、`paper-writing`、`ml-paper-writing`、`paper-compile-repair`、`apply-citation-fixes` 或 `proof-repair`。
+5. **不越权**：给出需要完整新实验或重写的情形；核对只交回用户，不自动启动实验执行、`paper-writing`、`paper-compile-repair`、`apply-citation-fixes` 或 `proof-repair`。
 
 宿主须保留 `research-improvement` 的显式调用策略；文件安装成功不等于宿主已加载。以上为手工验收步骤，不是已完成真实科研验收的声明。

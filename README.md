@@ -222,8 +222,6 @@ playbook idea-discovery
 | | [create-verification-skill](skills/validation-cycle/create-verification-skill/SKILL.md) | 显式 | 为项目建立可运行的行为验证 Skill：启动、doctor、按用户路径驱动、证据与清理，播种特征覆盖映射；未执行的生成资产标草稿 |
 | | [maintain-verification-skill](skills/validation-cycle/maintain-verification-skill/SKILL.md) | 显式 | 随应用变化维护行为验证 Skill：按特征源读与真实驱动，区分文档漂移与产品缺陷，交付已证明修正 |
 | **Writing Cycle** | [paper-writing](skills/writing-cycle/paper-writing/SKILL.md) | 显式 | 统一写作入口：general／ML／Systems 标准；委托内编译与引用修复继承授权，不自动投稿 |
-| | [ml-paper-writing](skills/writing-cycle/ml-paper-writing/SKILL.md) | 显式 | 旧平行入口兼容层：ML experiment reporting、reviewer expectations、venue checklists；继承同一委托 |
-| | [systems-paper-writing](skills/writing-cycle/systems-paper-writing/SKILL.md) | 显式 | 旧平行入口兼容层：Systems writing methods、evaluation methods、venue and reviewer；继承同一委托 |
 | | [paper-plan](skills/writing-cycle/paper-plan/SKILL.md) | 显式 | 规划论文大纲与 Claim-Evidence 证据对应矩阵 |
 | | [paper-drafting](skills/writing-cycle/paper-drafting/SKILL.md) | 显式 | 依据实验数据与推导记录起草论文正文 |
 | | [academic-plotting](skills/writing-cycle/academic-plotting/SKILL.md) | 显式 | 绘制学术图表并保留可复现绘图脚本 |

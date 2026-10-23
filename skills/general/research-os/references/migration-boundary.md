@@ -47,8 +47,6 @@
 | 引用修复 | `skills/writing-cycle/apply-citation-fixes/SKILL.md` | 「委托继承」小节；精确 diff 不绕过，独立调用按其边界授权，委托内已授权时继承 |
 | 主张审计 | `skills/writing-cycle/paper-claim-audit/SKILL.md` | 「委托继承」小节；保持只读并如实标缺口 |
 | 拒稿攻击 | `skills/writing-cycle/claim-stress-test/SKILL.md` | 「委托继承」小节；保持只读并如实标缺口 |
-| ML 写作兼容层 | `skills/writing-cycle/ml-paper-writing/SKILL.md` | 「委托继承」小节；保留旧平行入口，新委托优先统一入口 |
-| Systems 写作兼容层 | `skills/writing-cycle/systems-paper-writing/SKILL.md` | 「委托继承」小节；保留旧平行入口，新委托优先统一入口 |
 | 审稿回复 | `skills/writing-cycle/rebuttal/SKILL.md` | 「委托继承」小节；不自动投稿或扩大任务 |
 | 转投适配 | `skills/writing-cycle/resubmit-pipeline/SKILL.md` | 「委托继承」小节；旧稿只读，不自动投稿 |
 | 会议演讲 | `skills/writing-cycle/paper-talk/SKILL.md` | 「委托继承」小节；只准备材料，不自动发布 |

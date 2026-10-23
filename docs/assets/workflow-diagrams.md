@@ -79,8 +79,8 @@ mindmap
       /research-os proof (method references on demand)
     Writing Cycle
       paper-writing
-      ml-paper-writing
-      systems-paper-writing
+      ML/AI professional references
+      Systems professional references
       paper-plan
       paper-drafting
       academic-plotting

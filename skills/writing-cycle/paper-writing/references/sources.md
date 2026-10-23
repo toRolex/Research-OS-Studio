@@ -7,13 +7,13 @@ This Skill adapts the independently MIT-licensed Orchestra Research `ml-paper-wr
 - Repository: <https://github.com/Orchestra-Research/AI-Research-SKILLs>
 - Original directory: `20-ml-paper-writing/ml-paper-writing/`
 - Original files read and adapted: `SKILL.md`, `references/checklists.md`, `references/reviewer-guidelines.md`. The citation workflow, writing guide, drafting checklist and venue/template handling were already adapted into the general [paper-drafting](../../paper-drafting/SKILL.md) Skill and are reused from there instead of duplicated; `references/writing-guide.md`, `references/citation-workflow.md` and `references/sources.md` were read to confirm that split.
-- Copyright (c) 2025 Claude AI Research Skills Contributors. Full MIT terms accompany this Skill in `../LICENSE`.
+- Copyright (c) 2025 Claude AI Research Skills Contributors. Full MIT terms accompany this Skill in `../LICENSE-ML.txt`.
 
 The ML/AI professional method is retained at body level and bounded:
 
-- Experiment reporting in `references/experiment-reporting.md` keeps the upstream Experiment/Reproducibility/Statistical-Significance/Compute/Limitations demands (error bars with a named method, number of runs/seeds, hyperparameter search ranges and selection, compute worker type/time/total, ablations, negative results, dedicated Limitations). Upstream illustrative numbers, default "3 seeds" style examples and environment setup are not turned into values; missing facts become visible gaps.
-- `references/venue-checklists.md` keeps the full checklist structure (NeurIPS 16-item shape, ICML Broader Impact and reproducibility checklist, ICLR LLM disclosure, ACL mandatory Limitations and responsible-NLP items, universal pre-submission list). Year-specific page limits, deadlines and policy wordings become "verify the current official edition"; no conference template, style file, `.bib`/`.bst` or example PDF is vendored.
-- `references/reviewer-expectations.md` keeps the four assessment dimensions, scoring calibration idea, common-concern/pre-emption tables and pre-submission reviewer simulation. Upstream's reading-rate percentages are removed as unverified; scoring labels are marked as edition-specific. Rebuttal handling stays with the separate user-invoked `rebuttal` entry.
+- Experiment reporting in `references/ml-experiment-reporting.md` keeps the upstream Experiment/Reproducibility/Statistical-Significance/Compute/Limitations demands (error bars with a named method, number of runs/seeds, hyperparameter search ranges and selection, compute worker type/time/total, ablations, negative results, dedicated Limitations). Upstream illustrative numbers, default "3 seeds" style examples and environment setup are not turned into values; missing facts become visible gaps.
+- `references/ml-venue-checklists.md` keeps the full checklist structure (NeurIPS 16-item shape, ICML Broader Impact and reproducibility checklist, ICLR LLM disclosure, ACL mandatory Limitations and responsible-NLP items, universal pre-submission list). Year-specific page limits, deadlines and policy wordings become "verify the current official edition"; no conference template, style file, `.bib`/`.bst` or example PDF is vendored.
+- `references/ml-reviewer-expectations.md` keeps the four assessment dimensions, scoring calibration idea, common-concern/pre-emption tables and pre-submission reviewer simulation. Upstream's reading-rate percentages are removed as unverified; scoring labels are marked as edition-specific. Rebuttal handling stays with the separate user-invoked `rebuttal` entry.
 
 No external paper, blog, conference template, style file or third-party image is vendored. The upstream `templates/` directory was inspected but not copied: it contains third-party LPPL bibliography/style packages, `natbib.sty` redistribution conditions not covered by the repository MIT license, and community templates with download/delete actions. The Skills that use a template require the user's own copy and license check.
 
@@ -29,6 +29,10 @@ No external paper, blog, conference template, style file or third-party image is
 | [The Science of Scientific Writing](https://cseweb.ucsd.edu/~swanson/papers/science-of-writing.pdf) | George Gopen and Judith Swan | Reader expectations, topic/stress position and seven principles |
 
 These links retain method attribution; they are optional background, not runtime dependencies, current venue rules, or citations to insert automatically into the user's paper.
+
+## Systems method attribution
+
+The Systems-specific methods are retained in the neighboring `systems-*.md` references and `../templates/systems-paper-writing-report.md`. They adapt Orchestra Research's `systems-paper-writing` references and ARIS `writing-systems-papers`; source path, revisions, adopted methods, and adaptation boundaries are recorded in `docs/upstream-sources-and-licenses.md`. Full MIT notices accompany this Skill as `../LICENSE-Orchestra.txt` and `../LICENSE-ARIS.txt`.
 
 ## Official information
 
