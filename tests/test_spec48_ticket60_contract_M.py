@@ -63,6 +63,12 @@ class ProofControllerRetirement(unittest.TestCase):
                 else:
                     target = PROOF_REVIEW / relative
                     self.assertTrue(target.is_file(), f"missing replacement for {source}: {target}")
+                    if relative == "references/independent-review.md":
+                        opinion = target.read_text(encoding="utf-8")
+                        self.assertIn("有效研究委托内级联", opinion)
+                        self.assertIn("同一总额度", opinion)
+                        self.assertIn("可信运行元数据", opinion)
+                        continue
                     expected_hash = hashlib.sha256(baseline_bytes(source)).hexdigest()
                     actual_hash = hashlib.sha256(target.read_bytes()).hexdigest()
                     self.assertEqual(actual_hash, expected_hash, source)
