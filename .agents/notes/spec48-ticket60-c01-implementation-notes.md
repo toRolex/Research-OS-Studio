@@ -2,7 +2,7 @@
 
 | Work unit | 状态 | 产物与验收证据 | 下一步 |
 |---|---|---|---|
-| C01：paper-compile-repair 委托授权合同修复 | done | 产品 commit `5ddae2e8ad1fbe61ec0ae583c9bc6e23c05083ec`；安装后 red→green、#57 13 tests、checker 原 9 条 archive diagnostics；报告 `/tmp/spec48-contract-fix-A/REPORT.md` | 交由 parent 另派 merger 与新独立复审；不外推为 #60 通过 |
+| C01：paper-compile-repair 委托授权合同修复 | done | 产品 commit `5ddae2e8ad1fbe61ec0ae583c9bc6e23c05083ec`、red-test strengthening `056cbbf859b7993e1808f8a9c4478a5f52b18b61`；安装后候选红→工作绿、#57 13 tests、checker 原 9 条 archive diagnostics；报告 `/tmp/spec48-contract-fix-A/REPORT.md` | 交由 parent 另派 merger 与新独立复审；不外推为 #60 通过 |
 
 ## 入口与范围
 
@@ -27,9 +27,9 @@
 
 ## 决策与验证记录
 
-- 实际变更严格限于 `paper-compile-repair/SKILL.md`、`references/bounded-repair.md` 与 `tests/test_spec48_ticket60_c01.py`。完整 patch artifact `/tmp/spec48-contract-fix-A/actual.diff`，SHA-256 `66ca16c6e59ed83b7becd4d20ebeaad0c057b14daf2da6a19f2a847b70152b90`。
-- 安装后 public seam：red 1 failure、returncode 1，日志 `/tmp/spec48-contract-fix-A/logs/c01-installed-red.log`，SHA-256 `e8d52d2dcf7678851d39a1ecb91b06febdcbca9c35ed79ed64d0b807681afd99`；green 1 pass、returncode 0，日志 `/tmp/spec48-contract-fix-A/logs/c01-installed-green-final.log`，SHA-256 `4760046a9dd9a97421342075f5baf54c83add1fc29d7896ca6f3aa5b5f4358f3`。Skills CLI 1.7.4 在使用 tracked copy helper 的 fixture 中实际安装；测试同时扫旧普遍逐轮审批语义与父委托/独立分支。
-- 合并 integration tip 后，C01 安装测试 1 pass、returncode 0；日志 `/tmp/spec48-contract-fix-A/logs/c01-post-integration.log`，SHA-256 `25639752834c6e9f8119ac995307dcb6c9b02b892793c384818cbe44a628c975`。#57 回归 13 pass、returncode 0；日志 `/tmp/spec48-contract-fix-A/logs/ticket57-post-integration.log`，SHA-256 `88a69e116a594c7289cbb107f88420d639b393c0e9807fd539ada754df0646d9`。
+- 实际变更严格限于 `paper-compile-repair/SKILL.md`、`references/bounded-repair.md` 与 `tests/test_spec48_ticket60_c01.py`。候选到最终文件集的 patch artifact `/tmp/spec48-contract-fix-A/actual.diff`，SHA-256 `0555cd3659469ce2cb6fbc17cb0902b231ad9099d724c776c654628f1cea2db2`。
+- 安装后 public seam：用 `SPEC48_C01_BASELINE=f7b03400a4b77bc77265e9076199977815163a87` 安装候选旧正文，先因旧普遍 gate `原稿仅应用本轮用户明确认可的具体 diff` red，returncode 1；日志 `/tmp/spec48-contract-fix-A/logs/c01-installed-red-baseline.log`，SHA-256 `7011c7c4ffe1ebbbfa902f7397ed7c572d410b72adf3e5f4426db1639f679e84`。当前合同安装后 green 1 pass、returncode 0；日志 `/tmp/spec48-contract-fix-A/logs/c01-installed-green-final.log`，SHA-256 `fd28992562d6e4f1ee1de9109933954dba9edaf4138105529701952d1a885186`。Skills CLI 1.7.4 通过 tracked helper fixture 实际安装；测试还扫描全文旧 gate、授权内分支与安全边界。
+- integration tip 合并后最终 C01 安装测试 1 pass、returncode 0；日志 `/tmp/spec48-contract-fix-A/logs/c01-post-integration.log`，SHA-256 `3a3e8e8e80e042d805d4b009cb10cbcb2cfeec5b04382e4dd59631be3ad72684`。#57 回归 13 pass、returncode 0；日志 `/tmp/spec48-contract-fix-A/logs/ticket57-post-integration.log`，SHA-256 `553fc5f8ab95b0e7e4cf7c61a53f404ec11f3e85c0e8eb9569d32e9b078db53c`。
 - 合并后 checker returncode 1，仍只有已知 9 条 `docs/acceptance/**/evidence/*.tar.gz` 诊断，日志 SHA-256 `acbd51e6f5e308fc570dced0eb6f46d3c9df9eb5de0323fc74271c38a0ff1cbf`，与历史记录一致；未改归档、allowlist 或 6 项历史全套失败，且未运行全套。
 - 命令均串行、树外 `TMPDIR=/tmp/spec48-contract-fix-A/tmp`、单命令上限 180 秒。TDD skill 缺失，因此按用户要求的最小安装后 red→green seam 实施，不声称已加载该 skill。
 - 交付报告：`/tmp/spec48-contract-fix-A/REPORT.md`，包含 finding 响应、实际 diff 指针/哈希、命令与日志 hashes、分支和 worktree、历史失败限制及 parent handoff。
