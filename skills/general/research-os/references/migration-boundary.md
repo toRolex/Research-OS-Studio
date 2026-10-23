@@ -8,6 +8,7 @@
 | --- | --- | --- |
 | 委托入口 | `skills/general/research-os/SKILL.md` | 「研究委托」小节 + 本目录合同与 `playbooks/literature-review.md` |
 | 文献综合 | `skills/idea-cycle/research-lit/SKILL.md` | 「委托继承」小节；无旧门，写入与预算由委托给 |
+| 候选比较（arena） | `skills/organization/arena/SKILL.md` | 「委托继承」小节；无旧门，子代理缺失时该阶段标 blocked |
 | 并行覆盖（swarm） | `skills/general/swarm/SKILL.md` | 「委托继承」小节；新增能力，非旧门迁移，改编自 pstack swarm（MIT，LICENSE 随目录共置） |
 | 对抗审查 | `skills/general/interrogate/SKILL.md` | 「委托继承」小节；无旧门，始终只读，修复由委托按授权另行组织 |
 | 形式化检查创建 | `skills/validation-cycle/create-formal-verification-skill/SKILL.md` | 「委托继承」小节；项目内验证资产与依赖准备在授权内，缺子代理时独立复核标 blocked |
