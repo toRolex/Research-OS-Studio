@@ -120,7 +120,7 @@ class ProofControllerRetirement(unittest.TestCase):
             ROOT / "docs/assets/workflow-diagrams.md",
         ]
         stale_caller = re.compile(
-            r"(?i)(?:--skill\s+proof-orchestrator|/proof-orchestrator\b|"
+            r"(?i)(?:--skill\s+proof-orchestrator|(?<![a-z0-9_./-])/proof-orchestrator\b|"
             r"\[[^\]]*proof-orchestrator\]\([^)]*proof-orchestrator|"
             r"`proof-orchestrator`[^\n]*(?:调用|安装|入口))"
         )

@@ -2,10 +2,10 @@
 
 ## 状态
 
-- proof 资源迁移与旧控制器删除：待最终验收；实现目标为旧控制器无调用者、方法与许可在 proof-review 包完整可达；当前已通过合同测试与真实 CLI 树外安装，待在明确 integration tip 后复验。
+- proof 资源迁移与旧控制器删除：done；15 份 references、MIT 许可与 NOTICE 已归入 `proof-review`，旧控制器与活调用均已移除。验收：`tests/test_spec48_ticket60_contract_M.py` 4 项通过、#55 17 项通过、真实 CLI 双包独立安装与 hash/链接核对通过。
 - discovery 配方迁移与旧控制器删除：本 unit 不开始；按用户预算提醒留给 parent/后续切片，保持 `creative-thinking-for-research` 现状。
-- 产品地图/README/安装/校验合同同步：待最终验收；当前本切片相关活调用清理完成，#55 与 checker policy 定向测试通过。
-- integration 同步与最终复验、报告：进行中；integration tip 已核实为 `14d9c6ef6ca7411dad1ac779647ba1a7cfb7603e`，`a11775f` 不在本次合并范围。
+- 产品地图/README/安装/校验合同同步：done；入口、配方、PRODUCT-MAP、migration-boundary、来源说明、README 目录与 checker 均无旧可调用 slug。
+- integration 同步与最终复验、报告：done；明确合并 tip `14d9c6ef6ca7411dad1ac779647ba1a7cfb7603e` 已是祖先（`git merge` 返回 Already up to date）；最终定向复验通过。`a11775f` 未合并。
 
 ## 入口与边界
 
@@ -26,7 +26,8 @@
 ## 证据记录
 
 - TDD contract red：`/tmp/spec48-ticket60-contract-M/logs/proof-red.log`，`tests/test_spec48_ticket60_contract_M.py` 首轮 25 failures，真实 returncode 1；诊断为替代资源、许可证/NOTICE、旧控制器和调用图尚未迁移。
-- TDD green：同测试 4 tests 通过，returncode 0；最终测试输出见 `/tmp/spec48-ticket60-contract-M/logs/test-contract-M-final.log`，SHA256 `a96b8a0ff4f90d78ab052a1751acd8f202860fc81dc6f36e605701014e9aa367`。
-- 已运行 #55 proof 合同 17 tests（returncode 0）与 checker policy 文件 4 tests（returncode 0）。Skills checker 自身 returncode 1，只有既有 9 条 docs/acceptance tarball 缺失诊断；无新资源/迁移诊断。
-- Skills CLI 1.7.4 通过缓存离线安装 `research-os`、`proof-review` 两个单独 slug；cwd、HOME 均位于 `/tmp` 独立目录。包内相对链接闭合，安装包文件集合与源码逐文件 SHA256 一致。原始输出与 manifest 位于 `/tmp/spec48-ticket60-contract-M/logs/`，最终哈希索引见 REPORT。
+- TDD red→green：迁移前合同测试 25 failures、returncode 1；首次合并后验证时，调用者正则误把 NOTICE 中历史 upstream 路径当活调用，修正后最终 4 tests、returncode 0。最终日志 `/tmp/spec48-ticket60-contract-M/logs/final-contract-M-green.log`，SHA256 `6c49b46ef3271134ecd4774a8e93a73c2a783156fcca5421d3ab9437c6de0626`。
+- 最终 `tests/test_spec48_ticket55.py`：17 tests、returncode 0，日志 SHA256 `ec9e32f129f9c20f4755bed7f779053551c4a9c4ee4b3a20ce2f2ce90ca3af52`。首次最终复验发现旧断言仍要求源码相对 Lean 路径，按 slug 索引改写测试后通过。
+- 最终 checker policy 文件：4 tests、returncode 0，日志 SHA256 `1a54f5d556bf55ad437aec3ddfb89052c66ddb42675e6bea78d0473fb72f9d07`。Skills checker 自身 returncode 1，只有既有 9 条 docs/acceptance tarball 缺失诊断；日志 SHA256 `acbd51e6f5e308fc570dced0eb6f46d3c9df9eb5de0323fc74271c38a0ff1cbf`。
+- Skills CLI 1.7.4 通过缓存离线安装 `research-os`、`proof-review` 两个单独 slug；cwd、HOME 均位于各自 `/tmp` 隔离目录。安装包文件清单分别 30/23 个，包内相对链接闭合、安装文件集合与源码逐文件 SHA256 一致。原始安装日志与逐文件 manifest 位于 `/tmp/spec48-ticket60-contract-M/logs/`，最终哈希见 REPORT。
 - 六项既有测试失败不在本 unit 复跑；未改写历史 notes/acceptance，不处理九条 archive 诊断。

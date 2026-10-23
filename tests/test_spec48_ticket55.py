@@ -301,7 +301,8 @@ class MathRecipeComposition(unittest.TestCase):
             ROOT / "skills/general/research-os/references/validation.md"
         ).read_text(encoding="utf-8")
         self.assertIn("`proof-review`", validation)
-        self.assertIn("references/lean-methods.md", validation)
+        self.assertIn("按 proof-review 索引读取随包方法", validation)
+        self.assertNotIn("references/lean-methods.md", validation)
         self.assertNotIn("proof-orchestrator", validation)
 
     def test_revised_skills_keep_their_local_resources_reachable_when_flat_installed(self):
