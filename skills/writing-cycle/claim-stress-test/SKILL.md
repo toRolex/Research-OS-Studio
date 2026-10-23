@@ -6,10 +6,11 @@ disable-model-invocation: true
 
 # Claim Stress Test — 最强拒稿论点与独立裁决
 
+Gates: none
+
 普通评分评审会把多个 MAJOR 弱点平铺；这里强制攻击者押注一条最有杀伤力的拒稿论证，再由独立裁决者确认哪些指控在当前原稿中站得住。重点是 headline、假设、证明义务与证据的整体关系，不是重复一份平衡弱点列表。攻击很尖锐不等于指控已成立。
 
 ## 调用与边界
-Gate: report-target | before=report-write | approval=explicit-user | source=SKILL.md#调用与边界
 
 显式调用或已授权正文级联，也可由用户点名。范围是整篇论证是否站得住：稳定稿件的最坏情况审查、camera-ready 前检查或 rebuttal 准备；不要求已跑标准评分评审。
 
@@ -60,3 +61,7 @@ standalone 交付独立 Markdown 报告，composed 把完整攻击、逐点裁�
 ### 5. 停止
 
 单次压力测试结束，用户决定是否补证、改稿或另开验证；不执行建议、不调用其他审计/Workflow、不投稿或宣布接受。`PASS` 只表示当前源文在这条攻击下存活，不表示论文科学正确、全面审查通过或 submission-ready。原稿/结果变化后，原报告限于当时材料；仅新的获准审查才开启新上下文，不用定时器重复裁决或抽取有利意见。
+
+## 委托继承
+
+本能力保持只读，不修改研究材料；报告路径、reviewer 能力与预算继承[研究委托](../../general/research-os/references/mandate.md)。缺证据时保留缺口，不捏造；修改由用户或委托明确授权。

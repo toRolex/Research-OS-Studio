@@ -26,13 +26,13 @@ Role: reviewer
 
 ## 步骤
 
-1. 读 `skills/writing-cycle/rebuttal/SKILL.md` 全文。论文、结果、原始评审只读。写入范围只限用户确认的输出目录。
+1. 读 `skills/writing-cycle/rebuttal/SKILL.md` 全文。论文、结果、原始评审只读。写入范围继承委托；没有明确范围时只读解析与形成草案。
 2. 按该正文完成读取、原子 concern 与证据映射。工作材料字段以 `skills/writing-cycle/rebuttal/templates/working-documents.md` 为准。
-3. 读 `skills/writing-cycle/rebuttal/references/response-methods.md`。停在 strategy-confirm：用户确认本次回应选择之前，只保留策略草案。quick mode 在问题板和策略后结束。
-4. 确认后起草候选回复、修订计划，并做八项检查。补实验只列建议，不在本路线启动。
-5. 停在 wording-confirm：展示完整候选措辞。用户确认完整候选且硬阻塞解除之前，不把候选写成已确认粘贴版。
+3. 读 `skills/writing-cycle/rebuttal/references/response-methods.md`。按当前委托的裁决规则确定回应策略并继续；quick mode 在问题板和策略后结束。
+4. 起草候选回复、修订计划，并做八项检查。补实验只列建议，不在本路线启动。
+5. 展示完整候选措辞、修订清单与未解决项，按当前委托授权交付；候选不等于已提交或已获 venue 接受。
 6. 交付候选回复与未决项。不投稿、不上传、不转投、不启动其他路线。
 
-## 停止
+## 委托继承与停止
 
-未确认策略时没有回复正文。未确认措辞时没有已确认粘贴版。外发始终由用户自己完成。
+写入路径、预算、策略和措辞裁决继承 [研究委托](../references/mandate.md) 及 `skills/writing-cycle/rebuttal/SKILL.md`；在授权职责内不增加重复确认门。超出写入或外发边界时只停该动作。只交候选，不投稿、不转投、不上传、不启动其他路线；外发始终由用户自己完成。

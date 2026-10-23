@@ -6,10 +6,11 @@ disable-model-invocation: true
 
 # Paper Claim Audit — 零上下文证据核对
 
+Gates: none
+
 由 fresh reviewer 直接比较论文与原始结果，防止写实验又写论文的执行者带入预期：最佳 seed 被当成均值、不同配置被混作公平比较、相对提升算错。文件存在与模型认可均不证明 Claim 成立。
 
 ## 调用与边界
-Gate: report-target | before=report-write | approval=explicit-user | source=SKILL.md#调用与边界
 
 显式调用或已授权正文级联，用户也可点名调用。只在当前请求的数据忠实性职责内工作。
 
@@ -62,3 +63,7 @@ reviewer 返回逐项发现、覆盖与重要性依据，不自行给顶层裁�
 读取[报告模板](templates/claim-audit-report.md)，保留 reviewer 完整原始回复、发送的任务正文/路径清单、逐 Claim 明细、裁决依据与修正建议。大表可作为同一 Markdown 报告附录，不用摘要替代全量证据。写入失败时在回复交付可用内容并报告失败路径，不声称文件已保存。
 
 **完成条件**：汇报实际报告位置或完整回复、裁决、各状态计数、重要问题及未核项；只提出修正建议，由用户决定采用。报告完成后停止，不启动修复、其他审计、下一 Workflow 或投稿，不把 PASS 称为科学正确、submission-ready 或被接受。稿件/结果变化后，报告只代表当时读取内容；下一次获准复核使用新的独立上下文，而非按定时器重投裁决。
+
+## 委托继承
+
+本能力保持只读，不修改研究材料；报告路径、读取范围与预算继承[研究委托](../../general/research-os/references/mandate.md)。委托内授权修复时由对应修复能力承接，不要求再次独立点名。

@@ -42,8 +42,8 @@ Gates: none
 | experiment-plan | — | 设计实验、写实验计划、做实验方案 | 已有研究问题，要的是有界计划而不是开跑 | no | [experiment-plan](playbooks/experiment-plan.md) |
 | experiment-bridge | — | 跑完这个实验并分析、按计划跑实验、实验桥接 | 已有计划或 tracker，要在本批授权内做完并分析 | no | [experiment-bridge](playbooks/experiment-bridge.md) |
 | paper-writing | general | 写论文 | 已有研究材料要写成论文，且材料不是机器学习实验、也不是以系统设计与实现为核心贡献 | no | [paper-writing-general](playbooks/paper-writing-general.md) |
-| paper-writing | ml | 机器学习 | 材料是机器学习或人工智能实验，要按该专业入口写论文 | no | [paper-writing-ml](playbooks/paper-writing-ml.md) |
-| paper-writing | systems | 系统论文 | 材料以系统设计与实现为核心贡献，要按该专业入口写论文 | no | [paper-writing-systems](playbooks/paper-writing-systems.md) |
+| paper-writing | ml | 机器学习 | 材料是机器学习或人工智能实验，要按专业标准组织论文写作 | no | [paper-writing-ml](playbooks/paper-writing-ml.md) |
+| paper-writing | systems | 系统论文 | 材料以系统设计与实现为核心贡献，要按专业标准组织论文写作 | no | [paper-writing-systems](playbooks/paper-writing-systems.md) |
 | proof | — | 续证明、接上一轮证明、证明交接、固定命题 | 已有固定命题或上一轮证明材料，要续接该 obligation | no | [proof](playbooks/proof.md) |
 | rebuttal | — | 回复审稿、逐条回应审稿意见、写 rebuttal | 已有论文与审稿意见，要逐 concern 候选回复 | no | [rebuttal](playbooks/rebuttal.md) |
 | resubmit | — | 转投、换 venue 重投、保留旧稿改投 | 已有投稿目录，要在新目录适配另一 venue 并保留旧稿 | no | [resubmit](playbooks/resubmit.md) |
@@ -54,7 +54,7 @@ Gates: none
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
 | swarm | — | 并行覆盖、分片排查、多方案竞赛、全面摸排 | 已有明确问题，要在有界额度内用并行子代理分片、竞赛或混合探索并汇总 | no | [swarm](playbooks/swarm.md) |
 
-已命名、文件未交付：无。
+已命名、文件未交付：无。写作请求统一进入 `paper-writing`；general、ml、systems 仅选专业标准，旧专业入口作为兼容调用保留。
 
 不占路线的独立能力：用户要对抗审查、独立挑战或多模型审查时，委托内由编排者或用户直接点名 [interrogate](../interrogate/SKILL.md)：独立 reviewer 逐模型挑战、findings 去重、分歧保留，主审四桶有据判断；该调用始终只读，修复由委托按授权另行组织（如 proof-repair、research-improvement）。
 
@@ -92,7 +92,11 @@ Role: orchestrator
 
 命中已交付 playbook 后，把其步骤逐字抄入 todolist，逐步跟踪 pending / in-progress / completed / blocked；清单保留编号、原句及子列表，只附状态和证据定位，不压缩成阶段摘要。首次展示清单后逐项直接对照 playbook，漏句先补齐；仅达到该步骤完成条件才标 completed。用当前会话的清单记录即可；route-only 只在对话内跟踪，不创建任务或文件。
 
-级联进入已迁移叶时沿用本次委托，不重复请求批准；进入未迁移叶时仍按该叶自己的门停下确认，处理完该点后同一委托继续。
+### 统一写作入口与兼容路由
+
+`paper-writing` 是唯一写作组织入口；general、ML 与 Systems 仅用于选择领域标准。所有写作变体都走 [paper-writing-general](playbooks/paper-writing-general.md) 及其 `skills/writing-cycle/paper-writing/SKILL.md`；该入口按 `skills/writing-cycle/paper-writing/references/standards.md` 按需加载专业资源。旧 `ml-paper-writing` 与 `systems-paper-writing` 名称保留为可直接调用的兼容层，不再由入口分流到独立控制流程。审稿回复、转投和演讲仍是独立目的路线，但其 playbook 服从各自 Skill 中的委托继承合同；授权内修复不要求二次点名。
+
+级联进入已迁移叶时沿用本次委托，不重复请求批准；进入未迁移叶时仍按该叶自己的门停下确认，处理完该点后同一委托继续。写作范围内的编译修复与引用修复按委托继承调用，不要求用户另行点名。
 
 每步开始前读对应叶 SKILL.md 全文，再按正文的条件读取点名资源并执行；读过入口、playbook 或步骤清单不等于读过叶正文。没有子代理工具时，需要分派的那一步按上面「宿主映射」标 blocked 并写明缺子代理能力，不把编排者自己读、自己跑记成已执行；只读建议与底层能力独立调用仍可用。仓库路径形如 skills/<category>/<skill-name>/SKILL.md；安装扁平布局时映射到 <安装根>/<skill-name>/SKILL.md（安装根取当前入口 SKILL.md 所在 skill 目录的父级或宿主报告的位置），共置资源相对该叶目录解析。先核实实际文件；找不到时标 blocked 与路径缺口，不猜测已读或跳到后续步骤。
 

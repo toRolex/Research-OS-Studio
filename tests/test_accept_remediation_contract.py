@@ -21,7 +21,14 @@ class AcceptRemediationContract(unittest.TestCase):
 
     def test_talk_severe_gate_build_bucket_and_review_version(self):
         text = (ROOT / 'skills/writing-cycle/paper-talk/SKILL.md').read_text()
-        for clause in ('严重发现逐项确认', '一般 unattended', '失败编译也计一次', '最新实际渲染', '先前审查不能继承'):
+        for clause in (
+            '严重错数',
+            '只暂停该项',
+            '已授权且不改变主张的纠正可继续',
+            '失败编译也计一次',
+            '最新实际渲染',
+            '先前审查不能继承',
+        ):
             self.assertIn(clause, text)
 
     def test_playbook_copy_is_verbatim_not_summary(self):
