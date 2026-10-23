@@ -38,7 +38,7 @@ Gates: none
 |---|---|---|---|---|---|
 | route-only | — | 我该从哪开始、该用哪个、只看推荐、推荐入口、不要执行 | 用户只要入口或下一步建议 | yes | [route-only](playbooks/route-only.md) |
 | literature | — | 查文献、文献综述、梳理 related work、这批论文怎么看 | 已有明确主题或论文集合，要在有界额度内完成一次文献综合并验收 | no | [literature-review](playbooks/literature-review.md) |
-| idea-discovery | — | 我有方向没 idea、从方向到 proposal、形成完整 Proposal | 只有方向或 brief，要文献、候选、查新、评审并收敛 | no | [idea-discovery](playbooks/idea-discovery.md) |
+| discovery | — | 我有研究方向，想从研究方向到 Proposal、形成完整 Proposal | 只有方向或 brief，希望按缺口整合文献、候选、查新、fresh 独立评审与方案收敛 | no | [discovery](playbooks/discovery.md) |
 | experiment-plan | — | 设计实验、写实验计划、做实验方案 | 已有研究问题，要的是有界计划而不是开跑 | no | [experiment-plan](playbooks/experiment-plan.md) |
 | experiment-bridge | — | 跑完这个实验并分析、按计划跑实验、实验桥接 | 已有计划或 tracker，要在本批授权内做完并分析 | no | [experiment-bridge](playbooks/experiment-bridge.md) |
 | paper-writing | general | 写论文 | 已有研究材料要写成论文，且材料不是机器学习实验、也不是以系统设计与实现为核心贡献 | no | [paper-writing-general](playbooks/paper-writing-general.md) |

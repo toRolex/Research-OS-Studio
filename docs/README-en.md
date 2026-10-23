@@ -39,7 +39,7 @@ Research OS Studio decomposes research into well-defined workflows. The AI assis
 
 - [Quick Start](#quick-start)
 - [Core Design Principles](#core-design-principles)
-- [39 Skills Inventory](#39-skills-inventory)
+- [Skills Inventory](#skills-inventory)
 - [Typical Research Workflows](#typical-research-workflows)
 - [Safety and Control Principles](#safety-and-control-principles)
 - [FAQ](#faq)
@@ -61,8 +61,8 @@ npx skills@latest add toRolex/Research-OS-Studio --list
 # Install all skills to current project
 npx skills@latest add toRolex/Research-OS-Studio --all
 
-# Discovery requires its five sibling capabilities when installed alone
-npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
+# For the discovery route, install `research-os` and its five Required capabilities together
+npx skills@latest add toRolex/Research-OS-Studio --skill research-os research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
 ```
 
 ### 2. Workspace Setup
@@ -101,9 +101,9 @@ Saved handoffs use three routes and no new state machine: `proof` resumes one fi
 
 ---
 
-## 39 Skills Inventory
+## Skills Inventory
 
-The suite contains 39 standalone skills. Invocation is explicit except for setup:
+The table lists the current standalone Skills shipped from the product tree. Invocation is explicit except for setup:
 - **Explicit except setup**: the user names the skill, or a parent playbook reads it by path. The model does not trigger it from the description.
 - **`setup-research-os`**: the one skill a model may suggest. Confirming each live model and the full draft still comes before any write.
 
@@ -111,7 +111,7 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 |---|---|---|---|
 | **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Confirm live session models, eight roles, a zero-grant policy, and workspace seeds; a suggestion is not write authorization |
 | | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; route-only is read-only; experiment-plan and experiment-bridge are delivered and bill a batch grant |
-| **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Composable entry: select needed capabilities by goal gap; reorder or revisit; full Discovery is optional |
+| **Idea Cycle** | [research-os Discovery recipe](../skills/general/research-os/playbooks/discovery.md) | Via `/research-os` | A user can give a research direction and ask for a complete Proposal; choose, reorder, or revisit the five Required capabilities by gap, preserving fresh independent review |
 | | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
 | | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Explicit | Multi-angle research candidate generation with filtering logs |
 | | [creative-thinking-for-research](../skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Explicit | Cognitive shifts and orthogonal exploration for ideation bottlenecks |
@@ -158,7 +158,7 @@ Provide a research direction
       ↓
 /research-os I have a direction and no idea
       ↓
-playbook idea-discovery
+research-os Discovery recipe
   Select needed capabilities from goal gaps; start locally, reorder, or revisit
   ├─ Literature gap: research-lit
   ├─ Candidate gap: idea-generation (creative-thinking if useful)
