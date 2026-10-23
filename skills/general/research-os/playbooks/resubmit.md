@@ -1,6 +1,6 @@
 # resubmit
 
-已有投稿要换 venue。新目录承接适配稿，旧投稿目录保持原样。范围确认和改动确认是 `resubmit-pipeline` 的自带门。
+已有投稿要换 venue。新目录承接适配稿，旧投稿目录保持原样；新建目录与既有文件的写入边界仍服从当前委托。
 
 ## 适用
 
@@ -10,7 +10,7 @@
 
 Role: orchestrator
 
-范围与改动确认。
+核对委托范围与保留待决冲突。
 
 Role: writer
 
@@ -22,13 +22,13 @@ Role: reviewer
 
 ## 步骤
 
-1. 读 `skills/writing-cycle/resubmit-pipeline/SKILL.md` 全文。停在 adaptation-scope：用户批准新目录之前不创建、不复制、不覆盖。目标已存在、非空或指向旧稿时停止。
+1. 读 `skills/writing-cycle/resubmit-pipeline/SKILL.md` 全文。写入路径继承委托；范围缺失时只展示计划。目标已存在、非空或指向旧稿时停止，不覆盖旧稿。
 2. 按 `skills/writing-cycle/resubmit-pipeline/references/adaptation-methods.md` 锁定旧稿并在新目录适配模板。旧稿只读。规则缺失时保留未核实项。
-3. 只读检查读 `skills/writing-cycle/paper-compile/SKILL.md`，引用检测读 `skills/writing-cycle/citation-audit/SKILL.md`。两份正文的自带门照旧生效。本步不改研究材料。
-4. 停在 change-confirm。用户逐项决定之前零研究材料写入。编译修复与引用改写只记下待转交入口名 paper-compile-repair、apply-citation-fixes。本路线不打开它们的正文，也不执行它们；用户要做时另行点名。
-5. 对已批准的本路线正文改动应用后，重做只读检查。报告格式用 `skills/writing-cycle/resubmit-pipeline/templates/adaptation-report.md`。
+3. 只读检查读 `skills/writing-cycle/paper-compile/SKILL.md`，引用检测读 `skills/writing-cycle/citation-audit/SKILL.md`。保持检查只读；当前委托已授权的编译与引用修复由对应能力按精确 diff 合同承接，不要求再次点名。
+4. 按委托核对拟议改动及授权范围。独立调用按 Skill 合同确认改动；级联调用在当前委托允许范围内继续，不重复确认。超出授权的改动保留为建议并停该分支。
+5. 对委托授权范围内的本路线正文改动应用后，重做只读检查。报告格式用 `skills/writing-cycle/resubmit-pipeline/templates/adaptation-report.md`。
 6. 交付新目录候选与报告。不向投稿系统提交、不上传、不发布。
 
 ## 停止
 
-旧稿零变更。新目录只含本次批准的复制、适配和报告。全部拒绝时零写入。
+旧稿始终只读；新目录只包含委托授权的复制、适配和报告。越权或预算到限时停对应动作。交付后不投稿、不上传、不发布。

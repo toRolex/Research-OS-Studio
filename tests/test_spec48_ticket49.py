@@ -13,6 +13,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from spec48_workcopy import copy_tracked_tree
+
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts" / "check-skills.py"
 ENTRY = ROOT / "skills/general/research-os/SKILL.md"
@@ -93,14 +95,10 @@ class WorkCopy:
     def __init__(self) -> None:
         self._tmp = tempfile.TemporaryDirectory()
         self.path = Path(self._tmp.name) / "repo"
-        shutil.copytree(
-            ROOT,
-            self.path,
-            ignore=shutil.ignore_patterns(".git", ".venv", "__pycache__"),
-        )
+        copy_tracked_tree(ROOT, self.path)
         for command in (
             ["git", "init"],
-            ["git", "add", "-A"],
+            ["git", "add", "-f", "."],
             ["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-m", "base"],
         ):
             subprocess.run(command, cwd=self.path, check=True, capture_output=True)
@@ -127,7 +125,7 @@ class ContractText(unittest.TestCase):
     def test_entry_points_at_mandate_and_keeps_readonly_and_host_map(self):
         text = ENTRY.read_text(encoding="utf-8")
         self.assertIn("references/mandate.md", text)
-        for kept in ("当前命中路线是 route-only", "blocked", "保留编号、原句及子列表"):
+        for kept in ("当前命中路线是 route-only", "blocked", "保留编号、原句及子列表", "写作请求统一进入 `paper-writing`"):
             self.assertIn(kept, text, kept)
 
     def test_mandate_counts_user_stop_as_stop_not_completion(self):
@@ -145,8 +143,9 @@ class ContractText(unittest.TestCase):
         self.assertIn("blocked", text)
 
     def test_legacy_leaf_still_declares_its_own_gate(self):
-        rebuttal = (SKILLS / "writing-cycle/rebuttal/SKILL.md").read_text(encoding="utf-8")
-        self.assertRegex(rebuttal, r"(?m)^Gate: strategy-confirm \|")
+        # #57 迁移 writing-cycle 中除绘图与总控外的写作能力后，用仍留在 #58/#59 范围的叶核对未迁移门。
+        plotting = (SKILLS / "writing-cycle/academic-plotting/SKILL.md").read_text(encoding="utf-8")
+        self.assertRegex(plotting, r"(?m)^Gate: figure-choice \|")
 
 
 class NoSubagentCapability(unittest.TestCase):

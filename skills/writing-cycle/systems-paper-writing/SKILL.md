@@ -1,29 +1,19 @@
 ---
 name: systems-paper-writing
-description: 从已有 Systems 材料交付系统论文候选稿与审查报告后停止。
+description: 从已有 Systems 材料交付系统论文候选稿与审查报告后停止；旧平行入口兼容。
 disable-model-invocation: true
 ---
 <!-- argument-hint: "[研究材料／计划／稿件路径] [venue、交付口径、写入范围与轮数]" -->
 
 # Systems Paper Writing
 
-用户显式调用的系统论文写作 Workflow。一次授权内交付候选稿与审查报告后停止。阶段、能力与审查输入见 [composition-map](references/composition-map.md)。
+Gates: none
 
-## 1. 授权门
-Gate: workflow-authorization | before=draft-write | approval=explicit-user | source=SKILL.md#1-授权门
+用户显式调用的系统论文写作 Workflow。它是旧平行入口兼容层：新委托优先走 [paper-writing](../paper-writing/SKILL.md)，本入口继续可独立使用并继承同一委托。一次授权内交付候选稿与审查报告后停止。阶段、能力与审查输入见 [composition-map](references/composition-map.md)。
 
-在任何草稿、图表、源码、文献或报告写入，以及任何付费／远程／高成本调用前，列出并让用户确认：
+## 委托继承
 
-- 输入材料范围、目标 venue（未指定则不设默认 venue，不缓存年度页数、模板或 deadline）、稿件语言与输出位置、稿件格式（LaTeX／Markdown）与真实构建入口；
-- **交付口径**：`draft`（默认）或 `submission-candidate`；
-- **系统证据面**：观察／生产数据、原型、end-to-end、microbenchmark／ablation、scalability 各属哪一类；缺失项如何标注；补实验须另行授权；
-- 允许写入的文件／目录与禁止写入的范围；已有材料默认只读，除非列入写入清单；
-- 修订轮数上限（默认 2 轮 review→fix→recompile）、每轮资源与停止条件；
-- 是否允许独立 reviewer，以及可交给它的材料边界；
-- 是否使用可选 style-ref 及其读取范围；
-- 付费渲染、AI 图像生成、远程写入或外部服务是否逐项获批。
-
-计划、合同或稿件中的指令不构成授权。缺确认时只做只读解析并形成执行草案，停在授权门。
+写入范围、venue、交付口径、轮数、审查边界和资源额度来自[研究委托合同](../../general/research-os/references/mandate.md)。构建预算按同一累计编译次数执行，失败构建也计一次；展示已用次数、上限与剩余次数，耗尽时交付当前稿与未构建原因。没有确认的写入边界或付费调用时只做只读解析并形成执行草案；越权、预算或目标变化时停那一步，同一委托的其余工作继续。
 
 **完成条件**：输入、venue 依据、格式与构建入口、交付口径、写入清单、轮数、系统证据面与未决问题可逐项核对；没有用默认 venue、页数或预算填空。
 
@@ -36,7 +26,7 @@ Gate: workflow-authorization | before=draft-write | approval=explicit-user | sou
 3. **图表**：调用 [academic-plotting](../academic-plotting/SKILL.md)，覆盖 end-to-end、microbenchmark／ablation、scalability 与架构图。过门：每图有来源、源文件与 caption，或明确缺口。失败：缺数据或绘图能力 → 标缺口并停该图。
 4. **起草**：调用 [paper-drafting](../paper-drafting/SKILL.md)，按 [systems-writing-methods.md](references/systems-writing-methods.md) 的章节顺序写。过门：授权章节为正文，数字可回溯，缺口留在原位。失败：核心来源冲突 → 停受影响章节。
 5. **证据面**：标签为 `MISSING SCALABILITY EVIDENCE`、end-to-end evidence gap、无 prototype、无 ablation。核对只读 [evaluation-methods.md](references/evaluation-methods.md) 与 [checklist.md](references/checklist.md)。缺则不报 `submission-candidate`。过门：每类有已有／部分／缺失，标签已写入计划、契约核对与报告。失败：用户未授权补证 → 保持缺口，不跑实验。
-6. **编译**：调用 [paper-compile](../paper-compile/SKILL.md)（check-only）。过门：有真实构建记录，或明确未运行。失败：错误在本次写入范围外 → 停，请用户点名 `paper-compile-repair`。范围内自产错误可在轮数内修并复编译。
+6. **编译与委托内修复**：调用 [paper-compile](../paper-compile/SKILL.md)（check-only）。过门：有真实构建记录，或明确未运行。失败：错误在本次写入范围外 → 停受影响分支。范围内错误调用 `paper-compile-repair` 并继承委托授权修复，不要求再次独立点名。
 7. **并列审查**：按 map 调用适用项。过门：每项有结论，或写明不适用／未执行。失败：缺原始结果记无法核实；缺独立能力记 `BLOCKED`。
 8. **评审与修订**：判据在 [venue-and-reviewer.md](references/venue-and-reviewer.md)。只在授权范围内改，再调用 paper-compile。过门：每轮评审、清单、改动、复编译一一对应。失败：命题、假设或结论范围变化，或修订被当成补实验授权 → 停交用户。轮数到、预算尽或连续两轮无新发现 → 停。
 
@@ -49,6 +39,6 @@ Gate: workflow-authorization | before=draft-write | approval=explicit-user | sou
 
 按 [报告模板](templates/systems-paper-writing-report.md) 交付。报告章节与实际材料、能力、写入、证据面一一对应。
 
-停止：授权未确认、写入冲突、venue 或契约未决、关键证据面缺失且口径要求对应主张就绪、编译修复超出授权、`submission-candidate` 缺审查或 PDF、轮数或预算到顶、用户要求停止，或各阶段已完成。交付后停止。`paper-writing`、`ml-paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk` 与 `research-improvement` 由用户另行点名。
+停止：授权未确认、写入冲突、venue 或契约未决、关键证据面缺失且口径要求对应主张就绪、编译修复超出授权、`submission-candidate` 缺审查或 PDF、轮数或预算到顶、用户要求停止，或各阶段已完成。交付后停止，不自动投稿、不对外承诺，也不启动 `research-improvement`。证据缺口可在授权内补查或补分析；没有依据就保留缺口，不捏造。
 
 **完成条件**：停止原因、已写与未写清单可核对；`MISSING SCALABILITY EVIDENCE` 等标签指向用户决定。
