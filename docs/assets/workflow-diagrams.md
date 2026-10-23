@@ -64,7 +64,6 @@ mindmap
       idea-refinement
     Validation Cycle
       experiment-plan
-      experiment-bridge
       run-experiment
       experiment-queue
       monitor-experiment

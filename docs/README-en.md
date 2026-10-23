@@ -39,7 +39,7 @@ Research OS Studio decomposes research into well-defined workflows. The AI assis
 
 - [Quick Start](#quick-start)
 - [Core Design Principles](#core-design-principles)
-- [39 Skills Inventory](#39-skills-inventory)
+- [Skill Inventory](#skill-inventory)
 - [Typical Research Workflows](#typical-research-workflows)
 - [Safety and Control Principles](#safety-and-control-principles)
 - [FAQ](#faq)
@@ -101,16 +101,16 @@ Saved handoffs use three routes and no new state machine: `proof` resumes one fi
 
 ---
 
-## 39 Skills Inventory
+## Skill Inventory
 
-The suite contains 39 standalone skills. Invocation is explicit except for setup:
+The suite contains standalone skills. Research OS recipe names are routing labels, not additional installable skill slugs. Invocation is explicit except for setup:
 - **Explicit except setup**: the user names the skill, or a parent playbook reads it by path. The model does not trigger it from the description.
 - **`setup-research-os`**: the one skill a model may suggest. Confirming each live model and the full draft still comes before any write.
 
 | Category | Skill Name | Invocation | Description |
 |---|---|---|---|
 | **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Confirm live session models, eight roles, a zero-grant policy, and workspace seeds; a suggestion is not write authorization |
-| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; route-only is read-only; experiment-plan and experiment-bridge are delivered and bill a batch grant |
+| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; route-only is read-only; experiment-plan and run-experiment are delivered; execution requires a batch grant, while monitoring, analysis, and audit remain separate |
 | **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Composable entry: select needed capabilities by goal gap; reorder or revisit; full Discovery is optional |
 | | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
 | | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Explicit | Multi-angle research candidate generation with filtering logs |
@@ -119,7 +119,6 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 | | [idea-review](../skills/idea-cycle/idea-review/SKILL.md) | Explicit | Independent reviewer perspective identifying proposal weaknesses |
 | | [idea-refinement](../skills/idea-cycle/idea-refinement/SKILL.md) | Explicit | Refines proposals into minimal viable and frontier routes |
 | **Validation** | [experiment-plan](../skills/validation-cycle/experiment-plan/SKILL.md) | Explicit | Creates bounded experiment plans with hypotheses, baselines, and budgets |
-| | [experiment-bridge](../skills/validation-cycle/experiment-bridge/SKILL.md) | Explicit | Full experiment workflow: implementation, test runs, monitoring, analysis, audit |
 | | [run-experiment](../skills/validation-cycle/run-experiment/SKILL.md) | Explicit | Executes experiment code within approved scope and tracks status |
 | | [experiment-queue](../skills/validation-cycle/experiment-queue/SKILL.md) | Explicit | Manages batch experiment queues and resource allocation |
 | | [monitor-experiment](../skills/validation-cycle/monitor-experiment/SKILL.md) | Explicit | Monitors running processes and hardware state without inference |
@@ -177,7 +176,7 @@ State hypothesis or target theorem
 Empirical Track                      Theoretical Track
 /experiment-plan                    formula-derivation (Derivations)
       ↓                                   ↓
-/experiment-bridge                  proof-writer (Draft proofs)
+/run-experiment                     proof-writer (Draft proofs)
   ├─ Test execution & monitoring          ↓
   ├─ Health checks & diagnostics     proof-review (Logic review)
   └─ Code & result integrity audit        ↓

@@ -104,7 +104,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research
 /research-os 我该从哪开始
 ```
 
-这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。只要一次文献综合走 literature：入口按研究委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度。设计实验走 experiment-plan；跑完已有计划并分析走 experiment-bridge 兼容入口，实际执行控制由 run-experiment 承担。这两条要占用运行资源，要求研究日志里的本批授权，setup 写下的默认政策不能当运行许可。
+这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。只要一次文献综合走 literature：入口按研究委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度。设计实验走 experiment-plan；“实验桥接／跑完已有计划”的用户表述由 `/research-os` 配方路由至唯一执行控制 `run-experiment`，分析与审计仍由独立能力承担。两条要占用运行资源，要求研究日志里的本批授权，setup 写下的默认政策不能当运行许可。
 
 已有上一轮证明、改进日志或研究作业记录时，不要从零重跑：
 
@@ -142,7 +142,7 @@ playbook idea-discovery
 实证路线                             理论路线
 /experiment-plan                    formula-derivation（公式推导）
       ↓                                   ↓
-/experiment-bridge                  proof-writer（起草证明）
+/run-experiment                     proof-writer（起草证明）
   ├─ 代码试跑与资源监控                   ↓
   ├─ 训练异常诊断与干预建议          proof-review（逻辑与反例审查）
   └─ 独立审计代码与结果真实性             ↓
@@ -203,7 +203,6 @@ playbook idea-discovery
 | | [idea-review](skills/idea-cycle/idea-review/SKILL.md) | 显式 | 独立评审视角，指出方案弱点与潜在问题 |
 | | [idea-refinement](skills/idea-cycle/idea-refinement/SKILL.md) | 显式 | 细化研究方案，输出最小可行路线与拓展路线 |
 | **Validation** | [experiment-plan](skills/validation-cycle/experiment-plan/SKILL.md) | 显式 | 制定包含假设、基线、指标与预算的实验计划 |
-| | [experiment-bridge](skills/validation-cycle/experiment-bridge/SKILL.md) | 显式 | 旧请求兼容入口：映射到 run-experiment，不重复编排 |
 | | [run-experiment](skills/validation-cycle/run-experiment/SKILL.md) | 显式 | 统一实验执行控制；记录输入版本、工具链、目录、作业身份、退出码、日志与产物 |
 | | [experiment-queue](skills/validation-cycle/experiment-queue/SKILL.md) | 显式 | 管理批量实验队列与资源分配 |
 | | [monitor-experiment](skills/validation-cycle/monitor-experiment/SKILL.md) | 显式 | 监控运行进程与状态，不做额外推论 |

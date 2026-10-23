@@ -9,14 +9,14 @@
 | 入口 | 角色／状态 | 选择依据、结果与停止边界 |
 |---|---|---|
 | `experiment-plan` | U／已实现（#9） | 已有研究问题尚缺可执行计划；明确 hypothesis、baseline、metric、ablation、固定评价面、修改范围、预算和失败含义，只产计划 |
-| `experiment-bridge` | U／已实现（#15） | 已有获批计划，需一次授权完成实现、code review、sanity、正式／批量运行、监控、收集、分析审计与授权 tracker 更新；不要求先用本产品规划。消融仅建议，不自行扩预算／下一轮；不启动独立 `result-to-claim` |
+| `run-experiment`（“实验桥接”为 Research OS 需求路由名） | U／已实现（#10、#56） | 已有获批计划，需在本批授权内实现、code review、sanity、正式／批量运行与初步收集；唯一执行控制。监控、健康诊断、分析、审计与 Claim 判断仍由独立能力承担；不要求先用本产品规划 |
 | `result-to-claim`（Results-to-Claims） | U／已实现（#14） | 已有外部或本产品结果，需判断能说什么；区分 Evidence 存在、统计可信度、支持程度与 Claim scope，将部分支持缩窄为可辩护主张。最终采用由用户决定，产出候选 Claim 就停 |
 
 ### 内部能力与局部点名入口
 
 | 能力 | 角色／状态 | 职责边界 |
 |---|---|---|
-| `run-experiment`、`experiment-queue` | M／已实现（#10） | 完整实现、review、sanity、运行与初步收集链；使用当前批准计划／修改范围／资源，保留 baseline 及成功、失败、无效、超时全部 attempts |
+| `run-experiment`、`experiment-queue` | M／已实现（#10、#56） | run-experiment 唯一负责执行控制、review、sanity、运行与初步收集；queue 独立管理批量；使用当前批准计划／修改范围／资源，保留 baseline 及成功、失败、无效、超时全部 attempts |
 | `monitor-experiment` | M／已实现（#11） | 观察 running/completed/crashed 等事实；不判 Claim，不自动分析或控制作业 |
 | `training-health-check` | M／已实现（#11） | 固定观测中的 NaN、发散、OOM、停滞、日志缺失；只诊断与建议，不自行 kill／重启 |
 | `analyze-results` | M／已实现（#12） | baseline、全部 attempts 与失败记录；重复试验、不确定性、选择偏差、多重比较；单 metric winner 不是科学结论 |
