@@ -151,10 +151,12 @@ class Registration(unittest.TestCase):
             text = (ROOT / readme).read_text(encoding="utf-8")
             assert "general/interrogate/SKILL.md" in text, readme
 
-    def test_entry_pointer(self):
+    def test_entry_declares_installable_interrogate_slug_without_cross_skill_link(self):
         text = (ROOT / "skills/general/research-os/SKILL.md").read_text(encoding="utf-8")
         assert "interrogate" in text
-        assert "../interrogate/SKILL.md" in text
+        assert "`interrogate`" in text
+        assert "只阻塞依赖它的分支" in text
+        assert "../interrogate/SKILL.md" not in text
 
     def test_checker_function_registered_and_clean(self):
         text = read("SKILL.md")

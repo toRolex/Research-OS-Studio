@@ -142,10 +142,16 @@ class ContractText(unittest.TestCase):
         self.assertIn("子代理", text)
         self.assertIn("blocked", text)
 
-    def test_unmigrated_leaf_still_declares_its_own_gate(self):
-        # #58 已迁移绘图叶；用仍未迁移的 proof-repair 核对旧门仍受 checker 约束。
+    def test_proof_repair_uses_migrated_delegation_contract(self):
+        # #55 已迁移 proof-repair；旧 Gate 断言与委托继承合同冲突。
         repair = (SKILLS / "validation-cycle/proof-repair/SKILL.md").read_text(encoding="utf-8")
-        self.assertRegex(repair, r"(?m)^Gate: repair-contract \|")
+        rel = "skills/validation-cycle/proof-repair/SKILL.md"
+        checker = load()
+        self.assertIn("## 委托继承", repair)
+        self.assertRegex(repair, r"(?m)^Gates: none$")
+        self.assertNotRegex(repair, r"(?m)^Gate:")
+        self.assertEqual(checker.MIGRATED_CONTRACT.get(rel), "委托继承")
+        self.assertNotIn(rel, checker.LEGACY_LEAF_GATES)
 
 
 class NoSubagentCapability(unittest.TestCase):
