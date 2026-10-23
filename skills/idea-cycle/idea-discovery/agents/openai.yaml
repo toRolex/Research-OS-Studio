@@ -1,5 +1,5 @@
 interface:
   display_name: "Idea Discovery"
-  short_description: "从研究方向到 Proposal 的完整发现流程"
+  short_description: "按目标缺口组合发现能力"
 policy:
   allow_implicit_invocation: false

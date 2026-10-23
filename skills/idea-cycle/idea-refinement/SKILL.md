@@ -10,8 +10,13 @@ disable-model-invocation: true
 
 目标是 **problem → focused method → minimal validation sketch**。最小充分机制优先；前沿技术是机制选择，不是装饰。
 
-## 1. 固定边界与 Problem Anchor
-Gate: anchor-clarify | before=anchor-change | approval=explicit-user | source=SKILL.md#1-固定边界与-problem-anchor
+## 委托继承
+
+Gates: none
+
+由 `/research-os` 的 Discovery 组合进入时，本调用继承调用者的研究委托：目标、权限、研究额度与完成条件沿用，读这份正文不再重复请求批准；只有目标替换才停下确认。独立调用时，本节的输入、边界、预算与输出来源就是本次授权范围，不需要先 setup。
+
+本能力已按委托合同迁移；未迁移的兄弟能力仍按各自旧门停下确认。越过授权写路径、外发、付费或安装资源属于越权；超过用户给定轮数或资源额度属于超额，都只阻塞对应动作，不扩大到整个委托。
 
 读取用户原问题、原始候选、原始文献、已有 review 和查新材料。默认只读用户提供的本地材料；确认需要新增的来源范围、检索预算、独立评审资源、修订轮数和输出路径。最多五轮“修订—独立复核”，用户可缩小或明确另定上限；无进展或达到任一预算即停，不按评分追逐无限循环。
 

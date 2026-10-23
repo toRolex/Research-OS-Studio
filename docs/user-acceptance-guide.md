@@ -136,14 +136,13 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
   3. **双路线取舍**：对比最小可行验证路线（MVP）与前沿进阶路线（Frontier），给出权衡依据。
 
 ### 5. `idea-discovery` 路线（#41；叶 Workflow 为 #8）
-- **操作**：对 `/research-os` 说「我有方向，没有 idea」，并给出研究方向 brief。不要只把这句话当成推荐请求。
+- **操作**：给出研究目标、已有材料或现成候选，使用 `/research-os` 或直接点名 `idea-discovery`。
 - **核验**：
-  1. 命中路线 `idea-discovery`，按 playbook 读完叶 skill 全文后执行 Phase 0 → 文献 → 候选 → 查新 → 独立评审 → 固定边界收敛；
-  2. 默认每个阶段在叶上的 `stage-checkpoint` 停下。用户在本次调用写明「一次走完」并给出预算时，阶段之间连续执行；输出路径、评审范围、问题锚点仍停；
-  3. 交付单一 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止，不运行 pilot，不创建实验计划，不进入 Validation；
-  4. **粘性**：下一句「继续」或「看下一阶段」仍走本路线；
-  5. **new task**：用户说 new task 后，例如「new task 我该从哪开始」，回到入口重匹配，只读请求进 route-only。
-- 直接点名 `/idea-discovery` 仍走叶入口，不经过本路由行。
+  1. 按目标缺口和已完成材料选必要能力子集；允许局部开始、重排与回访，完整方向到 Proposal 仅是可选配方；
+  2. 叶的检索范围、独立评审、问题锚点与预算保持有效。目标替换、越权、超额或既有文件冲突只阻塞对应分支；
+  3. 仅交付用户本次目标要求的报告和/或 Proposal；不自动运行 pilot、创建实验计划或进入 Validation；
+  4. 独立安装 `idea-discovery` 时同时安装五个 Required skills；缺少任一项应将依赖工作标 blocked，并给补装说明。
+- CLI 安装可使用 `skills add <package> --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y`。
 
 ---
 
@@ -310,7 +309,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 | 1 | **CLI 清单发现** | `skills add ... --list` 列出全部 39 个 Skill，无遗漏、无重复、无幽灵入口 | [ ] 通过 |
 | 2 | **Setup 不覆盖** | `setup-research-os` 沿用既有材料且不改研究日志；零授权政策不是运行许可；清单外模型停下；冲突展示 diff，拒绝或外部新建 `CLAUDE.md` 则零改动并重新确认 | [ ] 通过 |
 | 3 | **route-only 只读导航** | `/research-os` 在只读意图下推荐切入点，零文件写入、零联网、不自动触发任何工作流 | [ ] 通过 |
-| 4 | **Discovery 真实查新** | `idea-discovery` 执行真实检索与查新，独立评审，交付 Proposal 后停止 | [ ] 通过 |
+| 4 | **Discovery 组合与局部回访** | `idea-discovery` 按缺口选择子集、重排或回访；依赖缺失时明确 blocked，仅交付本次目标要求的报告/Proposal | [ ] 通过 |
 | 5 | **实验执行有界** | `experiment-bridge` 严格限制在批准预算和文件范围内，保留全部 attempts 历史 | [ ] 通过 |
 | 6 | **结果审计与 Claim** | `experiment-audit` 独立查作弊/幻觉；`result-to-claim` 收窄不确定结论 | [ ] 通过 |
 | 7 | **数学证明与修复** | `proof-review` 只读报告；`proof-repair` 遇反例不擅改命题，无 Lean 安全降级 | [ ] 通过 |
