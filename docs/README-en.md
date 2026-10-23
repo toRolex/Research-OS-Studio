@@ -60,6 +60,9 @@ npx skills@latest add toRolex/Research-OS-Studio --list
 
 # Install all skills to current project
 npx skills@latest add toRolex/Research-OS-Studio --all
+
+# Discovery requires its five sibling capabilities when installed alone
+npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
 ```
 
 ### 2. Workspace Setup
@@ -108,7 +111,7 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 |---|---|---|---|
 | **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Confirm live session models, eight roles, a zero-grant policy, and workspace seeds; a suggestion is not write authorization |
 | | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; route-only is read-only; experiment-plan and experiment-bridge are delivered and bill a batch grant |
-| **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Full ideation workflow: literature search, ideation, novelty check, review, proposal |
+| **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Composable entry: select needed capabilities by goal gap; reorder or revisit; full Discovery is optional |
 | | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
 | | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Explicit | Multi-angle research candidate generation with filtering logs |
 | | [creative-thinking-for-research](../skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Explicit | Cognitive shifts and orthogonal exploration for ideation bottlenecks |
@@ -157,17 +160,17 @@ Provide a research direction
 /research-os I have a direction and no idea
       ↓
 playbook idea-discovery
-  Stop after each phase unless the user writes "一次走完" and a budget
-  ├─ Search literature and track citations (research-lit)
-  ├─ Generate candidate ideas (idea-generation; creative-thinking if stuck)
-  ├─ Search prior work and check novelty (novelty-check)
-  ├─ Review and identify weaknesses (idea-review)
-  └─ Refine and converge route (idea-refinement)
+  Select needed capabilities from goal gaps; start locally, reorder, or revisit
+  ├─ Literature gap: research-lit
+  ├─ Candidate gap: idea-generation (creative-thinking if useful)
+  ├─ Prior work unchecked: novelty-check
+  ├─ Independent challenge needed: idea-review
+  └─ Convergence or Proposal needed: idea-refinement
       ↓
-Deliver IDEA_DISCOVERY.md and RESEARCH_PROPOSAL.md, then stop
+Deliver only the report and/or Proposal required by this mandate, then stop
 ```
 
-Leaf output-path, stage-checkpoint, review-scope, and problem-anchor gates stay in force. The next turn stays on this route; `new task` rematches. `/idea-discovery` remains the direct leaf entry.
+Full Discovery is an optional recipe, not a required route. Existing results may satisfy or omit a responsibility; new evidence may reorder work or trigger a revisit. Leaf source, review, and anchor obligations remain in force. A missing required skill blocks only its affected work and must be reported. Goal replacement, over-authority, over-quota, or file conflict also blocks only the affected branch.
 
 ### 2. Validation
 ```text

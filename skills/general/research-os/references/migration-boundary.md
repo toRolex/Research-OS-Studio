@@ -7,9 +7,16 @@
 | 能力 | 正文 | 委托落点 |
 | --- | --- | --- |
 | 委托入口 | `skills/general/research-os/SKILL.md` | 「研究委托」小节 + 本目录合同与 `playbooks/literature-review.md` |
+| 认知转换 | `skills/idea-cycle/creative-thinking-for-research/SKILL.md` | 「委托继承」小节；只贡献洞见，不裁决候选池 |
+| Discovery 配方 | `skills/idea-cycle/idea-discovery/SKILL.md` | 「委托继承」小节；一次委托内组合文献、生成、查新、评审与细化 |
+| 候选生成 | `skills/idea-cycle/idea-generation/SKILL.md` | 「委托继承」小节；多视角、去重与硬约束筛选 |
+| 候选细化 | `skills/idea-cycle/idea-refinement/SKILL.md` | 「委托继承」小节；保留 Problem Anchor，目标替换仍停 |
+| 独立评审 | `skills/idea-cycle/idea-review/SKILL.md` | 「委托继承」小节；评审者直达原始材料 |
+| 查新 | `skills/idea-cycle/novelty-check/SKILL.md` | 「委托继承」小节；closest prior work 与证据缺口 |
 | 文献综合 | `skills/idea-cycle/research-lit/SKILL.md` | 「委托继承」小节；无旧门，写入与预算由委托给 |
 | 并行覆盖（swarm） | `skills/general/swarm/SKILL.md` | 「委托继承」小节；新增能力，非旧门迁移，改编自 pstack swarm（MIT，LICENSE 随目录共置） |
 | 对抗审查 | `skills/general/interrogate/SKILL.md` | 「委托继承」小节；无旧门，始终只读，修复由委托按授权另行组织 |
+| 学术绘图 | `skills/writing-cycle/academic-plotting/SKILL.md` | 「委托继承」小节；数据图与示意图，外部副作用仍授权 |
 | 形式化检查创建 | `skills/validation-cycle/create-formal-verification-skill/SKILL.md` | 「委托继承」小节；项目内验证资产与依赖准备在授权内，缺子代理时独立复核标 blocked |
 | 形式化检查维护 | `skills/validation-cycle/maintain-formal-verification-skill/SKILL.md` | 「委托继承」小节；只改验证不改产品代码，同步 commit 与假设版本随检查推进 |
 | 持续推进、暂停恢复与改进 | `skills/general/research-os/playbooks/continuation.md`；`skills/writing-cycle/research-improvement/SKILL.md` | 入口明确路由；恢复核对原始产物、开放义务与活跃作业；改进继承委托，批次与公共行为修改保留决定门 |
