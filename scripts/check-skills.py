@@ -1188,7 +1188,6 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
     "skills/writing-cycle/research-improvement/SKILL.md": "委托继承",
     "skills/validation-cycle/experiment-plan/SKILL.md": "委托继承",
-    "skills/validation-cycle/experiment-bridge/SKILL.md": "委托继承",
     "skills/validation-cycle/run-experiment/SKILL.md": "委托继承",
     "skills/validation-cycle/experiment-queue/SKILL.md": "委托继承",
     "skills/validation-cycle/monitor-experiment/SKILL.md": "委托继承",
@@ -1592,7 +1591,6 @@ def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
 
 EXPERIMENT_SKILLS: tuple[str, ...] = (
     "experiment-plan",
-    "experiment-bridge",
     "run-experiment",
     "experiment-queue",
     "monitor-experiment",
@@ -1615,14 +1613,12 @@ EXPERIMENT_REQUIRED_FILES = {
     "experiment-plan": (
         "references/mandate.md", "references/block-checks.md", "templates/experiment-plan.md",
     ),
-    "experiment-bridge": (
-        "references/mandate.md", "references/composition-map.md", "templates/bridge-report.md",
-    ),
     "run-experiment": (
         "references/mandate.md",
         "references/execution-contract.md",
         "references/remote-execution.md",
         "references/batch-authorization.md",
+        "references/composition-map.md",
         "templates/run-report.md",
     ),
     "experiment-queue": ("references/mandate.md", "templates/batch-manifest.md"),
@@ -1644,11 +1640,10 @@ EXPERIMENT_REQUIRED_FILES = {
 }
 EXPERIMENT_TEXT_MARKERS = {
     "run-experiment": (
-        "执行控制", "小批量或队列", "委托继承", *EXPERIMENT_JOB_CONTRACT,
+        "唯一实验执行控制", "小批量或队列", "委托继承", *EXPERIMENT_JOB_CONTRACT,
         "作业退出", "产物有效", "科学结论", "旧文件",
         "远程只是执行位置", "SSH", "已有调度",
     ),
-    "experiment-bridge": ("兼容入口", "不再重复执行控制", "委托继承"),
     "experiment-queue": (
         "委托继承", *EXPERIMENT_JOB_CONTRACT, *EXPERIMENT_RECOVERY,
         "不因进入队列或新波次重复索权", "研究日志",
@@ -1681,21 +1676,26 @@ EXPERIMENT_MANDATE_PACKAGE_MARKERS = (
     "额度、权限与目标互不推导",
 )
 EXPERIMENT_COMPANION_DEPENDENCIES = {
-    "experiment-bridge": (
-        "run-experiment", "experiment-plan", "experiment-queue", "monitor-experiment",
-        "training-health-check", "analyze-results", "experiment-audit",
-    ),
     "experiment-queue": ("run-experiment",),
     "result-to-claim": ("analyze-results",),
 }
 EXPERIMENT_FILE_MARKERS = {
+    "run-experiment/references/composition-map.md": (
+        "是唯一执行控制", "experiment-plan", "experiment-queue", "monitor-experiment",
+        "training-health-check", "analyze-results", "experiment-audit", "result-to-claim",
+        "blocked",
+    ),
     "run-experiment/references/execution-contract.md": EXPERIMENT_JOB_CONTRACT,
     "run-experiment/references/remote-execution.md": EXPERIMENT_REMOTE,
     "run-experiment/references/batch-authorization.md": (
         "research-log.md", "valid_until", "scope", "cost_limit", "compute_limit", "run_limit",
         "run_count_basis: planned-run", "concurrency_limit", "retry_limit", "worst_case_estimate",
     ),
-    "run-experiment/templates/run-report.md": EXPERIMENT_JOB_CONTRACT,
+    "run-experiment/templates/run-report.md": (
+        *EXPERIMENT_JOB_CONTRACT, "Artifact validity", "Scientific conclusion",
+        "Monitoring and Health", "Analysis and Independent Audit", "Tracker Update",
+        "Optional Ablation Suggestions",
+    ),
     "experiment-queue/templates/batch-manifest.md": EXPERIMENT_JOB_CONTRACT,
 }
 EXPERIMENT_HOST_BINDINGS = FORMAL_HOST_BINDINGS
@@ -1712,6 +1712,11 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
     """#56 实验执行：委托继承、桥接合流、运行/恢复/远程合同与宿主中立。"""
     found: list[str] = []
     base = root / "skills" / "validation-cycle"
+    legacy_bridge = base / "experiment-bridge"
+    if (legacy_bridge / "SKILL.md").exists() or any(
+        path.is_file() for path in legacy_bridge.rglob("*")
+    ):
+        found.append("skills/validation-cycle/experiment-bridge: 旧 Skill 仍可发现或安装")
     packaged_mandate_text: str | None = None
     for name in EXPERIMENT_SKILLS:
         rel_dir = f"skills/validation-cycle/{name}"
@@ -1845,7 +1850,9 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
         run_body = run_text.read_text(encoding="utf-8")
         if "../experiment-bridge/SKILL.md" in run_body:
             found.append("skills/validation-cycle/run-experiment/SKILL.md: 仍依赖旧桥接控制器")
-        if "仓库中的 `experiment-queue`" not in run_body or "单独安装时如 queue 不可用" not in run_body:
+        if "唯一实验执行控制" not in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 未声明唯一执行控制")
+        if "仓库中的 `experiment-queue`" not in run_body or "单装 `run-experiment` 时" not in run_body:
             found.append("skills/validation-cycle/run-experiment/SKILL.md: 缺批量队列可用性边界")
         for marker in EXPERIMENT_AUTHORIZATION_MARKERS:
             if marker not in run_body:
@@ -1853,14 +1860,45 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
     bridge_playbook = root / EXPERIMENT_BRIDGE_PLAYBOOK
     if bridge_playbook.is_file():
         playbook = bridge_playbook.read_text(encoding="utf-8")
-        for marker in ("run-experiment", "analyze-results", "experiment-audit"):
+        for marker in (
+            "skills/validation-cycle/run-experiment/SKILL.md", "唯一执行控制",
+            "monitor-experiment", "training-health-check", "analyze-results",
+            "experiment-audit", "result-to-claim",
+        ):
             if marker not in playbook:
                 found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 缺能力路由 {marker}")
+        for marker in (
+            "skills/validation-cycle/experiment-bridge/SKILL.md", "-s experiment-bridge",
+            "/experiment-bridge",
+        ):
+            if marker in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 残留旧 Skill 调用或安装 slug {marker}")
         for marker in ("run_count_basis=planned-run", "每个 attempt 先记最坏预留"):
             if marker in playbook:
                 found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 桥接 playbook 重复执行控制合同 {marker}")
     else:
         found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: playbook 不存在")
+    active_route_docs = (
+        "README.md", "docs/README-en.md", "docs/user-acceptance-guide.md", "skills/README.md",
+        "skills/general/research-os/SKILL.md",
+        "skills/general/research-os/references/PRODUCT-MAP.md",
+        "skills/general/research-os/references/validation.md",
+        "skills/general/research-os/references/migration-boundary.md",
+        "skills/general/research-os/references/batch-authorization.md",
+        EXPERIMENT_BRIDGE_PLAYBOOK,
+    )
+    for relative in active_route_docs:
+        path = root / relative
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        for marker in (
+            "skills/validation-cycle/experiment-bridge/SKILL.md", "-s experiment-bridge",
+        ):
+            if marker in text:
+                found.append(f"{relative}: 残留旧 Skill 路径或安装 slug {marker}")
+        if re.search(r"(?m)^\s*/experiment-bridge\b", text):
+            found.append(f"{relative}: 残留旧 /experiment-bridge 可调用入口")
     boundary = root / MIGRATION_DOC
     if boundary.is_file():
         boundary_text = boundary.read_text(encoding="utf-8")

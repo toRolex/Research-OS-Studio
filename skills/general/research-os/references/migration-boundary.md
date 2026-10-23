@@ -25,8 +25,7 @@
 | 行为验证创建 | `skills/validation-cycle/create-verification-skill/SKILL.md` | 「委托继承」小节；项目内启动、驱动与验证资产在授权内，缺子代理时源读/复核标 blocked |
 | 行为验证维护 | `skills/validation-cycle/maintain-verification-skill/SKILL.md` | 「委托继承」小节；只改验证 skill 自身目录，现场驱动与证据清理随轮次推进 |
 | 实验计划 | `skills/validation-cycle/experiment-plan/SKILL.md` | 「委托继承」小节；只规划，未来预算不等于执行授权；对照按问题选，不硬套训练 baseline |
-| 实验桥接兼容入口 | `skills/validation-cycle/experiment-bridge/SKILL.md` | 「委托继承」小节；旧名映射到 run-experiment，不再重复执行控制 |
-| 实验执行 | `skills/validation-cycle/run-experiment/SKILL.md` | 「委托继承」小节；执行控制、批次路由、运行合同、断线恢复和远程执行位置合并在此 |
+| 实验执行 | `skills/validation-cycle/run-experiment/SKILL.md` | 「委托继承」小节；唯一执行控制、批次路由、运行合同、断线恢复和远程执行位置合并在此；Research OS 的“实验桥接”仅为需求配方名 |
 | 实验队列 | `skills/validation-cycle/experiment-queue/SKILL.md` | 「委托继承」小节；有界批次、依赖、有限重试、原作业查询与产物判定 |
 | 实验观察 | `skills/validation-cycle/monitor-experiment/SKILL.md` | 「委托继承」小节；只读运行事实，不做作业控制或科学判断 |
 | 训练健康诊断 | `skills/validation-cycle/training-health-check/SKILL.md` | 「委托继承」小节；只读诊断和建议，不控制作业 |

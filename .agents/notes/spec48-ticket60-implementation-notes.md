@@ -5,7 +5,7 @@
 | Work unit | 状态 | 产物与验收 | 下一步 |
 |---|---|---|---|
 | W1：统一 paper-writing 迁移 ML/Systems 专业资源，移除旧平行控制器 | done | 产品 commit `8a00c4bb51654c6c1e83c0cf477e7366a4458de0`；迁移映射及安装后合同完成；证据见下方日志 | `/tmp/spec48-ticket60-contract-W/REPORT.md` 汇总并交 parent |
-| W2：experiment-bridge 兼容壳收缩至 run-experiment | 本轮明确剩余 | `experiment-bridge/{SKILL.md,LICENSE,agents/openai.yaml,references/{composition-map,mandate}.md,templates/bridge-report.md}` 与 `/research-os` 路由/README/验证地图/Checker 活调用者，以及 `run-experiment` CLI 独立安装均未改/未测 | Parent 后续单独收缩；不得把本轮 W1 证据外推至实验安装 |
+| W2：experiment-bridge 兼容壳收缩至 run-experiment | done | 产品 commit `bf50d4325604f2c981b8c4a4df1b89bef441d338`；TDD、CLI 与验收细节见 `/tmp/spec48-ticket60-bridge/REPORT.md` | 仅本报告声明的边界和 9 条历史 archive 诊断留待后续整体验收 |
 
 ## W1 资源迁移映射（实施前）
 
@@ -34,6 +34,30 @@
 - 最终通过日志：`final-ticket60-writing-2.log`（3 tests）、`final-ticket57-2.log`（13）、`final-ticket43.log`（8）、`ticket38.log`（21）、`accept-remediation-contract-final.log`（4）、`policy-gates-corrected.log`（4）、`tracked-scan.log`（1）；各命令串行、树外 `TMPDIR=/tmp`、真实 return code，单条 subprocess timeout 180s。
 - Checker 最终仍返回 1，但仅余 9 条历史 `docs/acceptance/**/evidence/*.tar.gz` 诊断；原始输出与 `/tmp/spec48-closed-baseline/logs/head-checker.log` 完全一致。未运行全套；沿用 #55 merger 报告记载的 6 个历史失败，不把它们写成当前全套实测。
 - W2 尚未改动。剩余包括 `skills/validation-cycle/experiment-bridge/{SKILL.md,LICENSE,agents/openai.yaml,references/{composition-map,mandate}.md,templates/bridge-report.md}`；活调用者包括 `skills/general/research-os/SKILL.md`、`playbooks/experiment-bridge.md`、`README.md`、`skills/README.md`、`references/{PRODUCT-MAP,validation}.md`、`docs/upstream-sources-and-licenses.md` 与 `scripts/check-skills.py`/`tests/test_spec48_ticket56.py` 合同；另需在独立 HOME/cwd 执行 `run-experiment` CLI 单装验证。保留 bridge 配方名可以，但须移除兼容 Skill 控制器并把报告、组合资源及许可归属移到 `run-experiment`。
+
+## W2 收缩实施记录
+
+- **入口判定**：直接在当前隔离 worktree 执行一个有界 W2 单元。用户明确“独立 T3 worktree、不写 integration/main、不 push/tracker、不继续派发”；因此不派发。材料已提供 W2 精确剩余、#48/#60 缓存与 W1 真实单装报告，前置输入齐备。当前分支 `t3/shrink-experiment-bridge` 起于 `integration/spec-48=14d9c6e`，已先快进合入 W1 来源 `3bf2fa3a6a4e10b78a455d302474607ea1013038`；不拉入未完成 Discovery 或独立活文档来源。
+- **规则**：已读全局 Multi-Agent、model-availability、CODING_STANDARDS、仓库 `AGENTS.md`、pre-implement、writing-for-agents 与 `SKILL-MECHANICS.md`，以及 #56 ticket56 合同测试/实施记录。当前安装未找到单独的 TDD Skill（`tdd/SKILL.md`、`tests.md`、`mocking.md` 均不存在）；按用户指定的安装后 public seam 先 red→green，不宣称该 Skill 已加载。不得削弱作业身份、退出码、日志、产物有效性、断线先查原任务、数学/非训练分支与额度合同。
+- **映射完成**：旧 `LICENSE` 与 `run-experiment/LICENSE` 字节相同（SHA-256 `e30cf5dd5f49b4f9b656590e23d782b4756c924a9f0ff0162b3e7b5d87006bf5`）；旧 `references/mandate.md` 与 run-experiment 同路径副本相同（SHA-256 `88aa76af938dfbcf4baf680c51389c17ed6639bd39328fc3b36ef99e692e04e1`），重复副本已删除。旧组合图的“只选择所需分支、缺能力只阻塞该分支”并入新 `run-experiment/references/composition-map.md`。旧 82 行 bridge report 的实现审查、监控/健康、分析、审计、tracker、消融建议与 next-options 章节并入统一 `templates/run-report.md`；原 attempts/milestones 合并到已有更强作业身份/输入版本/工具链/退出码/日志/产物有效性合同，不重复建模板。旧 Skill/controller metadata 删除；用户需求名只留在 Research OS 配方并直接委托 run-experiment。
+
+### W2 初始检查点与续接
+
+### W2 暂停检查点
+
+- 初始 public-seam 红灯命令 `uv run --offline --with pytest python -m pytest -q -p no:cacheprovider tests/test_spec48_ticket60_bridge.py`，真实退出码 1，4 tests failed。具体：旧目录仍存在；配方合同测试要求 route 文本提及 monitor（此项需保留监控职责但断言应核对适当地图/路由，不应把 monitor 强制并入执行器）；run-experiment 无组合图；真实 Skills CLI 安装副本缺 `references/composition-map.md`。
+- 红灯中的真实 Skills CLI `skills@1.7.4` version 命令与 `add ... --skill run-experiment --agent claude-code --copy --yes` 均返回 0；单装目录仅含 `run-experiment` 的断言已通过，随后按合同在缺组合图处失败。没有把 shell copy 当 CLI 安装。原始 CLI stdout/stderr 尚未落盘，不能声称已有 CLI 日志文件或 hash 清单。
+- parent 随后重新授权同一 W2，未换 worktree、未重置/清理 patch、未追加派发。
+
+### W2 续接
+
+- **public seam red→green**：原始 red 见上。修正 monitor 检查为职责组合（recipe 只在用户要求时委托；组合图验证观察事实、不控制作业且能力缺失仅阻塞该分支）；最终 `tests/test_spec48_ticket60_bridge.py`：4 passed，13 subtests passed，exit 0。该测试使用真实缓存 Skills CLI 1.7.4 在独立 `/tmp` HOME/cwd 单装，并核对包文件集、逐字节内容、链接、许可证及未安装的 queue 分支行为。
+- **#56/入口合同**：`tests/test_spec48_ticket56.py`：27 passed，13 subtests passed；`scripts/test_check_skills_ticket42.py`：4 passed；`scripts/test_check_skills_ticket46.py`：9 passed，2 subtests passed；`scripts/test_check_skills_ticket43.py`：8 passed，3 subtests passed。均为串行、树外 `TMPDIR=/tmp`。
+- **checker 基线**：`uv run --offline python scripts/check-skills.py` exit 1，诊断精确为原有 9 条 `docs/acceptance/**/evidence/*.tar.gz` 断链；无 bridge 或其他新诊断。未运行完整测试套件，保留 #55 merger/W1 报告中的原 6 个全套失败（本轮未重跑、未改历史资料或 allowlist）。
+- **真实最终 CLI 安装**：`skills@1.7.4 add <worktree> --skill run-experiment --agent claude-code --copy --yes --json` exit 0，选中 1 个、状态 installed、mode copy；独立 HOME/cwd 在 `/tmp/spec48-ticket60-bridge/final-cli-json/`。九个包文件的集合与字节哈希与源码一致；7 个 Markdown 内链全部闭合，无跨包依赖。包清单聚合 SHA-256 `a7bf613a69a3a603cf7186f518570325bb0d22da109058e9850c8e8d9373528d`；逐文件散列与 CLI 日志在 `/tmp/spec48-ticket60-bridge/logs/`，实际安装输出、许可与 mandate 哈希详见 `/tmp/spec48-ticket60-bridge/REPORT.md`。
+- **安全合同保留**：#56 测试继续核查作业身份、退出码/日志/产物有效性、断线查原任务后不盲重跑、数学/非训练对照与本批额度。研究配方没有第二授权账本或作业状态机；计划、队列、监控、健康、分析、审计与 Claim 判断仍由独立职责承担。
+- **integration-tip 复验**：最终核对 `integration/spec-48=14d9c6ef6ca7411dad1ac779647ba1a7cfb7603e`，在任务分支执行 `git merge --no-edit integration/spec-48` 得 `Already up to date`；合并后按上述顺序串行复跑 bridge 4/13、ticket56 27/13、ticket42 4、ticket46 9/2、ticket43 8/3，均 exit 0。checker 仍仅有原 9 条归档断链。diff check exit 0。
+- W2 已按原范围完成；产品提交为 `bf50d4325604f2c981b8c4a4df1b89bef441d338`。最终验收报告与 CLI 证据位于 `/tmp/spec48-ticket60-bridge/REPORT.md` 及同目录 `logs/`。此状态不外推为 #60 全票完成。
 
 ## Deviations
 

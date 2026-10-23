@@ -3,7 +3,7 @@
 本指南面向在真实科研项目中验收 Research OS Studio 纯 Agent Skills 套件的用户与维护者。指南汇总了已批准 35 票重构方案中全部科研能力的验收场景、输入边界、预期行为、工具缺失降级与停止条件。
 
 > **免责与验收状态声明**：
-> 静态检查只说明被检查 revision 的目录、frontmatter、链接或文档合同满足相应规则；Skills CLI 的发现、实际复制安装和宿主加载需在可丢弃项目中另行验证，并记录 CLI 版本、宿主及结果。上述证据均不证明真实开放问题已解决或研究质量已通过；本指南不作此类认证，用户应按本次实际验收结果分别记录。
+> 静态检查只说明被检查 revision 的目录、frontmatter、链接、文档合同或合成场景满足相应规则；Skills CLI 的发现、实际复制安装和宿主加载需在可丢弃项目中另行验证，并记录 CLI 版本、宿主及结果。以上证据均不证明真实开放问题已解决、科研质量已通过或真实环境的端到端体验已经验收；用户应按本次实际验收结果分别记录。
 
 ---
 
@@ -183,8 +183,8 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     1. 严格区分“数据文件存在”与“数据是否充分支持结论”；
     2. 将部分支持或存在边界的结论收窄为可辩护的候选 Claim（例如限定数据集、限定算力范围）；
     3. 产出候选 Claim 清单后停止，最终采纳与否由用户决定。
-- **`experiment-bridge`（#15 宏实验 Bridge Workflow；#42 批次预授权）**
-  - **操作**：提供已批准的实验计划。可直接调用 `/experiment-bridge`，或调用 `/research-os 跑完这个实验并分析`。低消耗验收用可丢弃项目里的一条本地命令，不用 GPU。
+- **实验执行（#15 宏流程路由；#42 批次预授权）**
+  - **操作**：提供已批准的实验计划。直接调用 `/run-experiment`，或调用 `/research-os 跑完这个实验并分析`（用户也可把目标称为“实验桥接”）。低消耗验收用可丢弃项目里的一条本地命令，不用 GPU。
   - **核验**：
     1. 在一次授权内串联实现、sanity 验证、正式执行、监控、结果分析与审计；叶 skill 的阶段不由 playbook 重写；
     2. 启动前读研究日志。缺本批授权、valid_until 已过、scope 不含本次写域、累计或单次越界、并发或重试越界：停，无作业产物；
@@ -304,7 +304,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 | 2 | **Setup 不覆盖** | `setup-research-os` 沿用既有材料且不改研究日志；零授权政策不是运行许可；清单外模型停下；冲突展示 diff，拒绝或外部新建 `CLAUDE.md` 则零改动并重新确认 | [ ] 通过 |
 | 3 | **route-only 只读导航** | `/research-os` 在只读意图下推荐切入点，零文件写入、零联网、不自动触发任何工作流 | [ ] 通过 |
 | 4 | **Discovery 组合与局部回访** | `/research-os` Discovery recipe 按缺口选择子集、重排或回访；依赖缺失时仅相关职责 blocked，fresh 独立评审不由自查替代，仅交付本次目标要求的报告/Proposal | [ ] 通过 |
-| 5 | **实验执行有界** | `experiment-bridge` 严格限制在批准预算和文件范围内，保留全部 attempts 历史 | [ ] 通过 |
+| 5 | **实验执行有界** | `experiment-bridge` 仅是 `/research-os` 配方名，不是 Skill/slash 入口；执行唯一进入 `run-experiment`，严格限制在批准预算和文件范围内并保留全部 attempts 历史；分析/审计仍是独立职责 | [ ] 通过 |
 | 6 | **结果审计与 Claim** | `experiment-audit` 独立查作弊/幻觉；`result-to-claim` 收窄不确定结论 | [ ] 通过 |
 | 7 | **数学证明与修复** | `proof-review` 只读报告；`proof-repair` 遇反例不擅改命题，无 Lean 安全降级 | [ ] 通过 |
 | 8 | **论文写作与编译** | `/research-os` paper-writing 三变体各自走本专业入口，授权前零写入，交付候选稿与审查报告；编译修复与引用修复仍须另行点名 | [ ] 通过 |

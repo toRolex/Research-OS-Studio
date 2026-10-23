@@ -104,7 +104,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill research-os research-li
 /research-os 我该从哪开始
 ```
 
-这进入 route-only：按研究方向或已有材料给推荐，不修改文件、不联网，也不自动执行推荐任务。旧入口 `ask-research-os` 已删除。目标明确时，可直接点名底层技能，或让 `/research-os` 按研究委托组合能力。委托给出目标、授权范围、可用资源额度与完成条件；普通能力/阶段转换不逐次停下请批。没有 setup 或明确预算时可先做有界且不越权的工作；需要消耗运行资源的步骤只在有效额度内执行，缺少或超出额度时停在该分支。`experiment-bridge` 仍是兼容入口，实际执行控制由 `run-experiment` 承担；本说明不表示其他兼容入口已被替代或迁移完成。
+这进入 route-only：按研究方向或已有材料给推荐，不修改文件、不联网，也不自动执行推荐任务。旧入口 `ask-research-os` 已删除。目标明确时，可直接点名底层技能，或让 `/research-os` 按研究委托组合能力。委托给出目标、授权范围、可用资源额度与完成条件；普通能力/阶段转换不逐次停下请批。没有 setup 或明确预算时可先做有界且不越权的工作；需要消耗运行资源的步骤只在有效额度内执行，缺少或超出额度时停在该分支。一次文献综合可直接按委托交付并验收实际产物。`experiment-bridge` 是 `/research-os` 的需求配方名，不是兼容 Skill；实验执行唯一进入 `run-experiment`，分析与审计仍由独立能力承担。运行资源须有研究日志里的本批授权；setup 中的默认政策不是运行许可。外发、破坏性操作、越权或超额度，以及能力定义的硬门，仍须在相应副作用前停止。
 
 已有上一轮证明、改进日志或研究作业记录时，不要从零重跑：
 
@@ -144,7 +144,7 @@ research-os Discovery 配方
 实证路线                             理论路线
 /experiment-plan                    formula-derivation（公式推导）
       ↓                                   ↓
-/experiment-bridge                  proof-writer（起草证明）
+/run-experiment                     proof-writer（起草证明）
   ├─ 代码试跑与资源监控                   ↓
   ├─ 训练异常诊断与干预建议          proof-review（逻辑与反例审查）
   └─ 独立审计代码与结果真实性             ↓
@@ -205,7 +205,6 @@ research-os Discovery 配方
 | | [idea-review](skills/idea-cycle/idea-review/SKILL.md) | 显式 | 独立评审视角，指出方案弱点与潜在问题 |
 | | [idea-refinement](skills/idea-cycle/idea-refinement/SKILL.md) | 显式 | 细化研究方案，输出最小可行路线与拓展路线 |
 | **Validation** | [experiment-plan](skills/validation-cycle/experiment-plan/SKILL.md) | 显式 | 制定包含假设、基线、指标与预算的实验计划 |
-| | [experiment-bridge](skills/validation-cycle/experiment-bridge/SKILL.md) | 显式 | 旧请求兼容入口：映射到 run-experiment，不重复编排 |
 | | [run-experiment](skills/validation-cycle/run-experiment/SKILL.md) | 显式 | 统一实验执行控制；记录输入版本、工具链、目录、作业身份、退出码、日志与产物 |
 | | [experiment-queue](skills/validation-cycle/experiment-queue/SKILL.md) | 显式 | 管理批量实验队列与资源分配 |
 | | [monitor-experiment](skills/validation-cycle/monitor-experiment/SKILL.md) | 显式 | 监控运行进程与状态，不做额外推论 |

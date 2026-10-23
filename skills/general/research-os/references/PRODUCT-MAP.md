@@ -22,14 +22,14 @@
 
 数学／理论证明路线（#55）由 `/research-os` 的 proof 配方作为唯一总控，按当前证据在推导、构造、计算、并行候选、独立审查、finding 修复与按需形式化之间交替；这些是职责独立的 Skill slug，不是固定阶段。长期证明的旧总控已移除；原有数学审计、Lean、记号、压力测试与交接资源归入 `proof-review` 的按需参考及其随包许可，未复制第二套轮次控制器。
 
-`research-os`（U，已实现，#38）：唯一编排入口。只读请求走 route-only，零副作用。已交付 playbook：route-only、literature、discovery、experiment-plan、experiment-bridge、paper-writing 的 general / ml / systems、proof、rebuttal、resubmit、paper-talk、improvement、pickup。入口已按研究委托合同迁移（#49）：目标、权限、额度与完成条件见 [mandate.md](mandate.md)；literature、discovery 与 proof 是已迁移路线，其余路线仍属未迁移批次，边界与清单见 [migration-boundary.md](migration-boundary.md)。experiment-plan 与 experiment-bridge 在计划获准时确认本批授权；默认算力政策不是运行许可。已保存的证明轮次走 proof，已有研究整体的有界改进走 improvement，新会话恢复已保存交接走 pickup（#45）。pickup 重读批准、授权和作业记录，不延长授权。`setup-research-os`（U，已实现，#3）：用户确实想初始化或补齐人类可读工作区；探索、逐问、完整草稿确认后补缺。**不是咨询或其他入口的前置门槛**。
+`research-os`（U，已实现，#38）：唯一编排入口。只读请求走 route-only，零副作用。已交付 playbook：route-only、literature、discovery、experiment-plan、experiment-bridge（用户需求路由名，执行唯一进入 `run-experiment`）、paper-writing 的 general / ml / systems、proof、rebuttal、resubmit、paper-talk、improvement、pickup。Discovery 按研究委托合同迁移（#60），其完整方向到 Proposal 是可选目标；普通能力/阶段转换不逐次停下请批，资源额度、外发、破坏性操作、越权及能力定义的硬门仍须遵守。委托目标、授权范围、额度与完成条件见 [mandate.md](mandate.md)；`experiment-bridge` 是配方名而非可安装 Skill 或独立 slash 入口，唯一执行控制为 `run-experiment`。已保存的证明轮次走 proof，已有研究整体的有界改进走 improvement，新会话恢复已保存交接走 pickup（#45）。pickup 重读批准、授权和作业记录，不延长授权。`setup-research-os`（U，已实现，#3）：用户确实想初始化或补齐人类可读工作区；探索、逐问、完整草稿确认后补缺。**不是咨询或其他入口的前置门槛**。
 
 ## 按现有材料选切入点
 
 - **方向或现成候选**：用户可直接向 `/research-os` 提交方向并要求完整 Proposal，或只做已有材料中的文献、候选、查新、独立评审或细化缺口。Discovery recipe 按证据选 Required 能力子集并允许重排/回访；缺依赖只阻塞受影响职责，fresh 独立评审不可由自查替代。完整方向到 Proposal 是可选目标；不对空方向捏造 novelty 结论。读 [idea-cycle.md](idea-cycle.md)。
 - **已有主题要一次文献综合**：走已迁移的 literature route（playbook literature-review）。它按委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度；要拿这批材料形成 Proposal 时走 Discovery recipe。也可直接点名 `research-lit`。
 - **已有问题要做计划**：走已交付的 experiment-plan。它只产计划；执行授权写在研究日志，不来自默认政策。
-- **已有计划要跑完并分析**：走已交付的 experiment-bridge。启动前核对研究日志里的本批授权；缺授权、过期、越界或要删既有结果时停。
+- **已有计划要跑完并分析**：用户可用“实验桥接”表达目标；执行唯一进入 `run-experiment`。按需组合独立监控、分析与审计能力。启动前核对研究日志里的本批授权；缺授权、过期、越界或要删既有结果时停。
 - **已有结果**：先看用户要解释不确定性、审计真实性，还是形成候选 Claim；分别推荐对应内部能力或已实现的 `result-to-claim`。仅想从结果衍生新方向时才考虑已实现的 `idea-generation`；不强迫重新找 Idea。读 [validation.md](validation.md)；衍生新方向再读 idea-cycle。
 - **已有稿件**：按需要选引用／Claim／Proof／Stress 检查、局部修复、通用／专业写作，或 `/research-os` 的 rebuttal、resubmit、paper-talk（叶入口仍是 `rebuttal`、`resubmit-pipeline`、`paper-talk`）与 `research-improvement`。不自动起草新稿、运行实验或初始化目录。读 [writing-cycle.md](writing-cycle.md)。
 

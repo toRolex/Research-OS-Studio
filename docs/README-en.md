@@ -9,7 +9,7 @@
 
   <p>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
-    <a href="../skills/README.md"><img src="https://img.shields.io/badge/skills-42-green.svg" alt="Skills"></a>
+    <a href="../skills/README.md"><img src="https://img.shields.io/badge/skills-41-green.svg" alt="Skills"></a>
     <a href="user-acceptance-guide.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
     <a href="https://github.com/toRolex/Research-OS-Studio/stargazers"><img src="https://img.shields.io/github/stars/toRolex/Research-OS-Studio.svg?style=social" alt="GitHub stars"></a>
   </p>
@@ -103,23 +103,24 @@ Saved handoffs use three routes and no new state machine: `proof` resumes one fi
 
 ## Skills Inventory
 
-The inventory below follows the current `skills/` tree; its size is not a product requirement. Invocation is explicit except for setup:
+The inventory below follows the current `skills/` tree; its size is not a product requirement. Research OS recipe names are routing labels, not additional installable skill slugs. Invocation is explicit except for setup:
 - **Explicit except setup**: the user names the skill, or a parent playbook reads it by path. The model does not trigger it from the description.
 - **`setup-research-os`**: the one skill a model may suggest. It is optional; a suggestion is not write authorization, and role setup is not a prerequisite to bounded research.
 
 | Category | Skill Name | Invocation | Description |
 |---|---|---|---|
 | **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Optional workspace bootstrap for live-model role mappings, a zero-grant default policy, and workspace seeds; a suggestion is not write authorization |
-| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified research-delegation entry; route-only is read-only; use real host subagent capability when delegating. `experiment-bridge` remains a compatibility entry for `run-experiment`; this inventory does not claim #55B/C has merged |
-| **Idea Cycle** | [research-os Discovery recipe](../skills/general/research-os/playbooks/discovery.md) | Via `/research-os` | A user can give a research direction and ask for a complete Proposal; choose, reorder, or revisit the five Required capabilities by gap, preserving fresh independent review |
-| | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
+| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified research-delegation entry; route-only is read-only; Discovery and experiment-bridge are composable recipe names, not installable Skills; execution uniquely enters `run-experiment` and uses real host subagent capability when delegating |
+| | [swarm](../skills/general/swarm/SKILL.md) | Explicit | Parallel exploration through real host subagents, with isolated outputs and explicit synthesis |
+| | [interrogate](../skills/general/interrogate/SKILL.md) | Explicit | Read-only independent challenge of assumptions and conclusions |
+| **Organization** | [arena](../skills/organization/arena/SKILL.md) | Explicit | Compares and integrates candidate outputs through an isolated, rubric-led process |
+| **Idea Cycle** | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
 | | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Explicit | Multi-angle research candidate generation with filtering logs |
 | | [creative-thinking-for-research](../skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Explicit | Cognitive shifts and orthogonal exploration for ideation bottlenecks |
 | | [novelty-check](../skills/idea-cycle/novelty-check/SKILL.md) | Explicit | Search closest prior work to verify proposal novelty |
 | | [idea-review](../skills/idea-cycle/idea-review/SKILL.md) | Explicit | Independent reviewer perspective identifying proposal weaknesses |
 | | [idea-refinement](../skills/idea-cycle/idea-refinement/SKILL.md) | Explicit | Refines proposals into minimal viable and frontier routes |
 | **Validation** | [experiment-plan](../skills/validation-cycle/experiment-plan/SKILL.md) | Explicit | Creates bounded experiment plans with hypotheses, baselines, and budgets |
-| | [experiment-bridge](../skills/validation-cycle/experiment-bridge/SKILL.md) | Explicit | Full experiment workflow: implementation, test runs, monitoring, analysis, audit |
 | | [run-experiment](../skills/validation-cycle/run-experiment/SKILL.md) | Explicit | Executes experiment code within approved scope and tracks status |
 | | [experiment-queue](../skills/validation-cycle/experiment-queue/SKILL.md) | Explicit | Manages batch experiment queues and resource allocation |
 | | [monitor-experiment](../skills/validation-cycle/monitor-experiment/SKILL.md) | Explicit | Monitors running processes and hardware state without inference |
@@ -128,6 +129,10 @@ The inventory below follows the current `skills/` tree; its size is not a produc
 | | [experiment-audit](../skills/validation-cycle/experiment-audit/SKILL.md) | Explicit | Audits code logic, evaluation metrics, and result authenticity |
 | | [result-to-claim](../skills/validation-cycle/result-to-claim/SKILL.md) | Explicit | Extracts bounded scientific claims supported by empirical data |
 | | [formula-derivation](../skills/validation-cycle/formula-derivation/SKILL.md) | Explicit | Mathematical derivations recording assumptions, steps, and error bounds |
+| | [create-formal-verification-skill](../skills/validation-cycle/create-formal-verification-skill/SKILL.md) | Explicit | Builds runnable formal checks with assumption and correspondence audits |
+| | [maintain-formal-verification-skill](../skills/validation-cycle/maintain-formal-verification-skill/SKILL.md) | Explicit | Re-aligns and reruns formal checks after code changes |
+| | [create-verification-skill](../skills/validation-cycle/create-verification-skill/SKILL.md) | Explicit | Builds runnable behavioral verification skills and evidence workflows |
+| | [maintain-verification-skill](../skills/validation-cycle/maintain-verification-skill/SKILL.md) | Explicit | Updates behavioral verification workflows for changed product behavior |
 | | [proof-writer](../skills/validation-cycle/proof-writer/SKILL.md) | Explicit | Drafts formal proofs while tracking incomplete attempts and gaps |
 | | [proof-review](../skills/validation-cycle/proof-review/SKILL.md) | Explicit | Read-only check for proof structure, lemmas, and counterexamples |
 | | [proof-repair](../skills/validation-cycle/proof-repair/SKILL.md) | Explicit | Targeted repair of proof gaps within authorized scope |
@@ -178,7 +183,7 @@ State hypothesis or target theorem
 Empirical Track                      Theoretical Track
 /experiment-plan                    formula-derivation (Derivations)
       ↓                                   ↓
-/experiment-bridge                  proof-writer (Draft proofs)
+/run-experiment                     proof-writer (Draft proofs)
   ├─ Test execution & monitoring          ↓
   ├─ Health checks & diagnostics     proof-review (Logic review)
   └─ Code & result integrity audit        ↓

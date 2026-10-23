@@ -24,7 +24,7 @@
 
 以下均为 user-invoked 顶层入口，只能由用户另行显式调用；本表不要求已迁移的内部能力再次点名。`research-improvement` 不自动启动这些顶层 Workflow、不代为授权、不据其名称暗示已执行：
 
-- `experiment-bridge`、`experiment-plan`（完整实验计划与执行宏流程）
+- `experiment-plan`、`run-experiment`（分别承担计划与唯一执行控制；分析、监控与审计仍是独立职责）
 - `paper-writing`（通用完整写作总流程 #25）
 - `paper-writing`（唯一写作组织入口；ML/AI 与 Systems 专业选项由同一入口按需读取资源）
 - `paper-compile-repair`、`apply-citation-fixes`、`proof-repair`（专项修复入口）
