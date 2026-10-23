@@ -13,6 +13,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from spec48_workcopy import copy_tracked_tree
+
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts" / "check-skills.py"
 ENTRY = ROOT / "skills/general/research-os/SKILL.md"
@@ -93,14 +95,10 @@ class WorkCopy:
     def __init__(self) -> None:
         self._tmp = tempfile.TemporaryDirectory()
         self.path = Path(self._tmp.name) / "repo"
-        shutil.copytree(
-            ROOT,
-            self.path,
-            ignore=shutil.ignore_patterns(".git", ".venv", "__pycache__"),
-        )
+        copy_tracked_tree(ROOT, self.path)
         for command in (
             ["git", "init"],
-            ["git", "add", "-A"],
+            ["git", "add", "-f", "."],
             ["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-m", "base"],
         ):
             subprocess.run(command, cwd=self.path, check=True, capture_output=True)

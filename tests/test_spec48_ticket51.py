@@ -17,6 +17,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from spec48_workcopy import copy_tracked_tree
+
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts" / "check-skills.py"
 ARENA = ROOT / "skills/organization/arena"
@@ -68,14 +70,10 @@ def _force_rmtree(func, path, _exc):
 def copy_tree() -> Path:
     tmp = Path(tempfile.mkdtemp())
     dest = tmp / "repo"
-    shutil.copytree(
-        ROOT,
-        dest,
-        ignore=shutil.ignore_patterns(".git", ".venv", "__pycache__", "ticket51-tmp"),
-    )
+    copy_tracked_tree(ROOT, dest)
     for command in (
         ["git", "init"],
-        ["git", "add", "-A"],
+        ["git", "add", "-f", "."],
         ["git", "-c", "user.email=t@t", "-c", "user.name=t", "commit", "-m", "base"],
     ):
         subprocess.run(command, cwd=dest, check=True, capture_output=True)
