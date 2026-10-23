@@ -4,7 +4,7 @@
 
 | Work unit | Status | Artifact / evidence | Next |
 |---|---|---|---|
-| Integrate #51 with current Spec48, install, and regression verification | 待验收 | `t3/spec48-ticket51-compat-tests`; initial base `b0d8eadc171435896bc2b7bef76bbc54722b797c`; source `t3/arena-capability` merged as `1553ca4817304129a827d0be1b386213f90ff554` | 提交实现与本记录，写 `/tmp/spec48-51-resume/REPORT.md` |
+| Integrate #51 with current Spec48, install, and regression verification | done | Product commit `3096cf0a1044ee210ab090f6db539b782574c556`; full acceptance report `/tmp/spec48-51-resume/REPORT.md`; source `t3/arena-capability` merged as `1553ca4817304129a827d0be1b386213f90ff554` | 无 |
 
 ## Entry decision and scope
 
