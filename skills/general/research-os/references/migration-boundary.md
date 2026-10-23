@@ -25,8 +25,10 @@
 | 结果分析 | `skills/validation-cycle/analyze-results/SKILL.md` | 「委托继承」小节；统计可信度与偏差限制，不升级为 Claim |
 | 实验审计 | `skills/validation-cycle/experiment-audit/SKILL.md` | 「委托继承」小节；只读完整性审计，分开作业退出、产物有效和科学结论 |
 | 结果到 Claim | `skills/validation-cycle/result-to-claim/SKILL.md` | 「委托继承」小节；范围受限候选主张，采用由用户决定 |
-
-迁移一个能力的完整动作：把正文改成继承委托（去掉旧 `Gate:`，写出该能力的边界与完成条件），在 `scripts/check-skills.py` 的 `MIGRATED_CONTRACT` 登记路径与小节名，把同一行加入本表，并从 `LEGACY_LEAF_GATES` 删除。
+| 数学公式推导 | `skills/validation-cycle/formula-derivation/SKILL.md` | 「委托继承」小节；委托写域内可建新文件，原对象/假设变化须用户确认；推导不自动变成证明 |
+| 证明构造 | `skills/validation-cycle/proof-writer/SKILL.md` | 「委托继承」小节；保留原命题、假设、失败路线和有限尝试；不自动进入审查或修复 |
+| 证明修复 | `skills/validation-cycle/proof-repair/SKILL.md` | 「委托继承」小节；修复限于 finding 和委托写域，命题/假设变化仍需决定，编译命令及副产物范围单独核对 |
+| 长期证明兼容入口 | `skills/validation-cycle/proof-orchestrator/SKILL.md` | 「委托继承」小节；旧名称路由到 research-os proof 配方，不重复控制轮次、额度、暂停恢复或停止；原方法资源随包保留 |
 | 统一写作 | `skills/writing-cycle/paper-writing/SKILL.md` | 「委托继承」小节；ML/Systems 标准按需引用，委托内编译与引用修复继承授权，不自动投稿 |
 | 论文规划 | `skills/writing-cycle/paper-plan/SKILL.md` | 「委托继承」小节；写入与报告路径由委托覆盖 |
 | 论文起草 | `skills/writing-cycle/paper-drafting/SKILL.md` | 「委托继承」小节；证据缺口在授权内处理且不捏造 |
@@ -41,6 +43,9 @@
 | 审稿回复 | `skills/writing-cycle/rebuttal/SKILL.md` | 「委托继承」小节；不自动投稿或扩大任务 |
 | 转投适配 | `skills/writing-cycle/resubmit-pipeline/SKILL.md` | 「委托继承」小节；旧稿只读，不自动投稿 |
 | 会议演讲 | `skills/writing-cycle/paper-talk/SKILL.md` | 「委托继承」小节；只准备材料，不自动发布 |
+
+迁移一个能力的完整动作：把正文改成继承委托（去掉旧 `Gate:`，写出该能力的边界与完成条件），在 `scripts/check-skills.py` 的 `MIGRATED_CONTRACT` 登记路径与小节名，把同一行加入本表，并从 `LEGACY_LEAF_GATES` 删除。
+
 ## 未迁移
 
 其余叶 Skill 仍以 `Gate: <id> | before=… | approval=explicit-user | source=…` 声明自己的批准点；权威清单是 `scripts/check-skills.py` 的 `LEGACY_LEAF_GATES`，本文件不复制整表以免两份漂移。

@@ -7,7 +7,10 @@ correct.
 from __future__ import annotations
 
 import importlib.util
+import os
 import re
+import subprocess
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -15,6 +18,36 @@ ROOT = Path(__file__).resolve().parents[1]
 ENTRY = ROOT / "skills/general/research-os/SKILL.md"
 PLAYBOOK = ROOT / "skills/general/research-os/playbooks/proof.md"
 CHECKER = ROOT / "scripts/check-skills.py"
+MIGRATED_WRITE_SKILLS = {
+    "skills/validation-cycle/proof-writer/SKILL.md",
+    "skills/validation-cycle/proof-repair/SKILL.md",
+    "skills/validation-cycle/formula-derivation/SKILL.md",
+}
+MIGRATED_COMPAT_SKILL = "skills/validation-cycle/proof-orchestrator/SKILL.md"
+INSTALL_CHECK_SKILLS = (
+    "skills/validation-cycle/proof-writer",
+    "skills/validation-cycle/proof-repair",
+    "skills/validation-cycle/formula-derivation",
+    "skills/validation-cycle/proof-review",
+    "skills/validation-cycle/proof-orchestrator",
+)
+PROOF_ORCHESTRATOR_REFERENCES = (
+    "references/audit-output-contract.md",
+    "references/dispatch-prompts.md",
+    "references/independent-review.md",
+    "references/lean-methods.md",
+    "references/notation-audit.md",
+    "references/prompts/continuation.md",
+    "references/prompts/explicit-send.md",
+    "references/prompts/focused-redo.md",
+    "references/prompts/format-repair.md",
+    "references/prompts/independent-opinion.md",
+    "references/prompts/local-proof.md",
+    "references/prompts/manual-handoff.md",
+    "references/prompts/return-audit.md",
+    "references/proof-audit-rubric.md",
+    "references/stress-tests.md",
+)
 
 CAPABILITIES = {
     "arena": "skills/organization/arena/SKILL.md",
@@ -48,6 +81,47 @@ def load_checker():
 
 def contains_any(text: str, alternatives: tuple[str, ...]) -> bool:
     return any(alternative in text for alternative in alternatives)
+
+
+def install_tracked_skill(skill_dir: str, destination: Path) -> Path:
+    """Build a small flat-install snapshot from tracked files only."""
+    result = subprocess.run(
+        ["git", "ls-files", "-z", "--", skill_dir],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+    )
+    tracked = [Path(path.decode()) for path in result.stdout.split(b"\0") if path]
+    installed = destination / Path(skill_dir).name
+    prefix = Path(skill_dir).parts
+    for relative in tracked:
+        source = ROOT / relative
+        target = installed / Path(*relative.parts[len(prefix) :])
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(source.read_bytes())
+    return installed
+
+
+def local_markdown_links(path: Path) -> list[Path]:
+    links = []
+    for raw in re.findall(r"\[[^\]]+\]\(([^)]+)\)", path.read_text(encoding="utf-8")):
+        target = raw.strip().split(maxsplit=1)[0].strip("<>").split("#", 1)[0]
+        if not target or target.startswith(("#", "/")) or re.match(r"^[a-z][a-z0-9+.-]*:", target):
+            continue
+        links.append(Path(os.path.abspath(path.parent / target)))
+    return links
+
+
+def reachable_markdown_files(skill_root: Path) -> set[Path]:
+    pending = [skill_root / "SKILL.md"]
+    visited: set[Path] = set()
+    while pending:
+        current = pending.pop()
+        if current in visited or not current.is_file():
+            continue
+        visited.add(current)
+        pending.extend(local_markdown_links(current))
+    return visited
 
 
 class MathRecipeComposition(unittest.TestCase):
@@ -142,7 +216,6 @@ class MathRecipeComposition(unittest.TestCase):
             "continuation.md",
             "pickup.md",
             "improvement.md",
-            "../references/migration-boundary.md",
         ):
             with self.subTest(reference=reference):
                 self.assertIn(reference, self.recipe)
@@ -151,29 +224,114 @@ class MathRecipeComposition(unittest.TestCase):
             ROOT / "skills/general/research-os/playbooks/continuation.md",
             ROOT / "skills/general/research-os/playbooks/pickup.md",
             ROOT / "skills/general/research-os/playbooks/improvement.md",
-            ROOT / "skills/general/research-os/references/migration-boundary.md",
         ):
             self.assertTrue(reference.is_file(), str(reference))
 
-    def test_unmigrated_leaf_gates_are_not_overridden_by_the_center_recipe(self):
+    def test_writer_repair_and_derivation_inherit_the_mandate_without_leaf_gates(self):
         checker = load_checker()
-        legacy_paths = (
-            "skills/validation-cycle/formula-derivation/SKILL.md",
-            "skills/validation-cycle/proof-repair/SKILL.md",
-            "skills/validation-cycle/proof-writer/SKILL.md",
-        )
-        for relative_path in legacy_paths:
+        for relative_path in sorted(MIGRATED_WRITE_SKILLS):
             with self.subTest(skill=relative_path):
-                self.assertIn(relative_path, checker.LEGACY_LEAF_GATES)
+                self.assertEqual("委托继承", checker.MIGRATED_CONTRACT.get(relative_path))
+                self.assertNotIn(relative_path, checker.LEGACY_LEAF_GATES)
                 leaf = (ROOT / relative_path).read_text(encoding="utf-8")
-                self.assertRegex(leaf, r"(?m)^Gate:")
-        self.assertTrue(
-            contains_any(
-                self.recipe,
-                ("叶级门", "叶 Skill 自身的门", "未迁移能力的门"),
-            ),
-            "the recipe must preserve the still-active leaf contract",
+                self.assertRegex(leaf, r"(?m)^## 委托继承$")
+                self.assertRegex(leaf, r"(?m)^Gates: none$")
+                self.assertNotRegex(leaf, r"(?m)^Gate:")
+                self.assertIn("disable-model-invocation: true", leaf)
+                self.assertTrue(contains_any(leaf, ("独立调用", "standalone")))
+
+    def test_delegated_writes_cover_new_files_and_retries_without_reapproval(self):
+        for relative_path in sorted(MIGRATED_WRITE_SKILLS):
+            leaf = (ROOT / relative_path).read_text(encoding="utf-8")
+            with self.subTest(skill=relative_path):
+                self.assertTrue(contains_any(leaf, ("写域", "写入范围")))
+                self.assertTrue(contains_any(leaf, ("新文件", "新建文件", "新研究文件")))
+                self.assertTrue(contains_any(leaf, ("重试", "下一轮", "后续阶段")))
+                self.assertTrue(contains_any(leaf, ("继承", "无需再次", "不重置")))
+
+    def test_original_claim_and_assumptions_still_require_user_confirmation_to_change(self):
+        writer = (ROOT / "skills/validation-cycle/proof-writer/SKILL.md").read_text(
+            encoding="utf-8"
         )
+        repair = (ROOT / "skills/validation-cycle/proof-repair/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        derivation = (
+            ROOT / "skills/validation-cycle/formula-derivation/SKILL.md"
+        ).read_text(encoding="utf-8")
+        for skill, leaf in (("writer", writer), ("repair", repair), ("derivation", derivation)):
+            with self.subTest(skill=skill):
+                self.assertIn("原命题", leaf)
+                self.assertIn("假设", leaf)
+                self.assertTrue(contains_any(leaf, ("用户确认", "用户决定")))
+
+    def test_repair_remains_finding_scoped_and_compile_side_effects_stay_bounded(self):
+        repair = (ROOT / "skills/validation-cycle/proof-repair/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("finding", repair.lower())
+        self.assertTrue(contains_any(repair, ("编译副产物", "编译输出", "编译范围")))
+        self.assertTrue(contains_any(repair, ("命令", "副产物")))
+        self.assertTrue(contains_any(repair, ("授权范围", "委托范围", "写入范围")))
+
+    def test_proof_review_stays_fresh_read_only_and_separate_from_repair(self):
+        review = (ROOT / "skills/validation-cycle/proof-review/SKILL.md").read_text(
+            encoding="utf-8"
+        )
+        self.assertRegex(review, r"(?m)^Gates: none$")
+        self.assertTrue(contains_any(review, ("fresh review", "fresh", "freshly")))
+        self.assertTrue(contains_any(review, ("只读", "零写入")))
+        self.assertTrue(contains_any(review, ("不自动启动修复", "不调用它", "不开始下一轮")))
+        self.assertIn("证明义务", review)
+        self.assertTrue(contains_any(review, ("反例尝试", "反例核实")))
+
+    def test_proof_orchestrator_is_an_alias_not_a_second_research_controller(self):
+        checker = load_checker()
+        self.assertEqual("委托继承", checker.MIGRATED_CONTRACT.get(MIGRATED_COMPAT_SKILL))
+        self.assertNotIn(MIGRATED_COMPAT_SKILL, checker.LEGACY_LEAF_GATES)
+        compat = (ROOT / MIGRATED_COMPAT_SKILL).read_text(encoding="utf-8")
+        self.assertRegex(compat, r"(?m)^## 委托继承$")
+        self.assertRegex(compat, r"(?m)^Gates: none$")
+        self.assertNotRegex(compat, r"(?m)^Gate:")
+        self.assertTrue(contains_any(compat, ("兼容入口", "旧名称", "兼容别名")))
+        self.assertIn("research-os", compat)
+        for control in ("轮次", "额度", "暂停", "恢复"):
+            with self.subTest(control=control):
+                self.assertIn(control, compat)
+        self.assertTrue(contains_any(compat, ("references/dispatch-prompts.md", "提示模板")))
+
+    def test_revised_skills_keep_their_local_resources_reachable_when_flat_installed(self):
+        with tempfile.TemporaryDirectory(prefix="ticket55-install-") as temporary:
+            install_root = Path(temporary)
+            installed = {
+                skill_dir: install_tracked_skill(
+                    skill_dir, install_root / Path(skill_dir).name
+                )
+                for skill_dir in INSTALL_CHECK_SKILLS
+            }
+            for skill_dir, skill_root in installed.items():
+                with self.subTest(skill=skill_dir):
+                    reachable = reachable_markdown_files(skill_root)
+                    self.assertIn(Path(os.path.abspath(skill_root / "SKILL.md")), reachable)
+                    for document in reachable:
+                        for target in local_markdown_links(document):
+                            self.assertTrue(
+                                target.is_file(),
+                                f"{skill_dir}: local install link escapes its bundle: {target}",
+                            )
+
+            compat_root = installed["skills/validation-cycle/proof-orchestrator"]
+            reachable = reachable_markdown_files(compat_root)
+            for relative in PROOF_ORCHESTRATOR_REFERENCES:
+                with self.subTest(reference=relative):
+                    self.assertIn(Path(os.path.abspath(compat_root / relative)), reachable)
+
+    def test_product_recipe_has_no_slice_status_or_unread_case_implementation_copy(self):
+        self.assertNotRegex(self.recipe, r"(?i)\bSlice\s+[ABC]\b")
+        self.assertNotIn("未阅读或复制未缓存", self.recipe)
+        self.assertIn("不认证候选证明", self.recipe)
+        self.assertIn("原命题", self.recipe)
+        self.assertIn("proof-review 每次 fresh", self.recipe)
 
 
 if __name__ == "__main__":
