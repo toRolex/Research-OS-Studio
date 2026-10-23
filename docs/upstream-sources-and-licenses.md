@@ -123,6 +123,7 @@
 - **采用**：保留计划解析与按 milestone 实现、代码 review、sanity-first、baseline-first、按规模选择单次/批量执行、OOM 有限重试、停滞清理、波次依赖、预期输出完成判定、状态持久化与 resume、完整 attempt 收集。
 - **适配**：删除 Vast.ai/Modal/`serverless-modal` provider 绑定、`mcp__codex` 固定审查、自动 deploy、无限调试/自动重试、自动 ablation/下一 Workflow、`.aris`/`nohup`/`screen` 调度和 `queue_manager.py` 常驻 scheduler；改为纯 Markdown 的作业清单、状态表与宿主已有执行工具。新增候选实现/evaluator 隔离、真实 ground truth、执行前确认、付费/远程/高成本授权、停止/重启权限、成功/失败/无效/超时 attempt 留存和演练/真实验收区分；`run-report.md` 与 `batch-manifest.md` 为局部适配模板。
 - **调用核对**：上游 `experiment-bridge` Phase 4 按 job 数在 `run-experiment` 与 `experiment-queue` 间路由，Phase 5 收集初步结果并调用 `training-check`；本票只实现路由所需的两个执行能力，监控/分析/审计/Claims 属后续独立票，未在此虚构调用。上游 queue 引用的 `compute-env-contract.md`、`external-cadence.md` 已阅读，只保留其中与执行边界相关的有界性方法。
+- **#56 授权合同适配**：实验桥接的执行控制合入 `run-experiment`，旧 `experiment-bridge` 保留为兼容入口。新增共置 `references/execution-contract.md` 与 `references/remote-execution.md`，记录输入版本、工具链、独立目录、作业身份、退出码、原始日志、产物、断线原作业查询、三类判定分离、SSH/已有调度复用与不锁定供应商。另将本仓共享批次授权规则适配为独立可安装的 `references/batch-authorization.md`，在安装的单个 `run-experiment` 中也可读取完整授权字段与逐次启动核验。数学计算不强制训练 baseline；对照按计划选择。九个实验能力继承 research-os 委托合同，旧叶授权门移除，生产服务器不作为验收门。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随两个 Skill 的 `LICENSE` 一起发行。
 
 ## 已采用的完整 Experiment Bridge Workflow
