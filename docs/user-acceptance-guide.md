@@ -3,7 +3,7 @@
 本指南面向在真实科研项目中验收 Research OS Studio 纯 Agent Skills 套件的用户与维护者。指南汇总了已批准 35 票重构方案中全部科研能力的验收场景、输入边界、预期行为、工具缺失降级与停止条件。
 
 > **免责与验收状态声明**：
-> 本仓库所有 39 个自包含 Skill 均已通过实施期的静态架构检查、frontmatter 规范核验、内部链接可达性验证与合成场景测试。然而，**静态检查与模拟场景审查绝不等于用户在真实科研环境中的端到端体验验收**。用户应在可丢弃的测试项目副本中，依据本指南逐项核实实际行为。
+> 静态检查只说明被检查 revision 的目录、frontmatter、链接或文档合同满足相应规则；Skills CLI 的发现、实际复制安装和宿主加载需在可丢弃项目中另行验证，并记录 CLI 版本、宿主及结果。上述证据均不证明真实开放问题已解决或研究质量已通过；本指南不作此类认证，用户应按本次实际验收结果分别记录。
 
 ---
 
@@ -12,8 +12,8 @@
 ### 1. 基础环境与工具所有权
 - **环境所有权归用户所有**：Research OS 不会且不得自动为用户安装或配置 Python、Lean、LaTeX、R、CUDA/GPU 驱动、SSH 密钥或 Slurm 调度器。
 - **工具缺失如实报告**：当 Skill 需要的外部工具（如 `pdflatex`、`lean`、`web_search` 或特定 Python 库）不存在时，Skill 必须如实报告工具缺失缺口并安全降级，**绝不伪造执行成功**。
-- **高成本与破坏性操作边界**：涉及 GPU 算力消耗、付费 API 调用、远程代码执行、文件重写或外部发布的行为，必须预先明确修改范围与资源预算，并在操作前获得用户明确授权。
-- **叶门保留、旧停止语义作废**：`/research-os` 命中已交付 playbook 后继续编排。可逆步骤直接做。对外发送、删或覆盖既有实验数据，以及叶 skill 正文里的审批点，仍停下来等批准。不再把「产出报告」本身当成必须结束流程的信号。下一条主流程不因报告完成而自动开始；已交付 playbook 只在本批授权内继续。默认算力政策不是这张授权。
+- **授权与副作用边界**：高成本计算、付费 API 和外部执行须有相应范围与额度授权；普通授权内工作不因阶段转换、输出路径变化或每轮修复而重复请求批准。对外发送、破坏性覆盖/删除、超出授权或额度，以及具体能力声明的硬门，仍在副作用前停下并只阻塞相关工作。
+- **研究委托**：`/research-os` 按目标、授权范围与额度、完成条件持续组合和重排所需能力；产出报告本身不是必须停止信号。只读请求始终只读。缺少 setup 或明确预算时可先做不依赖未授权资源的有界工作；只有主要目标被替换时才要求目标所有者确认。仅在当前宿主确有子代理能力时派发，不把本地串行工作冒称为委托执行。
 
 ### 2. 准备可丢弃的测试工作区
 在独立的临时目录中克隆或创建测试项目，不要直接在未经备份的重要科研仓库中进行首次破坏性测试：
@@ -28,7 +28,7 @@ git init
 使用通用 Skills CLI（不使用自建安装器，不要求 clone 本仓库、不要求 Python wheel / UV）：
 
 ```bash
-# 1. 检查 GitHub 仓库可发现的 Skills 清单（应列出全部 39 个 Skill）
+# 1. 检查 GitHub 仓库可发现的 Skills 清单（应与本次 checkout 的 skills/ 目录一致）
 npx skills@latest add toRolex/Research-OS-Studio --list
 
 # 2. 安装全部 Skills 到当前测试项目
@@ -51,15 +51,15 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 ## 二、通用入口（General）验收场景
 
 ### 1. `setup-research-os`（#40 项目配置与安全初始化）
-`setup-research-os` 一次配齐项目级角色表、默认算力政策和工作区种子。模型可以建议运行它；建议本身不是写入授权。写入前有两个停点：逐角色确认当时可用模型，以及确认整份草稿。
+`setup-research-os` 是可选的项目初始化，可配置项目级角色映射、默认算力政策和工作区种子；不运行 setup 不应阻止主入口有界开始。模型可以建议运行它；建议本身不是写入授权。若用户选择配置角色表，写入前确认所选模型确实可用并确认整份草稿。
 
 - **场景 1.1：全新空项目**
   - **操作**：在空目录中运行 setup。宿主先列出本 session 可用模型。
   - **核验**：
-    1. 八个角色 orchestrator、literature、ideator、implementer、analyst、prover、writer、reviewer 逐个确认；
+    1. setup 输出的预设角色映射来自本 session 真实可用模型；角色映射不是开始研究的前置条件；
     2. 每个写入的 `provider/model-id` 都能在刚才的清单里逐字找到；
     3. 建议 `research/`，并展示角色表、默认政策、导航、项目说明、findings、研究日志和指令区块；
-    4. 确认前零写入；确认后 `.agents/research-os-models.md` 恰好八行，`research/compute-policy.md` 写明不是运行授权，额度是 0；
+    4. 确认前零写入；确认后验证已选择的角色映射和 `research/compute-policy.md`（默认额度为 0，且明确不是运行授权）；
     5. 不配置环境、不生成研究结论、不启动研究流程。
 - **场景 1.2：既有材料**
   - **操作**：项目里已有论文、代码、数据、工作区和研究日志。
@@ -68,8 +68,8 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
   - **操作**：对已确认的同一份角色表和政策再跑一次。
   - **核验**：目标与确认稿字节相同则不写；不追加第二套角色或第二套额度。已有研究日志仍不变。
 - **场景 1.4：不可用模型**
-  - **操作**：给一个不在本轮 `pi --list-models`（或其他宿主清单）中的 slug。
-  - **核验**：停下并重新询问；未确认的模型不进入草稿，也不写入角色表。
+  - **操作**：给一个不在本 session 当前宿主真实模型能力清单中的 slug。
+  - **核验**：以当前宿主实时提供的模型/子代理能力为准；不可用模型不得写入角色表。宿主品牌或安装文件本身不能代替能力确认。
 - **场景 1.5：全局角色表**
   - **操作**：记录 `~/.agents/pstack-models.md` 的修改时间，再完成 setup。
   - **核验**：该文件的修改时间不变；本来没有它，setup 也不创建它。
@@ -140,7 +140,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 - **核验**：
   1. 按目标缺口和已完成材料选必要能力子集；允许局部开始、重排与回访，完整方向到 Proposal 仅是可选配方；
   2. 叶的检索范围、独立评审、问题锚点与预算保持有效。目标替换、越权、超额或既有文件冲突只阻塞对应分支；
-  3. 仅交付用户本次目标要求的报告和/或 Proposal；不自动运行 pilot、创建实验计划或进入 Validation；
+  3. 按研究委托交付目标要求的报告和/或 Proposal；若目标止于候选方案则收束，不因普通阶段边界阻止更广委托内已授权的后续工作，也不擅自替换主要目标；
   4. 独立安装 `idea-discovery` 时同时安装五个 Required skills；缺少任一项应将依赖工作标 blocked，并给补装说明。
 - CLI 安装可使用 `skills add <package> --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y`。
 
@@ -213,8 +213,8 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
     1. 必须先明确修复范围、最大轮数与允许修改的文件段落；
     2. **反例推翻原则**：若命题被已确认的反例推翻，严禁在未经用户允许的情况下擅自修改命题或暗中添加条件，必须停止并提示用户重新审视命题；
     3. 修复后调用内部复审，未通过则如实标记未解决。
-- **`proof-orchestrator`（#18 长期复杂证明管理与可选 Lean）**
-  - **操作**：针对单个复杂长期义务（Single Obligation），调用 `/proof-orchestrator`，或经 `/research-os` proof 进入。新会话恢复时走 pickup。
+- **`/research-os` proof（长期证明、续接与可选 Lean）**
+  - **操作**：针对已有证明、复杂义务或推广障碍，从 `/research-os` proof 进入；新会话恢复时走 pickup。旧 proof-orchestrator Skill 控制器已移除。
   - **核验**：
     1. 在新目录中记录继承状态与尝试历史，不污染旧轮次；
     2. **无 Lean 环境降级**：无 Lean 工具链时，正常执行普通数学推导，并显式标注“未执行 Lean 形式化验证”，绝不强行安装工具链；
@@ -306,7 +306,7 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 
 | 序号 | 验证项 | 预期表现 | 验收判定 |
 |---|---|---|---|
-| 1 | **CLI 清单发现** | `skills add ... --list` 列出全部 39 个 Skill，无遗漏、无重复、无幽灵入口 | [ ] 通过 |
+| 1 | **CLI 清单发现** | `skills add ... --list` 与本次被测源目录的 `skills/` 清单逐项相符，无遗漏、无重复、无幽灵入口；记录实际数量及 CLI 版本 | [ ] 通过 |
 | 2 | **Setup 不覆盖** | `setup-research-os` 沿用既有材料且不改研究日志；零授权政策不是运行许可；清单外模型停下；冲突展示 diff，拒绝或外部新建 `CLAUDE.md` 则零改动并重新确认 | [ ] 通过 |
 | 3 | **route-only 只读导航** | `/research-os` 在只读意图下推荐切入点，零文件写入、零联网、不自动触发任何工作流 | [ ] 通过 |
 | 4 | **Discovery 组合与局部回访** | `idea-discovery` 按缺口选择子集、重排或回访；依赖缺失时明确 blocked，仅交付本次目标要求的报告/Proposal | [ ] 通过 |
@@ -318,4 +318,4 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 | 10 | **审稿、转投、演讲** | `/research-os` 进入 rebuttal、resubmit、paper-talk；策略、措辞、范围、改动、授权、大纲与外发仍停；旧稿保留，三产物是 slides、notes、script | [ ] 通过 |
 | 11 | **工具缺失与边界** | 缺失外部环境（LaTeX/Lean/GPU）如实报告并降级，不假报成功，不自装环境 | [ ] 通过 |
 | 12 | **组合门** | 只读优先于执行词；可逆步骤不停；外发、删覆盖、批次越界、叶审批点停在副作用前 | [ ] 通过 |
-| 13 | **宿主能力与分派** | pi / Claude Code / Codex 限定安装副本保留显式调用字段；子代理是编排前提，无该工具时需要分派的步骤标 blocked 并只给只读建议，不串行代跑冒充委托已执行 | [ ] 通过 |
+| 13 | **宿主能力与分派** | 在实际宿主核验 Skill 发现/加载及当前子代理能力；仅把真实支持的子代理用于委托。无该能力时继续可有界完成的部分，并如实标明未执行的委托工作，不以品牌或串行代跑冒称委托已执行 | [ ] 通过 |

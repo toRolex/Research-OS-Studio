@@ -13,7 +13,7 @@ party's MPL-covered files.
 The following material is adapted from EtaSkill commit
 `f49ce5dd6b0bfb7565c35063e10aa1ac42a480e9`:
 
-- this `skills/proof-orchestrator/` directory
+- the proof-specific references now shipped in `skills/validation-cycle/proof-review/references/`
 - the matching `skills/skills-codex/proof-orchestrator/` directory
 - the adversarial proof-audit rubric, DeepSeek reviewer routing, and audit
   output contract internalized in those directories

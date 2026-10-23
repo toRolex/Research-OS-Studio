@@ -23,15 +23,13 @@ MIGRATED_WRITE_SKILLS = {
     "skills/validation-cycle/proof-repair/SKILL.md",
     "skills/validation-cycle/formula-derivation/SKILL.md",
 }
-MIGRATED_COMPAT_SKILL = "skills/validation-cycle/proof-orchestrator/SKILL.md"
 INSTALL_CHECK_SKILLS = (
     "skills/validation-cycle/proof-writer",
     "skills/validation-cycle/proof-repair",
     "skills/validation-cycle/formula-derivation",
     "skills/validation-cycle/proof-review",
-    "skills/validation-cycle/proof-orchestrator",
 )
-PROOF_ORCHESTRATOR_REFERENCES = (
+PROOF_REVIEW_MIGRATED_REFERENCES = (
     "references/audit-output-contract.md",
     "references/dispatch-prompts.md",
     "references/independent-review.md",
@@ -57,7 +55,6 @@ CAPABILITIES = {
     "proof-writer": "skills/validation-cycle/proof-writer/SKILL.md",
     "proof-review": "skills/validation-cycle/proof-review/SKILL.md",
     "proof-repair": "skills/validation-cycle/proof-repair/SKILL.md",
-    "proof-orchestrator": "skills/validation-cycle/proof-orchestrator/SKILL.md",
     "create-verification-skill": "skills/validation-cycle/create-verification-skill/SKILL.md",
     "maintain-verification-skill": "skills/validation-cycle/maintain-verification-skill/SKILL.md",
     "create-formal-verification-skill": (
@@ -285,34 +282,28 @@ class MathRecipeComposition(unittest.TestCase):
         self.assertIn("证明义务", review)
         self.assertTrue(contains_any(review, ("反例尝试", "反例核实")))
 
-    def test_proof_orchestrator_is_an_alias_not_a_second_research_controller(self):
+    def test_proof_review_owns_specialized_audit_and_handoff_references(self):
         checker = load_checker()
-        self.assertEqual("委托继承", checker.MIGRATED_CONTRACT.get(MIGRATED_COMPAT_SKILL))
-        self.assertNotIn(MIGRATED_COMPAT_SKILL, checker.LEGACY_LEAF_GATES)
-        compat = (ROOT / MIGRATED_COMPAT_SKILL).read_text(encoding="utf-8")
-        self.assertRegex(compat, r"(?m)^## 委托继承$")
-        self.assertRegex(compat, r"(?m)^Gates: none$")
-        self.assertNotRegex(compat, r"(?m)^Gate:")
-        self.assertTrue(contains_any(compat, ("兼容入口", "旧名称", "兼容别名")))
-        self.assertIn("research-os", compat)
-        for control in ("轮次", "额度", "暂停", "恢复"):
-            with self.subTest(control=control):
-                self.assertIn(control, compat)
-        self.assertTrue(contains_any(compat, ("references/dispatch-prompts.md", "提示模板")))
+        self.assertNotIn("skills/validation-cycle/proof-orchestrator/SKILL.md", checker.MIGRATED_CONTRACT)
+        review = (ROOT / CAPABILITIES["proof-review"]).read_text(encoding="utf-8")
+        self.assertIn("按需数学方法与交接参考", review)
+        for reference in PROOF_REVIEW_MIGRATED_REFERENCES:
+            with self.subTest(reference=reference):
+                self.assertTrue((ROOT / "skills/validation-cycle/proof-review" / reference).is_file())
+        self.assertFalse((ROOT / "skills/validation-cycle/proof-orchestrator/SKILL.md").exists())
 
-    def test_missing_capabilities_block_only_their_branch_and_compat_fails_closed(self):
+    def test_missing_capabilities_block_only_their_branch(self):
         self.assertIn("缺少某能力只阻塞依赖它的分支", self.recipe)
-        compat = (ROOT / MIGRATED_COMPAT_SKILL).read_text(encoding="utf-8")
-        self.assertIn("无法到达 `/research-os`", compat)
-        self.assertIn("请求调用/安装该入口", compat)
-        self.assertIn("不要在此重建旧总控", compat)
+        self.assertIn("缺少 `proof-review` 只阻塞独立证明审查", self.recipe)
 
-    def test_validation_map_uses_installable_slug_for_compat_resources(self):
+    def test_validation_map_attributes_methods_to_proof_review(self):
         validation = (
             ROOT / "skills/general/research-os/references/validation.md"
         ).read_text(encoding="utf-8")
-        self.assertIn("`proof-orchestrator`", validation)
+        self.assertIn("`proof-review`", validation)
+        self.assertIn("按 proof-review 索引读取随包方法", validation)
         self.assertNotIn("references/lean-methods.md", validation)
+        self.assertNotIn("proof-orchestrator", validation)
 
     def test_revised_skills_keep_their_local_resources_reachable_when_flat_installed(self):
         with tempfile.TemporaryDirectory(prefix="ticket55-install-") as temporary:
@@ -334,11 +325,11 @@ class MathRecipeComposition(unittest.TestCase):
                                 f"{skill_dir}: local install link escapes its bundle: {target}",
                             )
 
-            compat_root = installed["skills/validation-cycle/proof-orchestrator"]
-            reachable = reachable_markdown_files(compat_root)
-            for relative in PROOF_ORCHESTRATOR_REFERENCES:
+            review_root = installed["skills/validation-cycle/proof-review"]
+            reachable = reachable_markdown_files(review_root)
+            for relative in PROOF_REVIEW_MIGRATED_REFERENCES:
                 with self.subTest(reference=relative):
-                    self.assertIn(Path(os.path.abspath(compat_root / relative)), reachable)
+                    self.assertIn(Path(os.path.abspath(review_root / relative)), reachable)
 
     def test_research_os_flat_install_has_no_cross_skill_file_link(self):
         with tempfile.TemporaryDirectory(prefix="ticket55-entry-install-") as temporary:

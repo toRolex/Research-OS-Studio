@@ -2,6 +2,8 @@
 
 在自己的科研项目目录使用通用 [Skills CLI](https://github.com/vercel-labs/skills)；无需安装 Research OS 专用 runtime。主使用说明参见 [README.md](../README.md)，全流程手工验收步骤参见 [用户手工验收指南](../docs/user-acceptance-guide.md)。
 
+`/research-os` 按研究委托（目标、授权范围与额度、完成条件）组合底层能力；普通阶段转换不要求重复批准。只读请求保持只读；没有 setup 或明确预算时仍可有界开始不依赖未授权资源的工作。仅在当前宿主真实支持子代理时才委托；否则只推进本地可完成部分，并标明未执行的委托工作。
+
 ```bash
 npx skills@latest add toRolex/Research-OS-Studio --list
 npx skills@latest add toRolex/Research-OS-Studio --all
@@ -9,7 +11,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
 ```
 
-Skills CLI 按独立 slug 安装，不会解析跨 Skill 依赖。选择性安装 proof 配方时，按需同时选择 `research-os` 与所用能力（如 `arena`、`swarm`、`interrogate`、`formula-derivation`、`proof-writer`、`proof-review`、`proof-repair` 及验证 Skill）；旧 `proof-orchestrator` 只有在 `research-os` 也安装时才可转入新配方。缺少能力只阻塞依赖它的分支，不用自审或串行扮演替代。
+Skills CLI 按独立 slug 安装，不会解析跨 Skill 依赖。选择性安装 proof 配方时，按需同时选择 `research-os` 与所用能力（如 `arena`、`swarm`、`interrogate`、`formula-derivation`、`proof-writer`、`proof-review`、`proof-repair` 及验证 Skill）；proof-orchestrator 控制器已删除，数学审计、Lean、记号和交接资源随 `proof-review` 包提供。缺少能力只阻塞依赖它的分支，不用自审或串行扮演替代。
 
 这些远程命令读取 GitHub 已发布版本，不会包含尚未合并或 push 的本地修改。验证本地分支时，在一个临时科研项目目录中运行（将绝对路径替换为当前 checkout）：
 
@@ -39,7 +41,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 | General | `general/` | [setup-research-os](general/setup-research-os/SKILL.md)（可被模型建议；写入仍须确认）、[research-os](general/research-os/SKILL.md)（显式；旧入口 ask-research-os 已删除）、[swarm](general/swarm/SKILL.md)（显式；并行覆盖：分片、竞赛或混合探索，派发宿主真实子代理并汇总，缺口不算通过；改编自 pstack swarm，MIT）、[interrogate](general/interrogate/SKILL.md)（显式；独立挑战与主审判断，只读） |
 | Organization | `organization/` | [arena](organization/arena/SKILL.md)（显式；候选比较与整合：Frame→Fan-out→Cross-judge→Pick→Graft→Verify；预先 rubric、输出隔离、完整阅读候选、主编排者逐项综合；已迁移到研究委托合同，缺子代理标 blocked；独立于其他组织能力） |
 | Idea Cycle | `idea-cycle/` | [idea-discovery](idea-cycle/idea-discovery/SKILL.md)（user-invoked 可组合入口：按目标缺口组合必要叶能力，可从现成候选局部开始或回访；仅按用户目标交付报告和/或 Proposal。独立安装需同时装 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，见上方 CLI 命令）、[research-lit](idea-cycle/research-lit/SKILL.md)、[idea-generation](idea-cycle/idea-generation/SKILL.md)、[creative-thinking-for-research](idea-cycle/creative-thinking-for-research/SKILL.md)、[novelty-check](idea-cycle/novelty-check/SKILL.md)、[idea-review](idea-cycle/idea-review/SKILL.md)、[idea-refinement](idea-cycle/idea-refinement/SKILL.md)（除 setup 外全部显式调用；用户点名或父流程按路径级联；支持 standalone / composed） |
-| Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[experiment-bridge](validation-cycle/experiment-bridge/SKILL.md)（兼容入口；映射到 run-experiment，不重复编排）、[run-experiment](validation-cycle/run-experiment/SKILL.md)（统一执行控制；记录输入版本、工具链、目录、作业身份、退出码、日志与产物）、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[proof-orchestrator](validation-cycle/proof-orchestrator/SKILL.md)（user-invoked；单 obligation 长期续接）、[create-formal-verification-skill](validation-cycle/create-formal-verification-skill/SKILL.md)（user-invoked；按问题选工具建立可重跑形式化检查，记录假设/版本/同步与编码对应审计，不强制全链形式化）、[maintain-formal-verification-skill](validation-cycle/maintain-formal-verification-skill/SKILL.md)（user-invoked；代码变化后重新对齐检查，重跑并区分漂移与 bug）、[create-verification-skill](validation-cycle/create-verification-skill/SKILL.md)（user-invoked；建立可运行的行为验证 Skill：启动/doctor/驱动/证据/清理与特征覆盖映射，未执行的生成资产标草稿，不冒称形式化）、[maintain-verification-skill](validation-cycle/maintain-verification-skill/SKILL.md)（user-invoked；随应用变化按特征源读与真实驱动，区分文档漂移与产品缺陷）、[proof-review](validation-cycle/proof-review/SKILL.md)（显式调用，用户可点名或级联；只读，支持 standalone / composed）、[proof-repair](validation-cycle/proof-repair/SKILL.md)（user-invoked；显式授权的有界修复）、[analyze-results](validation-cycle/analyze-results/SKILL.md)、[result-to-claim](validation-cycle/result-to-claim/SKILL.md)（user-invoked；把已有结果转为范围受限的候选 Claim，产出后停止）、[formula-derivation](validation-cycle/formula-derivation/SKILL.md)、[proof-writer](validation-cycle/proof-writer/SKILL.md)（除 setup 外全部显式调用；用户点名或父流程按路径级联；支持 standalone / composed） |
+| Validation Cycle | `validation-cycle/` | [experiment-plan](validation-cycle/experiment-plan/SKILL.md)（user-invoked；将已有问题转为有界实验计划，产出后停止）、[experiment-bridge](validation-cycle/experiment-bridge/SKILL.md)（兼容入口；映射到 run-experiment，不重复编排）、[run-experiment](validation-cycle/run-experiment/SKILL.md)（统一执行控制；记录输入版本、工具链、目录、作业身份、退出码、日志与产物）、[experiment-queue](validation-cycle/experiment-queue/SKILL.md)、[monitor-experiment](validation-cycle/monitor-experiment/SKILL.md)、[training-health-check](validation-cycle/training-health-check/SKILL.md)、[experiment-audit](validation-cycle/experiment-audit/SKILL.md)、[create-formal-verification-skill](validation-cycle/create-formal-verification-skill/SKILL.md)（user-invoked；按问题选工具建立可重跑形式化检查，记录假设/版本/同步与编码对应审计，不强制全链形式化）、[maintain-formal-verification-skill](validation-cycle/maintain-formal-verification-skill/SKILL.md)（user-invoked；代码变化后重新对齐检查，重跑并区分漂移与 bug）、[create-verification-skill](validation-cycle/create-verification-skill/SKILL.md)（user-invoked；建立可运行的行为验证 Skill：启动/doctor/驱动/证据/清理与特征覆盖映射，未执行的生成资产标草稿，不冒称形式化）、[maintain-verification-skill](validation-cycle/maintain-verification-skill/SKILL.md)（user-invoked；随应用变化按特征源读与真实驱动，区分文档漂移与产品缺陷）、[proof-review](validation-cycle/proof-review/SKILL.md)（显式调用，用户可点名或级联；只读，支持 standalone / composed，随包提供按需数学审计与交接方法）、[proof-repair](validation-cycle/proof-repair/SKILL.md)（user-invoked；显式授权的有界修复）、[analyze-results](validation-cycle/analyze-results/SKILL.md)、[result-to-claim](validation-cycle/result-to-claim/SKILL.md)（user-invoked；把已有结果转为范围受限的候选 Claim，产出后停止）、[formula-derivation](validation-cycle/formula-derivation/SKILL.md)、[proof-writer](validation-cycle/proof-writer/SKILL.md)（除 setup 外全部显式调用；用户点名或父流程按路径级联；支持 standalone / composed） |
 | Writing Cycle | `writing-cycle/` | [paper-writing](writing-cycle/paper-writing/SKILL.md)（统一写作入口：general／ML／Systems，交付候选稿与审查报告后停止）、[ml-paper-writing](writing-cycle/ml-paper-writing/SKILL.md)（旧平行入口兼容层：seeds、error bars、compute、limitations）、[systems-paper-writing](writing-cycle/systems-paper-writing/SKILL.md)（旧平行入口兼容层：design rationale、end-to-end、scalability）、[paper-plan](writing-cycle/paper-plan/SKILL.md)、[paper-drafting](writing-cycle/paper-drafting/SKILL.md)（均显式调用，可独立或级联）、[academic-plotting](writing-cycle/academic-plotting/SKILL.md)（显式调用；#58 负责其迁移与实现）、[paper-compile](writing-cycle/paper-compile/SKILL.md)（check-only）、[paper-compile-repair](writing-cycle/paper-compile-repair/SKILL.md)（精确 diff；委托内继承授权）、[citation-audit](writing-cycle/citation-audit/SKILL.md)（只读）、[apply-citation-fixes](writing-cycle/apply-citation-fixes/SKILL.md)（精确 diff；委托内继承已授权范围）、[paper-claim-audit](writing-cycle/paper-claim-audit/SKILL.md)（只读）、[claim-stress-test](writing-cycle/claim-stress-test/SKILL.md)（只读；最强拒稿论点与独立裁决）、[rebuttal](writing-cycle/rebuttal/SKILL.md)（不自动补实验或外发）、[paper-talk](writing-cycle/paper-talk/SKILL.md)（不自动发布）、[resubmit-pipeline](writing-cycle/resubmit-pipeline/SKILL.md)（保留旧稿，不自动投稿）、[research-improvement](writing-cycle/research-improvement/SKILL.md)（#59 总控，有界 review／repair／re-review；不自动启动 experiment-bridge、paper-writing 或专项修复入口） |
 
 ## idea-discovery 单项安装依赖
@@ -56,7 +58,7 @@ Spec #57 更新 Writing Cycle 委托合同：`paper-writing` 是统一入口，M
 
 已保存交接用 `/research-os` 的三条路线，不另建状态机：
 
-- **proof**：从已有数学成果、证明材料或推广障碍继续，按证据交替推导、构造、计算、fresh 只读审查、finding 修复与按需形式化；不是每项必经的固定顺序。`/research-os` 委托统一控制目标、写域、轮次、额度、暂停恢复与停止。`proof-orchestrator` 仅为旧名称兼容入口。
+- **proof**：从已有数学成果、证明材料或推广障碍继续，按证据交替推导、构造、计算、fresh 只读审查、finding 修复与按需形式化；不是每项必经的固定顺序。`/research-os` 委托统一控制目标、写域、轮次、额度、暂停恢复与停止；proof-review 按需承载证明审计、Lean、记号和交接参考。
 - **improvement**：对已有 Claims、代码、结果和 findings 做有界 review → repair → re-review。轮数、写入范围和补实验名额以 research-improvement 的授权门为准。
 - **pickup**：新会话打开已保存交接、`compute-policy.md` 和 `research-log.md`，重查已批准与未批准边界。过期授权不续期，未知消耗不按 0 释放。
 
@@ -93,11 +95,11 @@ Writing Cycle 审查能力均只读审查研究材料、输出 Markdown 报告�
 
 ## 初始化与人工验收
 
-setup 先探索现有项目，再读取本 session 的真实模型清单。八个角色逐个确认后，才起草 `.agents/research-os-models.md`。默认 `compute-policy.md` 的额度是 0、范围未指定，正文写明它不是运行授权。工作区已有则沿用；没有时才建议可见的 `research/`。缺失的导航、项目说明、findings、研究日志只补一次。角色表和政策在确认新全文后整文件替换，字节相同则不写。已有研究日志和全局 `~/.agents/pstack-models.md` 不改。
+setup 是可选的项目初始化：先探索现有项目，再读取本 session 的真实模型清单；用户选择使用时，可为八个预设角色确认模型并起草 `.agents/research-os-models.md`。该角色表不是开始研究的前置条件；主入口按宿主当前真实子代理能力安排委托。默认 `compute-policy.md` 的额度是 0、范围未指定，正文写明它不是运行授权。工作区已有则沿用；没有时才建议可见的 `research/`。缺失的导航、项目说明、findings、研究日志只补一次。角色表和政策在确认新全文后整文件替换，字节相同则不写。已有研究日志和全局 `~/.agents/pstack-models.md` 不改。
 
 在可丢弃的科研项目副本中逐项验收：
 
-1. **新项目**：核对清单里真实存在的八个模型、零授权政策、种子和指令区块；确认前零写入。
+1. **新项目**：单独验收 setup 时核对所选角色映射均来自真实模型清单、零授权政策、种子和指令区块；确认前零写入。另核验不运行 setup、也未提供明确预算时，主入口仍能有界开始不依赖未授权资源的工作。
 2. **非空项目**：放入原研究材料及已有日志；沿用目录，日志字节不变，不搬迁材料。
 3. **重复执行**：同一确认稿不再写入，不出现第二套角色或额度。
 4. **不可用模型**：清单外 slug 停下重问，角色表不含该 slug。
@@ -108,7 +110,7 @@ setup 先探索现有项目，再读取本 session 的真实模型清单。八�
 
 ## 长期证明与人工验收
 
-长期证明任务统一经 `/research-os` 的 proof 路线编排；旧名称 `proof-orchestrator` 只是兼容入口。委托持续控制目标、写域、总额度、轮次/重试、暂停恢复与停止；续接时读原始材料并沿用剩余额度，不重复索权或重置。按需使用随包的审计、Lean、记号与交接方法资源；Lean 不是前置条件，外部发送仍须满足具体授权边界。
+长期证明任务统一经 `/research-os` 的 proof 路线编排。proof-review 随包提供审计、Lean、记号与交接方法参考，按本次审查分支读取；Lean 不是前置条件，外部发送仍须满足具体授权边界。
 
 在可丢弃的项目副本中核对：
 
