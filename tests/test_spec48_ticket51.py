@@ -24,6 +24,7 @@ SKILL = ARENA / "SKILL.md"
 LICENSE = ARENA / "LICENSE"
 ENTRY = ROOT / "skills/general/research-os/SKILL.md"
 BOUNDARY = ROOT / "skills/general/research-os/references/migration-boundary.md"
+SOURCE_RECORD = ROOT / "docs/upstream-sources-and-licenses.md"
 
 # 历史断链：main 上已存在（#49 记录），任何票不得把它当自己的回归。
 HISTORICAL = re.compile(
@@ -99,6 +100,16 @@ class ArenaCapabilityTests(unittest.TestCase):
         self.assertIn("88d47514b82e7c44f00f2b2a72ff6dd12158038c", self.text)
         self.assertIn("pstack", self.text)
 
+    def test_central_source_record_names_arena_asset_and_packaged_license(self):
+        record = SOURCE_RECORD.read_text(encoding="utf-8")
+        required = (
+            "pstack/skills/arena/SKILL.md",
+            "skills/organization/arena/LICENSE",
+            "88d47514b82e7c44f00f2b2a72ff6dd12158038c",
+        )
+        missing = [item for item in required if item not in record]
+        self.assertFalse(missing, f"central arena source record is missing: {missing}")
+
     def test_six_phases_preserved_with_full_reading_and_rubric_first(self):
         for phase in PHASES:
             self.assertIn(phase, self.text, phase)
@@ -157,10 +168,10 @@ class ArenaCapabilityTests(unittest.TestCase):
         self.assertNotIn(arena_rel, module.LEGACY_LEAF_GATES)
         self.assertIn("organization/arena", BOUNDARY.read_text(encoding="utf-8"))
 
-    def test_entry_discovers_arena(self):
+    def test_entry_discovers_arena_by_installed_skill_name(self):
         entry_text = ENTRY.read_text(encoding="utf-8")
-        self.assertIn("organization/arena/SKILL.md", entry_text)
-        self.assertIn("arena", entry_text)
+        self.assertIn("打开 `arena` Skill", entry_text)
+        self.assertNotIn("organization/arena/SKILL.md", entry_text)
 
     def test_readme_manifests_match_skill_directory(self):
         actual = {
