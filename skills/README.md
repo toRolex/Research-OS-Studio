@@ -2,6 +2,8 @@
 
 在自己的科研项目目录使用通用 [Skills CLI](https://github.com/vercel-labs/skills)；无需安装 Research OS 专用 runtime。主使用说明参见 [README.md](../README.md)，全流程手工验收步骤参见 [用户手工验收指南](../docs/user-acceptance-guide.md)。
 
+`/research-os` 按研究委托（目标、授权范围与额度、完成条件）组合底层能力；普通阶段转换不要求重复批准。只读请求保持只读；没有 setup 或明确预算时仍可有界开始不依赖未授权资源的工作。仅在当前宿主真实支持子代理时才委托；否则只推进本地可完成部分，并标明未执行的委托工作。
+
 ```bash
 npx skills@latest add toRolex/Research-OS-Studio --list
 npx skills@latest add toRolex/Research-OS-Studio --all
@@ -91,11 +93,11 @@ Writing Cycle 审查能力均只读审查研究材料、输出 Markdown 报告�
 
 ## 初始化与人工验收
 
-setup 先探索现有项目，再读取本 session 的真实模型清单。八个角色逐个确认后，才起草 `.agents/research-os-models.md`。默认 `compute-policy.md` 的额度是 0、范围未指定，正文写明它不是运行授权。工作区已有则沿用；没有时才建议可见的 `research/`。缺失的导航、项目说明、findings、研究日志只补一次。角色表和政策在确认新全文后整文件替换，字节相同则不写。已有研究日志和全局 `~/.agents/pstack-models.md` 不改。
+setup 是可选的项目初始化：先探索现有项目，再读取本 session 的真实模型清单；用户选择使用时，可为八个预设角色确认模型并起草 `.agents/research-os-models.md`。该角色表不是开始研究的前置条件；主入口按宿主当前真实子代理能力安排委托。默认 `compute-policy.md` 的额度是 0、范围未指定，正文写明它不是运行授权。工作区已有则沿用；没有时才建议可见的 `research/`。缺失的导航、项目说明、findings、研究日志只补一次。角色表和政策在确认新全文后整文件替换，字节相同则不写。已有研究日志和全局 `~/.agents/pstack-models.md` 不改。
 
 在可丢弃的科研项目副本中逐项验收：
 
-1. **新项目**：核对清单里真实存在的八个模型、零授权政策、种子和指令区块；确认前零写入。
+1. **新项目**：单独验收 setup 时核对所选角色映射均来自真实模型清单、零授权政策、种子和指令区块；确认前零写入。另核验不运行 setup、也未提供明确预算时，主入口仍能有界开始不依赖未授权资源的工作。
 2. **非空项目**：放入原研究材料及已有日志；沿用目录，日志字节不变，不搬迁材料。
 3. **重复执行**：同一确认稿不再写入，不出现第二套角色或额度。
 4. **不可用模型**：清单外 slug 停下重问，角色表不含该 slug。

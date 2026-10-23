@@ -33,13 +33,13 @@
 
 ## Research OS Studio
 
-Research OS Studio decomposes research into well-defined workflows. The AI assists within explicit authorization boundaries to generate candidate solutions, code, and drafts, while experiment design, result validation, and progression decisions remain in your control.
+Research OS Studio is a research-delegation suite: the main entry combines capabilities toward a user-owned goal within an explicit mandate. It can progress without ordinary stage-by-stage approvals; users retain control of goal replacement, authorization and quota boundaries, and external or destructive actions.
 
 ## Table of Contents
 
 - [Quick Start](#quick-start)
 - [Core Design Principles](#core-design-principles)
-- [39 Skills Inventory](#39-skills-inventory)
+- [Skills Inventory](#skills-inventory)
 - [Typical Research Workflows](#typical-research-workflows)
 - [Safety and Control Principles](#safety-and-control-principles)
 - [FAQ](#faq)
@@ -92,25 +92,25 @@ Saved handoffs use three routes and no new state machine: `proof` resumes one fi
 ## Core Design Principles
 
 - **Pure Agent Skills**: Installs directly without separate CLIs, Python packages, or background services.
-- **Three Research Cycles**:
+- **Three Capability Areas (not a required sequence)**:
   1. **Idea Cycle**: Literature search, multi-angle ideation, novelty verification, independent review, and proposal convergence.
   2. **Validation Cycle**: Empirical track handles experiment planning, monitoring, statistical analysis, and audits; theoretical track covers derivations, proof drafting, review, and repairs.
   3. **Writing Cycle**: Paper drafting, academic plotting, LaTeX compilation checks, citation and claim consistency audits, rebuttal preparation, and venue adaptation.
-- **Human in the Loop**: A route starts only from an explicit invocation. Reversible steps run without interruption and are shown afterwards. Three gate types stop before the side effect: irreversible actions (external sends, deleting or overwriting existing experiment data), a missing or exceeded batch grant, and a leaf skill's own approval point. A single invocation can continue across stages when the user explicitly authorizes that boundary; without it, the orchestrator does not start the next top-level workflow.
+- **Human in the Loop**: A research mandate establishes the goal, permitted scope and quota, and completion condition. The orchestrator may compose and reorder capabilities within that mandate without asking at ordinary stage transitions, output-path changes, or each repair. A read-only request stays read-only. Main-goal replacement waits for the goal owner's confirmation; work beyond authority or quota, external sends, destructive actions, and capability-specific hard gates stop only the affected work. Missing setup or an explicit budget does not block all work: begin with a bounded scope that does not assume ungranted resources. Delegate only when the active host actually supports subagents; otherwise do feasible work and report what could not be delegated.
 - **Native File Formats**: Outputs deliverables directly as Markdown, LaTeX, scripts, and data files.
 
 ---
 
-## 39 Skills Inventory
+## Skills Inventory
 
-The suite contains 39 standalone skills. Invocation is explicit except for setup:
+The inventory below follows the current `skills/` tree; its size is not a product requirement. Invocation is explicit except for setup:
 - **Explicit except setup**: the user names the skill, or a parent playbook reads it by path. The model does not trigger it from the description.
-- **`setup-research-os`**: the one skill a model may suggest. Confirming each live model and the full draft still comes before any write.
+- **`setup-research-os`**: the one skill a model may suggest. It is optional; a suggestion is not write authorization, and role setup is not a prerequisite to bounded research.
 
 | Category | Skill Name | Invocation | Description |
 |---|---|---|---|
-| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Confirm live session models, eight roles, a zero-grant policy, and workspace seeds; a suggestion is not write authorization |
-| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; route-only is read-only; experiment-plan and experiment-bridge are delivered and bill a batch grant |
+| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Optional workspace bootstrap for live-model role mappings, a zero-grant default policy, and workspace seeds; a suggestion is not write authorization |
+| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified research-delegation entry; route-only is read-only; use real host subagent capability when delegating. `experiment-bridge` remains a compatibility entry for `run-experiment`; this inventory does not claim #55B/C has merged |
 | **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Composable entry: select needed capabilities by goal gap; reorder or revisit; full Discovery is optional |
 | | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
 | | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Explicit | Multi-angle research candidate generation with filtering logs |
@@ -152,6 +152,8 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 ---
 
 ## Typical Research Workflows
+
+These are example recipes, not mandatory stages or a fixed pipeline. The orchestrator can compose, reorder, or revisit capabilities according to the mandate, then stop when its completion condition is met.
 
 ### 1. Idea Discovery
 ```text
@@ -212,8 +214,8 @@ paper-compile-repair and apply-citation-fixes stay separately invoked
 ## Safety and Control Principles
 
 1. **No System Alterations**: The suite does not install or modify Python, Lean, LaTeX, CUDA drivers, or cloud credentials. It reports missing tools and adapts cleanly.
-2. **Explicit route, gated side effects**: A route starts only from an explicit invocation. Reversible steps run and are shown afterwards. External sends, deleting or overwriting existing experiment data, a batch grant that is missing or exceeded, and a leaf skill's own approval point stop before the side effect. A single invocation can continue across stages only when the user states that boundary. Without it, the orchestrator does not start the next top-level workflow.
-3. **Prior Confirmation**: Operations that involve heavy computation, file rewriting, or paid APIs require explicit user confirmation.
+2. **Mandate, read-only scope, and hard gates**: Keep explicit entry and user-requested read-only scope. Within the mandate, ordinary reversible work and capability transitions proceed without repeated approval. Main-goal replacement waits for the goal owner's confirmation; authority or quota overrun, external sends, destructive changes, and specific safety gates stop before the side effect; only affected work is blocked.
+3. **Quota-aware execution**: Missing setup or an explicit budget permits bounded work that does not assume ungranted resources. Heavy computation and paid external services proceed only within actual authorization and quota; missing or exceeded quota stops the affected work.
 
 ---
 
@@ -222,8 +224,9 @@ paper-compile-repair and apply-citation-fixes stay separately invoked
 **Q: Will installing this suite alter my existing project files?**  
 A: No. The `setup-research-os` command inspects your workspace and displays all proposed edits before writing anything.
 
-**Q: Which AI clients are supported?**  
-A: Any client supporting the Agent Skills format is compatible, including Claude Code, Codex, Cursor, Gemini CLI, Kimi CLI, and Pi.
+**Q: What host capabilities are required?**
+
+A host must actually discover and load Agent Skills for direct use. Delegated work additionally requires real subagent support in that host; verify its behavior rather than inferring it from a product name or successful file installation.
 
 ---
 
