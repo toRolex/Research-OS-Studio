@@ -54,7 +54,7 @@ Gates: none
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
 | swarm | — | 并行覆盖、分片排查、多方案竞赛、全面摸排 | 已有明确问题，要在有界额度内用并行子代理分片、竞赛或混合探索并汇总 | no | [swarm](playbooks/swarm.md) |
 
-已命名、文件未交付：无。写作请求统一进入 `paper-writing`；general、ml、systems 仅选专业标准，旧专业入口作为兼容调用保留。
+已命名、文件未交付：无。写作统一进入 `paper-writing`；general、ml、systems 选择专业分支与资源。旧 ML/Systems 独立写作入口已合并到该统一能力，不再承诺旧 Skill 路径可调用。
 
 不占路线的独立能力：用户要对抗审查、独立挑战或多模型审查时，委托内由编排者或用户直接点名 `interrogate`：独立 reviewer 逐模型挑战、findings 去重、分歧保留，主审四桶有据判断；该调用始终只读，修复由委托按授权另行组织（如 `proof-repair`、`research-improvement`）。独立能力未安装时只阻塞依赖它的分支，不阻塞其他委托工作。
 
@@ -92,7 +92,7 @@ Role: orchestrator
 
 命中已交付 playbook 后，把其步骤逐字抄入 todolist，逐步跟踪 pending / in-progress / completed / blocked；清单保留编号、原句及子列表，只附状态和证据定位，不压缩成阶段摘要。首次展示清单后逐项直接对照 playbook，漏句先补齐；仅达到该步骤完成条件才标 completed。用当前会话的清单记录即可；route-only 只在对话内跟踪，不创建任务或文件。
 
-### 统一写作入口与兼容路由
+### 统一写作入口与专业分支
 
 `paper-writing` 是唯一写作组织入口；general、ML 与 Systems 仅选择领域分支和按需资源。对应主路由及专业 playbook 都进入 `skills/writing-cycle/paper-writing/SKILL.md`，由该入口与 `skills/writing-cycle/paper-writing/references/standards.md` 组织统一写作；ML/Systems 意图仍可由用户明确表达。审稿回复、转投和演讲仍是独立目的路线，但其 playbook 服从各自 Skill 中的委托继承合同；授权内修复不要求二次点名。
 
