@@ -10,7 +10,7 @@
 | 编译检查与委托内修复 | [paper-compile](../../paper-compile/SKILL.md) → 授权内 [paper-compile-repair](../../paper-compile-repair/SKILL.md) | 真实构建状态、错误位置、精确修复 diff、改动文件、复编译结果 | 不改源码范围外的文件，不安装工具，不用旧 PDF 冒充成功 |
 | 数字／比较审查 | [paper-claim-audit](../../paper-claim-audit/SKILL.md) | 逐 Claim 数字、配置、聚合、delta、caption、覆盖范围对账 | 不替代引用／证明／整篇论证，不自动改稿 |
 | 引用审查与委托内修复 | [citation-audit](../../citation-audit/SKILL.md)；授权内 [apply-citation-fixes](../../apply-citation-fixes/SKILL.md) | 身份、元数据、语境三轴逐条发现；继承授权后展示并应用精确修复 | 只读审查仍不修改；修复不越委托写入范围 |
-| 证明审查 | [proof-review](../../../validation-cycle/proof-review/SKILL.md)（仅含定理／引理／证明时） | 证明义务、逻辑缺口、反例、影响范围 | 不修证明，不编译，不自动调用 `proof-repair` |
+| 证明审查 | `proof-review`（按可发现的 Skill slug 调用；仅含定理／引理／证明时） | 证明义务、逻辑缺口、反例、影响范围 | 不修证明，不编译，不自动调用 `proof-repair` |
 | 整篇拒稿论证 | [claim-stress-test](../../claim-stress-test/SKILL.md) | 最强拒稿攻击、独立裁决与严重度 | 不自封最终结论，不自动改稿 |
 | 独立整篇评审与授权 revision | 本 Workflow 自身（fresh-context 独立 reviewer） | 分级评审、修订清单、逐项改动、复编译与轮次记录 | 不改命题／假设／结论范围，不越出授权写入范围，不无限循环 |
 
