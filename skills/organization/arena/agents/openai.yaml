@@ -1,0 +1,5 @@
+interface:
+  display_name: "arena"
+  short_description: "候选比较与整合：同一任务并行多个独立候选，交叉评判、主编排者逐项选择与手工整合后交付可验证产物。"
+policy:
+  allow_implicit_invocation: false

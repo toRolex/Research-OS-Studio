@@ -10,7 +10,7 @@
   <p>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
     <a href="https://linux.do"><img src="https://img.shields.io/badge/LINUX%20DO-Community-blue?logo=linux&logoColor=white" alt="LINUX DO"></a>
-    <a href="skills/README.md"><img src="https://img.shields.io/badge/skills-45-green.svg" alt="Skills"></a>
+    <a href="skills/README.md"><img src="https://img.shields.io/badge/skills-suite-green.svg" alt="Skills"></a>
     <a href="docs/user-acceptance-guide.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
     <a href="https://github.com/toRolex/Research-OS-Studio/stargazers"><img src="https://img.shields.io/github/stars/toRolex/Research-OS-Studio.svg?style=social" alt="GitHub stars"></a>
   </p>
@@ -49,7 +49,7 @@ Research OS Studio 将科研过程拆解为边界明确的工作流。AI 在单�
 - [核心设计原则](#核心设计原则)
 - [快速开始](#快速开始)
 - [典型科研流程](#典型科研流程)
-- [45 个 Skill 能力清单](#45-个-skill-能力清单)
+- [Skill 能力清单](#skill-能力清单)
 - [安全与控制原则](#安全与控制原则)
 - [常见问题](#常见问题)
 - [相关文档](#相关文档)
@@ -101,7 +101,7 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 /research-os 我该从哪开始
 ```
 
-这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。只要一次文献综合走 literature：入口按研究委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度。设计实验走 experiment-plan；跑完已有计划并分析走 experiment-bridge。这两条要占用运行资源，要求研究日志里的本批授权，setup 写下的默认政策不能当运行许可。
+这进入 route-only：按研究方向或已有材料给推荐，不修改文件，不联网，也不自动触发工作流。旧入口 `ask-research-os` 已删除。已经清楚目标时，也可以直接点名对应技能，或让 `/research-os` 进入对应 playbook。只要一次文献综合走 literature：入口按研究委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度。设计实验走 experiment-plan；跑完已有计划并分析走 experiment-bridge 兼容入口，实际执行控制由 run-experiment 承担。这两条要占用运行资源，要求研究日志里的本批授权，setup 写下的默认政策不能当运行许可。
 
 已有上一轮证明、改进日志或研究作业记录时，不要从零重跑：
 
@@ -177,9 +177,9 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 
 ---
 
-## 45 个 Skill 能力清单
+## Skill 能力清单
 
-全套包含 45 个独立技能。根据触发机制分为两类：
+本仓库提供可独立使用的技能，按触发机制分为两类：
 - **除 setup 外全部显式调用**：用户直接点名，或父流程按路径级联读取全文。模型不因描述自动触发。
 - **`setup-research-os`**：唯一允许模型主动建议的例外。写入前仍要逐角色确认模型和整份草稿。
 
@@ -189,6 +189,7 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 | | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口：一次调用是一份研究委托（目标/权限/额度/完成条件见 `references/mandate.md`）；只读走 route-only；literature 是已迁移的最短链路，未迁移路线仍按各自旧门停下（边界见 `references/migration-boundary.md`） |
 | | [swarm](skills/general/swarm/SKILL.md) | 显式 | 并行覆盖：分片、竞赛或混合探索，派发宿主真实子代理并汇总；独立 brief、输出隔离、缺证据有界重派，缺口不算通过（改编自 pstack swarm，MIT，见其 LICENSE） |
 | | [interrogate](skills/general/interrogate/SKILL.md) | 显式 | 对抗审查：独立 reviewer 逐模型挑战研究材料或变更，findings 去重、分歧保留，主审四桶有据判断；始终只读，修复由委托按授权另行组织 |
+| **Organization** | [arena](skills/organization/arena/SKILL.md) | 显式 | 候选比较与整合：同一任务并行独立候选，预先 rubric、交叉评判、主编排者逐项选基座并手工整合，数学整合后重查假设/记号/依赖闭合；胜出不等于原命题成立；已迁移到研究委托合同，缺子代理时标 blocked |
 | **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | 显式 | 构思查新工作流：文献检索、生成方案、查新、评审并输出 Proposal |
 | | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | 显式 | 文献检索与综合，标注出处与核实状态；已迁移到研究委托合同，不再有叶级审批门 |
 | | [idea-generation](skills/idea-cycle/idea-generation/SKILL.md) | 显式 | 多视角生成研究候选方案，记录筛选理由 |
@@ -197,8 +198,8 @@ paper-compile-repair 与 apply-citation-fixes 须另行点名
 | | [idea-review](skills/idea-cycle/idea-review/SKILL.md) | 显式 | 独立评审视角，指出方案弱点与潜在问题 |
 | | [idea-refinement](skills/idea-cycle/idea-refinement/SKILL.md) | 显式 | 细化研究方案，输出最小可行路线与拓展路线 |
 | **Validation** | [experiment-plan](skills/validation-cycle/experiment-plan/SKILL.md) | 显式 | 制定包含假设、基线、指标与预算的实验计划 |
-| | [experiment-bridge](skills/validation-cycle/experiment-bridge/SKILL.md) | 显式 | 实验执行工作流：实现、试跑、监控、分析与审计 |
-| | [run-experiment](skills/validation-cycle/run-experiment/SKILL.md) | 显式 | 在指定范围内执行实验代码并记录运行状态 |
+| | [experiment-bridge](skills/validation-cycle/experiment-bridge/SKILL.md) | 显式 | 旧请求兼容入口：映射到 run-experiment，不重复编排 |
+| | [run-experiment](skills/validation-cycle/run-experiment/SKILL.md) | 显式 | 统一实验执行控制；记录输入版本、工具链、目录、作业身份、退出码、日志与产物 |
 | | [experiment-queue](skills/validation-cycle/experiment-queue/SKILL.md) | 显式 | 管理批量实验队列与资源分配 |
 | | [monitor-experiment](skills/validation-cycle/monitor-experiment/SKILL.md) | 显式 | 监控运行进程与状态，不做额外推论 |
 | | [training-health-check](skills/validation-cycle/training-health-check/SKILL.md) | 显式 | 诊断 NaN、显存溢出、loss 停滞等训练异常 |

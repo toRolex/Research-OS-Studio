@@ -17,6 +17,7 @@ import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "skills"
@@ -768,7 +769,8 @@ for readme_name in ("README.md", "skills/README.md"):
     if not rp.exists():
         err(f"{readme_name}: 不存在")
         continue
-    listed = set(re.findall(r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+)/SKILL\.md\)", rp.read_text(encoding="utf-8")))
+    readme_text = rp.read_text(encoding="utf-8")
+    listed = set(re.findall(r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+)/SKILL\.md\)", readme_text))
     if listed != actual:
         missing = sorted(actual - listed)
         extra = sorted(listed - actual)
@@ -776,7 +778,6 @@ for readme_name in ("README.md", "skills/README.md"):
             err(f"{readme_name}: 清单缺 {len(missing)} 个 Skill: {', '.join(missing)}")
         if extra:
             err(f"{readme_name}: 清单含不存在 Skill: {', '.join(extra)}")
-
 # --- 6–9: 入口合同（路由、级联、门、旧 router） ---------------------------
 for skill_name, rel, skill_dir, skill_text, user_invoked, yaml_text in skill_bodies:
     if yaml_text is not None:
@@ -1146,6 +1147,7 @@ def ticket59_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]
 MIGRATED_CONTRACT: dict[str, str] = {
     "skills/general/research-os/SKILL.md": "研究委托",
     "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
+    "skills/organization/arena/SKILL.md": "委托继承",
     "skills/validation-cycle/create-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-verification-skill/SKILL.md": "委托继承",
     "skills/general/swarm/SKILL.md": "委托继承",
@@ -1153,6 +1155,15 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
     "skills/writing-cycle/research-improvement/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-plan/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-bridge/SKILL.md": "委托继承",
+    "skills/validation-cycle/run-experiment/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-queue/SKILL.md": "委托继承",
+    "skills/validation-cycle/monitor-experiment/SKILL.md": "委托继承",
+    "skills/validation-cycle/training-health-check/SKILL.md": "委托继承",
+    "skills/validation-cycle/analyze-results/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-audit/SKILL.md": "委托继承",
+    "skills/validation-cycle/result-to-claim/SKILL.md": "委托继承",
 }
 MANDATE_DOC = "skills/general/research-os/references/mandate.md"
 MIGRATION_DOC = "skills/general/research-os/references/migration-boundary.md"
@@ -1166,13 +1177,7 @@ LEGACY_LEAF_GATES: dict[str, set[str]] = {
     "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
     "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
     "skills/idea-cycle/novelty-check/SKILL.md": set(),
-    "skills/validation-cycle/analyze-results/SKILL.md": {"write-path"},
-    "skills/validation-cycle/experiment-audit/SKILL.md": {"write-path"},
-    "skills/validation-cycle/experiment-bridge/SKILL.md": {"run-authorization"},
-    "skills/validation-cycle/experiment-plan/SKILL.md": {"output-path"},
-    "skills/validation-cycle/experiment-queue/SKILL.md": {"batch-authorization", "precondition-block"},
     "skills/validation-cycle/formula-derivation/SKILL.md": {"write-authorization"},
-    "skills/validation-cycle/monitor-experiment/SKILL.md": {"write-path"},
     "skills/validation-cycle/proof-orchestrator/SKILL.md": {"round-scope", "external-action"},
     "skills/validation-cycle/proof-repair/SKILL.md": {
         "repair-contract",
@@ -1181,9 +1186,6 @@ LEGACY_LEAF_GATES: dict[str, set[str]] = {
     },
     "skills/validation-cycle/proof-review/SKILL.md": set(),
     "skills/validation-cycle/proof-writer/SKILL.md": {"write-authorization"},
-    "skills/validation-cycle/result-to-claim/SKILL.md": {"write-path"},
-    "skills/validation-cycle/run-experiment/SKILL.md": {"run-authorization", "milestone-start"},
-    "skills/validation-cycle/training-health-check/SKILL.md": {"write-path"},
     "skills/writing-cycle/academic-plotting/SKILL.md": {"figure-choice", "external-resource"},
     "skills/writing-cycle/apply-citation-fixes/SKILL.md": {"apply-authorization"},
     "skills/writing-cycle/citation-audit/SKILL.md": {"audit-scope"},
@@ -1409,6 +1411,286 @@ def verification_skill_problems(root: Path, tracked_paths: set[str]) -> list[str
     return found
 
 
+EXPERIMENT_SKILLS: tuple[str, ...] = (
+    "experiment-plan",
+    "experiment-bridge",
+    "run-experiment",
+    "experiment-queue",
+    "monitor-experiment",
+    "training-health-check",
+    "analyze-results",
+    "experiment-audit",
+    "result-to-claim",
+)
+EXPERIMENT_JOB_CONTRACT = (
+    "输入版本", "工具链", "独立目录", "作业身份", "退出码", "原始日志", "产物",
+)
+EXPERIMENT_RECOVERY = (
+    "断线", "原作业", "不盲重跑", "旧文件", "作业退出", "产物有效", "科学结论",
+)
+EXPERIMENT_REMOTE = (
+    "远程只是执行位置", "SSH", "已有调度", "不新造执行引擎", "不锁定供应商",
+    "凭据", "独立目录", "作业身份", "原作业",
+)
+EXPERIMENT_REQUIRED_FILES = {
+    "experiment-plan": (
+        "references/mandate.md", "references/block-checks.md", "templates/experiment-plan.md",
+    ),
+    "experiment-bridge": (
+        "references/mandate.md", "references/composition-map.md", "templates/bridge-report.md",
+    ),
+    "run-experiment": (
+        "references/mandate.md",
+        "references/execution-contract.md",
+        "references/remote-execution.md",
+        "references/batch-authorization.md",
+        "templates/run-report.md",
+    ),
+    "experiment-queue": ("references/mandate.md", "templates/batch-manifest.md"),
+    "monitor-experiment": (
+        "references/mandate.md", "references/observation-sources.md", "templates/run-status-report.md",
+    ),
+    "training-health-check": (
+        "references/mandate.md", "references/health-signals.md", "templates/health-report.md",
+    ),
+    "analyze-results": (
+        "references/mandate.md", "references/statistical-checks.md", "templates/analysis-report.md",
+    ),
+    "experiment-audit": (
+        "references/mandate.md", "references/integrity-checks.md", "templates/audit-report.md",
+    ),
+    "result-to-claim": (
+        "references/mandate.md", "references/claim-judgment.md", "templates/claim-report.md",
+    ),
+}
+EXPERIMENT_TEXT_MARKERS = {
+    "run-experiment": (
+        "执行控制", "小批量或队列", "委托继承", *EXPERIMENT_JOB_CONTRACT,
+        "作业退出", "产物有效", "科学结论", "旧文件",
+        "远程只是执行位置", "SSH", "已有调度",
+    ),
+    "experiment-bridge": ("兼容入口", "不再重复执行控制", "委托继承"),
+    "experiment-queue": (
+        "委托继承", *EXPERIMENT_JOB_CONTRACT, *EXPERIMENT_RECOVERY,
+        "不因进入队列或新波次重复索权", "研究日志",
+    ),
+    "experiment-plan": (
+        "委托继承", "数学计算", "不硬套训练 baseline", "计划声明的对照",
+        "不逐 milestone 再索权",
+    ),
+    "monitor-experiment": ("委托继承",),
+    "training-health-check": ("委托继承",),
+    "analyze-results": ("委托继承",),
+    "experiment-audit": ("委托继承", "作业退出", "产物有效", "科学结论", "unknown"),
+    "result-to-claim": ("委托继承", "作业退出", "产物有效", "科学结论", "旧文件"),
+}
+EXPERIMENT_MANDATE_MARKERS = (
+    "references/mandate.md",
+    "完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`",
+    "分发摘录缺失",
+    "本次动作超出摘录",
+)
+EXPERIMENT_MANDATE_PACKAGE_MARKERS = (
+    "叶能力、下一阶段或一次审查完成都不重置授权",
+    "用户明确只要推荐、只审查、只规划或不要执行时，保持该范围",
+    "未授权的破坏性动作",
+    "项目内的依赖、工具与缓存可在授权内自动准备",
+    "有界首轮",
+    "并行、换线程、重试与恢复都消耗同一份额度，不重置",
+    "用户叫停是停止，不是完成",
+    "委托的验收看实际产物，不看执行者的自述",
+    "额度、权限与目标互不推导",
+)
+EXPERIMENT_COMPANION_DEPENDENCIES = {
+    "experiment-bridge": (
+        "run-experiment", "experiment-plan", "experiment-queue", "monitor-experiment",
+        "training-health-check", "analyze-results", "experiment-audit",
+    ),
+    "experiment-queue": ("run-experiment",),
+    "result-to-claim": ("analyze-results",),
+}
+EXPERIMENT_FILE_MARKERS = {
+    "run-experiment/references/execution-contract.md": EXPERIMENT_JOB_CONTRACT,
+    "run-experiment/references/remote-execution.md": EXPERIMENT_REMOTE,
+    "run-experiment/references/batch-authorization.md": (
+        "research-log.md", "valid_until", "scope", "cost_limit", "compute_limit", "run_limit",
+        "run_count_basis: planned-run", "concurrency_limit", "retry_limit", "worst_case_estimate",
+    ),
+    "run-experiment/templates/run-report.md": EXPERIMENT_JOB_CONTRACT,
+    "experiment-queue/templates/batch-manifest.md": EXPERIMENT_JOB_CONTRACT,
+}
+EXPERIMENT_HOST_BINDINGS = FORMAL_HOST_BINDINGS
+EXPERIMENT_MODEL_PIN = FORMAL_MODEL_PIN
+EXPERIMENT_AUTHORIZATION_MARKERS = (
+    "research-log.md", "valid_until", "scope", "累计额度", "run_count_basis=planned-run",
+    "concurrency_limit", "retry_limit", "worst_case_estimate", "不按 milestone 重复索取",
+    "batch-authorization.md",
+)
+EXPERIMENT_BRIDGE_PLAYBOOK = "skills/general/research-os/playbooks/experiment-bridge.md"
+
+
+def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#56 实验执行：委托继承、桥接合流、运行/恢复/远程合同与宿主中立。"""
+    found: list[str] = []
+    base = root / "skills" / "validation-cycle"
+    packaged_mandate_text: str | None = None
+    for name in EXPERIMENT_SKILLS:
+        rel_dir = f"skills/validation-cycle/{name}"
+        skill_dir = base / name
+        if not skill_dir.is_dir():
+            found.append(f"{rel_dir}: 实验 Skill 不存在")
+            continue
+        for rel in ("SKILL.md", "LICENSE", "agents/openai.yaml", *EXPERIMENT_REQUIRED_FILES.get(name, ())):
+            path = skill_dir / rel
+            rel_path = f"{rel_dir}/{rel}"
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少实验执行资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+        skill_path = skill_dir / "SKILL.md"
+        if not skill_path.is_file():
+            continue
+        text = skill_path.read_text(encoding="utf-8")
+        for marker in EXPERIMENT_TEXT_MARKERS.get(name, ()):
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺「{marker}」")
+        for marker in EXPERIMENT_MANDATE_MARKERS:
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺单装委托合同引用/失效处理「{marker}」")
+        mandate_copy = skill_dir / "references" / "mandate.md"
+        canonical_mandate = root / "skills/general/research-os/references/mandate.md"
+        if mandate_copy.is_file() and canonical_mandate.is_file():
+            copy_text = mandate_copy.read_text(encoding="utf-8")
+            canonical_text = canonical_mandate.read_text(encoding="utf-8")
+            if packaged_mandate_text is None:
+                packaged_mandate_text = copy_text
+            elif copy_text != packaged_mandate_text:
+                found.append(f"{rel_dir}/references/mandate.md: 分发副本与其他实验叶不一致")
+            for marker in EXPERIMENT_MANDATE_PACKAGE_MARKERS:
+                if marker not in canonical_text:
+                    found.append(f"skills/general/research-os/references/mandate.md: 权威合同缺「{marker}」")
+                if marker not in copy_text:
+                    found.append(f"{rel_dir}/references/mandate.md: 单装合同缺「{marker}」")
+            if "本文件摘录自唯一规范源 `skills/general/research-os/references/mandate.md`" not in copy_text:
+                found.append(f"{rel_dir}/references/mandate.md: 缺规范源与分发副本关系")
+        elif not mandate_copy.is_file():
+            found.append(f"{rel_dir}/references/mandate.md: 缺单装委托合同资源")
+        elif not canonical_mandate.is_file():
+            found.append("skills/general/research-os/references/mandate.md: 委托唯一权威缺失或未追踪")
+        companions = EXPERIMENT_COMPANION_DEPENDENCIES.get(name, ())
+        if companions:
+            dependency_header = "## 联装能力依赖"
+            if dependency_header not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺联装能力依赖声明")
+            else:
+                dependency_body = text.split(dependency_header, 1)[1].split("\n## ", 1)[0]
+                for companion in companions:
+                    if f"`{companion}`" not in dependency_body:
+                        found.append(f"{rel_dir}/SKILL.md: 未声明联装依赖 {companion}")
+                if "缺失时标为 `blocked`" not in dependency_body:
+                    found.append(f"{rel_dir}/SKILL.md: 缺联装能力缺失时的 blocked 行为")
+                if "npx skills add <repo>" not in dependency_body:
+                    found.append(f"{rel_dir}/SKILL.md: 缺联装能力补装命令")
+        if "委托继承" not in heading_anchors(text):
+            found.append(f"{rel_dir}/SKILL.md: 缺「委托继承」小节")
+        if re.search(r"(?m)^Gate:", text):
+            found.append(f"{rel_dir}/SKILL.md: 已迁移实验能力残留旧门")
+        for binding in EXPERIMENT_HOST_BINDINGS:
+            if binding in text:
+                found.append(f"{rel_dir}/SKILL.md: 宿主绑定残留 {binding}")
+        if EXPERIMENT_MODEL_PIN.search(text):
+            found.append(f"{rel_dir}/SKILL.md: 固定模型绑定")
+        yaml_path = skill_dir / "agents" / "openai.yaml"
+        if yaml_path.is_file() and yaml_allow_implicit(yaml_path.read_text(encoding="utf-8")) != "false":
+            found.append(f"{rel_dir}/agents/openai.yaml: allow_implicit_invocation 必须为 false")
+        if f"{rel_dir}/SKILL.md" not in MIGRATED_CONTRACT:
+            found.append(f"{rel_dir}/SKILL.md: 未登记迁移状态")
+        for rel, markers in EXPERIMENT_FILE_MARKERS.items():
+            if not rel.startswith(f"{name}/"):
+                continue
+            path = base / rel
+            if not path.is_file():
+                asset_path = f"skills/validation-cycle/{rel}"
+                message = f"{asset_path}: 缺少实验执行资产"
+                if message not in found:
+                    found.append(message)
+                continue
+            body = path.read_text(encoding="utf-8")
+            for marker in markers:
+                if marker not in body:
+                    found.append(f"skills/validation-cycle/{rel}: 缺「{marker}」")
+    mandate = root / "skills/general/research-os/references/mandate.md"
+    if not mandate.is_file() or "skills/general/research-os/references/mandate.md" not in tracked_paths:
+        found.append("skills/general/research-os/references/mandate.md: 委托唯一权威缺失或未追踪")
+
+    # The repository-wide link check validates files; validate fragments as well
+    # for all nine shipped experiment skills, including same-file anchors.
+    for name in EXPERIMENT_SKILLS:
+        skill_dir = base / name
+        if not skill_dir.is_dir():
+            continue
+        for markdown in skill_dir.rglob("*.md"):
+            rel_markdown = markdown.relative_to(root).as_posix()
+            lines = markdown.read_text(encoding="utf-8").splitlines()
+            for line_number, line in enumerate(lines, 1):
+                for target in link_re.findall(line):
+                    if target.startswith(("http://", "https://", "mailto:")):
+                        continue
+                    file_part, separator, fragment = target.partition("#")
+                    if not separator or not fragment:
+                        fragment = ""
+                    if not file_part:
+                        target_markdown = markdown
+                    else:
+                        resolved = lexical_relative(markdown.parent, unquote(file_part))
+                        if resolved is None:
+                            continue
+                        target_markdown = Path(resolved)
+                    try:
+                        target_markdown.relative_to(skill_dir)
+                    except ValueError:
+                        found.append(
+                            f"{rel_markdown}:{line_number}: 单装时不可解析的跨叶 Markdown 引用 {target}"
+                        )
+                    if not target_markdown.is_file():
+                        continue  # Missing paths are reported by the repository-wide link check.
+                    if not fragment:
+                        continue
+                    anchor = unquote(fragment)
+                    if anchor not in heading_anchors(target_markdown.read_text(encoding="utf-8")):
+                        found.append(
+                            f"{rel_markdown}:{line_number}: 无效 Markdown fragment #{anchor}"
+                        )
+    run_text = base / "run-experiment" / "SKILL.md"
+    if run_text.is_file():
+        run_body = run_text.read_text(encoding="utf-8")
+        if "../experiment-bridge/SKILL.md" in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 仍依赖旧桥接控制器")
+        if "仓库中的 `experiment-queue`" not in run_body or "单独安装时如 queue 不可用" not in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 缺批量队列可用性边界")
+        for marker in EXPERIMENT_AUTHORIZATION_MARKERS:
+            if marker not in run_body:
+                found.append(f"skills/validation-cycle/run-experiment/SKILL.md: 缺批次授权合同「{marker}」")
+    bridge_playbook = root / EXPERIMENT_BRIDGE_PLAYBOOK
+    if bridge_playbook.is_file():
+        playbook = bridge_playbook.read_text(encoding="utf-8")
+        for marker in ("run-experiment", "analyze-results", "experiment-audit"):
+            if marker not in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 缺能力路由 {marker}")
+        for marker in ("run_count_basis=planned-run", "每个 attempt 先记最坏预留"):
+            if marker in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 桥接 playbook 重复执行控制合同 {marker}")
+    else:
+        found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: playbook 不存在")
+    boundary = root / MIGRATION_DOC
+    if boundary.is_file():
+        boundary_text = boundary.read_text(encoding="utf-8")
+        for name in EXPERIMENT_SKILLS:
+            if name not in boundary_text:
+                found.append(f"{MIGRATION_DOC}: 未列出实验能力 {name}")
+    return found
+
+
 for sf in skill_files:
     rel = sf.relative_to(ROOT).as_posix()
     expected = expected_gates(sf.parent, sf.parent.name)
@@ -1419,6 +1701,29 @@ for sf in skill_files:
     for problem in gate_problems(sf.parent.name, sf.parent, body, expected, tracked):
         err(f"{rel}: {problem}")
 
+# --- arena 阶段保真（#51）：六阶段机制不得静默丢失 ---
+ARENA_REL = "skills/organization/arena/SKILL.md"
+ARENA_PHASES = ("Frame", "Fan-out", "Cross-judge", "Pick", "Graft", "Verify")
+ARENA_UPSTREAM_REMNANTS = ("~/.cursor", "pstack-models.mdc")
+
+
+def arena_contract_problems(root: Path) -> list[str]:
+    found: list[str] = []
+    path = root / ARENA_REL
+    if not path.is_file():
+        return [f"{ARENA_REL}: arena 技能不存在"]
+    text = path.read_text(encoding="utf-8")
+    for phase in ARENA_PHASES:
+        if phase not in text:
+            found.append(f"{ARENA_REL}: arena 缺阶段 {phase}")
+    for token in ARENA_UPSTREAM_REMNANTS:
+        if token in text:
+            found.append(f"{ARENA_REL}: arena 残留上游宿主绑定 {token}")
+    if "swarm" in text.lower():
+        found.append(f"{ARENA_REL}: arena 引用 swarm，不独立")
+    return found
+
+
 for problem in migration_contract_problems(ROOT, tracked):
     err(problem)
 for problem in continuation_contract_problems(ROOT, tracked):
@@ -1428,6 +1733,11 @@ for problem in ticket59_contract_problems(ROOT, tracked):
 for problem in formal_verification_problems(ROOT, tracked):
     err(problem)
 for problem in verification_skill_problems(ROOT, tracked):
+    err(problem)
+for problem in experiment_execution_problems(ROOT, tracked):
+    err(problem)
+
+for problem in arena_contract_problems(ROOT):
     err(problem)
 
 

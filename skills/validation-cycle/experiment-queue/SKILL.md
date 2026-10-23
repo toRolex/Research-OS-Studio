@@ -7,14 +7,32 @@ disable-model-invocation: true
 
 # Experiment Queue
 
-当单个 [run-experiment](../run-experiment/SKILL.md) 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞清理、状态可恢复。这是 显式调用或已授权正文级联 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停在汇总报告。
+当单个 `run-experiment` 不足以承载多作业实验时，把已授权的作业组织为**有界批次**：逐波执行、按依赖等待、OOM 有限重试、停滞判定与授权内清理、状态可恢复。这是 显式调用或已授权正文级联 的内部编排能力：当前 Validation Workflow 可在已授权职责内组合调用，用户也可点名 standalone。批次结束后停在汇总报告。
 
-与 run-experiment 的分工见 [experiment-bridge 第 4 节](../experiment-bridge/SKILL.md)。进度读状态表，不另开调度时钟。
+Gates: none
 
-## 1. 授权与资源门
-Gate: batch-authorization | before=job-start | approval=explicit-user | source=SKILL.md#1-授权与资源门
+## 委托合同依赖
 
-在任何作业启动前，列出并让用户确认：
+- 单装包随本叶携带 [委托合同分发摘录](references/mandate.md)，覆盖目标、权限、额度、完成/停止与验收的必需规则；完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`。
+- 分发摘录缺失、与完整规范冲突或本次动作超出摘录时，标为 `blocked` 并停止受影响动作；不得从开发仓库路径或其他叶推断授权。
+
+## 联装能力依赖
+
+- 可独立构建、检查批次清单；实际执行合同与报告模板来自 `run-experiment`。伴随能力缺失时标为 `blocked`，只交付清单/预检，不执行批次。
+- 补装执行依赖：`npx skills add <repo> -s research-os -s experiment-queue -s run-experiment -a claude-code -y`。
+
+与 run-experiment 的分工见其执行控制。进度读状态表，不另开调度时钟。
+
+## 委托继承
+
+- **委托合同**：目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威；只读或只做清单时不启动。
+- **批次授权**：当前委托和批次授权继续继承，内部级联不重置。付费、远程、上传、下载和清理按批次范围执行；越权只阻塞对应作业。作业尝试和恢复继续记入同一工作区研究日志中的批次记录。
+- **项目内依赖准备**：可在授权项目目录内检查或准备依赖，复用常规缓存；不改全局配置、用户凭据或其他项目。
+- **停止**：用户叫停、额度耗尽、工具受阻或本批完成即停止；预算跨 worker、重试和恢复不重置。
+
+## 1. 授权与资源边界
+
+在任何作业启动前，把该波作业与 run-experiment 已核验的本批授权对照：若作业、命令、写域和资源均已覆盖，继续执行，不因进入队列或新波次重复索权；超出授权的作业保持 blocked，并仅就越界部分请用户决定。清单至少说明：
 
 - 作业集合与来源（显式清单、grid 规格或自然语言描述）；
 - 允许的并发上限、可用资源集合（GPU/CPU/机器/队列）与每作业资源需求；
@@ -23,7 +41,7 @@ Gate: batch-authorization | before=job-start | approval=explicit-user | source=S
 - 可修改范围、输出/状态位置，以及作业失败时允许的修复动作；
 - 谁可以停止、暂停、重排或清理批次；付费与远程写入是否逐项获批。
 
-缺少确认时只构建清单和预检草案，必须停在授权门。默认不安装环境、不申请新凭据、不上传私有材料、不提交或发布。
+缺少执行授权时只构建清单和预检草案。默认不申请新凭据、不上传私有材料、不提交或发布；项目内依赖准备与远程动作按委托和批次授权边界执行。运行名额、费用和算力继续按同一个 `research-log.md` 批次记账；恢复不新建批次，也不重置额度。
 
 **完成条件**：作业数、依赖、并发上限、资源与授权状态明确；未授权集合不会进入执行。
 
@@ -32,6 +50,7 @@ Gate: batch-authorization | before=job-start | approval=explicit-user | source=S
 输入可以是显式清单、grid 规格或自然语言；先用项目已有格式表达，不建立统一 schema。推荐使用 [批次清单模板](templates/batch-manifest.md)，至少记录：
 
 - **project / cwd / 执行入口**：每个作业在哪个项目目录、用哪个已有命令运行；
+- **输入版本 / 工具链 / 独立目录 / 作业身份**：展开每个作业的代码/数据/配置版本、环境、隔离工作目录和稳定 job id；实际执行合同来自 `run-experiment`，其未安装时按“联装能力依赖”补装并复用，不从本叶摘要推断缺失规则。
 - **default_cmd 与每作业 args**：把 grid 或模板展开为具体命令；
 - **preconditions**：作业启动前必须存在的文件/检查点/数据（如 teacher checkpoint）；
 - **resources**：允许的资源列表、`max_parallel`、空闲阈值；
@@ -44,7 +63,6 @@ Grid 规格按笛卡尔积展开为明确作业；阶段模板在展开时把变
 **完成条件**：每个作业都有唯一 id、明确命令、预期输出和所属阶段；grid 展开可人工复核；依赖关系无环且指向已声明阶段。
 
 ## 3. 预检
-Gate: precondition-block | before=blocked-job | approval=explicit-user | source=SKILL.md#3-预检
 
 在执行前逐项检查并记录：
 
@@ -72,23 +90,25 @@ Gate: precondition-block | before=blocked-job | approval=explicit-user | source=
 
 - **资源隔离**：同一资源上不重叠启动作业；启动前确认资源空闲，等待而不是抢占。
 - **有限并发**：并发数不超过已确认的 `max_parallel` 或可用资源数。
-- **每作业一个 attempt 记录**：记录 run id、phase、资源、命令、开始/结束时间、状态、expected_output、错误摘要和原始日志位置。
-- **状态机**：`pending → running → completed`；OOM 走 `failed_oom → pending`（有限重试）；其他失败进入 `failed_other → stuck`（等待人工检查）；停滞会话按第 5 节处理。
-- **完成判定以预期输出为准**：不只相信会话状态；检查 `expected_output` 文件/结果实际存在且未损坏。
+- **每作业一个 attempt 记录**：记录 job/run id、phase、输入版本、工具链、独立目录、资源、命令、开始/结束时间、退出码、原始日志、产物、状态、expected_output、错误摘要。
+- **状态机**：`pending → running → completed`；OOM 走 `failed_oom → pending`（有限重试）；其他失败进入 `failed_other → stuck`（等待人工检查）；缺少身份或退出证据时标 `unknown`，先核对原作业，不自动重试或清理；停滞会话按第 5 节处理。
+- **统一完成判定**：第 4 节执行、第 5 节停滞与第 6 节恢复共用同一门槛，不能用会话状态或预期文件出现替代证据。只有同时满足以下条件才标 `completed`：作业身份能对应本次 attempt；退出证据明确显示该 attempt 成功且退出码为 0；预期产物关联同一身份、存在、可读且完整性检查通过。缺少作业身份或退出证据 → `unknown`，补齐同一作业证据前不得重跑。`unknown` 不算依赖可通过的终态，依赖它的后续波次先保持 blocked。
+- **区分失败与产物**：分别记录作业退出、产物有效性和科学结论；成功退出不自动证明产物完整，产物有效也不等于科学结论成立。
+- **旧文件 + 本次非零退出**：上次遗留 `output.csv` + 本次 attempt 非零退出 → `failed_other`；旧文件不算本次产物。
+- **本次成功 + 完整产物**：本次 attempt 成功退出（退出码为 0）+ 身份关联且完整的预期产物 → `completed`。
+- **本次成功 + 产物不完整**：成功退出但产物缺失、部分写入或完整性检查失败 → 不得标 `completed`；记录作业已成功退出与产物无效/未知的独立结论。
+- **会话清理**：会话清理仅在授权明确覆盖该清理动作时执行；否则保留会话并报告，不把未清理会话当作资源已释放。
 - **依赖在启动时强制**：阶段作业只在所依赖阶段的全部作业到达终态后启动。注意“终态”包含 `stuck`——失败的 teacher 不会永久阻塞 student，因此启动依赖波次前先检查状态表中的 `stuck` 项，不把缺失 precondition 当成通过。
 
 **完成条件**：每个已启动作业都有状态、资源、原始日志与预期输出核对结果；没有跨越未满足依赖或未释放资源的波次。
 
 ## 5. 停滞、OOM 与有限重试
 
-**停滞检测**：对每个 `running` 作业定期检查进程/会话是否仍在运行，以及预期输出是否出现。若会话存活但执行进程已退出：
-
-- 预期输出存在 → 标 `completed`，清理残留会话；
-- 预期输出不存在 → 标 `failed_other` 并清理会话，进入 `stuck`。
+**停滞检测**：对每个 `running` 作业定期检查原作业进程/调度器终态、身份与退出证据；预期输出是否出现仅作为产物核验的一项输入。若会话存活但执行进程已退出，仍按第 4 节统一完成判定：只有身份、成功退出码和本次完整产物全部通过才标 `completed`；缺少身份或退出证据时标 `unknown`，旧文件或部分产物不能使作业完成。需要清理残留会话时，先单独核对清理授权；未授权则保留会话并报告。
 
 **OOM 处理**：从日志识别内存不足（如 CUDA out of memory）。检测到后：
 
-1. 标 `failed_oom`，清理该作业的残留会话/进程；
+1. 标 `failed_oom`；若要清理残留会话/进程，先核对授权是否明确覆盖清理并确认资源实际释放，未授权时保留并报告；
 2. 等待已确认的重试延迟；
 3. 确认资源已释放后再分配（优先换到空闲资源）；
 4. 重新入队为 `pending`，attempts 计数加一；
@@ -101,7 +121,8 @@ Gate: precondition-block | before=blocked-job | approval=explicit-user | source=
 ## 6. 状态、恢复与停止
 
 - **状态持久化**：每次状态变化都写入用户可读的状态表（沿用项目已有 tracker 或清单格式）；包含 meta（project、run 标识、开始时间、执行位置）、phases 状态和逐作业状态。状态表用于恢复和人工核对，不是中央数据库。
-- **可恢复**：批次中断后，读取状态表；`running` 作业先核对其会话/进程是否仍存活，存活则保留，否则按第 5 节重新判定；`pending` 继续；`completed`/`stuck` 不重跑。恢复时复用原有 run 标识与路径，不重新生成清单。
+- **可恢复**：批次中断后，读取状态表；断线先查原作业，不盲重跑。用同一 job id 在调度器、远端主机、原始日志和退出记录中核对：会话/进程仍存活则保留，否则按第 4 节统一完成判定。旧文件不能证明来自本次作业身份或未被取代时保持 `stale`/`unknown`，不当作完成；缺少身份或退出证据的 `unknown` 不重跑，先补核原作业。`pending` 继续；`completed`/`stuck` 不重跑。恢复时复用原有 run 标识与路径，不重新生成清单。
+- **判定分离**：作业退出看调度器/进程/日志终态；产物有效看身份、可读性和完整性；科学结论只由计划成功标准、统计分析和审计判断。
 - **幂等**：恢复只补齐未完成项，不覆盖 manifest、状态历史或已有结果。
 - **停止条件**：以下任一情况立即停止当前职责并报告：授权被撤回、预算耗尽、达到超时、重复失败超过批准的重试/修复上限、资源或副作用超出确认范围、precondition 无法满足、用户要求停止、或全部作业到达终态。
 - **停止与重启权限**：暂停、kill、重启、扩大资源或迁移机器都必须由用户授权；本 Skill 只能建议并分开记录建议与实际动作。
@@ -110,7 +131,7 @@ Gate: precondition-block | before=blocked-job | approval=explicit-user | source=
 
 ## 7. 汇总与交回
 
-批次全部到达终态或被停止后，读取状态表和原始日志，生成自然格式汇总（沿用 [run-experiment 报告模板](../run-experiment/templates/run-report.md) 的 attempts 表）：
+批次全部到达终态或被停止后，读取状态表和原始日志，生成自然格式汇总；若已联装 `run-experiment`，沿用其 attempts 表，避免重复定义作业报告合同：
 
 - 逐阶段/逐作业状态统计：completed、failed、invalid、timeout、oom、cancelled、stuck、not-run；
 - 成功、失败、无效、超时与重试的完整历史，不只列出成功项；

@@ -123,6 +123,7 @@
 - **采用**：保留计划解析与按 milestone 实现、代码 review、sanity-first、baseline-first、按规模选择单次/批量执行、OOM 有限重试、停滞清理、波次依赖、预期输出完成判定、状态持久化与 resume、完整 attempt 收集。
 - **适配**：删除 Vast.ai/Modal/`serverless-modal` provider 绑定、`mcp__codex` 固定审查、自动 deploy、无限调试/自动重试、自动 ablation/下一 Workflow、`.aris`/`nohup`/`screen` 调度和 `queue_manager.py` 常驻 scheduler；改为纯 Markdown 的作业清单、状态表与宿主已有执行工具。新增候选实现/evaluator 隔离、真实 ground truth、执行前确认、付费/远程/高成本授权、停止/重启权限、成功/失败/无效/超时 attempt 留存和演练/真实验收区分；`run-report.md` 与 `batch-manifest.md` 为局部适配模板。
 - **调用核对**：上游 `experiment-bridge` Phase 4 按 job 数在 `run-experiment` 与 `experiment-queue` 间路由，Phase 5 收集初步结果并调用 `training-check`；本票只实现路由所需的两个执行能力，监控/分析/审计/Claims 属后续独立票，未在此虚构调用。上游 queue 引用的 `compute-env-contract.md`、`external-cadence.md` 已阅读，只保留其中与执行边界相关的有界性方法。
+- **#56 授权合同适配**：实验桥接的执行控制合入 `run-experiment`，旧 `experiment-bridge` 保留为兼容入口。新增共置 `references/execution-contract.md` 与 `references/remote-execution.md`，记录输入版本、工具链、独立目录、作业身份、退出码、原始日志、产物、断线原作业查询、三类判定分离、SSH/已有调度复用与不锁定供应商。另将本仓共享批次授权规则适配为独立可安装的 `references/batch-authorization.md`，在安装的单个 `run-experiment` 中也可读取完整授权字段与逐次启动核验。数学计算不强制训练 baseline；对照按计划选择。九个实验能力继承 research-os 委托合同，旧叶授权门移除，生产服务器不作为验收门。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随两个 Skill 的 `LICENSE` 一起发行。
 
 ## 已采用的完整 Experiment Bridge Workflow
@@ -354,6 +355,14 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **本仓适配**：去掉 Cursor 命令、个人规则目录与固定模型绑定，派发与独立复核按宿主真实子代理能力判定、缺失时标 blocked；新增四类对象（代码性质／形式模型／数学定理／普通测试）与「按问题选工具、不强制全链形式化」的边界；新增外部假设、材料、依赖版本、实际覆盖、同步状态与变化失效判断的记录；新增原问题、编码定义与定理声明的对应审计，明确占位符、编译成功与有限数值结果不能冒充原定理成立；新增故障暴露证据与「未执行即草稿」状态。普通证明的生成、审查与修复仍属 proof 族，不在本能力范围。
 - **共置资源与许可**：创建侧携带 `references/tool-selection.md`、`references/assumption-ledger.md`、`references/correspondence-audit.md`、`templates/formal-verification-record.md`，维护侧为单文件正文；两者各自携带完整 MIT 文本与 `NOTICE.md` 来源记录，扁平安装后不依赖本文件、开发者目录或临时调查快照。
 - **验收层级**：本票只做静态合同、检查器与可丢弃目录安装验证；不声称真实数学定理已被形式化，也不声称模型在真实研究中会正确使用该能力。
+
+## 已采用的候选比较与整合能力
+
+`skills/organization/arena/` 改编自 cursor/plugins 的 `pstack/` 子树，固定 revision `88d47514b82e7c44f00f2b2a72ff6dd12158038c`。2026-10-24 复核离线归档：实际采用的唯一上游资产是 `pstack/skills/arena/SKILL.md`（4511B，git blob `b198b9e425c6b3e6ff01ca789b97ca5b4abb7ce2`）；该目录没有其他 references、templates、assets 或 scripts。上游正文引用的 Cursor 模型规则与原则 Skills 是宿主绑定指令，不作为本产品依赖或随包资源。
+
+- **保留与适配**：保留 Frame、Fan-out、Cross-judge、Pick、Graft、Verify 的职责、候选全文阅读、先声明 rubric、隔离输出、综合交叉评判、手工 graft，以及数学整合后的假设／记号／依赖闭合重查；胜出不证明命题成立。固定模型与个人目录替换为宿主中立的能力协商及研究委托边界。正文唯一共置文件引用为 `LICENSE`。
+- **来源与许可**：作者 Lauren Tan；许可来自插件级 `pstack/LICENSE`（MIT，`Copyright (c) 2026 Lauren Tan`），不是仓库根许可。随包 `skills/organization/arena/LICENSE` 与上游许可逐字一致（SHA256 `bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`）；Skill 正文保留来源仓库、revision、原路径与 attribution。
+- **安装边界**：`arena` 与入口 `research-os` 各自经 Skills CLI 扁平安装；入口按安装 slug `arena` 发现独立能力，不依赖 `/tmp` 归档或开发者目录。安装、结构合同与检查不证明真实科研或数学质量。
 
 ## 已解决的 revision／路径矛盾
 

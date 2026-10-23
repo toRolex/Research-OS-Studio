@@ -1,10 +1,11 @@
 # Experiment Queue 批次清单
 
-这是人类可读的作业清单，不是中央 schema 或数据库。使用项目已有格式即可（Markdown 表、YAML 或 JSON）；下面的 YAML 展示字段含义，实际执行前与用户确认并保存到本次授权位置。
+这是人类可读的作业清单，不是中央 schema 或数据库。使用项目已有格式即可（Markdown 表、YAML 或 JSON）；下面的 YAML 展示字段含义。已授权写域内的新清单直接写到本次授权位置，不为普通新文件路径重复确认。先读同名清单；写域不明或覆盖既有成果时停止写入并询问。
 
 ## 运行标识
 
 - project / cwd / 执行入口：
+- 作业身份约定：调度器 job id、远端主机 + run id 或本地进程 id；同一作业的恢复必须复用同一身份。
 - 允许资源与 `max_parallel`：
 - 空闲阈值：
 - 本次预算（作业数 / wall-clock / 资源）：
@@ -33,9 +34,9 @@ Grid 在构建清单时展开为明确的逐作业条目，展开口径可人工
 
 ## 作业清单
 
-| Job id | Phase | 命令 / args | Preconditions | Expected output | 状态 |
-|---|---|---|---|---|---|
-| | | | | | pending |
+| Job id | 输入版本 | 工具链 | 独立目录 | Phase | 命令 / args | Preconditions | Expected output | 退出码 | 原始日志 | 产物 | 状态 | Artifact validity | Scientific conclusion |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | | | pending | | |
 
 ## OOM / 重试策略
 

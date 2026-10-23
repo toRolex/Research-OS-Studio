@@ -20,15 +20,17 @@
 
 每次 attempt 一行；成功、失败、无效、超时、取消、未执行都保留。
 
-| Run ID | Milestone | System/Variant | Split | Seed | Metric | Status | Raw result | Failure reason |
-|---|---|---|---|---|---|---|---|---|
-| | | | | | | | | |
+| Run ID | 输入版本 | 工具链 | 独立目录 | 作业身份 | Milestone | System/Variant | Split | Seed | Metric | 退出码 | 原始日志 | 产物 | Status | Artifact validity | Scientific conclusion | Failure reason |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | | | | | | | | |
+
+`Scientific conclusion` only records `not-judged / supported / needs-narrowing / unsupported / invalid / unknown` assigned later by analysis, audit or Results-to-Claims; `run-experiment` never upgrades 产物有效 to 科学结论.
 
 Status 取值：`completed` / `failed` / `invalid` / `timeout` / `oom` / `cancelled` / `not-run`。
 
-## Baseline vs Attempts
+## Plan-declared comparison vs Attempts
 
-- Baseline：[配置、原始结果位置、状态]
+- Comparison：[计划声明的 baseline / control / certificate replay，配置、原始结果位置、状态]
 - All attempts：[与 baseline 并列的完整列表]
 - Failures / invalid / timeout：[逐项原因与日志位置]
 

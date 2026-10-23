@@ -9,8 +9,18 @@ disable-model-invocation: true
 
 从固定观测诊断训练是否出现 NaN/Inf、发散、OOM、停滞和日志完整性问题，并给出**建议**。它回答“训练过程是否健康”，不回答“实验是否支持 Claim”。作业控制权始终在用户手中。
 
-## Scope and authorization
-Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#scope-and-authorization
+Gates: none
+
+## 委托合同依赖
+
+- 单装包随本叶携带 [委托合同分发摘录](references/mandate.md)，覆盖目标、权限、额度、完成/停止与验收的必需规则；完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`。
+- 分发摘录缺失、与完整规范冲突或本次动作超出摘录时，标为 `blocked` 并停止受影响动作；不得从开发仓库路径或其他叶推断授权。
+
+## 委托继承
+
+- 目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威。
+- 只读诊断边界不变；报告写盘按委托允许位置继续，内部级联不重置授权。
+- 一次有界诊断后停止；建议不等于控制动作，kill/restart/requeue 留给用户或 run-experiment 的授权执行。
 
 - **Role:** explicitly invoked or path-cascaded internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. This skill reads observations and diagnoses. It never stops, kills, restarts, retries, requeues, pauses or reconfigures a job, and never edits training code, configuration, data or checkpoints.
 - **Inputs:** existing training observations — loss/gradient/metric records, training logs (stdout/stderr), resource or scheduler records, and the user's stated window and expected schedule when given. Observations may be a file, a directory of logs, or text the user pasted. A specific tracking service, GPU scheduler, framework or live session is not a prerequisite.
