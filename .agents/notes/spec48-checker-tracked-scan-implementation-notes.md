@@ -5,7 +5,7 @@
 - 最小修复：done；只改全局 Markdown 清单，不改 copier、忽略集、历史红灯或其他票目录；`checker-green` rc=1、原九条 stdout 原始字节 cmp=0。
 - 串行初验：done；clean 实现提交 `bde88be847dcc5cfdb06776dc216aa13fe94d710` 上 sentinel rc=0；214 联合 rc=0（87 subtests，99.289 秒）；全套 rc=1（6 failed／272 passed／131 subtests，121.848 秒）。`compare-clean` rc=0：六个失败 nodeid 精确匹配既有基线，checker 原九条 stdout 原始字节 cmp=0。
 - 只读 parent 扫描探针：done；`parent-probe` rc=1（仅原九条诊断），0.283 秒；exec 本分支源码、仅将 `__file__` 指到 parent，scandir 对不在 tracked 祖先集合内的目录一律先拒绝。没有拒绝触发，stdout 精确 cmp=0；未写 parent 文件；前后 parent HEAD 均 `86caa4fd76792b056f31d5c083fb7cd918760a4c`。不外推为 parent 全套通过。
-- integration 同步／最终交接：待验收；读取具体 integration tip 并在本分支 merge，然后在 clean worktree 复验，最终身份／diff／日志见外置 REPORT。
+- integration 同步／最终交接：done；本分支 merge 具体 tip `86caa4fd76792b056f31d5c083fb7cd918760a4c`（Already up to date，rc=0），在 clean `caf5405de7aa9d70cd1ec5bf36a7c03cf63df295` 复验：sentinel 1 passed rc=0；联合 214 passed／87 subtests rc=0（73.797 秒）；全套仍 6 failed／272 passed／131 subtests rc=1（136.815 秒）；`compare-final` rc=0，六项失败集合与原九条 stdout 精确匹配。交付前 integration ref 仍为上述 SHA。此后仅追加本 notes 完成状态，最终提交身份／实际 diff／收尾 checker 证据见外置 REPORT。
 
 ## 边界与决策
 - 指定 implementation worker，用户禁止继续派发，直接执行；已读全局 Multi-Agent/model-availability/CODING_STANDARDS、pre-implement、指定 TDD 三文件、GLOSSARY 与 ADR-0005；Python 仅 uv。
