@@ -44,15 +44,7 @@ LEAF_GATES = {
     "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
     "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
     "skills/idea-cycle/novelty-check/SKILL.md": set(),
-    "skills/validation-cycle/formula-derivation/SKILL.md": {"write-authorization"},
-    "skills/validation-cycle/proof-orchestrator/SKILL.md": {"round-scope", "external-action"},
-    "skills/validation-cycle/proof-repair/SKILL.md": {
-        "repair-contract",
-        "assumption-or-claim-change",
-        "compile-authorization",
-    },
     "skills/validation-cycle/proof-review/SKILL.md": set(),
-    "skills/validation-cycle/proof-writer/SKILL.md": {"write-authorization"},
     "skills/writing-cycle/academic-plotting/SKILL.md": {"figure-choice", "external-resource"},
 }
 
@@ -107,6 +99,20 @@ class PolicyAndGates(unittest.TestCase):
             if not expected:
                 self.assertRegex(text, r"(?m)^Gates: none$")
         migrated = set(module.MIGRATED_CONTRACT)
+        migrated_proof_skills = {
+            "skills/validation-cycle/formula-derivation/SKILL.md",
+            "skills/validation-cycle/proof-writer/SKILL.md",
+            "skills/validation-cycle/proof-repair/SKILL.md",
+            "skills/validation-cycle/proof-orchestrator/SKILL.md",
+        }
+        self.assertTrue(migrated_proof_skills <= migrated)
+        self.assertTrue(migrated_proof_skills.isdisjoint(module.LEGACY_LEAF_GATES))
+        for rel in migrated_proof_skills:
+            self.assertEqual(module.MIGRATED_CONTRACT[rel], "委托继承")
+            text = (ROOT / rel).read_text(encoding="utf-8")
+            self.assertNotRegex(text, r"(?m)^Gate:")
+            self.assertRegex(text, r"(?m)^Gates: none$")
+            self.assertRegex(text, r"(?m)^## 委托继承$")
         writing_skills = {
             f"skills/writing-cycle/{name}/SKILL.md"
             for name in (

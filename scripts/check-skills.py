@@ -1139,6 +1139,10 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/validation-cycle/analyze-results/SKILL.md": "委托继承",
     "skills/validation-cycle/experiment-audit/SKILL.md": "委托继承",
     "skills/validation-cycle/result-to-claim/SKILL.md": "委托继承",
+    "skills/validation-cycle/formula-derivation/SKILL.md": "委托继承",
+    "skills/validation-cycle/proof-writer/SKILL.md": "委托继承",
+    "skills/validation-cycle/proof-repair/SKILL.md": "委托继承",
+    "skills/validation-cycle/proof-orchestrator/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-writing/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-plan/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-drafting/SKILL.md": "委托继承",
@@ -1166,15 +1170,7 @@ LEGACY_LEAF_GATES: dict[str, set[str]] = {
     "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
     "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
     "skills/idea-cycle/novelty-check/SKILL.md": set(),
-    "skills/validation-cycle/formula-derivation/SKILL.md": {"write-authorization"},
-    "skills/validation-cycle/proof-orchestrator/SKILL.md": {"round-scope", "external-action"},
-    "skills/validation-cycle/proof-repair/SKILL.md": {
-        "repair-contract",
-        "assumption-or-claim-change",
-        "compile-authorization",
-    },
     "skills/validation-cycle/proof-review/SKILL.md": set(),
-    "skills/validation-cycle/proof-writer/SKILL.md": {"write-authorization"},
     "skills/writing-cycle/academic-plotting/SKILL.md": {"figure-choice", "external-resource"},
 }
 
