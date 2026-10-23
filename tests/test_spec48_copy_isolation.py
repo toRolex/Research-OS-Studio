@@ -1,5 +1,6 @@
 """Spec48 可损坏副本只携带 tracked 资产，不吸入本机证据树。"""
 import shutil
+import stat
 import subprocess
 import tempfile
 import unittest
@@ -7,8 +8,11 @@ from contextlib import ExitStack
 from pathlib import Path
 from unittest.mock import patch
 
+import test_check_skills_policy_gates as policy_gates
 import test_spec48_ticket49 as ticket49
 import test_spec48_ticket51 as ticket51
+import test_spec48_ticket54 as ticket54
+import test_spec48_ticket56 as ticket56
 
 
 class CopyIsolation(unittest.TestCase):
@@ -27,6 +31,7 @@ class CopyIsolation(unittest.TestCase):
                 path = source / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text(content, encoding="utf-8")
+            (source / "scripts/check-skills.py").chmod(0o755)
             subprocess.run(["git", "init", "-q", str(source)], check=True)
             subprocess.run(
                 ["git", "-C", str(source), "add", "-f", "."], check=True
@@ -47,9 +52,21 @@ class CopyIsolation(unittest.TestCase):
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text("must stay in source\n", encoding="utf-8")
 
-            for module in (ticket49, ticket51):
-                with self.subTest(helper=module.__name__), patch.object(module, "ROOT", source), ExitStack() as cleanup:
-                    if module is ticket49:
+            entries = (
+                (ticket49, "WorkCopy"),
+                (ticket51, "copy_tree"),
+                (ticket54, "WorkCopy"),
+                (ticket56, "WorkCopy"),
+                (policy_gates, "new-destination"),
+                (policy_gates, "existing-destination"),
+            )
+            for module, entry in entries:
+                with self.subTest(helper=module.__name__, entry=entry), patch.object(module, "ROOT", source), ExitStack() as cleanup:
+                    if module is policy_gates:
+                        parent = Path(cleanup.enter_context(tempfile.TemporaryDirectory()))
+                        dest = parent if entry == "existing-destination" else parent / "repo"
+                        module.copy_worktree(dest)
+                    elif module is not ticket51:
                         work = cleanup.enter_context(module.WorkCopy())
                         dest = work.path
                     else:
@@ -66,6 +83,10 @@ class CopyIsolation(unittest.TestCase):
                     self.assertEqual(copied, set(assets))
                     for name, content in assets.items():
                         self.assertEqual((dest / name).read_text(encoding="utf-8"), content)
+                    self.assertEqual(
+                        stat.S_IMODE((dest / "scripts/check-skills.py").stat().st_mode),
+                        0o755,
+                    )
                     tracked = subprocess.run(
                         ["git", "ls-files", "-z"], cwd=dest,
                         check=True, capture_output=True, text=True,
