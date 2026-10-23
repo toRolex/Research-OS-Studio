@@ -34,22 +34,14 @@ echo "✅ 初始化完成！"
 echo ""
 sleep 1
 
-# 场景3: Idea Discovery
-echo "💡 步骤3: Idea Discovery 工作流"
-echo "$ /idea-discovery"
+# 场景3: Research OS Discovery
+echo "💡 步骤3: Research OS Discovery 配方"
+echo "$ /research-os"
 sleep 2
-echo "🎯 请输入研究方向: 基于深度学习的蛋白质结构预测"
-sleep 2
-echo "📚 Phase 1: 文献调研中..."
-sleep 1
-echo "💡 Phase 2: 生成 5 个候选 Idea"
-sleep 1
-echo "🔍 Phase 3: 查新检查"
-sleep 1
-echo "👥 Phase 4: 独立评审"
-sleep 2
-echo "📋 交付: IDEA_DISCOVERY.md"
-echo "✅ 工作流完成，等待用户决策"
+echo "🎯 用户目标: 从研究方向和已有材料形成 Proposal"
+echo "🧭 按缺口选择、重排或回访所需的发现能力"
+echo "👥 需要挑战时由 fresh 独立 reviewer 审查原始材料"
+echo "📋 按授权交付发现报告和/或 Proposal；完成后停止"
 echo ""
 sleep 1
 

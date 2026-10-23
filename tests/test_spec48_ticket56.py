@@ -19,7 +19,6 @@ CHECK = ROOT / "scripts" / "check-skills.py"
 BASE = ROOT / "skills" / "validation-cycle"
 EXPERIMENT_SKILLS = (
     "experiment-plan",
-    "experiment-bridge",
     "run-experiment",
     "experiment-queue",
     "monitor-experiment",
@@ -30,7 +29,6 @@ EXPERIMENT_SKILLS = (
 )
 RUN = BASE / "run-experiment"
 QUEUE = BASE / "experiment-queue"
-BRIDGE = BASE / "experiment-bridge"
 BOUNDARY = ROOT / "skills/general/research-os/references/migration-boundary.md"
 BRIDGE_PLAYBOOK = ROOT / "skills/general/research-os/playbooks/experiment-bridge.md"
 UPSTREAM = ROOT / "docs/upstream-sources-and-licenses.md"
@@ -107,7 +105,7 @@ class WorkCopy:
 
 
 class OwnershipAndMandate(unittest.TestCase):
-    def test_nine_experiment_capabilities_remain_separate(self):
+    def test_eight_experiment_skills_remain_separate(self):
         mod = load()
         for name in EXPERIMENT_SKILLS:
             skill_dir = BASE / name
@@ -125,21 +123,23 @@ class OwnershipAndMandate(unittest.TestCase):
             self.assertTrue(BOUNDARY.is_file() and name in text(BOUNDARY), name)
             self.assertIn(name, text(UPSTREAM), name)
 
-    def test_bridge_is_compatibility_pointer_not_duplicate_controller(self):
-        bridge = text(BRIDGE / "SKILL.md")
+    def test_bridge_recipe_is_not_an_installable_controller(self):
         run = text(RUN / "SKILL.md")
-        self.assertIn("兼容入口", bridge)
-        self.assertIn("`run-experiment`", bridge)
-        self.assertNotIn("](../run-experiment/SKILL.md)", bridge)
-        self.assertIn("不再重复执行控制", bridge)
-        self.assertNotRegex(bridge, r"(?m)^Gate:", bridge)
-        for phrase in ("正式与批量运行", "分析审计与 tracker 更新", "授权门"):
-            self.assertNotIn(phrase, bridge, phrase)
-        self.assertIn("执行控制", run)
+        playbook = text(BRIDGE_PLAYBOOK)
+        self.assertFalse((BASE / "experiment-bridge/SKILL.md").exists())
+        self.assertIn("skills/validation-cycle/run-experiment/SKILL.md", playbook)
+        self.assertIn("唯一执行控制", playbook)
+        self.assertNotIn("skills/validation-cycle/experiment-bridge/SKILL.md", playbook)
+        self.assertNotRegex(playbook, r"(?m)^\s*/experiment-bridge\b")
+        self.assertIn("是唯一实验执行控制", run)
         self.assertIn("小批量或队列", run)
         self.assertIn("仓库中的 `experiment-queue`", run)
-        self.assertIn("单独安装时如 queue 不可用", run)
-        self.assertNotIn("../experiment-bridge/SKILL.md", run)
+        self.assertIn("单装 `run-experiment` 时", run)
+        composition = text(RUN / "references/composition-map.md")
+        self.assertIn("`monitor-experiment`", composition)
+        self.assertIn("`analyze-results`", composition)
+        self.assertIn("`experiment-audit`", composition)
+        self.assertIn("只阻塞其自身职责", composition)
 
 
 class ExecutionContract(unittest.TestCase):
@@ -153,6 +153,10 @@ class ExecutionContract(unittest.TestCase):
             self.assertIn(phrase, report, phrase)
         self.assertIn("references/execution-contract.md", run)
         self.assertTrue((RUN / "references/execution-contract.md").is_file())
+        for relative in (
+            "references/composition-map.md", "templates/run-report.md",
+        ):
+            self.assertTrue((RUN / relative).is_file(), relative)
 
     def test_queue_reuses_same_contract_and_has_recovery(self):
         queue = text(QUEUE / "SKILL.md")
@@ -223,7 +227,7 @@ class UnifiedController(unittest.TestCase):
     def test_research_os_bridge_playbook_is_a_pointer_not_a_second_controller(self):
         playbook = text(BRIDGE_PLAYBOOK)
         self.assertIn("run-experiment", playbook)
-        self.assertIn("分析或审计", playbook)
+        self.assertIn("只在用户委托要求时", playbook)
         self.assertIn("analyze-results", playbook)
         self.assertIn("experiment-audit", playbook)
         self.assertNotIn("run_count_basis=planned-run", playbook)
@@ -236,10 +240,10 @@ class WorkflowRemediation(unittest.TestCase):
         authority = text(ROOT / "skills/general/research-os/references/mandate.md")
         required_files = {
             "experiment-plan": ("references/block-checks.md", "templates/experiment-plan.md"),
-            "experiment-bridge": ("references/composition-map.md", "templates/bridge-report.md"),
             "run-experiment": (
                 "references/execution-contract.md", "references/remote-execution.md",
-                "references/batch-authorization.md", "templates/run-report.md",
+                "references/batch-authorization.md", "references/composition-map.md",
+                "templates/run-report.md",
             ),
             "experiment-queue": ("templates/batch-manifest.md",),
             "monitor-experiment": (
@@ -283,11 +287,6 @@ class WorkflowRemediation(unittest.TestCase):
 
     def test_cross_skill_references_declare_group_dependencies_and_blocking(self):
         dependencies = {
-            "experiment-bridge": (
-                "run-experiment", "experiment-plan", "experiment-queue",
-                "monitor-experiment", "training-health-check", "analyze-results",
-                "experiment-audit",
-            ),
             "experiment-queue": ("run-experiment",),
             "result-to-claim": ("analyze-results",),
         }
@@ -452,12 +451,12 @@ class CheckerContract(unittest.TestCase):
     def test_checker_detects_missing_other_single_install_resource(self):
         with WorkCopy() as root:
             resource = root.path / (
-                BASE / "experiment-bridge/references/composition-map.md"
+                BASE / "run-experiment/references/composition-map.md"
             ).relative_to(ROOT)
             resource.unlink()
             root.stage()
             self.assertIn(
-                "experiment-bridge/references/composition-map.md: 缺少实验执行资产",
+                "run-experiment/references/composition-map.md: 缺少实验执行资产",
                 "\n".join(fresh_problems(root)),
             )
 

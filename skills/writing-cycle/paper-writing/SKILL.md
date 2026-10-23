@@ -9,7 +9,7 @@ disable-model-invocation: true
 
 Gates: none
 
-用户显式调用。这是 writing-cycle 的统一写作入口：general、ML 和 Systems 材料都在本入口组织，专业规则按需读取。一次授权内组合内部能力，交付候选稿与审查报告后停止。阶段、能力与审查输入见 [composition-map](references/composition-map.md)。
+用户显式调用。这是 writing-cycle 的统一写作入口：general、ML 和 Systems 材料都在本入口组织，专业规则按需读取。按材料主要贡献选择 general、ML/AI 或 Systems 专业分支；混合论文可并用对应参考。一次授权内组合内部能力，交付候选稿与审查报告后停止。阶段、能力与审查输入见 [composition-map](references/composition-map.md) 和 [专业资源索引](references/standards.md)。
 
 ## 委托继承
 

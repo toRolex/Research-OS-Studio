@@ -4,7 +4,7 @@
 
 ## 适用
 
-已有主题、问题、一批论文或稿件，要一次能交付的文献 landscape 或单篇解释。要由材料生成候选并收敛成 Proposal 走 idea-discovery；只要推荐入口走 route-only。
+已有主题、问题、一批论文或稿件，要一次能交付的文献 landscape 或单篇解释。要由材料生成候选并收敛成 Proposal 走 Discovery recipe；只要推荐入口走 route-only。
 
 ## 阶段角色
 
