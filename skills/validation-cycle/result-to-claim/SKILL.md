@@ -8,8 +8,13 @@ disable-model-invocation: true
 
 把已有结果变成**范围受限的候选主张**，而不是把数字变成结论。它回答"这些结果能说什么、不能说什么、还缺什么"，产出候选 Claim 后即停止；采不采用由用户决定。
 
-## 调用与授权
-Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#调用与授权
+Gates: none
+
+## 委托继承
+
+- 目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威。
+- 只读判定与报告写盘按委托允许位置继续；内部级联不重置授权，候选主张仍由用户采用。
+- 不把旧文件当作当前证据：结果必须关联作业身份、输入版本和有效产物；作业退出、产物有效、科学结论分别判定。
 
 这是 **user-invoked Workflow**：用户显式要求"结果能支持什么 Claim"时使用。模型不自动启动它；本 Skill 也不启动其他 user-invoked Workflow。输入可以是外部现成结果，不要求先运行本产品的实验、分析或审计。
 
@@ -30,6 +35,7 @@ Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.m
 - 待判定 Claim：原文、声明的 population／setting／metric／时间范围／比较对象、引用编号。
 - 结果文件：每个引用数字对应的文件、key、值、所属 attempt、读取范围与可核对性。
 - baseline：数值、出处（本地复现还是引用外部数字）、配置与数据划分；引用型标 `reported`。
+- 作业合同：输入版本、工具链、独立目录、作业身份、退出码、原始日志和产物；无法关联或被取代的旧文件标 `stale`/`unknown`。
 - attempt 集合：成功、失败、崩溃、超时、无效、被排除的每一次；只剩 winner 汇总时回溯原始集合。
 - 已有分析／审计报告：路径、版本、结论摘要；只导航，不替代本 Phase 的存在性核对。
 

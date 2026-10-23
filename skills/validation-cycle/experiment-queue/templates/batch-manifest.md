@@ -5,6 +5,7 @@
 ## 运行标识
 
 - project / cwd / 执行入口：
+- 作业身份约定：调度器 job id、远端主机 + run id 或本地进程 id；同一作业的恢复必须复用同一身份。
 - 允许资源与 `max_parallel`：
 - 空闲阈值：
 - 本次预算（作业数 / wall-clock / 资源）：
@@ -33,9 +34,9 @@ Grid 在构建清单时展开为明确的逐作业条目，展开口径可人工
 
 ## 作业清单
 
-| Job id | Phase | 命令 / args | Preconditions | Expected output | 状态 |
-|---|---|---|---|---|---|
-| | | | | | pending |
+| Job id | 输入版本 | 工具链 | 独立目录 | Phase | 命令 / args | Preconditions | Expected output | 退出码 | 原始日志 | 产物 | 状态 | Artifact validity | Scientific conclusion |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| | | | | | | | | | | | pending | | |
 
 ## OOM / 重试策略
 

@@ -8,8 +8,13 @@ disable-model-invocation: true
 
 将用户给定的问题、Proposal 或方法整理为 **claim → evidence → run order** 路线图。计划服务证据而非预设论文成功。
 
-## 调用与授权
-Gate: output-path | before=plan-write | approval=explicit-user | source=SKILL.md#调用与授权
+Gates: none
+
+## 委托继承
+
+- 目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威；只读或只建议时不落盘。
+- 内部级联不重置授权；计划写盘按委托允许的位置继续。未来实验预算不等于执行授权。
+- 完成计划即停止；关键数据、评价定义或硬预算未知时交付 **BLOCKED 草稿**，不编造数值。
 
 这是 **user-invoked Workflow**：用户显式调用本 Skill 制定实验计划时使用。模型不自动启动它；本 Skill 也不调用其他 Workflow。输入可以是现成研究问题，不要求先运行 Discovery 或 refinement。用户若只给不稳定方向，输出缺口与待确认的假设，不替用户换题。
 
@@ -18,6 +23,7 @@ Gate: output-path | before=plan-write | approval=explicit-user | source=SKILL.md
 - **写入范围**：仅用户允许的计划与 tracker 文件。默认在对话返回草稿；需落盘时沿用现有 Research Workspace，提出 `EXPERIMENT_PLAN.md` 与 `EXPERIMENT_TRACKER.md` 的具体路径并确认。已有文件先展示差异，未授权覆盖则保留原件。写入前复查目的文件；出现外部变化时重新确认。不修改代码、数据、评估器、Agent 配置或其他研究材料。
 - **资源范围**：本次仅规划。用户允许的未来实验预算不等于本次执行授权。远程读取、付费检索或敏感数据外传需符合本次授权；缺少资料时标为待提供，不安装工具或申请算力。
 - **停止条件**：完成计划与摘要即停止；关键数据、评价定义或硬预算未知时交付明确标为“待补全，不可执行”的草稿并停止。拒绝授权或工具权限被拒时保留已有材料并报告。
+- 需要运行批次时，仅在用户明确确认后按工作区授权流程记录该批 `research-log.md`；实际启动由 run-experiment 核验并继承这份授权，不逐 milestone 再索权。仅有计划不代表运行获批。
 
 ## Planning constants
 
@@ -25,6 +31,7 @@ Gate: output-path | before=plan-write | approval=explicit-user | source=SKILL.md
 - **MAX_CORE_BLOCKS = 5** — keep the must-run experimental story compact.
 - **MAX_BASELINE_FAMILIES = 3** — prefer a few strong baselines over many weak ones.
 - **DEFAULT_SEEDS = 3** — propose 3 seeds when stochastic variance matters and budget allows; this is neither automatic authorization nor a guarantee of statistical power.
+- **对照按问题选**：机器学习用计划声明中的训练 baseline；数学计算采用计划声明的对照（最小对照、已知值、证书重放或独立实现检查），不硬套训练 baseline。
 
 ## Workflow
 

@@ -1153,6 +1153,15 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
     "skills/writing-cycle/research-improvement/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-plan/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-bridge/SKILL.md": "委托继承",
+    "skills/validation-cycle/run-experiment/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-queue/SKILL.md": "委托继承",
+    "skills/validation-cycle/monitor-experiment/SKILL.md": "委托继承",
+    "skills/validation-cycle/training-health-check/SKILL.md": "委托继承",
+    "skills/validation-cycle/analyze-results/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-audit/SKILL.md": "委托继承",
+    "skills/validation-cycle/result-to-claim/SKILL.md": "委托继承",
 }
 MANDATE_DOC = "skills/general/research-os/references/mandate.md"
 MIGRATION_DOC = "skills/general/research-os/references/migration-boundary.md"
@@ -1166,13 +1175,7 @@ LEGACY_LEAF_GATES: dict[str, set[str]] = {
     "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
     "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
     "skills/idea-cycle/novelty-check/SKILL.md": set(),
-    "skills/validation-cycle/analyze-results/SKILL.md": {"write-path"},
-    "skills/validation-cycle/experiment-audit/SKILL.md": {"write-path"},
-    "skills/validation-cycle/experiment-bridge/SKILL.md": {"run-authorization"},
-    "skills/validation-cycle/experiment-plan/SKILL.md": {"output-path"},
-    "skills/validation-cycle/experiment-queue/SKILL.md": {"batch-authorization", "precondition-block"},
     "skills/validation-cycle/formula-derivation/SKILL.md": {"write-authorization"},
-    "skills/validation-cycle/monitor-experiment/SKILL.md": {"write-path"},
     "skills/validation-cycle/proof-orchestrator/SKILL.md": {"round-scope", "external-action"},
     "skills/validation-cycle/proof-repair/SKILL.md": {
         "repair-contract",
@@ -1181,9 +1184,6 @@ LEGACY_LEAF_GATES: dict[str, set[str]] = {
     },
     "skills/validation-cycle/proof-review/SKILL.md": set(),
     "skills/validation-cycle/proof-writer/SKILL.md": {"write-authorization"},
-    "skills/validation-cycle/result-to-claim/SKILL.md": {"write-path"},
-    "skills/validation-cycle/run-experiment/SKILL.md": {"run-authorization", "milestone-start"},
-    "skills/validation-cycle/training-health-check/SKILL.md": {"write-path"},
     "skills/writing-cycle/academic-plotting/SKILL.md": {"figure-choice", "external-resource"},
     "skills/writing-cycle/apply-citation-fixes/SKILL.md": {"apply-authorization"},
     "skills/writing-cycle/citation-audit/SKILL.md": {"audit-scope"},
@@ -1409,6 +1409,159 @@ def verification_skill_problems(root: Path, tracked_paths: set[str]) -> list[str
     return found
 
 
+EXPERIMENT_SKILLS: tuple[str, ...] = (
+    "experiment-plan",
+    "experiment-bridge",
+    "run-experiment",
+    "experiment-queue",
+    "monitor-experiment",
+    "training-health-check",
+    "analyze-results",
+    "experiment-audit",
+    "result-to-claim",
+)
+EXPERIMENT_JOB_CONTRACT = (
+    "输入版本", "工具链", "独立目录", "作业身份", "退出码", "原始日志", "产物",
+)
+EXPERIMENT_RECOVERY = (
+    "断线", "原作业", "不盲重跑", "旧文件", "作业退出", "产物有效", "科学结论",
+)
+EXPERIMENT_REMOTE = (
+    "远程只是执行位置", "SSH", "已有调度", "不新造执行引擎", "不锁定供应商",
+    "凭据", "独立目录", "作业身份", "原作业",
+)
+EXPERIMENT_REQUIRED_FILES = {
+    "run-experiment": (
+        "references/execution-contract.md",
+        "references/remote-execution.md",
+        "references/batch-authorization.md",
+        "templates/run-report.md",
+    ),
+    "experiment-queue": ("templates/batch-manifest.md",),
+}
+EXPERIMENT_TEXT_MARKERS = {
+    "run-experiment": (
+        "执行控制", "小批量或队列", "委托继承", *EXPERIMENT_JOB_CONTRACT,
+        "作业退出", "产物有效", "科学结论", "旧文件",
+        "远程只是执行位置", "SSH", "已有调度",
+    ),
+    "experiment-bridge": ("兼容入口", "不再重复执行控制", "委托继承"),
+    "experiment-queue": (
+        "委托继承", *EXPERIMENT_JOB_CONTRACT, *EXPERIMENT_RECOVERY,
+        "不因进入队列或新波次重复索权", "研究日志",
+    ),
+    "experiment-plan": (
+        "委托继承", "数学计算", "不硬套训练 baseline", "计划声明的对照",
+        "不逐 milestone 再索权",
+    ),
+    "monitor-experiment": ("委托继承",),
+    "training-health-check": ("委托继承",),
+    "analyze-results": ("委托继承",),
+    "experiment-audit": ("委托继承", "作业退出", "产物有效", "科学结论", "unknown"),
+    "result-to-claim": ("委托继承", "作业退出", "产物有效", "科学结论", "旧文件"),
+}
+EXPERIMENT_FILE_MARKERS = {
+    "run-experiment/references/execution-contract.md": EXPERIMENT_JOB_CONTRACT,
+    "run-experiment/references/remote-execution.md": EXPERIMENT_REMOTE,
+    "run-experiment/references/batch-authorization.md": (
+        "research-log.md", "valid_until", "scope", "cost_limit", "compute_limit", "run_limit",
+        "run_count_basis: planned-run", "concurrency_limit", "retry_limit", "worst_case_estimate",
+    ),
+    "run-experiment/templates/run-report.md": EXPERIMENT_JOB_CONTRACT,
+    "experiment-queue/templates/batch-manifest.md": EXPERIMENT_JOB_CONTRACT,
+}
+EXPERIMENT_HOST_BINDINGS = FORMAL_HOST_BINDINGS
+EXPERIMENT_MODEL_PIN = FORMAL_MODEL_PIN
+EXPERIMENT_AUTHORIZATION_MARKERS = (
+    "research-log.md", "valid_until", "scope", "累计额度", "run_count_basis=planned-run",
+    "concurrency_limit", "retry_limit", "worst_case_estimate", "不按 milestone 重复索取",
+    "batch-authorization.md",
+)
+EXPERIMENT_BRIDGE_PLAYBOOK = "skills/general/research-os/playbooks/experiment-bridge.md"
+
+
+def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#56 实验执行：委托继承、桥接合流、运行/恢复/远程合同与宿主中立。"""
+    found: list[str] = []
+    base = root / "skills" / "validation-cycle"
+    for name in EXPERIMENT_SKILLS:
+        rel_dir = f"skills/validation-cycle/{name}"
+        skill_dir = base / name
+        if not skill_dir.is_dir():
+            found.append(f"{rel_dir}: 实验 Skill 不存在")
+            continue
+        for rel in ("SKILL.md", "LICENSE", "agents/openai.yaml", *EXPERIMENT_REQUIRED_FILES.get(name, ())):
+            path = skill_dir / rel
+            rel_path = f"{rel_dir}/{rel}"
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少实验执行资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+        skill_path = skill_dir / "SKILL.md"
+        if not skill_path.is_file():
+            continue
+        text = skill_path.read_text(encoding="utf-8")
+        for marker in EXPERIMENT_TEXT_MARKERS.get(name, ()):
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺「{marker}」")
+        if "委托继承" not in heading_anchors(text):
+            found.append(f"{rel_dir}/SKILL.md: 缺「委托继承」小节")
+        if re.search(r"(?m)^Gate:", text):
+            found.append(f"{rel_dir}/SKILL.md: 已迁移实验能力残留旧门")
+        for binding in EXPERIMENT_HOST_BINDINGS:
+            if binding in text:
+                found.append(f"{rel_dir}/SKILL.md: 宿主绑定残留 {binding}")
+        if EXPERIMENT_MODEL_PIN.search(text):
+            found.append(f"{rel_dir}/SKILL.md: 固定模型绑定")
+        yaml_path = skill_dir / "agents" / "openai.yaml"
+        if yaml_path.is_file() and yaml_allow_implicit(yaml_path.read_text(encoding="utf-8")) != "false":
+            found.append(f"{rel_dir}/agents/openai.yaml: allow_implicit_invocation 必须为 false")
+        if f"{rel_dir}/SKILL.md" not in MIGRATED_CONTRACT:
+            found.append(f"{rel_dir}/SKILL.md: 未登记迁移状态")
+        for rel, markers in EXPERIMENT_FILE_MARKERS.items():
+            if not rel.startswith(f"{name}/"):
+                continue
+            path = base / rel
+            if not path.is_file():
+                asset_path = f"skills/validation-cycle/{rel}"
+                message = f"{asset_path}: 缺少实验执行资产"
+                if message not in found:
+                    found.append(message)
+                continue
+            body = path.read_text(encoding="utf-8")
+            for marker in markers:
+                if marker not in body:
+                    found.append(f"skills/validation-cycle/{rel}: 缺「{marker}」")
+    run_text = base / "run-experiment" / "SKILL.md"
+    if run_text.is_file():
+        run_body = run_text.read_text(encoding="utf-8")
+        if "../experiment-bridge/SKILL.md" in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 仍依赖旧桥接控制器")
+        if "仓库中的 `experiment-queue`" not in run_body or "单独安装时如 queue 不可用" not in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 缺批量队列可用性边界")
+        for marker in EXPERIMENT_AUTHORIZATION_MARKERS:
+            if marker not in run_body:
+                found.append(f"skills/validation-cycle/run-experiment/SKILL.md: 缺批次授权合同「{marker}」")
+    bridge_playbook = root / EXPERIMENT_BRIDGE_PLAYBOOK
+    if bridge_playbook.is_file():
+        playbook = bridge_playbook.read_text(encoding="utf-8")
+        for marker in ("run-experiment", "analyze-results", "experiment-audit"):
+            if marker not in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 缺能力路由 {marker}")
+        for marker in ("run_count_basis=planned-run", "每个 attempt 先记最坏预留"):
+            if marker in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 桥接 playbook 重复执行控制合同 {marker}")
+    else:
+        found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: playbook 不存在")
+    boundary = root / MIGRATION_DOC
+    if boundary.is_file():
+        boundary_text = boundary.read_text(encoding="utf-8")
+        for name in EXPERIMENT_SKILLS:
+            if name not in boundary_text:
+                found.append(f"{MIGRATION_DOC}: 未列出实验能力 {name}")
+    return found
+
+
 for sf in skill_files:
     rel = sf.relative_to(ROOT).as_posix()
     expected = expected_gates(sf.parent, sf.parent.name)
@@ -1428,6 +1581,8 @@ for problem in ticket59_contract_problems(ROOT, tracked):
 for problem in formal_verification_problems(ROOT, tracked):
     err(problem)
 for problem in verification_skill_problems(ROOT, tracked):
+    err(problem)
+for problem in experiment_execution_problems(ROOT, tracked):
     err(problem)
 
 
