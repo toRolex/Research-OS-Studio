@@ -44,7 +44,7 @@ Gates: none
 | paper-writing | general | 写论文 | 已有研究材料要写成论文，且材料不是机器学习实验、也不是以系统设计与实现为核心贡献 | no | [paper-writing-general](playbooks/paper-writing-general.md) |
 | paper-writing | ml | 机器学习 | 材料是机器学习或人工智能实验，要按专业标准组织论文写作 | no | [paper-writing-ml](playbooks/paper-writing-ml.md) |
 | paper-writing | systems | 系统论文 | 材料以系统设计与实现为核心贡献，要按专业标准组织论文写作 | no | [paper-writing-systems](playbooks/paper-writing-systems.md) |
-| proof | — | 续证明、接上一轮证明、证明交接、固定命题 | 已有固定命题或上一轮证明材料，要续接该 obligation | no | [proof](playbooks/proof.md) |
+| proof | — | 接续数学成果、续证明、证明交接、推广受阻 | 已有定理、证明、推导、计算或推广障碍，要围绕原问题继续研究 | no | [proof](playbooks/proof.md) |
 | rebuttal | — | 回复审稿、逐条回应审稿意见、写 rebuttal | 已有论文与审稿意见，要逐 concern 候选回复 | no | [rebuttal](playbooks/rebuttal.md) |
 | resubmit | — | 转投、换 venue 重投、保留旧稿改投 | 已有投稿目录，要在新目录适配另一 venue 并保留旧稿 | no | [resubmit](playbooks/resubmit.md) |
 | paper-talk | — | 做会议演讲、生成 slides notes script、准备 paper talk | 已有论文，要 slides、notes 与逐字 script | no | [paper-talk](playbooks/paper-talk.md) |
@@ -56,7 +56,7 @@ Gates: none
 
 已命名、文件未交付：无。写作请求统一进入 `paper-writing`；general、ml、systems 仅选专业标准，旧专业入口作为兼容调用保留。
 
-不占路线的独立能力：用户要对抗审查、独立挑战或多模型审查时，委托内由编排者或用户直接点名 [interrogate](../interrogate/SKILL.md)：独立 reviewer 逐模型挑战、findings 去重、分歧保留，主审四桶有据判断；该调用始终只读，修复由委托按授权另行组织（如 proof-repair、research-improvement）。
+不占路线的独立能力：用户要对抗审查、独立挑战或多模型审查时，委托内由编排者或用户直接点名 `interrogate`：独立 reviewer 逐模型挑战、findings 去重、分歧保留，主审四桶有据判断；该调用始终只读，修复由委托按授权另行组织（如 `proof-repair`、`research-improvement`）。独立能力未安装时只阻塞依赖它的分支，不阻塞其他委托工作。
 
 ## 只读优先
 

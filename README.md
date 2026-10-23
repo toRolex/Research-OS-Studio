@@ -148,9 +148,11 @@ playbook idea-discovery
   └─ 独立审计代码与结果真实性             ↓
       ↓                             /proof-repair（有界修复）
 /result-to-claim（提取约束结论）          ↓
-      ↓                             /proof-orchestrator（长定理与 Lean 辅助）
+      ↓                             proof-orchestrator（旧名称兼容到 /research-os；Lean 按需）
 交付实验审计与 Claim 报告（停止）    交付完整证明记录（停止）
 ```
+
+理论分支由证据决定具体活动，可在推导、证明构造、fresh 只读审查、finding 修复和形式化之间切换；这些不是每次必经的固定阶段，长期任务的轮次与额度只由 `/research-os` 委托管理。
 
 ### 3. 论文写作与审计（Writing Cycle）
 ```text
@@ -213,7 +215,7 @@ playbook idea-discovery
 | | [proof-writer](skills/validation-cycle/proof-writer/SKILL.md) | 显式 | 起草数学证明，保留未完成的尝试与断点 |
 | | [proof-review](skills/validation-cycle/proof-review/SKILL.md) | 显式 | 只读审查证明逻辑与边界反例，不修改文件 |
 | | [proof-repair](skills/validation-cycle/proof-repair/SKILL.md) | 显式 | 在授权范围内有针对性地修复证明断点 |
-| | [proof-orchestrator](skills/validation-cycle/proof-orchestrator/SKILL.md) | 显式 | 管理复杂长定理证明，支持 Lean 辅助推导 |
+| | [proof-orchestrator](skills/validation-cycle/proof-orchestrator/SKILL.md) | 显式 | 旧名称兼容入口，转入 `/research-os` proof；保留可选 Lean、审计和交接方法，不另建轮次/额度总控 |
 | | [create-formal-verification-skill](skills/validation-cycle/create-formal-verification-skill/SKILL.md) | 显式 | 为项目建立可重跑的形式化检查；按问题选工具，记录假设/版本/同步并审计编码与原问题对应 |
 | | [maintain-formal-verification-skill](skills/validation-cycle/maintain-formal-verification-skill/SKILL.md) | 显式 | 代码变化后把形式化检查重新对齐；重跑并区分验证漂移与代码 bug |
 | | [create-verification-skill](skills/validation-cycle/create-verification-skill/SKILL.md) | 显式 | 为项目建立可运行的行为验证 Skill：启动、doctor、按用户路径驱动、证据与清理，播种特征覆盖映射；未执行的生成资产标草稿 |

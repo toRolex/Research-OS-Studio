@@ -131,7 +131,7 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 | | [proof-writer](../skills/validation-cycle/proof-writer/SKILL.md) | Explicit | Drafts formal proofs while tracking incomplete attempts and gaps |
 | | [proof-review](../skills/validation-cycle/proof-review/SKILL.md) | Explicit | Read-only check for proof structure, lemmas, and counterexamples |
 | | [proof-repair](../skills/validation-cycle/proof-repair/SKILL.md) | Explicit | Targeted repair of proof gaps within authorized scope |
-| | [proof-orchestrator](../skills/validation-cycle/proof-orchestrator/SKILL.md) | Explicit | Manages long-horizon proofs with optional Lean formalization |
+| | [proof-orchestrator](../skills/validation-cycle/proof-orchestrator/SKILL.md) | Explicit | Legacy alias into `/research-os` proof; preserves optional Lean, audit, and handoff methods without a second round/quota controller |
 | **Writing Cycle** | [paper-writing](../skills/writing-cycle/paper-writing/SKILL.md) | Explicit | `/research-os` paper-writing / general: planning, plotting, drafting, a real compile, and parallel audits; the leaf keeps its own authorization gate |
 | | [ml-paper-writing](../skills/writing-cycle/ml-paper-writing/SKILL.md) | Explicit | paper-writing / ml: ML materials skip the general entry; seeds, error bars, compute, limitations |
 | | [systems-paper-writing](../skills/writing-cycle/systems-paper-writing/SKILL.md) | Explicit | paper-writing / systems: systems materials skip the general entry; design rationale, end-to-end, scalability |
@@ -185,9 +185,11 @@ Empirical Track                      Theoretical Track
   └─ Code & result integrity audit        ↓
       ↓                             /proof-repair (Targeted repair)
 /result-to-claim (Extract claims)         ↓
-      ↓                             /proof-orchestrator (Lean assistant)
+      ↓                             proof-orchestrator (legacy alias to /research-os; optional Lean)
 Delivers audit & claim report       Delivers complete proof logs
 ```
+
+The theoretical route selects and alternates derivation, proof construction, fresh read-only review, finding repair, and optional formalization from evidence; these are not mandatory stages. `/research-os` is the sole owner of long-running mandate, rounds, quota, pause/resume, and stop control.
 
 ### 3. Writing Cycle
 ```text

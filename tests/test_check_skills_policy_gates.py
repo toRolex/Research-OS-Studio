@@ -36,15 +36,7 @@ HISTORICAL_CHECKER_PROBLEMS = frozenset(
 )
 # 本票拥有的叶。入口与 setup 基线由后续票并入同一 checker。
 LEAF_GATES = {
-    "skills/validation-cycle/formula-derivation/SKILL.md": {"write-authorization"},
-    "skills/validation-cycle/proof-orchestrator/SKILL.md": {"round-scope", "external-action"},
-    "skills/validation-cycle/proof-repair/SKILL.md": {
-        "repair-contract",
-        "assumption-or-claim-change",
-        "compile-authorization",
-    },
     "skills/validation-cycle/proof-review/SKILL.md": set(),
-    "skills/validation-cycle/proof-writer/SKILL.md": {"write-authorization"},
 }
 
 
@@ -98,6 +90,20 @@ class PolicyAndGates(unittest.TestCase):
             if not expected:
                 self.assertRegex(text, r"(?m)^Gates: none$")
         migrated = set(module.MIGRATED_CONTRACT)
+        migrated_proof_skills = {
+            "skills/validation-cycle/formula-derivation/SKILL.md",
+            "skills/validation-cycle/proof-writer/SKILL.md",
+            "skills/validation-cycle/proof-repair/SKILL.md",
+            "skills/validation-cycle/proof-orchestrator/SKILL.md",
+        }
+        self.assertTrue(migrated_proof_skills <= migrated)
+        self.assertTrue(migrated_proof_skills.isdisjoint(module.LEGACY_LEAF_GATES))
+        for rel in migrated_proof_skills:
+            self.assertEqual(module.MIGRATED_CONTRACT[rel], "委托继承")
+            text = (ROOT / rel).read_text(encoding="utf-8")
+            self.assertNotRegex(text, r"(?m)^Gate:")
+            self.assertRegex(text, r"(?m)^Gates: none$")
+            self.assertRegex(text, r"(?m)^## 委托继承$")
         writing_skills = {
             f"skills/writing-cycle/{name}/SKILL.md"
             for name in (
@@ -158,31 +164,21 @@ class PolicyAndGates(unittest.TestCase):
             self._damaged(Path(tmp) / "repo")
 
     def _damaged(self, work: Path) -> None:
-        # 反例固定在仍未迁移的 proof-repair，避免把已迁移的写作/绘图叶当旧门。
+        # #55 已迁移 proof-repair；负例破坏新委托合同，不把它退回旧门基线。
         leaf = SKILLS / "validation-cycle" / "proof-repair" / "SKILL.md"
         cases = {
-            "drop-one-gate": lambda text: text.replace(
-                "Gate: repair-contract |", "Gate-removed: repair-contract |", 1
-            ),
-            "all-none": lambda text: "\n".join(
-                line for line in text.splitlines() if not line.startswith("Gate:")
-            )
-            + "\nGates: none\n",
-            "rename-id": lambda text: text.replace("repair-contract", "repair-ok", 1),
-            "duplicate-id": lambda text: text.replace(
-                "Gate: repair-contract |",
-                "Gate: repair-contract |\nGate: repair-contract | before=repair-write | approval=explicit-user | source=SKILL.md#1-确认修复契约",
+            "drop-gates-none": lambda text: text.replace("Gates: none\n", "", 1),
+            "reintroduce-legacy-gate": lambda text: text.replace(
+                "Gates: none",
+                "Gate: repair-contract | before=repair-write | approval=explicit-user | source=SKILL.md#1-确认修复契约",
                 1,
             ),
-            "bad-source": lambda text: text.replace(
-                "source=SKILL.md#1-确认修复契约",
-                "source=SKILL.md#不存在的锚点",
-                1,
+            "drop-delegation-section": lambda text: text.replace(
+                "## 委托继承", "## 缺失的授权", 1
             ),
-            "drop-section": lambda text: "\n".join(
-                line for line in text.splitlines() if not line.startswith(("Gate:", "Gates:"))
-            )
-            + "\n",
+            "duplicate-gates-none": lambda text: text.replace(
+                "Gates: none\n", "Gates: none\nGates: none\n", 1
+            ),
             "yaml-true": None,
             "drop-disable": lambda text: text.replace("disable-model-invocation: true\n", "", 1),
         }

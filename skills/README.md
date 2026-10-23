@@ -9,6 +9,8 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
 ```
 
+Skills CLI 按独立 slug 安装，不会解析跨 Skill 依赖。选择性安装 proof 配方时，按需同时选择 `research-os` 与所用能力（如 `arena`、`swarm`、`interrogate`、`formula-derivation`、`proof-writer`、`proof-review`、`proof-repair` 及验证 Skill）；旧 `proof-orchestrator` 只有在 `research-os` 也安装时才可转入新配方。缺少能力只阻塞依赖它的分支，不用自审或串行扮演替代。
+
 这些远程命令读取 GitHub 已发布版本，不会包含尚未合并或 push 的本地修改。验证本地分支时，在一个临时科研项目目录中运行（将绝对路径替换为当前 checkout）：
 
 ```bash
@@ -54,7 +56,7 @@ Spec #57 更新 Writing Cycle 委托合同：`paper-writing` 是统一入口，M
 
 已保存交接用 `/research-os` 的三条路线，不另建状态机：
 
-- **proof**：续接一个固定命题。读上一轮证明目录，新目录只处理本轮 obligation。命题、审查和修复仍由 proof-writer、proof-review、proof-repair、proof-orchestrator 自己的门约束。
+- **proof**：从已有数学成果、证明材料或推广障碍继续，按证据交替推导、构造、计算、fresh 只读审查、finding 修复与按需形式化；不是每项必经的固定顺序。`/research-os` 委托统一控制目标、写域、轮次、额度、暂停恢复与停止。`proof-orchestrator` 仅为旧名称兼容入口。
 - **improvement**：对已有 Claims、代码、结果和 findings 做有界 review → repair → re-review。轮数、写入范围和补实验名额以 research-improvement 的授权门为准。
 - **pickup**：新会话打开已保存交接、`compute-policy.md` 和 `research-log.md`，重查已批准与未批准边界。过期授权不续期，未知消耗不按 0 释放。
 
@@ -83,7 +85,7 @@ Writing Cycle 审查能力均只读审查研究材料、输出 Markdown 报告�
 
 ## 普通公式推导与证明生成
 
-`formula-derivation` 用于组织推导主线、选定不变量、说明假设与近似并生成完整公式链；`proof-writer` 用于固定命题的证明生成，不替代只读证明审查。两者均为显式调用，由用户点名或父流程按路径级联。Standalone 产出获准路径中的 Markdown package；composed 将同样完整的内容贡献到调用者指定报告，不另建重复主报告。没有写入授权时仅在聊天返回。
+`formula-derivation` 用于组织推导主线、选定不变量、说明假设与近似并生成完整公式链；`proof-writer` 用于固定命题的证明生成，不替代只读证明审查。两者均为显式调用，由用户点名或父流程按路径级联，并继承当前委托的写域与额度；已授权范围内创建新文件、切换阶段或重试不重复索权。独立调用缺少影响执行的字段时，只对缺项提出有界问题；没有写入授权时在聊天返回。改变原命题或假设仍须用户确认。
 
 开始前固定目标、输入范围、目的路径和有限尝试预算；变更假设、弱化命题或重构目标只是建议，获明确授权后才发展独立变体。成功、缺口、实际失败路线和可复用教训都应保留；承重缺口未解决时不标成功。普通数学推导不需要 Lean，也不安装工具链；生成完成即停止，不自动进入通用 review / repair 或推进其他 Workflow。
 
@@ -106,7 +108,7 @@ setup 先探索现有项目，再读取本 session 的真实模型清单。八�
 
 ## 长期证明与人工验收
 
-显式调用 `proof-orchestrator`，或经 `/research-os` 的 proof 路线进入。指定一个 obligation、旧轮次材料（若有）、新输出目录及有限预算。它保留本地完整尝试、自查与表达整理；卡住后可准备最小手动交接包，然后停止。不是 Proof Writer／Review／Repair 的自动调用链，也不自动进入论文流程。新会话要恢复该交接时走 pickup，先重读这些文件，不从零重跑。Lean 搜索、反馈与构建只是[共置可选方法](validation-cycle/proof-orchestrator/references/lean-methods.md)，没有 Lean 仍可进行普通证明。
+长期证明任务统一经 `/research-os` 的 proof 路线编排；旧名称 `proof-orchestrator` 只是兼容入口。委托持续控制目标、写域、总额度、轮次/重试、暂停恢复与停止；续接时读原始材料并沿用剩余额度，不重复索权或重置。按需使用随包的审计、Lean、记号与交接方法资源；Lean 不是前置条件，外部发送仍须满足具体授权边界。
 
 在可丢弃的项目副本中核对：
 
@@ -131,7 +133,7 @@ setup 先探索现有项目，再读取本 session 的真实模型清单。八�
 
 ## 证明审查与修复
 
-`proof-review` 直接读取现成证明及其依赖，只在回复中给出义务、缺口、反例与影响，不写文件、不编译、不自动修复。普通证明不要求 Lean 或 LaTeX 环境。`proof-repair` 必须由用户显式启动，确认目标命题、精确文件/段落、轮数和工具资源后才修订；编译与其副产物单独授权。修复内部使用已安装的 `proof-review` 复审，严重问题另做 fresh 盲审；缺少独立能力时报告未完成。
+`proof-review` 每次都重新读取当前证明及依赖，fresh 只读返回义务、缺口、反例与影响；不写文件、不编译、不自动修复。普通证明不要求 Lean 或 LaTeX 环境。`proof-repair` 在当前委托的 finding、写域和轮数内修订；独立调用缺少必要范围时先有界询问。改变原命题/假设须用户确认；编译须委托覆盖命令、运行与输出/副产物范围。修复内部使用可用的 `proof-review` 复审，严重问题另做 fresh 盲审；缺少独立能力时报告未完成。
 
 在可丢弃的项目副本中手工验收：
 
