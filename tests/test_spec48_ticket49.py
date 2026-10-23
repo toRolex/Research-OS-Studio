@@ -142,10 +142,10 @@ class ContractText(unittest.TestCase):
         self.assertIn("子代理", text)
         self.assertIn("blocked", text)
 
-    def test_legacy_leaf_still_declares_its_own_gate(self):
-        # #57 迁移 writing-cycle 中除绘图与总控外的写作能力后，用仍留在 #58/#59 范围的叶核对未迁移门。
-        plotting = (SKILLS / "writing-cycle/academic-plotting/SKILL.md").read_text(encoding="utf-8")
-        self.assertRegex(plotting, r"(?m)^Gate: figure-choice \|")
+    def test_unmigrated_leaf_still_declares_its_own_gate(self):
+        # #58 已迁移绘图叶；用仍未迁移的 proof-repair 核对旧门仍受 checker 约束。
+        repair = (SKILLS / "validation-cycle/proof-repair/SKILL.md").read_text(encoding="utf-8")
+        self.assertRegex(repair, r"(?m)^Gate: repair-contract \|")
 
 
 class NoSubagentCapability(unittest.TestCase):

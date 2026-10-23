@@ -24,7 +24,7 @@
 
 ## 按现有材料选切入点
 
-- **只有方向**：想形成完整 Proposal，由 `/research-os` 进入 `idea-discovery` 并照 playbook 执行到 Proposal。该路线仍未迁移，默认每个阶段停下；用户写明一次走完并给出预算才连续。也可直接点名候选生成／创意思考，或对已选候选单独查新／评审／收敛。不对空方向捏造 novelty 结论。读 [idea-cycle.md](idea-cycle.md)。
+- **方向或现成候选**：想形成完整 Proposal，可由 `/research-os` 进入 `idea-discovery`；也可从已有材料对应的文献、候选、查新、独立评审或细化缺口局部开始。入口按目标缺口选能力子集并允许重排/回访；完整方向到 Proposal 是可选目标，不默认强制所有职责。不对空方向捏造 novelty 结论。读 [idea-cycle.md](idea-cycle.md)。
 - **已有主题要一次文献综合**：走已迁移的 literature route（playbook literature-review）。它按委托合同直接跑到交付并验收实际产物，不要求先 setup 或先报额度；要拿这批材料形成 Proposal 才改走 idea-discovery。也可直接点名 `research-lit`。
 - **已有问题要做计划**：走已交付的 experiment-plan。它只产计划；执行授权写在研究日志，不来自默认政策。
 - **已有计划要跑完并分析**：走已交付的 experiment-bridge。启动前核对研究日志里的本批授权；缺授权、过期、越界或要删既有结果时停。
