@@ -4,9 +4,9 @@
 
 | Work unit | Status | Artifacts / evidence | Next |
 |---|---|---|---|
-| Fix 13 full-install edges and declare paper-writing's standalone dependency boundary | 待验收 | `tests/test_ticket60_flat_install_links.py` is green (4 tests); initial red was 1 error / 3 failures | Repeat real CLI installs from the committed source tree |
-| Validate isolated Skills CLI 1.7.4 installs | in progress | Baseline: `/tmp/spec48-ticket60-final-install/REPORT.md`, `install-audit.json`; provisional CLI runs rc=0 before commit | Reinstall all 41 and representative standalone writing leaves with fresh HOME/cwd bound to committed tree |
-| Submit isolated implementation | not started | This notes file | Commit only after report and verification are complete |
+| Fix 13 full-install edges and declare paper-writing's standalone dependency boundary | done | Implementation commit `3df3c63de4f6c06f096d178d2187094e2191ca25`; focused contract tests 4/4 green | None |
+| Validate isolated Skills CLI 1.7.4 installs | done | `/tmp/spec48-install-link-fix/REPORT.md`; committed-source full/single install logs and SHA-bound audit | None |
+| Submit isolated implementation | done | Implementation commit above; this final notes update is committed separately | Parent can merge this isolated branch; no push performed |
 
 ## Entry decision and work-unit boundary
 
@@ -25,9 +25,12 @@
 ## Verification so far
 
 - Red/green: the newly added focused contract test failed before the fix (1 missing excerpt error, 3 assertions red), then passed 4/4 after the changes.
-- `uv run --offline --no-project python -m unittest tests/test_ticket60_flat_install_links.py tests/test_spec48_ticket60.py tests/test_spec48_ticket60_bridge.py tests/test_spec48_ticket60_contract_M.py`: 15 tests passed. A pytest invocation was attempted but the isolated uv environment has no `pytest` module (rc=1); the stdlib unittest suite ran successfully.
-- Provisional fresh-cache CLI 1.7.4 installs (full 41, paper-writing, paper-compile) each returned rc=0 and exact-copy audits passed. These were run before commit and are not the final acceptance evidence; repeat on the committed source tree.
+- Committed source identity: implementation SHA `3df3c63de4f6c06f096d178d2187094e2191ca25`, tree `f37bcd8120689d70b1381348c4fcfb7f01ff2d3e`, branch `t3/fix-flat-install-skill-links`, worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-94e8135d`.
+- Committed-source CLI `skills@1.7.4`: version, full 41, single `paper-writing`, and single `paper-compile` each rc=0 with separate HOME/cwd. Full install: 41 installed, 0 failed, 332 files, 57 license/notice files, no symlinks, 393/393 concrete local paths resolve. Paper-writing single retains 20 expected sibling/resource misses; paper-compile single is 7/7 resolved.
+- Full manifest source/install SHA-256: `513af6a354200e1dc53d26c6185b9a0ec2f48790b3670bdef970fb0c82b351b2`. All 12 mandate excerpt copies match canonical SHA `60c40e03b390ed08241067d7e256094cb6fdf5af35343a930e0ec6a1bd0899a0`.
+- `uv run --offline --no-project python -m unittest tests/test_ticket60_flat_install_links.py tests/test_spec48_ticket60.py tests/test_spec48_ticket60_bridge.py tests/test_spec48_ticket60_contract_M.py`: 15 tests passed. `pytest` could not import in the offline uv environment (`No module named pytest`, rc=1); the stdlib unittest suite ran successfully. The full 328-node suite and known #45/archive failures were not re-run or altered.
+- Final report: `/tmp/spec48-install-link-fix/REPORT.md`, SHA-256 `0bfdaa6f8d86bb6f872a894a0204bb3df67c137d3c9a62fcdec73a5747e6d273`. Raw committed-source install/test logs and complete file/link audit are under `/tmp/spec48-install-link-fix/committed/`.
 
 ## Deviations
 
-- None so far.
+- `pytest` was unavailable in the isolated uv environment; scoped tests were run through stdlib `unittest` instead. No scope or authorization deviations.
