@@ -72,7 +72,9 @@ class MigrationContract(unittest.TestCase):
             text = (SKILLS / name / "SKILL.md").read_text(encoding="utf-8")
             self.assertNotRegex(text, r"(?m)^Gate: ", name)
             self.assertIn("委托继承", text, name)
-        self.assertIn("skills/writing-cycle/academic-plotting/SKILL.md", module.LEGACY_LEAF_GATES)
+        plotting = "skills/writing-cycle/academic-plotting/SKILL.md"
+        self.assertIn(plotting, migrated)
+        self.assertNotIn(plotting, module.LEGACY_LEAF_GATES)
         improvement = "skills/writing-cycle/research-improvement/SKILL.md"
         self.assertIn(improvement, migrated)
         self.assertNotIn(improvement, module.LEGACY_LEAF_GATES)

@@ -33,4 +33,4 @@
 | `proof-review` | U／已实现（#17） | 独立只读审查入口；每次 fresh 读取当前证明并返回 findings，不改命题、证明或 LaTeX |
 | `proof-repair` | U／已实现（#17；#55 委托迁移） | 独立调用补齐有限修复契约；在 `/research-os` proof 委托中继承既有写域与额度，只按 finding 修复，命题／假设变化仍由用户决定。必须 fresh 复审；审查能力缺失时不得声称完成 |
 | `proof-orchestrator` | U／兼容入口（#55） | 旧名称只把长期证明、续接和交接交给 `/research-os` proof 配方；不独立控制轮次、额度、暂停恢复或停止。依赖 `research-os`；未安装时停止并请求安装，不重建旧总控 |
-| Lean premise／lemma search、LSP、Mathlib 规范与 kernel／build 检查 | 专业内部方法（随 `proof-orchestrator` 共置的 `references/lean-methods.md`），不是独立已安装 Skill | premise 搜索结果是候选，需读 signature；LSP 是快速反馈，kernel／build 才是形式化检查。无 Lean 继续普通推导／证明，形式化标未验证；不安装工具链或引入 Archon runtime |
+| Lean premise／lemma search、LSP、Mathlib 规范与 kernel／build 检查 | 专业内部方法；按需读取已安装 `proof-orchestrator` 的随包 Lean 资源，不是独立 Skill | premise 搜索结果是候选，需读 signature；LSP 是快速反馈，kernel／build 才是形式化检查。无 Lean 继续普通推导／证明，形式化标未验证；不安装工具链或引入 Archon runtime |

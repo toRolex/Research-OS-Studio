@@ -307,6 +307,13 @@ class MathRecipeComposition(unittest.TestCase):
         self.assertIn("请求调用/安装该入口", compat)
         self.assertIn("不要在此重建旧总控", compat)
 
+    def test_validation_map_uses_installable_slug_for_compat_resources(self):
+        validation = (
+            ROOT / "skills/general/research-os/references/validation.md"
+        ).read_text(encoding="utf-8")
+        self.assertIn("`proof-orchestrator`", validation)
+        self.assertNotIn("references/lean-methods.md", validation)
+
     def test_revised_skills_keep_their_local_resources_reachable_when_flat_installed(self):
         with tempfile.TemporaryDirectory(prefix="ticket55-install-") as temporary:
             install_root = Path(temporary)

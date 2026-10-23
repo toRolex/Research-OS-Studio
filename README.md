@@ -81,6 +81,9 @@ npx skills@latest add toRolex/Research-OS-Studio --list
 
 # 安装全部技能到当前项目
 npx skills@latest add toRolex/Research-OS-Studio --all
+
+# 仅装 Discovery 时也安装五个必需兄弟能力
+npx skills@latest add toRolex/Research-OS-Studio --skill idea-discovery research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
 ```
 
 ### 2. 初始化工作区
@@ -120,17 +123,17 @@ npx skills@latest add toRolex/Research-OS-Studio --all
 /research-os 我有方向，没有 idea
       ↓
 playbook idea-discovery
-  默认每个阶段停下；写明「一次走完」并给出预算才连续
-  ├─ 检索文献并标注出处 (research-lit)
-  ├─ 多视角生成方案 (idea-generation；卡住时 creative-thinking)
-  ├─ 检索已知工作并精准查新 (novelty-check)
-  ├─ 独立评审与挑刺 (idea-review)
-  └─ 方案细化与收敛 (idea-refinement)
+  按目标缺口选择必要能力，可局部开始、重排与回访
+  ├─ 文献范围不足：research-lit
+  ├─ 候选不足：idea-generation（必要时 creative-thinking）
+  ├─ prior work 未核：novelty-check
+  ├─ 需独立挑战：idea-review
+  └─ 需收敛或 Proposal：idea-refinement
       ↓
-交付 IDEA_DISCOVERY.md 与 RESEARCH_PROPOSAL.md 后停止
+按本次目标交付局部报告和/或 Proposal 后停止
 ```
 
-叶上的输出路径、阶段检查点、评审范围和问题锚点仍然生效。下一句延续本路线；说 new task 才重匹配。直接点名 `/idea-discovery` 仍走叶入口。
+全链 Discovery 是适用时的参考配方，不是每次必经阶段。已有成果可满足或省略对应职责；新增证据可触发重排与回访。目标替换、越权、超额或既有文件冲突只阻塞对应分支。
 
 ### 2. 实验与推导（Validation）
 ```text
@@ -192,7 +195,7 @@ playbook idea-discovery
 | | [swarm](skills/general/swarm/SKILL.md) | 显式 | 并行覆盖：分片、竞赛或混合探索，派发宿主真实子代理并汇总；独立 brief、输出隔离、缺证据有界重派，缺口不算通过（改编自 pstack swarm，MIT，见其 LICENSE） |
 | | [interrogate](skills/general/interrogate/SKILL.md) | 显式 | 对抗审查：独立 reviewer 逐模型挑战研究材料或变更，findings 去重、分歧保留，主审四桶有据判断；始终只读，修复由委托按授权另行组织 |
 | **Organization** | [arena](skills/organization/arena/SKILL.md) | 显式 | 候选比较与整合：同一任务并行独立候选，预先 rubric、交叉评判、主编排者逐项选基座并手工整合，数学整合后重查假设/记号/依赖闭合；胜出不等于原命题成立；已迁移到研究委托合同，缺子代理时标 blocked |
-| **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | 显式 | 构思查新工作流：文献检索、生成方案、查新、评审并输出 Proposal |
+| **Idea Cycle** | [idea-discovery](skills/idea-cycle/idea-discovery/SKILL.md) | 显式 | 可组合发现能力：按目标缺口选择、重排或回访；完整 Discovery/Proposal 为可选目标 |
 | | [research-lit](skills/idea-cycle/research-lit/SKILL.md) | 显式 | 文献检索与综合，标注出处与核实状态；已迁移到研究委托合同，不再有叶级审批门 |
 | | [idea-generation](skills/idea-cycle/idea-generation/SKILL.md) | 显式 | 多视角生成研究候选方案，记录筛选理由 |
 | | [creative-thinking-for-research](skills/idea-cycle/creative-thinking-for-research/SKILL.md) | 显式 | 构思瓶颈时的认知转换与正交发散 |

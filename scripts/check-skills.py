@@ -221,7 +221,27 @@ for sf in skill_files:
     skill_bodies.append((name, rel, sf.parent, skill_text, explicit, yaml_text))
 
 # --- 4: markdown 相对链接 -------------------------------------------------
-md_files = [p for p in ROOT.rglob("*.md") if ".git" not in p.parts]
+def tracked_markdown_files() -> list[Path]:
+    """只访问 tracked Markdown 的祖先目录，保留目录枚举与栈遍历顺序。"""
+    candidates = {ROOT / rel for rel in tracked
+                  if rel.endswith(".md") and ".git" not in Path(rel).parts}
+    parents = {ROOT / parent for path in candidates
+               for parent in path.relative_to(ROOT).parents}
+    found: list[Path] = []
+    pending = [ROOT]
+    while pending:
+        directory = pending.pop()
+        try:
+            entries = list(directory.iterdir())
+        except OSError:
+            continue  # 与 rglob 一样跳过不可读／已消失的目录。
+        found.extend(path for path in entries if path in candidates)
+        pending.extend(path for path in entries
+                       if path in parents and path.is_dir() and not path.is_symlink())
+    return found
+
+
+md_files = tracked_markdown_files()
 link_re = re.compile(r"\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 
 
@@ -1121,12 +1141,19 @@ def ticket59_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]
 # 移入 MIGRATED_CONTRACT，并在 references/migration-boundary.md 记录同一事实。
 MIGRATED_CONTRACT: dict[str, str] = {
     "skills/general/research-os/SKILL.md": "研究委托",
+    "skills/idea-cycle/creative-thinking-for-research/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-discovery/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-generation/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-refinement/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-review/SKILL.md": "委托继承",
+    "skills/idea-cycle/novelty-check/SKILL.md": "委托继承",
     "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
     "skills/organization/arena/SKILL.md": "委托继承",
     "skills/validation-cycle/create-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-verification-skill/SKILL.md": "委托继承",
     "skills/general/swarm/SKILL.md": "委托继承",
     "skills/general/interrogate/SKILL.md": "委托继承",
+    "skills/writing-cycle/academic-plotting/SKILL.md": "委托继承",
     "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
     "skills/writing-cycle/research-improvement/SKILL.md": "委托继承",
@@ -1164,14 +1191,7 @@ MANDATE_SECTIONS = ("目标", "权限", "研究额度", "完成与停止")
 
 # --- 未迁移叶 skill 门声明（#39 基线）；入口、setup 与已迁移能力不进这份路径表 ---
 LEGACY_LEAF_GATES: dict[str, set[str]] = {
-    "skills/idea-cycle/creative-thinking-for-research/SKILL.md": {"write-path"},
-    "skills/idea-cycle/idea-discovery/SKILL.md": {"stage-checkpoint", "output-path"},
-    "skills/idea-cycle/idea-generation/SKILL.md": {"write-path"},
-    "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
-    "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
-    "skills/idea-cycle/novelty-check/SKILL.md": set(),
     "skills/validation-cycle/proof-review/SKILL.md": set(),
-    "skills/writing-cycle/academic-plotting/SKILL.md": {"figure-choice", "external-resource"},
 }
 
 
@@ -1379,6 +1399,129 @@ def verification_skill_problems(root: Path, tracked_paths: set[str]) -> list[str
         for name in VERIFICATION_SKILLS:
             if name not in boundary_text:
                 found.append(f"{MIGRATION_DOC}: 未列出行为验证能力 {name}")
+    return found
+
+RESEARCH_ASSETS = {
+    "skills/idea-cycle/research-lit": (
+        "LICENSE",
+        "references/source-methods.md",
+        "references/file-capability-audit.md",
+        "references/source-verification.md",
+        "templates/literature-report.md",
+    ),
+    "skills/idea-cycle/novelty-check": (
+        "LICENSE",
+        "references/source-verification.md",
+    ),
+    "skills/idea-cycle/creative-thinking-for-research": (
+        "LICENSE-Orchestra.txt",
+        "references/creative-frameworks.md",
+    ),
+    "skills/writing-cycle/academic-plotting": (
+        "LICENSE-ARIS.txt",
+        "LICENSE-Orchestra.txt",
+        "references/data-visualization.md",
+        "references/diagram-generation.md",
+        "references/diagram-styles.md",
+        "references/style-guide.md",
+        "references/table-and-review.md",
+        "templates/figure-note.md",
+    ),
+}
+DISCOVERY_PHASE_LEAVES = (
+    "research-lit",
+    "idea-generation",
+    "novelty-check",
+    "idea-review",
+    "idea-refinement",
+)
+
+
+def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#58 共享检索/来源/绘图资产：复用既有能力，不新增重复 Skill。"""
+    found: list[str] = []
+    for rel_dir, rels in RESEARCH_ASSETS.items():
+        for rel in rels:
+            rel_path = f"{rel_dir}/{rel}"
+            path = root / rel_path
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少随包研究资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+    composition = root / "skills/idea-cycle/idea-discovery/references/composition-notes.md"
+    if not composition.is_file():
+        found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 缺少组合说明")
+    else:
+        text = composition.read_text(encoding="utf-8")
+        for marker in ("组合配方", "Required skills", "DEPENDENCY MISSING / BLOCKED", "子集", "重排", "回访", "目标替换", "候选池与筛选", "收敛与 Proposal", *DISCOVERY_PHASE_LEAVES):
+            if marker not in text:
+                found.append(f"skills/idea-cycle/idea-discovery/references/composition-notes.md: 缺「{marker}」")
+        if "stage-checkpoint" in text:
+            found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 残留 stage-checkpoint")
+    discovery = root / "skills/idea-cycle/idea-discovery/SKILL.md"
+    if discovery.is_file():
+        text = discovery.read_text(encoding="utf-8")
+        if "stage-checkpoint" in text or "一次委托按下方 Phase 1–4.5 连续执行" in text:
+            found.append("skills/idea-cycle/idea-discovery/SKILL.md: 残留路线锁定语义")
+        for marker in ("目标缺口", "子集", "重排", "回访", "全链 Discovery 只是适用时的参考配方"):
+            if marker not in text:
+                found.append(f"skills/idea-cycle/idea-discovery/SKILL.md: 缺组合行为 {marker}")
+    playbook = root / "skills/general/research-os/playbooks/idea-discovery.md"
+    if playbook.is_file():
+        text = playbook.read_text(encoding="utf-8")
+        if "stage-checkpoint" in text or "匹配后跨 turn 保持本路线" in text:
+            found.append("skills/general/research-os/playbooks/idea-discovery.md: 残留路线锁定语义")
+        if "skills/idea-cycle/" in text:
+            found.append("skills/general/research-os/playbooks/idea-discovery.md: 使用仓库源码路径，无法解析安装后的 Skill 资源")
+        if "按安装后的 Skill 名称定位其目录" not in text:
+            found.append("skills/general/research-os/playbooks/idea-discovery.md: 缺安装后 Skill 目录解析规则")
+        for marker in ("缺口", "子集", "重排", "回访"):
+            if marker not in text:
+                found.append(f"skills/general/research-os/playbooks/idea-discovery.md: 缺组合行为 {marker}")
+        for rel in DISCOVERY_PHASE_LEAVES:
+            if rel not in text:
+                found.append(f"skills/general/research-os/playbooks/idea-discovery.md: 缺组合叶 {rel}")
+    plotting = root / "skills/writing-cycle/academic-plotting/SKILL.md"
+    if plotting.is_file():
+        text = plotting.read_text(encoding="utf-8")
+        if "没有计划时" in text and ("确认选择" in text or "确认候选" in text):
+            found.append("skills/writing-cycle/academic-plotting/SKILL.md: 无条件要求确认普通选图")
+        if "已授权目录内" not in text or "新文件路径" not in text:
+            found.append("skills/writing-cycle/academic-plotting/SKILL.md: 缺授权目录内自主选择新路径")
+    if discovery.is_file():
+        text = discovery.read_text(encoding="utf-8")
+        if "路径由用户确认" in text:
+            found.append("skills/idea-cycle/idea-discovery/SKILL.md: 授权目录内仍要求逐路径批准")
+    if composition.is_file():
+        text = composition.read_text(encoding="utf-8")
+        if "一次委托连续执行下列组合" in text or "不得跳过" in text:
+            found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 固定顺序强制所有职责")
+        install_line = next((line for line in text.splitlines() if "--skill idea-discovery" in line), "")
+        missing = [name for name in DISCOVERY_PHASE_LEAVES if name not in install_line]
+        if missing:
+            found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 成组安装命令缺 Required skills " + ", ".join(missing))
+    audit = root / "skills/idea-cycle/research-lit/references/file-capability-audit.md"
+    if not audit.is_file():
+        found.append("skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺文件能力缺口审计")
+    else:
+        audit_text = audit.read_text(encoding="utf-8")
+        for marker in ("plain text", "PDF", "OCR", "connector", "plotting", "export", "host prerequisite", "not bundled", "No additional external asset is selected in this ticket", "license", "dependencies"):
+            if marker not in audit_text:
+                found.append(f"skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺「{marker}」")
+        audit_rows = (
+            "Search plain text / Markdown",
+            "Read and extract born-digital PDF text",
+            "Read scanned PDFs / image-only documents",
+            "Reference-manager and notes connectors",
+            "Plotting and diagram production",
+            "Figure export and visual inspection",
+        )
+        for topic in audit_rows:
+            prefix = f"| {topic} |"
+            row = next((line for line in audit_text.splitlines() if line.startswith(prefix)), None)
+            cells = row.strip().strip("|").split("|") if row else []
+            if len(cells) != 4 or any(not cell.strip() for cell in cells):
+                found.append(f"skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺文件能力审计条目或覆盖信息 {topic}")
     return found
 
 
@@ -1709,6 +1852,9 @@ for problem in experiment_execution_problems(ROOT, tracked):
     err(problem)
 
 for problem in arena_contract_problems(ROOT):
+    err(problem)
+
+for problem in research_asset_problems(ROOT, tracked):
     err(problem)
 
 
