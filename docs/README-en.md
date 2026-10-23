@@ -205,7 +205,7 @@ Proof manuscripts also read proof-review
       ↓
 Delivers a candidate manuscript and audit report (stops)
 Submission and upload are outside this route
-paper-compile-repair and apply-citation-fixes stay separately invoked
+paper-compile-repair and apply-citation-fixes remain distinct leaf skills; they may be invoked directly or cascaded by an authorized mandate, with each skill's exact-diff controls preserved
 ```
 
 ---
