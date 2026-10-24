@@ -4,13 +4,15 @@ Spec #48 / Ticket #49。worktree `/Users/rolex/.t3/worktrees/Research OS Studio/
 
 ## 状态
 
-| 单元 | 交付目标 | 状态 | 产物 | 验收证据 |
-|---|---|---|---|---|
-| U1 委托合同 | 目标／权限／额度／完成停止语义单一权威 | done | `skills/general/research-os/references/mandate.md` | `tests/test_spec48_ticket49.py::ContractText`（3 passed） |
-| U2 迁移边界 | expand 迁移集与未迁移旧基线并存，不宣称全叶统一 | done | `skills/general/research-os/references/migration-boundary.md` + `MIGRATED_CONTRACT` / `LEGACY_LEAF_GATES` | `MigrationBoundary`（3 passed）、`CounterRelationship::test_*_is_red`（3 个损坏用例） |
-| U3 完整路径 | 入口 → research-lit → 结果验收 | done | `playbooks/literature-review.md` + 路由行 `literature` + `research-lit` 的「委托继承」 | `CompletePath`（2 passed）、`FlatInstall`（2 passed） |
-| U4 checker 迁移 | 去固定数量、显式迁移集、保留旧门与引用完整性 | done | `scripts/check-skills.py` | `CounterRelationship`（6 passed，含 2 个新增红用例） |
-| U5 安装实测 | 可丢弃目录安装入口与代表能力，资源可达 | done | 本文「安装证据」 | 实跑 `npx skills@latest add`（见下） |
+2026-10-24按本记录当时收束阶段补记下一步列；前五列和历史正文不变，不以当前产品状态重写当时结果。
+
+| 单元 | 交付目标 | 状态 | 产物 | 验收证据 | 当时下一步 / 阻塞 |
+|---|---|---|---|---|---|
+| U1 委托合同 | 目标／权限／额度／完成停止语义单一权威 | done | `skills/general/research-os/references/mandate.md` | `tests/test_spec48_ticket49.py::ContractText`（3 passed） | 无（本票合同范围）；词汇/ADR提交决定见下文上位事项 |
+| U2 迁移边界 | expand 迁移集与未迁移旧基线并存，不宣称全叶统一 | done | `skills/general/research-os/references/migration-boundary.md` + `MIGRATED_CONTRACT` / `LEGACY_LEAF_GATES` | `MigrationBoundary`（3 passed）、`CounterRelationship::test_*_is_red`（3 个损坏用例） | 后票继续迁移，不外推全叶已统一 |
+| U3 完整路径 | 入口 → research-lit → 结果验收 | done | `playbooks/literature-review.md` + 路由行 `literature` + `research-lit` 的「委托继承」 | `CompletePath`（2 passed）、`FlatInstall`（2 passed） | 无（本票路径/安装范围） |
+| U4 checker 迁移 | 去固定数量、显式迁移集、保留旧门与引用完整性 | done | `scripts/check-skills.py` | `CounterRelationship`（6 passed，含 2 个新增红用例） | README等数量/终态统一留#60；保留正文历史边界 |
+| U5 安装实测 | 可丢弃目录安装入口与代表能力，资源可达 | done | 本文「安装证据」 | 实跑 `npx skills@latest add`（见下） | 无（安装可达范围）；真实研究/宿主行为未验证 |
 
 ## 决策
 

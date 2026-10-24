@@ -1,5 +1,15 @@
 # #60 proof/docs merger — implementation notes
 
+## Historical work-unit status (retrospective)
+
+Added on 2026-10-24 from this note's original candidate-closeout record, not from new execution. Historical counts, failures and non-promotion boundaries below remain unchanged.
+
+| Work unit / deliverable | Status at that stage | Existing evidence | Next step / boundary at that stage |
+| --- | --- | --- | --- |
+| Merge proof/docs and reconcile semantics/count | done | Sources `ff53d46` then `a11775f`; reconciliation decisions below, including the stage-specific 45 badge | Discovery/W not included; their later merger must recheck the count |
+| Bounded candidate validation | done (within recorded scope) | M 4, ticket55 17, policy 4, ticket46 docs 9; checker retained nine historical archive diagnostics | No archive repair or overall #60/host/research acceptance implied |
+| Candidate evidence handoff | done | `/tmp/spec48-ticket60-proof-docs-merger/REPORT.md` | Candidate not promoted/pushed at this stage; parent owns later integration |
+
 ## Scope and entry decision
 
 Direct execution: the user supplied two completed source SHAs, a fixed merge order, and a bounded acceptance set, and explicitly prohibited further delegation. This candidate worktree started clean at `14d9c6ef6ca7411dad1ac779647ba1a7cfb7603e`; no integration/main worktree, tracker, or remote was touched.

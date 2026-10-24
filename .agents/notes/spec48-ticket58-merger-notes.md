@@ -1,5 +1,15 @@
 # Spec48 #58 merger notes
 
+## Historical work-unit status (retrospective)
+
+Added on 2026-10-24 from this note's original #58 candidate-closeout stage. This is an index to existing evidence, not a rerun or an update of historical integration/product state.
+
+| Work unit / deliverable | Status at that stage | Existing evidence | Next step / boundary at that stage |
+| --- | --- | --- | --- |
+| Merge #58 and reconcile catalogs/contracts/copy isolation | done | Source `5668ed6` at base `9080258`; conflict decisions below | No new integration/remote write; later tip handling stays in the merger report |
+| Candidate checks and full-package copy installation | done (bounded evidence) | Joint274 passed/137 subtests; full suite6 failed/294 passed; checker nine historical diagnostics; CLI46 directories/338 files matched | Historical failures and untested host/research behavior remain, not overall acceptance |
+| Evidence handoff | done | `/tmp/spec48-58-merger/REPORT.md`, including later affected-copy rerun record | Parent owns subsequent promotion/acceptance; no new execution here |
+
 ## Entry and scope
 
 Direct execution: the user explicitly prohibited further dispatch. This isolated branch started at the exact accepted base `9080258c323917e33af79c0a93a42c68c8473be2`; #58 source is `5668ed6eecd4b1194da324ba951960c364ea4ac8`. No integration ref, main checkout, remote, or issue tracker was written.

@@ -2,9 +2,11 @@
 
 ## 后续小修：Aggregate 有界重派合同（本次）
 
-| 单元 | 交付目标 | 状态 | 产物 | 验收证据 |
-|---|---|---|---|---|
-| F1 有界重派检查补强 | 在 Aggregate 局部约束额度门槛、最多一次重派与终态缺口，覆盖丢上限/丢二次缺口反例 | done | `skills/general/swarm/SKILL.md`、`scripts/check-skills.py`、`tests/test_spec48_ticket50.py` | 定向损坏副本分别红；原文局部合同绿；21 项票测通过；CLI 独立安装 3/3、组合安装 swarm 3/3 和入口 27/27 文件一致 |
+2026-10-24依据本记录各自收束阶段补记本表及下方U1–U5的下一步列；不合并或改写原始19项/后续21项、历史失败与安装记录。
+
+| 单元 | 交付目标 | 状态 | 产物 | 验收证据 | 当时下一步 / 阻塞 |
+|---|---|---|---|---|---|
+| F1 有界重派检查补强 | 在 Aggregate 局部约束额度门槛、最多一次重派与终态缺口，覆盖丢上限/丢二次缺口反例 | done | `skills/general/swarm/SKILL.md`、`scripts/check-skills.py`、`tests/test_spec48_ticket50.py` | 定向损坏副本分别红；原文局部合同绿；21 项票测通过；CLI 独立安装 3/3、组合安装 swarm 3/3 和入口 27/27 文件一致 | 无（F1补强范围）；全套历史失败/宿主未验见正文 |
 
 此次仅补强独立验收报告指出的 F1 测试缺口，不倒改原始证据记录或追认原 19 条测试能证明该语义。正文明确“剩余额度允许时最多重派一次，否则直接记为缺口”；checker 截取 Aggregate 到 Report 之间的局部条款，逐项验证额度内的上限、无额度直记缺口、第二次缺证后的最终缺口，避免全文无关“一次”虚绿。两个损坏副本分别删除上限句或二次缺口句；即便全文还留有“下一次会话”或一般“缺口不算通过”，都必须失败。测试按 TDD 先加合同断言得到 `AttributeError` 红，再在独立 git 副本中分别移除上限与终态缺口，两次运行均各失败 1 项（exit 1，日志 `/tmp/research-os-spec48-ticket50-review/f1/unbounded-retry-red.log`、`missing-terminal-gap-red.log`）；修复后反例测试及整票均绿（`uv run --with pytest python -m pytest tests/test_spec48_ticket50.py -q`，21 passed，exit 0，日志 `final-targeted.log`）。
 
@@ -14,13 +16,13 @@ worktree `/Users/rolex/.t3/worktrees/Research OS Studio/t3-b26667a5`，branch `t
 
 ## 状态
 
-| 单元 | 交付目标 | 状态 | 产物 | 验收证据 |
-|---|---|---|---|---|
-| U1 swarm 能力 | 分片/竞赛/混合、独立 brief、预声明规则、输出隔离、有界重派与缺口 | done | `skills/general/swarm/SKILL.md`（Frame / Fan out / Aggregate / Report） | `tests/test_spec48_ticket50.py::SwarmMechanism`（7 passed） |
-| U2 许可与归属 | 上游正文核查、MIT 版权文本随技能共置 | done | `skills/general/swarm/LICENSE`（字节复制自 pstack@88d4751 的 `pstack/LICENSE`，Copyright (c) 2026 Lauren Tan） + SKILL.md「来源与许可」 | `UpstreamAttribution`（2 passed）；LICENSE 为 `cp` 原样复制 |
-| U3 宿主中立 | 去 Cursor cloud／固定模型／个人目录绑定；角色表解析；缺子代理 blocked | done | SKILL.md「委托继承」「Phase A/B」 | `HostNeutrality`（3 passed）+ checker 禁词清单（`swarm_contract_problems`） |
-| U4 入口发现 | 路由行 + playbook + checker/README/迁移登记 | done | `playbooks/swarm.md`、入口路由表 `swarm` 行、`REQUIRED_RELEASE_ROUTES`、`MIGRATED_CONTRACT`、migration-boundary 表、两份 README 清单 | `EntryDiscovery`（7 passed） |
-| U5 安装实测 | 独立安装可读、资源可达 | done | 本文「安装证据」 | 实跑 skills CLI 1.7.4：独立 swarm 安装与 research-os+swarm 组合安装均成功（见下） |
+| 单元 | 交付目标 | 状态 | 产物 | 验收证据 | 当时下一步 / 阻塞 |
+|---|---|---|---|---|---|
+| U1 swarm 能力 | 分片/竞赛/混合、独立 brief、预声明规则、输出隔离、有界重派与缺口 | done | `skills/general/swarm/SKILL.md`（Frame / Fan out / Aggregate / Report） | `tests/test_spec48_ticket50.py::SwarmMechanism`（7 passed） | 无（本票方法合同范围）；真实派发未验证 |
+| U2 许可与归属 | 上游正文核查、MIT 版权文本随技能共置 | done | `skills/general/swarm/LICENSE`（字节复制自 pstack@88d4751 的 `pstack/LICENSE`，Copyright (c) 2026 Lauren Tan） + SKILL.md「来源与许可」 | `UpstreamAttribution`（2 passed）；LICENSE 为 `cp` 原样复制 | 无（本票归属范围） |
+| U3 宿主中立 | 去 Cursor cloud／固定模型／个人目录绑定；角色表解析；缺子代理 blocked | done | SKILL.md「委托继承」「Phase A/B」 | `HostNeutrality`（3 passed）+ checker 禁词清单（`swarm_contract_problems`） | 无（静态范围）；宿主运行行为未验证 |
+| U4 入口发现 | 路由行 + playbook + checker/README/迁移登记 | done | `playbooks/swarm.md`、入口路由表 `swarm` 行、`REQUIRED_RELEASE_ROUTES`、`MIGRATED_CONTRACT`、migration-boundary 表、两份 README 清单 | `EntryDiscovery`（7 passed） | 无（本票发现/登记范围） |
+| U5 安装实测 | 独立安装可读、资源可达 | done | 本文「安装证据」 | 实跑 skills CLI 1.7.4：独立 swarm 安装与 research-os+swarm 组合安装均成功（见下） | 无（安装可达范围）；不外推科研E2E |
 
 ## 逐 AC 证据
 

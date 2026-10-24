@@ -36,4 +36,4 @@
 
 ### Deviations
 
-- 暂无。
+- 2026-10-24补记归类：正文已记录首轮pre-fix RED及紧随GREEN曾直接用`python3`而非`uv`，最终串行GREEN/回归已改用`uv run --no-project python -m unittest`。此处汇总同一历史偏离及纠正，原始日志与正文保留，不是本轮重跑或重新认证历史结果。

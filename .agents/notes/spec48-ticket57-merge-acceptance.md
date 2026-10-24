@@ -2,6 +2,16 @@
 
 日期：2026-10-24（Asia/Shanghai）
 
+## 历史工作单元状态（补记）
+
+2026-10-24按本记录当时#51+#56+#57候选就绪阶段补记；原日志、六项历史失败、过渡allowlist和未推进integration边界保留，本次未重证。
+
+| 单元 / 交付目标 | 当时状态 | 原有产物与证据 | 当时下一步 / 阻塞 |
+| --- | --- | --- | --- |
+| 候选合并及跨票冲突处理 | done | `0a4bf6a`、`bb2572e`与下文四处冲突决定 | 无（该候选范围）；不代表#58/#60已入 |
+| 过渡allowlist反例及候选验收 | done（限定范围） | allowlist RED/GREEN；联合213 passed；全套6 failed/270 passed；九条checker诊断相同 | #60须处理归档策略并移除过渡允许集；不改历史失败 |
+| 安装与候选交接 | done | `logs/ticket57-ac6-install.log`及配套merger报告/下文版本清单 | 当时未promotion；后续整合与科研/宿主未验事项交parent |
+
 ## 状态与版本
 
 **候选就绪，integration 未推进。** 本记录只覆盖 #51+#56+#57 本地候选；没有写入 integration、主目录、tracker，也没有 push 或开启 review。
