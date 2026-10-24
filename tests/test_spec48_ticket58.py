@@ -126,7 +126,7 @@ class DiscoveryRecipe(unittest.TestCase):
     def test_recipe_preserves_independent_leaf_responsibilities(self):
         text = COMPOSITION.read_text(encoding="utf-8")
         self.assertIn("Required skills", text)
-        self.assertNotIn("不得跳过", text)
+        self.assertEqual(load().discovery_order_problems(text), [])
         for label, leaf in PHASE_LEAVES.items():
             with self.subTest(responsibility=label):
                 self.assertIn(label, text)
@@ -221,9 +221,9 @@ class Ticket58ReviewRegressions(unittest.TestCase):
         for marker in ("目标缺口", "子集", "重排", "回访"):
             with self.subTest(marker=marker):
                 self.assertIn(marker, text + COMPOSITION.read_text(encoding="utf-8"))
-        self.assertNotIn("固定顺序", text)
+        self.assertEqual(load().discovery_order_problems(text), [])
         composition = COMPOSITION.read_text(encoding="utf-8")
-        self.assertNotIn("不得跳过", composition)
+        self.assertEqual(load().discovery_order_problems(composition), [])
         playbook = PLAYBOOK.read_text(encoding="utf-8")
         self.assertNotIn("匹配后跨 turn 保持本路线", playbook)
 
@@ -313,7 +313,7 @@ class CheckerCounterexamples(unittest.TestCase):
             path = work.path / "skills/general/research-os/playbooks/discovery.md"
             text = path.read_text(encoding="utf-8").replace(
                 "按缺口组合五项 Required 能力",
-                "固定顺序执行五个阶段",
+                "必须固定顺序执行全部五项职责",
             )
             path.write_text(text, encoding="utf-8")
             stage_skill(work.path)

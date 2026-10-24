@@ -154,7 +154,7 @@ class ArenaCapabilityTests(unittest.TestCase):
             self.assertNotIn(token, self.text, token)
 
     def test_independent_of_swarm(self):
-        self.assertNotIn("swarm", self.text.lower())
+        self.assertNotIn("swarm", load().arena_required_dependencies(self.text))
 
     def test_registered_as_migrated_contract(self):
         module = load()

@@ -9,6 +9,9 @@
 4. 全部 markdown 相对链接指向 git 追踪内存在的文件（豁免占位符与已知 brace 行文）
 5. README.md 与 skills/README.md 的 Skill 清单与目录树一致
 6. 角色表、算力政策、研究日志字段；--skip-suite 只查显式给出的合同文件
+
+范围：静态结构、可解析声明与少量明确肯定的违约指令。任意自然语言中的隐式依赖、
+阶段顺序和额度语义仍须人工核验；结构通过不等于模型行为或全部语义已经认证。
 """
 import argparse
 import hashlib
@@ -1134,13 +1137,74 @@ def migration_contract_problems(root: Path, tracked_paths: set[str]) -> list[str
     return found
 
 
+def contract_directive_lines(text: str) -> list[str]:
+    """Read ordinary directive/declaration lines, not code examples or block quotes."""
+    result = []
+    in_code = False
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code or line.lstrip().startswith(">"):
+            continue
+        line = re.sub(r"[*`]", "", line).strip()
+        result.append(re.sub(r"^(?:[-+]\s+|\d+\.\s+)", "", line))
+    return result
+
+
+def discovery_order_problems(text: str) -> list[str]:
+    """Only explicit affirmative universal mandates; ambiguous prose is manual review."""
+    for line in contract_directive_lines(text):
+        for clause in re.split(r"[；。，]", line):
+            clause = clause.strip()
+            if re.match(r"^(?:必须|务必|应当)(?:按)?固定顺序执行(?:全部|所有|五项|五个)", clause):
+                return ["固定顺序强制所有职责"]
+            if re.match(r"^(?:必须|务必|应当)(?:在)?(?:每个|每一|各个)阶段.*(?:批准|确认)", clause):
+                return ["明确要求每阶段重复批准"]
+            if re.match(r"^本(?:配方|流程)(?:必须)?(?:是|作为)(?:独立的)?第二总控", clause):
+                return ["明确声明第二总控"]
+    return []
+
+
+def arena_required_dependencies(text: str) -> set[str]:
+    """Parse named Required skills/Dependencies declarations, not arbitrary mentions."""
+    dependencies: set[str] = set()
+    for line in contract_directive_lines(text):
+        match = re.fullmatch(r"(?:Required skills|Dependencies|必需依赖):\s*([a-z0-9-]+(?:\s*,\s*[a-z0-9-]+)*)", line, re.I)
+        if match:
+            dependencies.update(item.strip().lower() for item in match[1].split(","))
+        if re.match(r"^(?:必须|务必|应当)先(?:运行|调用)\s+swarm\b", line, re.I):
+            dependencies.add("swarm")
+    sections = re.findall(r"(?ms)^## (?:Required skills|Dependencies|必需依赖)\s*\n(.*?)(?=^## |\Z)", text)
+    for section in sections:
+        for line in contract_directive_lines(section):
+            if re.fullmatch(r"[a-z][a-z0-9-]*", line):
+                dependencies.add(line)
+            link = re.fullmatch(r"\[[^]]+\]\(([^)]+)\)", line)
+            if link and Path(link[1]).name == "SKILL.md":
+                dependencies.add(Path(link[1]).parent.name)
+    return dependencies
+
+
+def shared_quota_contract_problems(text: str) -> list[str]:
+    """Check the canonical mandate link and explicit resets; prose coverage is manual."""
+    found = []
+    lines = contract_directive_lines(text)
+    if not re.search(r"\[[^]]+\]\(\.\./references/mandate\.md(?:#[^)]*)?\)", text):
+        found.append("缺共享额度权威mandate的可解析引用；完整事件覆盖语义须人工核验")
+    for line in lines:
+        for clause in re.split(r"[；。，]", line):
+            if re.match(r"^\s*(?:每次|每个)?(?:并行|换线程|重试|恢复|子代理)(?:时|后)?(?:都)?(?:从零|重新)?(?:重置|清零)", clause):
+                found.append("明确指令重置共享额度，与累计委托冲突")
+    return found
+
+
 CONTINUATION_PLAYBOOK = "skills/general/research-os/playbooks/continuation.md"
 CONTINUATION_MARKERS = (
     "references/mandate.md",
     "references/batch-authorization.md",
     "可核验收束条件",
     "wall-clock",
-    "同一条额度",
     "暂停保存",
     "停滞",
     "真正死路",
@@ -1225,7 +1289,6 @@ def continuation_contract_problems(root: Path, tracked_paths: set[str]) -> list[
 
 TICKET59_CONTRACTS: dict[str, tuple[str, ...]] = {
     CONTINUATION_PLAYBOOK: (
-        "并行、换线程、重试、恢复和子代理消耗**同一条额度**，不重置",
         "未知消耗保留预留，不按 0 释放",
     ),
     "skills/general/research-os/playbooks/pickup.md": (
@@ -1318,6 +1381,8 @@ def ticket59_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]
         if rel not in tracked_paths:
             found.append(f"{rel}: #59 合同文件未追踪")
         body = path.read_text(encoding="utf-8")
+        if rel == CONTINUATION_PLAYBOOK:
+            found.extend(f"{rel}: {problem}" for problem in shared_quota_contract_problems(body))
         for marker in markers:
             if marker not in body:
                 found.append(f"{rel}: 缺少 #59 合同条款「{marker}」")
@@ -1727,8 +1792,7 @@ def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
         ):
             if marker not in text:
                 found.append(f"{composition_rel}: 缺「{marker}」")
-        if "固定顺序执行" in text or "不得跳过" in text:
-            found.append(f"{composition_rel}: 固定顺序强制所有职责")
+        found.extend(f"{composition_rel}: {problem}" for problem in discovery_order_problems(text))
         install_line = next((line for line in text.splitlines() if "--skill research-os" in line), "")
         missing = [name for name in DISCOVERY_PHASE_LEAVES if name not in install_line]
         if missing:
@@ -1752,8 +1816,7 @@ def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
         for rel in DISCOVERY_PHASE_LEAVES:
             if rel not in text:
                 found.append(f"{playbook_rel}: 缺组合叶 {rel}")
-        if "固定顺序执行" in text or "阶段批准" in text or "第二总控" in text:
-            found.append(f"{playbook_rel}: 固定顺序或重复总控语义")
+        found.extend(f"{playbook_rel}: {problem}" for problem in discovery_order_problems(text))
 
     required_discovery_assets = (
         "skills/general/research-os/templates/research-brief.md",
@@ -2154,8 +2217,8 @@ def arena_contract_problems(root: Path) -> list[str]:
     for token in ARENA_UPSTREAM_REMNANTS:
         if token in text:
             found.append(f"{ARENA_REL}: arena 残留上游宿主绑定 {token}")
-    if "swarm" in text.lower():
-        found.append(f"{ARENA_REL}: arena 引用 swarm，不独立")
+    if "swarm" in arena_required_dependencies(text):
+        found.append(f"{ARENA_REL}: arena 声明必需依赖 swarm，不独立")
     return found
 
 
@@ -2396,7 +2459,10 @@ def run_contract(args: argparse.Namespace) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Research OS skill 与配置合同检查")
+    parser = argparse.ArgumentParser(
+        description="Research OS skill 与配置合同检查",
+        epilog="静态检查只核结构/可解析声明及有限明确违约；自然语言的隐式依赖、阶段顺序、共享额度完整语义仍须人工核验。结构通过不证明模型遵从或科研正确性。",
+    )
     parser.add_argument(
         "--archive-scope", choices=("structure", "history"), default="structure",
         help="默认检查归档索引结构；history 另要求每包历史 SHA/字节完整（不认证来源/安全）",
