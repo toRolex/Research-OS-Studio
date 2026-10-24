@@ -7,7 +7,7 @@
 
 检查两条合同：
 
-1. 特征目录里除索引 README.md 外的每个 ``*.md`` 都被索引（README.md）链接；
+1. 特征目录里除索引 README.md 外的每个 ``*.md`` 都被索引（README.md）的非注释链接引用；
 2. 索引里的每个相对链接都指向存在的特征文件。
 
 发现孤儿特征文件或死链时以退出码 1 报告；一致时退出码 0。只做结构一致性
@@ -37,7 +37,7 @@ def lint(features_dir: Path) -> list[str]:
     index = features_dir / "README.md"
     if not index.is_file():
         return [f"{features_dir}: 缺索引 README.md"]
-    text = index.read_text(encoding="utf-8")
+    text = re.sub(r"<!--.*?(?:-->|\Z)", "", index.read_text(encoding="utf-8"), flags=re.S)
     linked = set[str]()
     problems: list[str] = []
     for match in MD_LINK.finditer(text):

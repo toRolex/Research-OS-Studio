@@ -50,7 +50,7 @@ Eve 的实际加载及仅显式调用策略尚未验收，不声明全宿主兼�
 
 只有实际含 `SKILL.md` 的目录才是可安装 Skill。不为分类创建占位 Skill，不把保留的旧工程纳入这份清单。
 
-Spec #57 更新 Writing Cycle 委托合同：`paper-writing` 是统一入口，ML／Systems 专业资源按需引用；旧平行入口保留兼容。除 `academic-plotting`（#58）与 `research-improvement`（#59）外，本分类写作／审查／修复／rebuttal／resubmit／talk 能力迁移到[研究委托](general/research-os/references/mandate.md)。委托内编译与引用修复继承授权，不要求再次独立点名；只读审查仍只读，且不自动投稿。
+Writing Cycle 以 `paper-writing` 为统一入口，ML／Systems 专业资源按需引用；旧平行控制器已删除，当前能力边界见[迁移说明](general/research-os/references/migration-boundary.md)。除 `academic-plotting`（#58）与 `research-improvement`（#59）外，本分类写作／审查／修复／rebuttal／resubmit／talk 能力迁移到[研究委托](general/research-os/references/mandate.md)。委托内编译与引用修复继承授权，不要求再次独立点名；只读审查仍只读，且不自动投稿。
 
 ## 只读入口导航
 
@@ -62,7 +62,7 @@ Spec #57 更新 Writing Cycle 委托合同：`paper-writing` 是统一入口，M
 - **improvement**：对已有 Claims、代码、结果和 findings 做有界 review → repair → re-review。轮数、写入范围和补实验名额以 research-improvement 的授权门为准。
 - **pickup**：新会话打开已保存交接、`compute-policy.md` 和 `research-log.md`，重查已批准与未批准边界。过期授权不续期，未知消耗不按 0 释放。
 
-自包含的[完整批准地图](general/research-os/references/PRODUCT-MAP.md)区分三条主流程、独立 user-invoked 入口、model-invoked 能力及数学／Lean、ML／Systems 专业扩展，同时区分已实现、计划和宿主可用性。计划条目不是当前安装命令，文件安装成功也不代表宿主已加载。Idea Discovery、Validation 与 Writing Cycle 的主入口及专业扩展均已交付。写论文时 `/research-os` 统一进入 `paper-writing`，按材料加载 general、ML 或 Systems 标准；旧专业入口保留兼容。
+自包含的[完整批准地图](general/research-os/references/PRODUCT-MAP.md)区分三条主流程、独立 user-invoked 入口、model-invoked 能力及数学／Lean、ML／Systems 专业扩展，同时区分已实现、计划和宿主可用性。计划条目不是当前安装命令，文件安装成功也不代表宿主已加载。Idea Discovery、Validation 与 Writing Cycle 的主入口及专业扩展均已交付。写论文时 `/research-os` 统一进入 `paper-writing`，按材料加载 general、ML 或 Systems 标准，不再安装旧专业控制器。
 
 在可丢弃项目中可分别用“只有方向”“已有外部结果”“已有稿件”咨询；核对推荐理由、不强制前序流程、计划状态如实说明，以及项目零写入、零自动启动。实现阶段的受限合成模型场景不等于真实科研或宿主交互验收。
 

@@ -214,6 +214,38 @@ class FeatureMapLintHelper(unittest.TestCase):
         result = self.run_helper(CREATE / "references" / "feature-map-example")
         self.assertEqual(result.returncode, 0, result.stderr)
 
+    def test_commented_links_do_not_index_features(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            features = Path(tmp)
+            (features / "account.md").write_text("# Account\n", encoding="utf-8")
+            for comment in (
+                "<!-- [Account](account.md) -->",
+                "<!--\n[Account](account.md)\n-->",
+                "<!--\n[Account](account.md)\n",
+            ):
+                with self.subTest(comment=comment):
+                    (features / "README.md").write_text(comment, encoding="utf-8")
+                    result = subprocess.run(
+                        [sys.executable, str(HELPER), str(features)],
+                        capture_output=True, text=True,
+                    )
+                    self.assertEqual(result.returncode, 1, result.stderr)
+                    self.assertIn("account.md", result.stderr)
+
+    def test_visible_link_after_comment_still_indexes_feature(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            features = Path(tmp)
+            (features / "account.md").write_text("# Account\n", encoding="utf-8")
+            (features / "README.md").write_text(
+                "<!-- [old](missing.md) -->\n[Account](account.md)\n",
+                encoding="utf-8",
+            )
+            result = subprocess.run(
+                [sys.executable, str(HELPER), str(features)],
+                capture_output=True, text=True,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+
     def test_fragment_destinations_and_external_urls(self):
         fixtures = Path(__file__).parent / "fixtures" / "ticket53"
         good_anchor = self.run_helper(fixtures / "anchor-good")

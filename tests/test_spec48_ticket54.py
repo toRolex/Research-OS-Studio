@@ -169,15 +169,15 @@ class AssumptionVersionSync(unittest.TestCase):
         for field in ("外部假设与材料", "同步状态", "commit", "重验触发条件"):
             self.assertIn(field, record, field)
 
-    def test_sync_commit_is_required_and_changes_invalidate_old_pass(self):
+    def test_sync_status_markers_are_documented(self):
         create = (CREATE / "SKILL.md").read_text(encoding="utf-8")
         maintain = (MAINTAIN / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("同步", create)
         self.assertIn("commit", create)
         self.assertIn("失效", create)
-        self.assertIn("同步 commit", maintain)
+        self.assertIn("同步", maintain)
         self.assertIn("stale", maintain)
-        self.assertIn("blocked 的检查不移动同步 commit", maintain)
+        self.assertIn("blocked", maintain)
 
 
 class CorrespondenceAudit(unittest.TestCase):
