@@ -1,0 +1,5 @@
+interface:
+  display_name: "maintain-formal-verification-skill"
+  short_description: "代码变化后把项目的形式化检查重新对齐：更新模型与性质、重跑并判定漂移还是 bug。"
+policy:
+  allow_implicit_invocation: false

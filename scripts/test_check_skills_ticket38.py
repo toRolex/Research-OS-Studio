@@ -140,7 +140,7 @@ class Cascade(unittest.TestCase):
     def test_outside_research_os_not_scanned_by_repo_helper(self):
         mod = load()
         self.assertFalse(
-            mod.cascade_scope("skills/writing-cycle/ml-paper-writing/references/sources.md")
+            mod.cascade_scope("skills/writing-cycle/paper-writing/references/sources.md")
         )
         self.assertTrue(mod.cascade_scope("skills/general/research-os/playbooks/custom.md"))
 
@@ -267,37 +267,39 @@ class Invocation(unittest.TestCase):
 
 
 IDEA_SKILLS = (
-    "skills/idea-cycle/idea-discovery/SKILL.md",
-    "skills/idea-cycle/research-lit/SKILL.md",
-    "skills/idea-cycle/idea-generation/SKILL.md",
-    "skills/idea-cycle/creative-thinking-for-research/SKILL.md",
-    "skills/idea-cycle/novelty-check/SKILL.md",
-    "skills/idea-cycle/idea-review/SKILL.md",
-    "skills/idea-cycle/idea-refinement/SKILL.md",
+    "research-lit",
+    "idea-generation",
+    "creative-thinking-for-research",
+    "novelty-check",
+    "idea-review",
+    "idea-refinement",
 )
 
 
-class IdeaDiscoveryRoute(unittest.TestCase):
+class DiscoveryRoute(unittest.TestCase):
     def test_route_row_and_playbook_cascade(self):
         mod = load()
         text = (ROOT / "skills/general/research-os/SKILL.md").read_text(encoding="utf-8")
         rows, parse_errors = mod.parse_route_table(text)
         self.assertEqual(parse_errors, [])
-        matched = [row for row in rows if row["路线"] == "idea-discovery"]
+        matched = [row for row in rows if row["路线"] == "discovery"]
         self.assertEqual(len(matched), 1)
         self.assertEqual(matched[0]["只读约束"], "no")
         problems, _hints = mod.route_table_problems(rows, ROOT / "skills/general/research-os")
         self.assertEqual(problems, [])
-        playbook = ROOT / "skills/general/research-os/playbooks/idea-discovery.md"
+        playbook = ROOT / "skills/general/research-os/playbooks/discovery.md"
         body = playbook.read_text(encoding="utf-8")
+        self.assertNotIn("skills/idea-cycle/", body)
+        self.assertIn("按安装后的 Skill 名称定位其目录", body)
+        self.assertIn("# Discovery", body)
         for rel in IDEA_SKILLS:
             self.assertIn(f"`{rel}`", body)
-            self.assertTrue((ROOT / rel).is_file())
-        self.assertIn("一次走完", body)
+            self.assertTrue((ROOT / "skills/idea-cycle" / rel / "SKILL.md").is_file())
+        self.assertIn("一次委托", body)
         self.assertIn("new task", body)
-        tracked = set(IDEA_SKILLS) | {"skills/general/research-os/playbooks/idea-discovery.md"}
+        tracked = {"skills/general/research-os/playbooks/discovery.md"}
         clean = mod.backtick_cascade_problems(
-            "skills/general/research-os/playbooks/idea-discovery.md",
+            "skills/general/research-os/playbooks/discovery.md",
             body,
             ROOT,
             tracked | {p.relative_to(ROOT).as_posix() for p in ROOT.rglob("*.md") if ".git" not in p.parts},
@@ -306,15 +308,15 @@ class IdeaDiscoveryRoute(unittest.TestCase):
 
     def test_damaged_skill_path_fails(self):
         mod = load()
-        rel = "skills/general/research-os/playbooks/idea-discovery.md"
-        damaged = "读 `skills/idea-cycle/idea-discovery/SKILL.md` 与 `skills/idea-cycle/missing-leaf/SKILL.md`。\n"
+        rel = "skills/general/research-os/playbooks/discovery.md"
+        damaged = "读 `skills/idea-cycle/research-lit/SKILL.md` 与 `skills/idea-cycle/missing-leaf/SKILL.md`。\n"
         tracked = {
             rel,
-            "skills/idea-cycle/idea-discovery/SKILL.md",
+            "skills/idea-cycle/research-lit/SKILL.md",
         }
         problems = mod.backtick_cascade_problems(rel, damaged, ROOT, tracked)
         self.assertTrue(any("missing-leaf" in p for p in problems))
-        self.assertFalse(any("idea-discovery/SKILL.md" in p and "missing" not in p for p in problems))
+        self.assertFalse(any("research-lit/SKILL.md" in p and "missing" not in p for p in problems))
 
 
 if __name__ == "__main__":

@@ -89,7 +89,7 @@
 ## 最终终验记录
 
 - 最新 integration **af43cc8** 已并入，最后merge `integration/research-os-v2` already-up-to-date、祖先exit0；最终checker39/U38/M1、tests **23**＋scripts **43**＝**66通过**、diff --check通过；新测试主动LSP0诊断。日志为`checker.final.txt`、`tests.final.txt`、`scripts-tests.final.txt`。
-- 证据包：[evidence/v2-accept-remediation.tar.gz](evidence/v2-accept-remediation.tar.gz)，**47,077,162 bytes（约45MiB）**；SHA-256 **`ffc305f4c1a94bd9ae6ea31f344de3736f47800b5f8593beb6091077b45e329a`**。899文件、32完整原session、37时间事件切片，898条逐文件manifest验证0 mismatch；根`ros-v2-remediation/`，manifest=`evidence/SHA256SUMS.json`。
+- 原包 `v2-accept-remediation.tar.gz` 仅本地保留、未纳入本仓；先前候选与核验缺口见[历史归档索引](evidence/README.md)：**47,077,162 bytes（约45MiB）**；SHA-256 **`ffc305f4c1a94bd9ae6ea31f344de3736f47800b5f8593beb6091077b45e329a`**。候选记录为899文件、32完整原session、37时间事件切片，898条逐文件manifest验证0 mismatch；根`ros-v2-remediation/`，manifest=`evidence/SHA256SUMS.json`。
 - 关键定位：Idea `project/idea-clean/{IDEA_DISCOVERY,RESEARCH_PROPOSAL}.md` 与三个review session；ML `project/ml-clean/canonical.md`/`paper/`/`build-2/`及`ml-report-pickup`；talk当前`project/talk-final/`/`build/talk.pdf`/`render/`/`talk-report.md`及`talk-final-review-1.session.jsonl`。旧GLM失败、talk-clean超时、talk-fixed/micro原REVISE、ML stream中断均保留，不覆盖为PASS。
 - **本轮整改通过待人验**：#41中性/原反馈完整、#43累计编译/拒绝第4次/真实最新图审查、#44严重门/逐次额度/最终版本全页审查、#46本次严格逐字/UV/身份与预算证据均有新增真实材料；科研REVISE/WARN及raw/模型/投影局限不作为伪科学通过。GLM攻击中文账本格式偏差单列，不伪称全中文；所有预算批准证据仍存在。
 - **不宣称票整体全部AC/发布就绪**：#46原要求GitHub评论与v2.0.0 tag未执行；本次是失败子集整改，不冒充三宿主全部路线从零重跑。闭票、tag、push、PR以及科研采用均留用户。本报告/回归/正文/最小证据与force-add notes一并本地提交。

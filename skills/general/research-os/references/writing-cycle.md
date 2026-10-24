@@ -21,14 +21,12 @@ Claim、Citation、Proof（理论内容适用）、Stress 与独立评审是并�
 
 | 入口 | 角色／状态 | 选择依据与边界 |
 |---|---|---|
-| `paper-writing` | U／已实现（#25） | `/research-os` 的 paper-writing / general。通用材料的完整 W3：plan、draft、figures、compile、适用 audits、独立评审与授权 revision；不是 drafting 薄壳；不自动启动其他 user-invoked Workflow |
-| `ml-paper-writing` | U／已实现（#26） | `/research-os` 的 paper-writing / ml，不经通用入口。ML 实验报告：seeds、error bars、compute、limitations；复用内部资产，不自动调用通用 W3 |
-| `systems-paper-writing` | U／已实现（#27） | `/research-os` 的 paper-writing / systems，不经通用入口。design rationale、implementation、end-to-end、microbenchmark／ablation、scalability；不与 ML 合并；缺扩展性等证据时记缺口而不补造 |
-| `paper-compile-repair` | U／已实现（#22） | 已知编译错误且希望改源码；显式确认范围后修复并复验，与 check-only 分离 |
-| `apply-citation-fixes` | U／已实现（#23） | 已有引用 findings 且希望替换／删除／修正文或 BibTeX；先展示拟修改范围并获授权，与 detect 分离 |
-| `research-improvement` | U／已实现（#28），跨流程可选（跨流程能力，物理归位于 writing-cycle/） | 对方法、代码、全部结果、Claims、草稿、diff、历史 findings 做有界 review／repair／re-review；高权限可写入口，在明确 scope、写入范围、轮数、资源及副作用授权内补分析／改稿，补实验须另行授权并在运行数名额内；承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 方法，不是只读审计，不自动启动 experiment-bridge、paper-writing 或专项修复入口 |
-| `rebuttal` | U／已实现（#29）；`/research-os` rebuttal 路线级联 | 现成审稿意见与论文证据；原子化 concern、映射证据、区分可答／待澄清／需补工作。strategy-confirm 与 wording-confirm 仍停；补实验另行授权 |
-| `resubmit-pipeline` | U／已实现（#30）；`/research-os` resubmit 路线级联 | 现成稿件换 venue；新目录适配并保留旧投稿。adaptation-scope 与 change-confirm 仍停；不要求先运行本产品写作流程 |
-| `paper-talk`（Conference Talk） | U／已实现（#31）；`/research-os` paper-talk 路线级联 | 已完成论文到 slides、notes、script。talk-authorization 与 outline-confirm 仍停；审查演讲产物，不是重复审计原论文 |
+| `paper-writing` | U／已实现（#25，统一入口） | 统一 general／ML／Systems 写作：plan、draft、figures、compile、适用 audits、独立评审与授权 revision；专业标准按需引用，不自动启动其他顶层 Workflow |
+| `paper-compile-repair` | U／已实现（#22） | 已知编译错误且希望改源码；check-only 与修复分离，委托已授权时继承职责、文件和预算 |
+| `apply-citation-fixes` | U／已实现（#23） | 已有引用 findings 且希望替换／删除／修正文或 BibTeX；detect-only 与修复分离，委托已授权时继承职责和写域 |
+| `research-improvement` | U／已实现（#28），跨流程可选（跨流程能力，物理归位于 writing-cycle/） | 对方法、代码、全部结果、Claims、草稿、diff、历史 findings 做有界 review／repair／re-review；高权限可写入口，在明确 scope、写入范围、轮数、资源及副作用授权内补分析／改稿，补实验须另行授权并在运行数名额内；承接 W3 `auto-paper-improvement-loop` 与 W2 `auto-review-loop` 方法，不是只读审计，不自动启动 run-experiment、paper-writing 或专项修复入口 |
+| `rebuttal` | U／已实现（#29）；`/research-os` rebuttal 路线级联 | 现成审稿意见与论文证据；原子化 concern、映射证据、按委托裁决策略与措辞；不投稿或外发 |
+| `resubmit-pipeline` | U／已实现（#30）；`/research-os` resubmit 路线级联 | 现成稿件换 venue；新目录适配并保留旧投稿；写入范围继承委托，不自动投稿 |
+| `paper-talk`（Conference Talk） | U／已实现（#31）；`/research-os` paper-talk 路线级联 | 已完成论文到 slides、notes、script；按委托范围准备和审查材料，不发布或投稿 |
 
 指定 venue 时，对应写作入口应使用最新官方 guidelines／模板，用户模板冲突交给用户决定。Router 只说明此要求，不替用户联网下载模板、编译、改稿或投稿。Rebuttal、Resubmit、Talk 彼此独立；Workflow 完成不等于论文被接受。

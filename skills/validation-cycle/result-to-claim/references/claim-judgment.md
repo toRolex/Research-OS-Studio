@@ -1,6 +1,6 @@
 # Claim 判定细则
 
-[Result to Claim](../SKILL.md) Phase 3 的缩窄、上限与反证。存在性核对留在 SKILL Phase 1；统计检查用已有 `analyze-results` 报告，没有报告时按 [statistical checks](../../analyze-results/references/statistical-checks.md) 做，不在这里重写。不能定位即保持 `unknown`。
+`result-to-claim` Phase 3 的缩窄、上限与反证。存在性核对留在 SKILL Phase 1；统计检查优先采用已有 `analyze-results` 报告。需要其共置 `statistical-checks.md` 且该能力未安装时，按本叶“联装能力依赖”补装；不可用时将统计结论保持为 `unknown`，不把缺失当作通过。
 
 ## 缩窄规则
 

@@ -9,8 +9,18 @@ disable-model-invocation: true
 
 从 baseline、全部 attempts 和失败记录形成含不确定性与偏差限制的结果分析。它回答“已有结果实际显示了什么、支撑边界在哪里”，不回答“该做什么新实验”，更不把一次胜出写成结论。
 
-## Scope and authorization
-Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#scope-and-authorization
+Gates: none
+
+## 委托合同依赖
+
+- 单装包随本叶携带 [委托合同分发摘录](references/mandate.md)，覆盖目标、权限、额度、完成/停止与验收的必需规则；完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`。
+- 分发摘录缺失、与完整规范冲突或本次动作超出摘录时，标为 `blocked` 并停止受影响动作；不得从开发仓库路径或其他叶推断授权。
+
+## 委托继承
+
+- 目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威。
+- 只读分析和报告写盘按委托允许位置继续；内部级联不重置授权，也不把分析升级为结论。
+- 一次有界分析后停止；不启动新运行、审计或写作。
 
 - **Role:** explicitly invoked or path-cascaded internal capability within the caller's authorized research scope; users may also explicitly invoke it standalone. Read the original result files and attempt records, not only an executor's summary. A parent Workflow is a caller, not permission to start another Workflow.
 - **Inputs:** the baseline (numbers plus where they came from), every attempt's raw outputs and run records (success, failure, crash, timeout, invalid, excluded), the configs and seeds behind each attempt, and the question the analysis should answer. Read existing project instructions and workspace navigation if present. Setup, a particular directory layout, a GPU scheduler, or any research runtime is not a prerequisite.

@@ -1,9 +1,11 @@
 #!/bin/bash
 # Research OS Studio 演示脚本
 # 用于制作 README 演示 GIF
+# 所有命令与结果均为模拟台词，不进行真实扫描、安装或研究操作。
 
 echo "🚀 Research OS Studio 演示"
 echo "=========================="
+echo "🧪 以下全部为模拟演示，不执行真实扫描、安装、初始化或计划写入。"
 echo ""
 sleep 1
 
@@ -11,7 +13,7 @@ sleep 1
 echo "📦 步骤1: 安装 Skills 套件"
 echo "$ npx skills@latest add toRolex/Research-OS-Studio --list"
 sleep 2
-echo "📋 发现 39 个可安装的 Skills..."
+echo "📋 [模拟] 展示当前套件可安装的 Skills 列表（未执行真实扫描）..."
 sleep 1
 echo "$ npx skills@latest add toRolex/Research-OS-Studio --all"
 sleep 2
@@ -34,22 +36,14 @@ echo "✅ 初始化完成！"
 echo ""
 sleep 1
 
-# 场景3: Idea Discovery
-echo "💡 步骤3: Idea Discovery 工作流"
-echo "$ /idea-discovery"
+# 场景3: Research OS Discovery
+echo "💡 步骤3: Research OS Discovery 配方"
+echo "$ /research-os"
 sleep 2
-echo "🎯 请输入研究方向: 基于深度学习的蛋白质结构预测"
-sleep 2
-echo "📚 Phase 1: 文献调研中..."
-sleep 1
-echo "💡 Phase 2: 生成 5 个候选 Idea"
-sleep 1
-echo "🔍 Phase 3: 查新检查"
-sleep 1
-echo "👥 Phase 4: 独立评审"
-sleep 2
-echo "📋 交付: IDEA_DISCOVERY.md"
-echo "✅ 工作流完成，等待用户决策"
+echo "🎯 用户目标: 从研究方向和已有材料形成 Proposal"
+echo "🧭 按缺口选择、重排或回访所需的发现能力"
+echo "👥 需要挑战时由 fresh 独立 reviewer 审查原始材料"
+echo "📋 按授权交付发现报告和/或 Proposal；完成后停止"
 echo ""
 sleep 1
 

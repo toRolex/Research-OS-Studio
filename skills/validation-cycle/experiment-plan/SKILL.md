@@ -8,16 +8,27 @@ disable-model-invocation: true
 
 将用户给定的问题、Proposal 或方法整理为 **claim → evidence → run order** 路线图。计划服务证据而非预设论文成功。
 
-## 调用与授权
-Gate: output-path | before=plan-write | approval=explicit-user | source=SKILL.md#调用与授权
+Gates: none
 
-这是 **user-invoked Workflow**：用户显式调用本 Skill 制定实验计划时使用。模型不自动启动它；本 Skill 也不调用其他 Workflow。输入可以是现成研究问题，不要求先运行 Discovery 或 refinement。用户若只给不稳定方向，输出缺口与待确认的假设，不替用户换题。
+## 委托合同依赖
+
+- 单装包随本叶携带 [委托合同分发摘录](references/mandate.md)，覆盖目标、权限、额度、完成/停止与验收的必需规则；完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`。
+- 分发摘录缺失、与完整规范冲突或本次动作超出摘录时，标为 `blocked` 并停止受影响动作；不得从开发仓库路径或其他叶推断授权。
+
+## 委托继承
+
+- 目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威；只读或只建议时不落盘。
+- 内部级联不重置授权；计划写盘按委托允许的位置继续。未来实验预算不等于执行授权。
+- 完成计划即停止；关键数据、评价定义或硬预算未知时交付 **BLOCKED 草稿**，不编造数值。
+
+本 Skill 可由用户独立显式调用，或由入口在有效研究委托覆盖规划职责、材料、输出范围与额度时按路径级联，不要求再次点名。模型不因描述自行触发；本 Skill 只制定计划，完成后返回用户或调用者，不调用其他 Workflow 或启动实验。输入可以是现成研究问题，不要求先运行 Discovery 或 refinement。用户若只给不稳定方向，输出缺口与待确认的假设，不替用户换题。
 
 - **User** 决定研究问题、固定评价面、预算上限及输出位置，并另行决定是否授权执行。
 - **Agent** 只读本次相关材料，设计比较、填写计划和待运行清单；不实现候选、不运行 sanity/baseline/评估、不配置环境。
-- **写入范围**：仅用户允许的计划与 tracker 文件。默认在对话返回草稿；需落盘时沿用现有 Research Workspace，提出 `EXPERIMENT_PLAN.md` 与 `EXPERIMENT_TRACKER.md` 的具体路径并确认。已有文件先展示差异，未授权覆盖则保留原件。写入前复查目的文件；出现外部变化时重新确认。不修改代码、数据、评估器、Agent 配置或其他研究材料。
+- **写入范围**：仅用户允许的计划与 tracker 写域。默认在对话返回草稿；已授权写域内的新文件直接写入，不再为普通文件路径重复确认。先读同名目标；写域不明、外部变化、覆盖既有成果或目标替换时停止相应动作并确认。沿用现有 Research Workspace，不修改代码、数据、评估器、Agent 配置或其他研究材料。
 - **资源范围**：本次仅规划。用户允许的未来实验预算不等于本次执行授权。远程读取、付费检索或敏感数据外传需符合本次授权；缺少资料时标为待提供，不安装工具或申请算力。
 - **停止条件**：完成计划与摘要即停止；关键数据、评价定义或硬预算未知时交付明确标为“待补全，不可执行”的草稿并停止。拒绝授权或工具权限被拒时保留已有材料并报告。
+- 需要运行批次时，仅在用户明确确认后按工作区授权流程记录该批 `research-log.md`；实际启动由 run-experiment 核验并继承这份授权，不逐 milestone 再索权。仅有计划不代表运行获批。
 
 ## Planning constants
 
@@ -25,6 +36,7 @@ Gate: output-path | before=plan-write | approval=explicit-user | source=SKILL.md
 - **MAX_CORE_BLOCKS = 5** — keep the must-run experimental story compact.
 - **MAX_BASELINE_FAMILIES = 3** — prefer a few strong baselines over many weak ones.
 - **DEFAULT_SEEDS = 3** — propose 3 seeds when stochastic variance matters and budget allows; this is neither automatic authorization nor a guarantee of statistical power.
+- **对照按问题选**：机器学习用计划声明中的训练 baseline；数学计算采用计划声明的对照（最小对照、已知值、证书重放或独立实现检查），不硬套训练 baseline。
 
 ## Workflow
 
@@ -88,9 +100,9 @@ For every kept block, fully specify:
 
 - **Claim tested** and **why this block exists**
 - **Dataset / split / task**
-- **Compared systems**: strongest baselines, ablations and variants only
+- **Compared systems / validation route**: choose and state the route. For training, compare the strongest relevant baselines, ablations and variants. For math/non-training work, name the mathematical control, known value, certificate replay or independent check; 不要求训练 baseline。
 - **Metrics**: decisive metric first, secondary metrics second
-- **Setup details**: backbone, frozen vs trainable parts, key hyperparameters, training budget, seeds
+- **Setup details**: training blocks state backbone, frozen vs trainable parts, key hyperparameters, training budget and seeds; math/non-training blocks state only applicable environment, exact inputs and check procedure, with training fields not applicable.
 - **Success criterion**: pre-specified effect size and uncertainty requirement, not merely the best point estimate
 - **Failure interpretation**: what a negative result means and what it does not mean
 - **Table / figure target**: where the evidence should appear (a report is sufficient)
@@ -100,21 +112,22 @@ Special rules:
 - Simplicity check 与 frontier necessity check 的比较对象见 [block checks](references/block-checks.md)。保留了对应 block 时按该文件填写；非 frontier 方法跳过 frontier block。
 - Pre-specify sampling unit, repeated seeds (start from DEFAULT_SEEDS when stochastic variance matters and budget allows), paired comparisons and uncertainty reporting when relevant. Keep tuning on development data and reserve final evaluation; label post-hoc analyses exploratory. Account for selection and multiple comparisons instead of presenting the best seed as confirmatory evidence.
 - Separate **valid negative** (valid evidence rules out the pre-specified meaningful gain or meets an explicit falsification rule), **inconclusive** (uncertainty still permits competing conclusions), **invalid** (protocol/data leakage/evaluator defect), and **operational failure** (crash/OOM/timeout). Missing a success threshold alone does not establish a negative; pre-specify how uncertainty and effect size distinguish negative from inconclusive. A valid negative limits the tested Claim; operational failure is not scientific falsification. Preserve all attempts, not only winners; missing metrics remain missing, never zero-valued success.
-- For **each criterion (including baseline validity and budget compliance)**, identify the planned primary evidence: run IDs, actual or proposed raw-result location, metric/column or log section, comparison and decision rule. Record existing evidence separately with its source; future evidence stays **not collected**. File existence and model agreement do not establish that the criterion holds.
+- For **each applicable criterion** (including training-baseline validity on the training route and budget compliance), identify primary evidence: run IDs, actual or proposed raw-result location, metric/column or log section, comparison and decision rule. For math/non-training work, evidence instead points to the named certificate, known value, invariant or independent check; training-baseline validity is not required. Record existing evidence separately with its source; future evidence stays **not collected**. File existence and model agreement do not establish that the criterion holds.
 
-**完成条件**：每个 block 的所有字段与逐 criterion evidence 对应完整；正、负、不确定、无效及运行失败的含义可区分。
+**完成条件**：每个 block 按其训练或数学/非训练路线写齐适用字段与逐 criterion evidence；训练路线明确 strongest baseline 和 baseline validity，数学/非训练路线明确对照或证书检查且不要求训练 baseline；正、负、不确定、无效及运行失败的含义可区分。
 
 ### Phase 4: Turn the Plan Into an Execution Order
 
-Specify future milestones; do not execute them:
+Specify future milestones; do not execute them. Choose the comparison/validation route from the research question:
 
-1. **Sanity stage** — data pipeline and metric correctness; include a quick overfit or toy split only if it fits the authorized scope. If it would alter fixed data or training settings, use sufficient existing protocol checks instead, or block pending a separately approved sanity design. Label any dedicated sanity attempt and exclude it from confirmatory results.
-2. **Baseline stage** — reproduce the strongest baseline(s) unchanged before candidate optimization
-3. **Main method stage** — final method on the primary setting
-4. **Decision stage** — decisive ablations for novelty, simplicity and frontier necessity
-5. **Polish stage** — robustness, qualitative figures, appendix extras
+1. **Sanity stage** — check data pipeline and metric correctness for training, or the mathematical object and checker for math/non-training work. Use a toy split/quick overfit only when training settings and authorized scope permit it. Label dedicated sanity attempts and exclude them from confirmatory evidence.
+2. **Training branch — baseline-first** — reproduce the strongest baseline relevant to the claim unchanged before candidate optimization. Candidate runs require a valid baseline on the same evaluation surface, with original configuration and raw evidence retained. Reuse an earlier baseline only when its protocol and evidence are actually comparable; a literature number alone is insufficient. An invalid or missing required baseline blocks candidate runs.
+3. **Math/non-training branch — comparison or certificate check** — name the mathematical control (for example a known value, analytic invariant, minimal counterexample, certificate replay, or independent implementation) and its exact evidence and decision rule. When no candidate is trained, backbone, training recipe, strongest training baseline, and its gate are not required (不要求训练 baseline). An unavailable or invalid certificate/check blocks only the claim that depends on it and remains `unknown` until resolved.
+4. **Main method / candidate stage** — final method on the primary setting when applicable; otherwise perform only the declared mathematical/non-training checks.
+5. **Decision stage** — decisive ablations for novelty, simplicity and frontier necessity when applicable; for other work, use the declared comparison to decide among pre-specified explanations.
+6. **Polish stage** — robustness, qualitative figures and appendix extras when applicable.
 
-For each milestone estimate compute, turnaround time, stop/go gate, risk and mitigation. **Baseline-first**: candidate runs require a valid baseline on the same evaluation surface, with original configuration and raw evidence retained. An earlier baseline may be reused only when its protocol and evidence are actually comparable; a literature number alone is insufficient. Baseline failure blocks main runs rather than encouraging optimization against an unreliable reference.
+For each applicable milestone estimate compute, turnaround time, stop/go gate, risk and mitigation. Preserve baseline-first for training studies; do not transfer that gate to math/non-training work. A failed comparison or certificate check does not become evidence of success.
 
 Separate **must-run** from **nice-to-have**. State per-run and total hard limits:
 
@@ -126,13 +139,13 @@ Separate **must-run** from **nice-to-have**. State per-run and total hard limits
 
 If the minimum discriminating suite exceeds a ceiling, reduce optional work or present a smaller hypothesis with user approval; do not quietly increase budget or remove the decisive control. Gate on missing resources, invalid baseline, exhausted budget or protocol changes; new decisions go to the user, not an automatic loop.
 
-**完成条件**：baseline-first 依赖、每阶段 gate、总预算算式与硬上限清楚；所有必须实验能纳入上限，否则明确不可执行及需用户决定之处。
+**完成条件**：训练路线的 baseline-first 依赖或数学/非训练路线的对照/证书 gate、每阶段条件、总预算算式与硬上限清楚；适用的必须运行能纳入上限，否则明确不可执行及需用户决定之处。
 
 ### Phase 5: Write the Outputs and Stop
 
 Read [计划与 tracker 模板](templates/experiment-plan.md) now. Fill every applicable section; explain any omitted block. Preserve natural-format evidence paths instead of wrapping them in a central schema. Follow the user's language preference; code, paths and metric names retain their original form.
 
-Present the full draft in the conversation, or write only the authorized destinations under the write rules above ([调用与授权](#调用与授权)). The tracker is a human-readable list of proposed runs, not a scheduler; initial status is **NOT RUN** or **BLOCKED**, and planned evidence is not a result. Future execution may record successful, negative, invalid, crashed and timed-out attempts there without deleting history.
+Present the full draft in the conversation, or write only the authorized destinations under the write rules above ([委托继承](#委托继承)). The tracker is a human-readable list of proposed runs, not a scheduler; initial status is **NOT RUN** or **BLOCKED**, and planned evidence is not a result. Future execution may record successful, negative, invalid, crashed and timed-out attempts there without deleting history.
 
 Finish with:
 

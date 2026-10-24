@@ -1,6 +1,8 @@
 # 批次授权
 
-本文件是 experiment-plan、experiment-bridge 与 improvement 补实验分支的共享授权规则；实际账本是工作区 research-log.md。默认政策不是本批授权。
+本文件是 experiment-plan、run-experiment（含“实验桥接”需求路由）与 improvement 补实验分支的共享授权规则；实际账本是工作区 research-log.md。默认政策不是本批授权。
+
+本文件只管需要占用费用、算力或作业名额的运行批次。没有显式额度时的有界首轮及其停止条件见[研究委托合同](mandate.md)；那条不占用付费资源，也不改写既有成果。
 
 ## 默认政策
 
@@ -13,7 +15,7 @@
 - scope：计划、允许写域、环境。未指定则本批不能执行。
 - cost_limit、currency：有限非负费用与币种。
 - compute_limit、compute_unit：有限非负算力。单位只能是 cpu-core-hour 或 gpu-device-hour，异构各写一行。
-- run_limit、run_count_basis：非负整数。experiment-bridge 用 planned-run；research-improvement 用 attempt。两者名额语义不混用。
+- run_limit、run_count_basis：非负整数。run-experiment 用 planned-run；research-improvement 用 attempt。两者名额语义不混用。
 - per_attempt_cost_limit、per_attempt_compute_limit：与累计同单位，且不大于累计上限。
 - concurrency_limit：非负整数。要启动时至少为 1。
 - retry_limit：每个 planned run 还能追加的 attempt 次数。重试额度不代替修复轮数。

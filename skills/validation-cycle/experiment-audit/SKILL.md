@@ -9,14 +9,25 @@ disable-model-invocation: true
 
 独立的、只读的实验完整性审查：判断**报告的实验是否真实、完整、可核对，以及是否按预先声明的协议执行**。它不执行实验，不修代码，不产生新结果。
 
+Gates: none
+
+## 委托合同依赖
+
+- 单装包随本叶携带 [委托合同分发摘录](references/mandate.md)，覆盖目标、权限、额度、完成/停止与验收的必需规则；完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`。
+- 分发摘录缺失、与完整规范冲突或本次动作超出摘录时，标为 `blocked` 并停止受影响动作；不得从开发仓库路径或其他叶推断授权。
+
 ## 核心原则：执行者只收集路径，独立审查者判定
 
 - **执行者**只定位本次可读的材料路径和审查范围，不预先读取、总结、解释或筛选内容，也不参与完整性判定。
 - **独立审查者**直接读取代码、evaluator、真值来源、配置、日志、原始结果和 Claims 本身，不使用执行者摘要、分数、排行榜或模型共识代替原始证据。
 - 独立审查者不可用或不在本次授权内时，明确标注 **single-agent assessment; independent verification not performed**；不得冒充第二审查者，不得把自我检查记作独立判定。
 
-## 角色与边界
-Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#角色与边界
+## 委托继承
+
+- 目标、权限、研究额度、完成与停止语义以 research-os mandate 为唯一权威。
+- 只读审计边界不变；报告写盘按委托允许位置继续，内部级联不重置授权。
+- 区分作业退出、产物有效与科学结论：旧结果必须能关联原作业身份且未被取代；无法证明时保持 `unknown`，不替当前声明背书。
+- 缺独立审查者时如实标 blocked/single-agent，不伪造第二意见。
 
 - **角色**：默认是当前 Validation 或写作职责内的 显式调用或已授权正文级联 discipline；用户也可点名 standalone。父 Workflow 的调用是 caller，不是启动其他 Workflow 的许可。
 - **输入**：用户明确给出的 protocol/计划、代码与配置、数据说明、每次 attempt 的日志和输出、分析材料、evaluator/ground truth、候选 Claims 及其声明范围。优先读原始文件和实际生成物；摘要、截图、表格或二手报告只能作为待核对线索。

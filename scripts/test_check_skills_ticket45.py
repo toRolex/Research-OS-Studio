@@ -63,15 +63,21 @@ class Ticket45Routes(unittest.TestCase):
             )
             self.assertEqual(problems, [], problems)
         proof = (SKILL / "playbooks/proof.md").read_text(encoding="utf-8")
+        self.assertIn("`proof-review`", proof)
+        # 当前配方按 slug 发现能力；展开实际入口以覆盖反引号路径级联。
+        proof = proof.replace(
+            "`proof-review`", "`skills/validation-cycle/proof-review/SKILL.md`", 1
+        )
+        rel = "skills/general/research-os/playbooks/proof.md"
+        self.assertEqual(mod.backtick_cascade_problems(rel, proof, ROOT, known), [])
         damaged = proof.replace(
-            "`skills/validation-cycle/proof-orchestrator/SKILL.md`",
-            "`skills/validation-cycle/proof-orchestrator/references/missing-handoff.md`",
+            "`skills/validation-cycle/proof-review/SKILL.md`",
+            "`skills/validation-cycle/proof-review/references/missing-handoff.md`",
             1,
         )
         self.assertNotEqual(damaged, proof)
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
-            rel = "skills/general/research-os/playbooks/proof.md"
             target = root / rel
             target.parent.mkdir(parents=True)
             target.write_text(damaged, encoding="utf-8")
@@ -95,8 +101,9 @@ class Ticket45Routes(unittest.TestCase):
         pickup = (SKILL / "playbooks/pickup.md").read_text(encoding="utf-8")
         self.assertIn("valid_until", pickup)
         self.assertIn("research-log", pickup)
+        self.assertNotIn("user_confirmation", pickup)
         for field in (
-            "user_confirmation",
+            "原始用户指令",
             "authorization_status",
             "actual_consumption",
             "skills/general/setup-research-os/templates/compute-policy.md",

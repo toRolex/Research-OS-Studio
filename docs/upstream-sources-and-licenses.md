@@ -20,6 +20,7 @@
 | [AutoResearchClaw](https://github.com/aiming-lab/AutoResearchClaw)，Aiming Lab | `be4ba4755bf1b52220f25e13b2293b5956590070` | 只借鉴 `researchclaw/pipeline/stages.py` 的 stage/gate 方法、`docs/HITL_GUIDE.md` 的 HITL 决策方法、`researchclaw/literature/verify.py` 的 citation verification 方法 | MIT，`Copyright (c) 2026 Aiming Lab`。本产品不需要其 23-stage runtime；不复制 runner、自动 rollback/pivot/refine、`--auto-approve` 或环境编排代码。若后续复制独立 verifier，必须先记录精确原路径和随附依赖。 |
 | [EurekAgent](https://github.com/THU-Team-Eureka/EurekAgent)，THU-Team-Eureka | `fb96df897dfb99797a77623aa0dd9ee178fe89d2` | 只借鉴 evaluator 隔离思想：示例 `examples/*/hidden_eval_dir/evaluate.py`，容器与 grader 参考 `src/docker/container.py`、`src/eval_grader/server.py`；公开 Skills 位于 `.claude/skills/{generate-inputs,implement-approach,prepare-workspace,propose-approaches}/` | AGPL-3.0。**仅 clean-room 借鉴公开思想**；不复制任何源码、Skill 文本、LangGraph、grader server、Docker runtime 或 hooks。 |
 | [Archon-Horizon](https://github.com/frenzymath/Archon-Horizon)，FrenzyMath | `c8885e05f1d0dff40f727ec45d5238b3c80b6336` | 只借鉴 workspace-first Lean、fresh-context review、read-only enforcement、checkpoint/resume 方法；当前实现路径包括 `src/archon_horizon/orchestration/orchestrator.py`、`src/archon_horizon/runlog.py` | Apache-2.0；NOTICE：`Archon Horizon Copyright 2026 FrenzyMath`，并要求关注 `THIRD_PARTY_NOTICES.md`。排除 orchestrator、ledger/inbox/dashboard/provider harness 等 runtime。历史报告声称的顶层 `hgraph/`、`subagents/compile.py` 在本次 revision 不存在，因此不得按旧路径复制。 |
+| [cursor/plugins · pstack](https://github.com/cursor/plugins/tree/88d47514b82e7c44f00f2b2a72ff6dd12158038c/pstack)，Lauren Tan | `88d47514b82e7c44f00f2b2a72ff6dd12158038c` | 形式化验证：`pstack/skills/create-formal-verification-skill/SKILL.md`、`pstack/skills/maintain-formal-verification-skill/SKILL.md`；只读核对 `pstack/LICENSE` | MIT，`Copyright (c) 2026 Lauren Tan`（插件级 `pstack/LICENSE`；仓库根无 LICENSE）。完整阅读两份正文与许可后改编为宿主中立的 `create-formal-verification-skill`／`maintain-formal-verification-skill`；删除 Cursor 专属命令、个人规则目录与固定模型绑定，增加四类对象区分、假设/版本/同步记录、编码对应审计与故障暴露证据要求。许可文本随 Skill 共置。 |
 | [karpathy/autoresearch](https://github.com/karpathy/autoresearch)，Andrej Karpathy | `228791fb499afffb54b46200aca536f79142f117` | `program.md` 的固定修改范围、固定时间预算、固定 metric、keep/discard、crash/timeout 记录方法；`README.md` 的公开设计说明 | README 声明 MIT，但本次树无 `LICENSE` 文件，GitHub API 为 `NOASSERTION`。按**许可证证据不足**处理：暂不复制 `program.md` 正文，只 clean-room 借鉴上述公开方法；上游补齐明确许可后再复核。 |
 
 ## 已采用资产
@@ -93,14 +94,16 @@
 
 场景材料（公开现成候选、论文、原实验代码）仅临时用于实现期验证，不随产品分发；用户真实研究效果与端到端体验仍待用户验收。
 
-## 已采用的 Idea Discovery Workflow
+## 已采用的 Idea Discovery Workflow（历史来源沿革与现行落点）
 
-`skills/idea-cycle/idea-discovery/` 是本仓当前的 Idea Discovery 主入口，user-invoked 顶层 Workflow；在一次显式调用内组合已交付的 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement`，交付单一 `IDEA_DISCOVERY.md` 与 `RESEARCH_PROPOSAL.md` 后停止。
+**现行落点**：统一入口是 `skills/general/research-os/SKILL.md`；其中 `discovery` 路线进入 `skills/general/research-os/playbooks/discovery.md`，组合规则见 `skills/general/research-os/references/discovery-composition.md`。该配方按目标缺口组合文献、候选、查新、fresh 独立评审与方案收敛，可重排、跳过已满足职责或回访，不要求普通阶段转换另行确认。专业写作统一由 `skills/writing-cycle/paper-writing/SKILL.md` 组织，general、ML 与 Systems 仅选择专业分支和资源。Discovery 所需许可随 Research OS 资源位于 `skills/general/research-os/licenses/idea-cycle/LICENSE`。
+
+**历史范围**：以下是旧 `idea-discovery` 控制器的来源、采用和迁移记录。`skills/idea-cycle/idea-discovery/` 是当时的本地产品路径，已不再作为现行入口或兼容调用；下列旧工作流与阶段门描述的是历史合同，不覆盖现行研究委托和 discovery 配方。
 
 - **来源与复核**：2026-09-15 通过官方 GitHub API 重新解析 ARIS／wanshuiyin revision `0472e530251cdbd3364c33b110063c58f819edd7`，全文读取 `skills/idea-discovery/SKILL.md`（527 行）、递归目录树（该目录仅 `SKILL.md`，无共置 references/templates/assets）、根 MIT 许可及它引用的 `templates/RESEARCH_BRIEF_TEMPLATE.md`。本次采用固定 revision，不声称最新 HEAD。
 - **完整方法采用**：保留 Phase 0 的 research brief 加载与一行方向合并、Phase 0.5 的参考论文摘要、Phase 1–4.5 的组合顺序（`research-lit` → `idea-creator` → `novelty-check` → `research-review` → `research-refine`）、逐候选查新与 closest prior work、独立 adversarial 评审、固定 Problem Anchor 收敛、单一权威交付物与逐阶段淘汰记录、阶段间检查点与诚实报告要求。brief 模板按上游 `RESEARCH_BRIEF_TEMPLATE.md` 适配为共置 `templates/research-brief.md`；报告结构落地为共置 `templates/discovery-report.md`；阶段—能力—章节映射与降级规则落地为共置 `references/composition-notes.md`。
 - **组合与真实调用核对**：上游 Phase 1/2/4 分别以 `— composed: idea-stage/IDEA_REPORT.md` 调用 `research-lit`、`idea-creator`、`research-review`，Phase 3 逐候选调用 `novelty-check`，Phase 4.5 调用 `research-refine-pipeline`（后者再调用 `research-refine` 与 `experiment-plan`）；本仓把已交付的同职责能力 `research-lit`、`idea-generation`、`novelty-check`、`idea-review`、`idea-refinement` 按同一顺序组合，各贡献命名 canonical 章节。上游记录在 `shared-references/{output-composition,citation-discipline,reviewer-independence,review-tracing,integration-contract,resumable-runs}.md` 与 `tools/{run_state.py,idea_discovery_gate.py,iteration_log.py}`；本票已阅读并只采纳 output-composition 的“单一权威交付物”与 reviewer-independence 的原始材料直达原则。
-- **删除与校准**：删除 pilot 实验与全部 GPU／时长常量、`AUTO_PROCEED` 自动推进、外部 Feishu 通知、`research_contract.md` 与实验计划／tracker、`run_state`／证据门／`.aris` tracing、`RENDER_HTML`、`COMPACT` 与 provider/MCP 绑定、自动跨主流程调用。阶段间默认阻塞等用户确认，仅用户明确授权“一次走完”时才连续执行；不写统一 JSON、状态机、receipt、HTML 或 manifest。
+- **历史阶段门（已被取代）**：旧控制器曾设置阶段检查点，并把跨阶段推进设为等待用户确认；这属于当时控制器的流程，不是当前合同。迁移后，现行 Discovery 配方按研究委托中的目标缺口选择能力并可重排或回访，普通阶段转换不重复请求批准。其余当时删除的 pilot 实验与 GPU／时长常量、`AUTO_PROCEED` 自动推进、外部 Feishu 通知、`research_contract.md` 与实验计划／tracker、`run_state`／证据门／`.aris` tracing、`RENDER_HTML`、`COMPACT` 与 provider/MCP 绑定、自动跨主流程调用，以及统一 JSON、状态机、receipt、HTML 或 manifest，均作为历史适配记录保留。
 - **Orchestra 互补方法**：不新增独立编排；Orchestra 的 `21-research-ideation` 构思框架已由 `idea-generation`（十个操作框架）与 `creative-thinking-for-research`（八框架）承载，本文档在生成职责内调用它们，不另建薄弱 charter→literature→gap→idea 单线。
 - **许可与验证**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随本 Skill 的 `LICENSE` 发行。实现期以公开方向、公开材料及缺工具场景做静态与场景核对；未运行 pilot、未执行用户真实科研，不代表端到端体验或科研质量已验收。
 
@@ -122,16 +125,18 @@
 - **采用**：保留计划解析与按 milestone 实现、代码 review、sanity-first、baseline-first、按规模选择单次/批量执行、OOM 有限重试、停滞清理、波次依赖、预期输出完成判定、状态持久化与 resume、完整 attempt 收集。
 - **适配**：删除 Vast.ai/Modal/`serverless-modal` provider 绑定、`mcp__codex` 固定审查、自动 deploy、无限调试/自动重试、自动 ablation/下一 Workflow、`.aris`/`nohup`/`screen` 调度和 `queue_manager.py` 常驻 scheduler；改为纯 Markdown 的作业清单、状态表与宿主已有执行工具。新增候选实现/evaluator 隔离、真实 ground truth、执行前确认、付费/远程/高成本授权、停止/重启权限、成功/失败/无效/超时 attempt 留存和演练/真实验收区分；`run-report.md` 与 `batch-manifest.md` 为局部适配模板。
 - **调用核对**：上游 `experiment-bridge` Phase 4 按 job 数在 `run-experiment` 与 `experiment-queue` 间路由，Phase 5 收集初步结果并调用 `training-check`；本票只实现路由所需的两个执行能力，监控/分析/审计/Claims 属后续独立票，未在此虚构调用。上游 queue 引用的 `compute-env-contract.md`、`external-cadence.md` 已阅读，只保留其中与执行边界相关的有界性方法。
+- **#56 授权合同适配**：实验桥接的执行控制合入 `run-experiment`，本次进一步移除旧 compatibility Skill；“实验桥接”只保留为 `/research-os` 需求配方名。新增共置 `references/execution-contract.md` 与 `references/remote-execution.md`，记录输入版本、工具链、独立目录、作业身份、退出码、原始日志、产物、断线原作业查询、三类判定分离、SSH/已有调度复用与不锁定供应商。另将本仓共享批次授权规则适配为独立可安装的 `references/batch-authorization.md`，在安装的单个 `run-experiment` 中也可读取完整授权字段与逐次启动核验。数学计算不强制训练 baseline；对照按计划选择。八个独立实验 Skill 继承 research-os 委托合同，旧叶授权门移除，生产服务器不作为验收门。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随两个 Skill 的 `LICENSE` 一起发行。
 
-## 已采用的完整 Experiment Bridge Workflow
+## Experiment Bridge 方法与报告资源迁移
 
-`skills/validation-cycle/experiment-bridge/` 为独立 user-invoked Workflow：从用户已批准的现成计划出发，在一次授权内完成实现、代码审查、sanity、正式/批量运行、监控、初步收集、分析审计与 tracker 更新，并给出可选消融建议。不要求先运行本产品的 `experiment-plan`，不自动启动独立 `result-to-claim`。
+上游 Experiment Bridge 的方法与自然语言报告已合入唯一执行控制 `skills/validation-cycle/run-experiment/`。用户仍可把“实验桥接”作为 `/research-os` 的需求表达；它不是独立 Skill，也没有可安装 slug。实现、执行、作业身份、恢复与初步报告由 run-experiment 控制；计划、队列、监控、健康、分析、审计和 Claim 判断仍由各自独立能力负责。
 
 - **来源**：wanshuiyin / ARIS，`skills/experiment-bridge/SKILL.md`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。2026-09-15 通过官方 GitHub API 重新解析 revision、读取完整正文（376 行）、递归目录树与仓库 MIT 许可；该目录仅有 `SKILL.md`，无共置 references/templates/assets 或第三方资产许可。复核当日官方 HEAD 为 `f1bd907b58f653131ebe6807c482e2554e07f9b9`；本次采用的是明确固定版本，不声称采用最新全文。同时全文重读 `skills/run-experiment/SKILL.md`、`skills/experiment-queue/SKILL.md`、`skills/monitor-experiment/SKILL.md`、`skills/training-check/SKILL.md` 及 `shared-references/{output-versioning,output-manifest,output-language,compute-env-contract,external-cadence}.md` 以核对真实调用关系。
-- **采用**：保留读取现成计划 → 按 milestone 实现 → 代码 review → sanity-first → 按 job 数路由单次/批量执行 → 监控收集 → 分析审计 → tracker 更新 → 消融建议的完整主体，以及 baseline-first、evaluator 真实 ground truth、完整 attempt 留存。批量路由与执行细节复用本产品已交付的 `run-experiment`（#10）与 `experiment-queue`（#10），监控/健康/分析/审计分别复用 `monitor-experiment`/`training-health-check`（#11）、`analyze-results`（#12）、`experiment-audit`（#13）；`references/composition-map.md` 与 `templates/bridge-report.md` 为局部适配资源。
+- **逐文件资源映射**：旧 `SKILL.md` 是兼容执行包装，删除；用户目标由仍保留的 `skills/general/research-os/playbooks/experiment-bridge.md` 路由到 `run-experiment`。旧 `agents/openai.yaml` 随第二发现/调用入口删除；唯一执行 metadata 留在 run-experiment。旧 `references/mandate.md` 与 run-experiment 同路径副本 SHA-256 相同（`88aa76af938dfbcf4baf680c51389c17ed6639bd39328fc3b36ef99e692e04e1`），删除重复件，权威随 run-experiment 安装。旧 `LICENSE` 与 `run-experiment/LICENSE` 字节相同（SHA-256 `e30cf5dd5f49b4f9b656590e23d782b4756c924a9f0ff0162b3e7b5d87006bf5`），只保留随 run-experiment 安装的一份 MIT notice。旧 5 行 composition map 的“仅组合所需分支、缺失能力只阻塞该分支”方法扩展并迁入 `run-experiment/references/composition-map.md`，逐项列明计划、队列、监控、健康、分析、审计、Claim 的独立边界。旧 `templates/bridge-report.md` 的 milestone/attempt、实现审查、监控健康、分析、审计、tracker、消融建议与下一步章节归并到 `run-experiment/templates/run-report.md`；以新模板更强的作业身份、输入版本、工具链、独立目录、退出码、日志、产物有效性与科学结论字段为准，分析/审计段只记录独立能力的输出，不授权 run-experiment 代做。
+- **保留的方法**：读取现成计划 → 按 milestone 实现 → code review → sanity-first → 按规模路由小批量/队列 → 监控事实与健康建议 → 初步收集 → 用户要求时组合独立分析/审计 → tracker 更新 → 仅建议消融；另保留 baseline-first、真实 evaluator/ground truth、全部 attempts 留存。数学/非训练路线仍按计划声明的对照、证书或独立检查，不套训练 baseline。
 - **适配**：删除固定 `mcp__codex`/GPT-6-Astra 审查、`AUTO_DEPLOY` 自动部署、无限调试与自动重试（改为批准上限内的有界修复）、`BASE_REPO` 默认 clone、`COMPACT` 双模式、`research_contract.md` 自动创建、Vast.ai/Modal/serverless-modal provider 绑定、W&B 强制读取、wandb/Feishu 通知、统一输出版本/manifest/语言协议、自动 `ablation-planner` 与 `auto-review-loop` 调用。新增执行前授权门、候选实现/evaluator 隔离、演练/真实区分、预算耗尽停止；消融仅建议，不自动执行，不扩预算，不开启下一轮，不启动 `result-to-claim`（#14）、Paper Writing 或其他顶层 Workflow。顶层 user-invoked Workflows 互不自动启动。
-- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE`。
+- **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；唯一完整 notice 随 `run-experiment/LICENSE` 安装。删除的是内容相同的重复许可副本，不改变许可归属或 notice。
 
 ## 已采用的独立实验审计 Skill
 
@@ -146,12 +151,12 @@
 
 ## 已采用的长期证明与可选 Lean 方法
 
-`skills/validation-cycle/proof-orchestrator/` 为 user-invoked 独立 Workflow，只续接本轮授权的一个 obligation；保留上游清晰名称，不提供中央 orchestrator runtime。
+旧 `skills/validation-cycle/proof-orchestrator/` 曾是 user-invoked 长期证明入口；#60 已删除其控制器。其审计、Lean、记号和交接资源现随 `proof-review` 独立包提供，`/research-os` proof 继续是唯一总控。
 
 - **ARIS 来源**：wanshuiyin / `skills/proof-orchestrator/`，revision `0472e530251cdbd3364c33b110063c58f819edd7`。2026-09-13 通过官方 GitHub API 重新读取完整 `SKILL.md`、`NOTICE.md`、六份共置 references（`dispatch-prompts.md`、`stress-tests.md`、`notation-audit.md`、`deepseek-routing.md`、`proof-audit-rubric.md`、`audit-output-contract.md`）及根 MIT 许可；该目录无其他 templates/assets。本机 ARIS checkout 的版本不同，未以本机内容替代固定来源，也未改动其已有工作。
 - **采用与修改**：中文适配保留目标／假设冻结、本地完整尝试→正确性自查→表达、跨轮只读来源与失败路线、最小阻塞交接、原始返回与已审结论分离、八种提示、17 类问题、四级严重度、九项核查、完整 side conditions／反例方法、七行记号评分及全部阈值、目标向下推导与符号编辑顺序。`deepseek-routing.md` 改为供应商中立的 `independent-review.md`；保留真实模型身份核对、独立性标签与负面意见，用户豁免不改变数学真值。移除固定 provider/MCP、宿主目录、ledger、统一 JSON/hash、submission gate 与自动重试；用本轮普通 Markdown 说明承载续接事实，补充有限预算、写前冲突及环境边界。
 - **真实调用关系**：上游本体自己完成本地尝试、自查和表达，外部交接／第二意见为可选分支；不是 `proof-writer → proof-checker` 的调用链。已核对原正文的全部调用引用及 `tests/test_proof_suite_integration.py`。上游对 writer/checker 的说明是职责分流和既有论文 gate 归属，本仓不导入这些依赖或伪装其科研验收效力。
-- **ARIS 许可与 NOTICE**：完整 MIT，`Copyright (c) 2026 wanshuiyin`，随 Skill 的 `LICENSE` 分发；原 `NOTICE.md` 逐字保留。NOTICE 声明其 `proof-orchestrator` 套件改编自 shenmuxing / EtaSkill revision `f49ce5dd6b0bfb7565c35063e10aa1ac42a480e9`，由该贡献唯一版权人将这一适配贡献重新许可为 ARIS MIT。采用依据为 ARIS 所附明确再许可声明，并非把 EtaSkill 整仓 MPL-2.0 改判 MIT；本仓没有复制 EtaSkill 原仓库的其他文件。原 NOTICE 的版权身份叙述属于上游原声明，本段说明本地适配，不冒称其版权身份。
+- **ARIS 许可与 NOTICE**：完整 MIT，`Copyright (c) 2026 wanshuiyin`，随 `proof-review/LICENSE` 分发；#60 将 proof-orchestrator 的数学审计、Lean、记号、压力测试、提示与交接 references 迁入 `proof-review/references/`，并将 NOTICE 随包改为 `proof-review/NOTICE-ETA.md`。NOTICE 保留 EtaSkill revision `f49ce5dd6b0bfb7565c35063e10aa1ac42a480e9` 与唯一版权人再许可说明，同时更新当前资源落点。采用依据为 ARIS 所附明确再许可声明，并非把 EtaSkill 整仓 MPL-2.0 改判 MIT；本仓没有复制 EtaSkill 原仓库的其他文件。原 NOTICE 的版权身份叙述属于上游原声明，本段说明本地适配，不冒称其版权身份。
 - **Archon 方法核对**：同日复核官方 `frenzymath/Archon-Horizon` revision `c8885e05f1d0dff40f727ec45d5238b3c80b6336`。完整阅读 `src/archon_horizon/skills/{leansearch,lean-check,mathlib-orientation,mathlib-conventions}/SKILL.md`（各目录只有该文件）、相关 `horizon`、`agents/prompts.py`、`skills/registry.py`、`commands/search.py`、`search/{workspace,index,mcp_server}.py`、`commands/check.py` 及 `LICENSE`、`NOTICE`、`THIRD_PARTY_NOTICES.md`。Apache-2.0，`Copyright 2026 FrenzyMath`；仅借鉴公开操作思想，不复制其 Skill、模板或实现，因此不分发 Archon／第三方代码。
 - **Lean 表达与边界**：本仓独立撰写共置 `references/lean-methods.md`，结合 Lean／Mathlib 官方文档核对，说明现有工具链前置、候选搜索与原 signature 阅读、LSP 快速反馈、实际 kernel/build 覆盖、传递公理及编码命题忠实性。上游四项是按需指导，不是四个现成独立 Workflow；本地文本索引不是类型统一，外部 LSP 服务不等于本地 `lean_search`。不采用 check 包装器、共享锁、指纹／缓存、blueprint、hgraph、horizon-waiting、ledger、inbox 或 dashboard；不安装 Lean／Mathlib，不配置用户环境。
 
@@ -312,27 +317,27 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **未采用 ARIS `paper-write`**：完整阅读后发现其引用规则署名来自 `Imbad0202/academic-research-skills`，该第三方许可未核清（参见「已采用的正文起草能力」），正文起草改用本仓已交付的 `paper-drafting`（#20，Orchestra 来源）。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；原始完整 notice 共置于 `LICENSE` 并随 Skill 安装。新增组合映射与报告模板是 W3 方法的局部适配，运行不依赖本来源文档。
 
-## 已采用的 Systems 专业写作 Workflow
+## 已采用的 Systems 专业写作资源（统一写作入口）
 
-`skills/writing-cycle/systems-paper-writing/` 是独立 user-invoked 的 Systems 专业写作入口：按系统论文专属结构完成规划、图表、起草、真实编译、并列适用审查、独立评审与授权修订，交付候选稿与审查报告后停止。它直接组合已交付的 model-invoked 能力，不调用通用 `paper-writing`（#25）或 ML 入口（#26），也不启动专项修复入口。
+`skills/writing-cycle/paper-writing/` 是 Systems 专业参考与模板的唯一发行位置；用户从统一 `paper-writing` 的 Systems 选项或 `/research-os` Systems 路线表达该需求，不再存在独立 Systems 写作控制器。专业方法仍按需支持规划、图表、起草、编译、并列适用审查、独立评审与授权修订。
 
 - **2026-09-15 采用复核**：通过官方 GitHub API 重新核对下列两个固定 revision、目录树、完整正文与根 MIT 许可；采用固定版本，不声称最新 HEAD。
 - **Orchestra / Claude AI Research Skills Contributors，revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`（主要来源）**：`20-ml-paper-writing/systems-paper-writing/SKILL.md` 与全部五份 `references/{section-blueprints,writing-patterns,checklist,systems-conferences,reviewer-guidelines}.md` 已完整读取。该目录另含 `templates/{osdi2026,nsdi2027,asplos2027,sosp2026}/` venue LaTeX 资产，因含第三方模板许可需逐目录核对，本票**不复制**，与 `paper-plan` 的既有决定一致。采用：逐段蓝图（Abstract 5 句、S1–S7）、design alternatives 与 trade-off、implementation 克制原则、end-to-end／microbenchmark／ablation／scalability、四种写作模式、三处一致规则、page budget、reviewer 判据、常见质疑与 pre-submission checklist。
 - **ARIS / wanshuiyin，revision `0472e530251cdbd3364c33b110063c58f819edd7`（比较后合并）**：`skills/writing-systems-papers/SKILL.md`（该目录仅此文件，184 行）全文读取并与 Orchestra 逐节比较。其 page allocation、5 句摘要与 S1–S7 结构同 Orchestra 实质重复，按「择优／合并」处理，不另发行竞争入口；保留其 `microbenchmark` 评价位、四种 pattern 命名、3 句结论、六维自检与 Academic Integrity 纪律，融入共置资源。
-- **本仓发行单元**：`SKILL.md`、`references/{systems-writing-methods,evaluation-methods,venue-and-reviewer,checklist,composition-map}.md`、`templates/systems-paper-writing-report.md`、`agents/openai.yaml`（`allow_implicit_invocation: false`）。采用方法的逐节写作用局在 `systems-writing-methods.md`；评价面与缺口处理在 `evaluation-methods.md`；venue 与 reviewer 判据在 `venue-and-reviewer.md`；投稿前自检在 `checklist.md`；阶段—能力映射在 `composition-map.md`。
+- **本仓发行资源**：`skills/writing-cycle/paper-writing/references/{systems-writing-methods,systems-evaluation-methods,systems-venue-and-reviewer,systems-checklist}.md` 与 `skills/writing-cycle/paper-writing/templates/systems-paper-writing-report.md`。采用方法的逐节写作用局在 `systems-writing-methods.md`；评价面与缺口处理在 `systems-evaluation-methods.md`；venue 与 reviewer 判据在 `systems-venue-and-reviewer.md`；投稿前自检在 `systems-checklist.md`。共通阶段—能力映射统一由 `references/composition-map.md` 承担，专业分支由 `skills/general/research-os/playbooks/paper-writing-systems.md` 指向。
 - **适配与删除**：删除缓存的年度 deadline／页数／模板与 venue LaTeX 资产，改为现场核对当前官方 CFP；删除固定 `mcp__codex` 与 provider 绑定；把上游“Hand off to /paper-write”改为本 Workflow 内授权修订或用户显式转交；删除机器 verdict／state／receipt；`ml-paper-writing` 的 citation verification 由已交付的 `citation-audit` 承接。缺失 scalability／end-to-end 证据时记 `MISSING ... EVIDENCE` 缺口，不伪造、不外推、不自动补实验。
-- **许可**：`LICENSE-Orchestra.txt` 保存完整 MIT 与 `Copyright (c) 2025 Claude AI Research Skills Contributors`；`LICENSE-ARIS.txt` 保存完整 MIT 与 `Copyright (c) 2026 wanshuiyin`。两份 notice 随 Skill 发行；新增资源为两方法的局部适配，运行不依赖上游仓库、中央 runtime 或上游其他 Skill。
+- **许可**：`skills/writing-cycle/paper-writing/LICENSE-Orchestra.txt` 保存完整 MIT 与 `Copyright (c) 2025 Claude AI Research Skills Contributors`；`LICENSE-ARIS.txt` 保存完整 MIT 与 `Copyright (c) 2026 wanshuiyin`。两份 notice 随统一 Skill 发行；新增资源为两方法的局部适配，运行不依赖上游仓库、中央 runtime 或上游其他 Skill。
 - **验证边界**：实现期以合成场景与静态链接检查核对；未在用户真实 Systems 项目中运行，不构成真实科研验收，也不声称 venue 规则已核验（须用户现场核对当期 CFP）。
-## 已采用的 ML 专业写作 Workflow
+## 已采用的 ML 专业写作资源（统一写作入口）
 
-`skills/writing-cycle/ml-paper-writing/` 是 ML/AI 专业写作的独立 user-invoked Workflow（票 #26），与通用 `paper-writing`（#25）和 `systems-paper-writing`（#27）并列而不互相启动。2026-09-15 通过官方 GitHub API 重新解析固定 revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`，读取完整目录树与完整正文，并核对仓库根 `LICENSE`；该 revision 解析成功且 GitHub 识别为 MIT，采用固定版本，不声称为最新 HEAD。
+`skills/writing-cycle/paper-writing/` 是 ML/AI 专业参考、来源记录与模板的唯一发行位置；用户从统一 `paper-writing` 的 ML/AI 选项或 `/research-os` ML 路线表达该需求。2026-09-15 通过官方 GitHub API 重新解析固定 revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`，读取上游完整目录树与完整正文，并核对仓库根 `LICENSE`；该 revision 解析成功且 GitHub 识别为 MIT，采用固定版本，不声称为最新 HEAD。
 
 - **来源**：Orchestra Research / AI-Research-SKILLs，`20-ml-paper-writing/ml-paper-writing/`，revision `773a52944ba4747a18bd4ae9ade53fff041adcbc`。共置 `references/` 含 `checklists.md`、`citation-workflow.md`、`reviewer-guidelines.md`、`sources.md`、`writing-guide.md`；`templates/` 含 45 个文件（6 个会议模板目录，含示例 PDF 与 TeX／style／bst）。完整读取 `SKILL.md`（982 行）、`references/checklists.md`（347 行）、`references/reviewer-guidelines.md`（348 行），并核读 `references/writing-guide.md`、`references/citation-workflow.md`、`references/sources.md` 以确认与已交付 `paper-drafting` 的拆分边界。
 - **采用（正文级）**：主动探索研究仓库并先交付完整候选草稿的协作姿态、What／Why／So What 叙事、五部分摘要与逐节结构；实验报告、统计报告、compute、复现、消融、失败结果与 Limitations 的完整要求；ML venue checklist（NeurIPS 16 项形态、ICML Broader Impact／reproducibility、ICLR LLM disclosure、ACL mandatory Limitations／responsible-NLP、通用投稿前清单）与 reviewer 四维／评分校准／常见质疑预防；引用核查、模板处理与作者自查经 `paper-drafting` 复用；并列适用审查与有界修订。
-- **共置资源**：ML 专属方法落在 `references/experiment-reporting.md`（实验报告、seeds／runs、error bars 及方法、超参与选择、数据划分、compute、消融、复现、失败结果、limitations）、`references/venue-checklists.md`（要求结构与投稿前清单）、`references/reviewer-expectations.md`（四维、常见质疑、投稿前自评）；组合与复用边界在 `references/composition-map.md`，方法归属在 `references/sources.md`，自然 Markdown 报告骨架在 `templates/ml-writing-report.md`。不是短契约壳。
+- **共置资源**：ML 专属方法落在 `skills/writing-cycle/paper-writing/references/ml-experiment-reporting.md`（实验报告、seeds／runs、error bars 及方法、超参与选择、数据划分、compute、消融、复现、失败结果、limitations）、`ml-venue-checklists.md`（要求结构与投稿前清单）、`ml-reviewer-expectations.md`（四维、常见质疑、投稿前自评）；统一组合与复用边界在 `references/composition-map.md`，方法归属在同包 `references/sources.md`，自然 Markdown 报告骨架在 `templates/ml-writing-report.md`。这些完整资源不是短契约壳。
 - **调用核对**：上游 `.claude-plugin/marketplace.json` 注册嵌套 `ml-paper-writing`；`0-autoresearch-skill/SKILL.md` 在研究结束后指向该写作能力；同目录 `academic-plotting`、`presenting-conference-talks`、`systems-paper-writing` 为兄弟 Skill。本仓把已交付的 `paper-plan`（#19）、`paper-drafting`（#20）、`academic-plotting`（#21）、`paper-compile`（#22）、`citation-audit`（#23）、`paper-claim-audit`／`claim-stress-test`（#24）与 `proof-review`（#17）按 ML 写作职责组合；`paper-writing`、`systems-paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`rebuttal`、`resubmit-pipeline`、`paper-talk`、`research-improvement` 均为独立 user-invoked 入口，本 Workflow 不启动它们。
 - **适配**：删除固定 `Exa MCP`／Semantic Scholar Python manager 等 provider 绑定与安装指令；历史页数、deadline、评分标签与 policy 措辞降为方法形态并要求当前官方 edition 现场核对；不分发会议模板、style、`.bst` 或示例 PDF；删除自动写作、自动补实验、自动投稿与自动启动其他 Workflow，改为授权门、当前官方规则现场核对、可见缺口（`[EVIDENCE NEEDED]`／`[SEED COUNT NEEDED]`／`[COMPUTE NEEDED]`）、有界轮数与用户逐项批准、自然 Markdown 报告。
-- **许可与模板排除**：MIT，`Copyright (c) 2025 Claude AI Research Skills Contributors`；完整 notice 随 Skill 的 `LICENSE` 发行，方法归属保留在共置 `references/sources.md`。`templates/` 目录虽经核对但不得搬运：其中含 LPPL 类 bibliography style、`natbib.sty` 及其未随附的 `natbib.dtx` 再分发条件、以及算法宏包和社区模板（含下载／删除动作），均不在仓库 MIT 概括范围内；本 Skill 要求用户使用已有或官方授权渠道获取的模板并自检许可证。
+- **许可与模板排除**：MIT，`Copyright (c) 2025 Claude AI Research Skills Contributors`；完整 notice 随统一 Skill 的 `LICENSE-ML.txt` 发行，方法归属保留在共置 `references/sources.md`。上游 venue 模板目录虽经核对但不得搬运：其中含 LPPL 类 bibliography style、`natbib.sty` 及其未随附的 `natbib.dtx` 再分发条件、以及算法宏包和社区模板（含下载／删除动作），均不在仓库 MIT 概括范围内；专业写作资源要求使用用户已有或当前官方授权模板并自检许可证。
 - **未采用 ARIS**：延续已记录的决定，不复制 ARIS `paper-write`；正文起草用本仓 `paper-drafting`（Orchestra 来源）。
 
 ## 已采用的全研究工作有界改进循环
@@ -345,7 +350,32 @@ ARIS 实际关联的 `skills/shared-references/{reviewer-independence,experiment
 - **调用核对**：完整读取上游 `skills/research-pipeline/SKILL.md`（`/auto-review-loop` 于 :241 被编排调用）、`skills/paper-writing/SKILL.md`（`/auto-paper-improvement-loop` 于 :478 被调用）、`skills/resubmit-pipeline/SKILL.md`（:206-218 以 `HUMAN_CHECKPOINT=true` 调用）、`skills/kill-argument/SKILL.md`（`auto-paper-improvement-loop` 于 :474 委托）。本仓以已交付的 model-invoked 能力组合：审查用 `paper-claim-audit`、`citation-audit`、`claim-stress-test`、`proof-review`、`experiment-audit`、`analyze-results`，验证用 `paper-compile`（check-only），授权内补实验用 `run-experiment`、`experiment-queue`、`monitor-experiment`、`training-health-check`；不自动启动 user-invoked 的 `experiment-bridge`、`paper-writing`、`paper-compile-repair`、`apply-citation-fixes`、`proof-repair`、`result-to-claim` 等顶层入口，不虚构未交付调用。
 - **许可**：MIT，`Copyright (c) 2026 wanshuiyin`；完整 notice 随 Skill 放在 `LICENSE` 并随安装保留。新增方法参考、组合映射与日志模板是上游循环方法的局部适配，运行不依赖上游仓库、中央 runtime 或其其他 Skill。
 
+## 已采用的形式化验证创建与维护能力
+
+`skills/validation-cycle/create-formal-verification-skill/` 与 `skills/validation-cycle/maintain-formal-verification-skill/` 均为显式调用的项目级能力：前者为项目建立可重跑的形式化检查并留下项目本地 verify skill，后者在代码变化后把检查重新对齐。来源为 cursor/plugins 的 `pstack/` 子树，固定 revision `88d47514b82e7c44f00f2b2a72ff6dd12158038c`，原路径 `pstack/skills/create-formal-verification-skill/SKILL.md`（5141B）与 `pstack/skills/maintain-formal-verification-skill/SKILL.md`（7012B）。2026-10-20 从离线归档逐字读取两份正文与 `pstack/LICENSE`（1067B，git blob `6b54002…`，SHA256 `bc957ca6…`），并按 `pstack/plugin.json` 的 `license: MIT` 与 `author.name = Lauren Tan` 核对归属；不声明仓库根许可，也不采用归档外的 pstack 文件。
+
+- **采用机制**：创建侧保留「从代码选目标 → 让问题决定工具 → 好检查的判据 → 生成项目本地 skill → 交付前在划痕改动上自证 → 交接」；维护侧保留四种结果（in sync／updated／bug／blocked）、只改验证的编辑范围、按代码而非按结果更新、重跑后区分漂移与 bug、用破坏变体证明检查仍能失败、同步 commit 推进规则与报告结构。
+- **本仓适配**：去掉 Cursor 命令、个人规则目录与固定模型绑定，派发与独立复核按宿主真实子代理能力判定、缺失时标 blocked；新增四类对象（代码性质／形式模型／数学定理／普通测试）与「按问题选工具、不强制全链形式化」的边界；新增外部假设、材料、依赖版本、实际覆盖、同步状态与变化失效判断的记录；新增原问题、编码定义与定理声明的对应审计，明确占位符、编译成功与有限数值结果不能冒充原定理成立；新增故障暴露证据与「未执行即草稿」状态。普通证明的生成、审查与修复仍属 proof 族，不在本能力范围。
+- **共置资源与许可**：创建侧携带 `references/tool-selection.md`、`references/assumption-ledger.md`、`references/correspondence-audit.md`、`templates/formal-verification-record.md`，维护侧为单文件正文；两者各自携带完整 MIT 文本与 `NOTICE.md` 来源记录，扁平安装后不依赖本文件、开发者目录或临时调查快照。
+- **验收层级**：本票只做静态合同、检查器与可丢弃目录安装验证；不声称真实数学定理已被形式化，也不声称模型在真实研究中会正确使用该能力。
+
+## 已采用的候选比较与整合能力
+
+`skills/organization/arena/` 改编自 cursor/plugins 的 `pstack/` 子树，固定 revision `88d47514b82e7c44f00f2b2a72ff6dd12158038c`。2026-10-24 复核离线归档：实际采用的唯一上游资产是 `pstack/skills/arena/SKILL.md`（4511B，git blob `b198b9e425c6b3e6ff01ca789b97ca5b4abb7ce2`）；该目录没有其他 references、templates、assets 或 scripts。上游正文引用的 Cursor 模型规则与原则 Skills 是宿主绑定指令，不作为本产品依赖或随包资源。
+
+- **保留与适配**：保留 Frame、Fan-out、Cross-judge、Pick、Graft、Verify 的职责、候选全文阅读、先声明 rubric、隔离输出、综合交叉评判、手工 graft，以及数学整合后的假设／记号／依赖闭合重查；胜出不证明命题成立。固定模型与个人目录替换为宿主中立的能力协商及研究委托边界。正文唯一共置文件引用为 `LICENSE`。
+- **来源与许可**：作者 Lauren Tan；许可来自插件级 `pstack/LICENSE`（MIT，`Copyright (c) 2026 Lauren Tan`），不是仓库根许可。随包 `skills/organization/arena/LICENSE` 与上游许可逐字一致（SHA256 `bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`）；Skill 正文保留来源仓库、revision、原路径与 attribution。
+- **安装边界**：`arena` 与入口 `research-os` 各自经 Skills CLI 扁平安装；入口按安装 slug `arena` 发现独立能力，不依赖 `/tmp` 归档或开发者目录。安装、结构合同与检查不证明真实科研或数学质量。
+
 ## 已解决的 revision／路径矛盾
+
+## 已采用的持续推进、暂停恢复与项目流程改进机制
+
+#59 的 `playbooks/continuation.md` 与 `skills/writing-cycle/research-improvement/SKILL.md` 的流程改进分支改编自 cursor/plugins 的 `pstack/` 子树，固定 revision `88d47514b82e7c44f00f2b2a72ff6dd12158038c`。2026-10-21 从离线归档逐字读取 `pstack/LICENSE`，并读取 `pstack/skills/{recall,reflect,correct,automate-me}/SKILL.md`、`pstack/skills/poteto-mode/playbooks/{autonomous-run,pause-safely,session-pickup}.md` 与 `pstack/docs/guide/07-overnight.md`；`pstack/skills/reflect/references/*.md` 只作 reviewer/synthesizer 对照，未逐字复制。
+
+- **采用机制**：持续执行保留可检查完成谓词、最小步进、验证、检查点、停滞换方法与死路如实停止；暂停保留安全边界、可恢复交接与“磁盘状态优先于会话记忆”；过程改进保留按重复错误和流程摩擦提炼可执行改进，以及公共行为改动先确认。
+- **本仓适配**：删除 Cursor `/loop`、云端 worker、固定模型、transcript 目录与个人目录绑定；不承诺后台进程。时间、费用、算力、子代理、重试与恢复改按研究委托合同累计，不重置；批次作业走批次授权；恢复核对原始产物、义务与活跃作业；外部 tracker 与公共套件行为必须用户确认。
+- **共置资源与许可**：`research-improvement` 携带 `NOTICE.md` 与 `UPSTREAM-LICENSE.md`；独立安装的 `research-os` 入口包也在 `skills/general/research-os/` 共置 `NOTICE-PSTACK.md` 与完整 `LICENSE-PSTACK`（Copyright (c) 2026 Lauren Tan，SHA256 `bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e`）。入口包保留原有 `LICENSE`，不依赖另装 `research-improvement`；两种安装均不依赖 `/tmp/research-os-spec48-upstream` 或其他开发者材料。
 
 旧 `docs/research/sources/README.md` 的六仓 revision 与仓库错位，不能在所列上游解析。错位关系可由当前上游 heads 复现：旧 ARIS SHA 实属 AutoResearchClaw，旧 AutoResearchClaw SHA 实属 EurekAgent，旧 EurekAgent SHA 实属 autoresearch，旧 Archon SHA 实属 Orchestra；旧 Orchestra 与旧 autoresearch SHA 当前均无法在对应仓库解析。上表取 2026-09-08 各官方默认分支完整 head，替代该索引作为后续搬运起点。
 
@@ -391,7 +421,6 @@ Archon 旧报告还把 `hgraph/` 与 `subagents/compile.py` 作为可复制路�
 | `skills/validation-cycle/experiment-queue/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/formula-derivation/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/monitor-experiment/` | 通过并修复（04e1fb2） | 记录于此表 |
-| `skills/validation-cycle/proof-orchestrator/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/proof-repair/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/proof-review/` | 通过并修复（04e1fb2） | 记录于此表 |
 | `skills/validation-cycle/proof-writer/` | 通过并修复（04e1fb2） | 记录于此表 |

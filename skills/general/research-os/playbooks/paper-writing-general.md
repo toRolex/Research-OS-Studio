@@ -22,9 +22,9 @@ fresh 数字、引用、论证与证明审查。
 
 ## 步骤
 
-1. 读 `skills/writing-cycle/paper-writing/SKILL.md` 全文，并按它执行。写入、图表、源码、文献、报告或付费调用之前，停在该文件的授权门。授权未确认时只做只读解析。
-2. 阶段、被组合能力与审查输入只读 `skills/writing-cycle/paper-writing/references/composition-map.md`。不把该文件正文抄进本 playbook，也不另定 audit 输入。
-3. 按叶 skill 的顺序级联，并读完下列全文：
+1. 读 `skills/writing-cycle/paper-writing/SKILL.md` 全文，并按它执行。写入范围、资源与预算沿用当前委托；没有确认的边界只做只读解析并形成执行草案，越权动作停该分支。
+2. 阶段、被组合能力与审查输入只读 `skills/writing-cycle/paper-writing/references/composition-map.md`；遇到 ML/AI 或 Systems 材料时再读 `skills/writing-cycle/paper-writing/references/standards.md` 及其对应专业资源。不把这些参考正文抄进本 playbook，也不另定 audit 输入。
+3. 按统一 composition map 按需组合写作能力；只加载命中分支需要的叶正文与资源，不把未选择的专项硬性串成整条链：
    - `skills/writing-cycle/paper-plan/SKILL.md`
    - `skills/writing-cycle/academic-plotting/SKILL.md`
    - `skills/writing-cycle/paper-drafting/SKILL.md`
@@ -37,4 +37,4 @@ fresh 数字、引用、论证与证明审查。
 
 ## 停止
 
-`paper-compile-repair` 与 `apply-citation-fixes` 由用户另行点名。本 playbook 不启动投稿、上传、补实验，也不打开另外两条专业写作入口。
+已授权写作职责内的编译与引用修复由对应能力承接，不要求用户再次点名。本 playbook 不启动投稿、上传、补实验，也不展开另外两条旧平行兼容入口。

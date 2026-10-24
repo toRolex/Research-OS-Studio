@@ -9,14 +9,14 @@ disable-model-invocation: true
 
 Build an honest derivation package, not a fake polished theorem story.
 
-## Invocation, Authorization, and Completion
-Gate: write-authorization | before=package-write | approval=explicit-user | source=SKILL.md#invocation-authorization-and-completion
+## 委托继承
+Gates: none
 
-This is a generation Skill invoked explicitly or through authorized path cascading, also available when a user explicitly names it. In **standalone** mode, produce the derivation package at the agreed project path. In **composed** mode, contribute the same complete content to the caller's designated report section; do not create a second canonical report.
+This Skill inherits the active `research-os` mandate: preserve its objective, readable inputs, writable scope, research budget, and stop conditions. A derivation package may be created as a new file inside the authorized write domain; moving from formula derivation to proof construction or another covered phase, and 重试 within the existing budget, do not require approval again. In **composed** mode, contribute the same complete content to the caller's designated report section; do not create a second canonical report.
 
-Before Step 1, establish the target, allowed local inputs, output path or section, and attempt budget from the request. If writing is not authorized, return the package in chat. A default filename is a suggestion, not permission to overwrite. Read existing destinations, preserve unrelated material and prior attempts, and ask before resolving conflicting edits. Only the agreed research-material destination may be changed; project instructions, environment, and unrelated files remain untouched.
+Users may invoke this Skill independently（独立调用）. Treat that request as the bounded authorization for this task. If the target/原命题 and assumptions, allowed local inputs, destination/write scope, or finite attempt budget needed for the requested action is missing, ask one concise, bounded set of questions only for those missing fields. Within the authorized write domain (写域), a new file (新文件) needs no separate path approval. Without write authorization, return the package in chat; a default filename is not permission to overwrite. Read existing destinations, preserve unrelated material and prior attempts, and stop only the conflicting edit. Do not require `/research-os` or setup before standalone use.
 
-Use the user's finite budget; otherwise attempt one derivation map and at most one alternative route, then report remaining blockers. Ambiguities that change the object, assumptions, or scope require clarification before manipulation. Once Step 2 fixes the target, retain it verbatim in the package. A reframe or added assumption is a separately labeled proposal: only explicit authorization permits developing that variant, and its status never counts as success of the original target.
+Use the mandate's finite budget; if no separate derivation allowance is stated, attempt one derivation map and at most one materially different route, then report remaining blockers. Ambiguities that change the object, assumptions, or scope require clarification before manipulation. Once Step 2 fixes the target, retain it verbatim in the package. A reframe or added assumption is a separately labeled proposal: only explicit user confirmation permits developing that variant, and its status never counts as success of the original target. 改变原命题或假设必须先经用户确认。
 
 Ordinary Markdown mathematics is sufficient. Lean, symbolic tools, network access, paid resources, and environment setup are not prerequisites or actions of this Skill. Use only available authorized local reading/writing capabilities; report unavailable inputs or capabilities instead of pretending to have checked them. Numerical examples, self-checks, and model agreement are not mathematical proof or formal verification.
 

@@ -14,6 +14,21 @@ Gates: none
 
 直接读证明，逐条检查义务，只返回发现。没有工具验证的普通数学审查不是 Lean kernel 验证；模型共识不是科研结论。
 
+每次调用都对当前完整证明与必要依赖重新读取并做 fresh review，包括同一修复流程中的复审。旧报告最多用于追踪 finding 编号；不得继承旧判决、跳过原文核对，或把非独立自查写成独立意见。只有实际隔离出新上下文时才称 fresh blind review。
+
+## 按需数学方法与交接参考
+
+按当前审查分支读取参考，不把整套材料前置加载：
+
+参考不改变本 Skill 的只读角色：评分、审计与候选修复均在返回的 Markdown 中给出。参考里的文件名、证明构造、编辑和 Lean 命令是供获授权执行者使用的方法；reviewer 只核查现有材料及记录，不执行写盘、编译或代行修复。报告落盘与可写方法由调用者在其有效委托内另行承接，调用者有写权限也不使 reviewer 可写。
+
+- 每项证明义务的推理、假设与结论核对使用[证明审计准则](references/proof-audit-rubric.md)，结果记录遵循[审计输出约定](references/audit-output-contract.md)。
+- 需要真正隔离的第二意见或外部审查交接时读取[独立意见](references/independent-review.md)、[提示模板索引](references/dispatch-prompts.md)及对应 `references/prompts/` 模板；模板不授予外发或新额度。
+- 记号边界不清时读取[记号审查](references/notation-audit.md)；需要回归交接与数学边界案例时按需读取[压力测试](references/stress-tests.md)。
+- 当前目标涉及 Lean 前提搜索、LSP 或 kernel/build 覆盖时才读取[Lean 方法](references/lean-methods.md)；Lean 仍非普通证明的前置条件。
+
+来源许可与改编范围见[MIT 许可证](LICENSE)和[EtaSkill NOTICE](NOTICE-ETA.md)。这些参考由 `proof-review` 包随附，不依赖开发源码路径。
+
 ## 职责与输入
 
 - **standalone**：用户点名审查现成 `.tex`、Markdown、可读取的论文或聊天中的证明，返回独立 Markdown 审查结果。

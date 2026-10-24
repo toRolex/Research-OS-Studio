@@ -35,7 +35,7 @@ graph TD
     Q --> R[📖 编译检查]
     R --> S[🔍 多维度审计]
     S --> T[候选稿与审查报告；不等于科研通过]
-    T -. 用户另行点名并确认具体 diff .-> R1[编译修复或引用修复]
+    T -. 有效委托内级联；独立调用显式；核对精确 diff .-> R1[编译修复或引用修复]
     T -. 外发前另行批准 .-> X[投稿或上传]
     G --> STOP[报告完成不自动启动下一主流程]
     M --> STOP
@@ -55,7 +55,7 @@ mindmap
       setup-research-os
       research-os
     Idea Cycle
-      idea-discovery
+      Discovery recipe (in research-os)
       research-lit
       idea-generation
       creative-thinking-for-research
@@ -64,7 +64,6 @@ mindmap
       idea-refinement
     Validation Cycle
       experiment-plan
-      experiment-bridge
       run-experiment
       experiment-queue
       monitor-experiment
@@ -76,11 +75,11 @@ mindmap
       proof-writer
       proof-review
       proof-repair
-      proof-orchestrator
+      /research-os proof (method references on demand)
     Writing Cycle
       paper-writing
-      ml-paper-writing
-      systems-paper-writing
+      ML/AI professional references
+      Systems professional references
       paper-plan
       paper-drafting
       academic-plotting
@@ -104,11 +103,10 @@ sequenceDiagram
     participant A as 🤖 AI Agent
     participant S as 📁 文件系统
     
-    U->>A: 调用 /idea-discovery
-    A->>S: 探索项目结构
-    A->>U: 展示发现结果
-    U->>A: 确认决策
-    A->>S: 写入授权范围
-    A->>U: 交付 Proposal
-    Note over U,A: 用户决定下一步
+    U->>A: /research-os：从研究方向形成 Proposal
+    A->>S: 读取用户提供且获准的材料
+    A->>A: 按缺口选择发现能力，可重排或回访
+    A->>S: 在授权范围内产出被要求的报告 / Proposal
+    A->>U: 交付结果与已覆盖、blocked、未覆盖职责
+    Note over U,A: 独立评审保持 fresh；完成后不自动进入其他主流程
 ```
