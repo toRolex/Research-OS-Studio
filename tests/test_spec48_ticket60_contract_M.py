@@ -56,19 +56,12 @@ def approved_bytes(relative: str) -> bytes:
     )
 
 
-def control_line(line: str) -> str:
-    # Markdown indentation/newlines remain significant; only repeated interior
-    # horizontal spaces in an approved control line may vary.
-    indent = re.match(r"[ \t]*", line)[0]
-    return indent + re.sub(r"[ \t]+", " ", line[len(indent):])
-
-
 def resource_preservation_problems(relative: str, actual: bytes) -> list[str]:
     """Original bytes outside reviewed control deltas; approved controls cannot regress.
 
     Equal spans still come from 14d9c6e. Only lines actually changed by the
-    independently approved adaptation use its control text, with whitespace
-    normalization. No file is exempted; method/attribution/license edits fail.
+    independently approved adaptation use its exact lines, including whitespace.
+    No file is exempted; method/attribution/license edits fail.
     """
     original = baseline_bytes(f"{OLD_PROOF}/{relative}")
     approved = approved_bytes(relative)
@@ -89,9 +82,7 @@ def resource_preservation_problems(relative: str, actual: bytes) -> list[str]:
         else:
             # Do not skip adapted files/blocks: constrain their approved role,
             # permission and retry rules too. Reinstating old gates must fail.
-            actual_controls = [control_line(line) for line in current[new_start:new_end]]
-            approved_controls = [control_line(line) for line in expected[new_start:new_end]]
-            if actual_controls != approved_controls:
+            if current[new_start:new_end] != expected[new_start:new_end]:
                 problems.append(f"批准的角色/发送控制适配被改变或回退（行{new_start + 1}–{new_end}）")
     return problems
 
@@ -359,15 +350,27 @@ class ResourcePreservationCounterexamples(unittest.TestCase):
         self.assertEqual(resource_preservation_problems(relative, old), [])
         self.assertTrue(resource_preservation_problems(relative, old + b"\n"))
 
-    def test_approved_control_spacing_is_not_a_replacement_file_hash(self):
+    def test_explicitly_approved_control_content_is_preserved(self):
         relative = "references/dispatch-prompts.md"
         source = self.current(relative)
+        original = baseline_bytes(f"{OLD_PROOF}/{relative}")
+        self.assertNotEqual(source, original)
+        self.assertEqual(source, approved_bytes(relative))
+        self.assertEqual(resource_preservation_problems(relative, source), [])
         line = next(line for line in source.decode().splitlines() if line.startswith("先按执行角色使用模板"))
-        changed = source.decode().replace(line, line.replace("proof-review ", "proof-review   ", 1), 1).encode()
-        self.assertNotEqual(hashlib.sha256(changed).digest(), hashlib.sha256(approved_bytes(relative)).digest())
-        self.assertEqual(resource_preservation_problems(relative, changed), [])
         indented = source.decode().replace(line, "    " + line, 1).encode()
         self.assertTrue(resource_preservation_problems(relative, indented), "must not turn role controls into a code example")
+
+    def test_unapproved_control_whitespace_changes_are_rejected(self):
+        relative = "references/independent-review.md"
+        source = self.current(relative)
+        marker = "3. 核实路线".encode()
+        self.assertEqual(source.count(marker), 1)
+        for spacing in (b"     ", b"\t", b" \t"):
+            with self.subTest(spacing=spacing):
+                changed = source.replace(marker, b"3." + spacing + "核实路线".encode(), 1)
+                self.assertNotEqual(changed, source)
+                self.assertTrue(resource_preservation_problems(relative, changed))
 
 
 if __name__ == "__main__":
