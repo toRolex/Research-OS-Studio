@@ -70,7 +70,7 @@ Role: orchestrator
 
 每个执行阶段按 playbook 的独立 `Role:` 声明解析本研究项目已确认的角色行，核实 provider/model-id 可用且支持 thinking；fresh dispatch 显式传入这两个值，并记录角色、解析来源、实际模型与 thinking。Role 管阶段执行者，不只是任务标签。当前宿主进程的 model 不改；orchestrator 配置不同于当前宿主时，把获准编排阶段派到对应 fresh 执行者，当前宿主只监督；没有该派发能力时如实标 blocked 并说明宿主模型差异，不把当前宿主自己跑说成已派发。
 
-文件或角色行缺失时使用当前 session 实际可用的模型与 thinking，并明示回退及原因，不编造 slug。显式指定模型不可用、thinking 不支持、行重复或格式错误时停下，请用户确认替代，不静默改配置。同上下文里的自审不是 fresh 独立审查；同模型 fresh 上下文可保留独立性，但不得冒充跨家族。无 fresh 能力时该阶段标 blocked 并写明 `independent review not performed`，不把同上下文自查记成执行或独立 review。不修改 `~/.agents/pstack-models.md`。
+文件或角色行缺失时使用当前 session 实际可用的模型与 thinking，并明示回退及原因，不编造 slug。显式指定模型不可用或 thinking 不支持时，先核对有效原委托的明确替代授权；已覆盖的替代在实际可用、档位受支持且费用/范围允许时可继承，记录授权来源及实际模型/thinking，不重复索权。没有替代权时停下，请用户确认替代；行重复或格式错误仍停下澄清，不静默改配置，不以一般任务或余额推导任意替代。同上下文里的自审不是 fresh 独立审查；同模型 fresh 上下文可保留独立性，但不得冒充跨家族。无 fresh 能力时该阶段标 blocked 并写明 `independent review not performed`，不把同上下文自查记成执行或独立 review。不修改 `~/.agents/pstack-models.md`。
 
 ## 算力
 
