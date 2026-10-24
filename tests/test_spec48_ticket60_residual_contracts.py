@@ -8,6 +8,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS_VERSION = "1.7.4"
@@ -97,7 +98,7 @@ class InstalledResidualContracts(unittest.TestCase):
         result = subprocess.run(
             [
                 "npx", "--offline", "--yes", f"skills@{SKILLS_VERSION}", "add",
-                str(ROOT), "--all", "--agent", "claude-code", "--copy", "--yes",
+                str(ROOT), "--skill", "*", "--agent", "claude-code", "--copy", "--yes",
             ],
             cwd=project,
             env={
@@ -190,7 +191,15 @@ class InstalledResidualContracts(unittest.TestCase):
         repairs = sorted(
             path.parent for path in project.rglob("paper-compile-repair/SKILL.md")
         )
-        self.assertGreater(len(repairs), 1)
+        self.assertEqual(repairs, [project / ".claude/skills/paper-compile-repair"])
+        self.assertEqual(
+            {path.name for path in project.iterdir() if path.is_dir()}, {".claude"}
+        )
+        self.assertEqual(
+            {path.relative_to(project).as_posix() for path in project.rglob("skills") if path.is_dir()},
+            {".claude/skills"},
+        )
+        self.assertFalse(any((project.parent / "home").rglob("SKILL.md")))
 
         checked_edges = 0
         for repair in repairs:
@@ -209,6 +218,17 @@ class InstalledResidualContracts(unittest.TestCase):
                 )
                 checked_edges += 1
         print(f"FULL INSTALL repair packages={len(repairs)} edges={checked_edges} all resolved")
+
+    def test_full_install_argv_selects_all_skills_but_only_claude_code(self):
+        # Inspect the process boundary without executing the unsafe all-agent alias.
+        with patch.object(subprocess, "run", return_value=subprocess.CompletedProcess([], 0, "", "")) as run:
+            self.install_all()
+        command = run.call_args.args[0]
+        self.assertNotIn("--all", command)
+        self.assertEqual(command[command.index("--skill") + 1], "*")
+        self.assertEqual(command.count("--agent"), 1)
+        self.assertEqual(command[command.index("--agent") + 1], "claude-code")
+        self.assertIn("--copy", command)
 
     def test_claim_audit_returns_readonly_result_to_caller_within_existing_delegation(self):
         project, home = self.new_install_root("paper-claim-audit")
