@@ -1,0 +1,5 @@
+interface:
+  display_name: "create-formal-verification-skill"
+  short_description: "为项目建立形式化检查资产：按问题选择工具、记录假设与同步、审计编码与原问题对应。"
+policy:
+  allow_implicit_invocation: false

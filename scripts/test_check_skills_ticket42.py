@@ -65,10 +65,12 @@ class ValidationRoutes(unittest.TestCase):
         self.assertIn("审查 session 指针、临时解析文件", grant)
         self.assertIn("只落入已批准写域", grant)
 
-    def test_leaf_skills_unchanged_by_contract_pointer(self):
+    def test_recipe_points_to_live_execution_skill_not_retired_controller(self):
         bridge = (PLAYBOOKS / "experiment-bridge.md").read_text(encoding="utf-8")
         plan = (PLAYBOOKS / "experiment-plan.md").read_text(encoding="utf-8")
-        self.assertIn("skills/validation-cycle/experiment-bridge/SKILL.md", bridge)
+        self.assertIn("skills/validation-cycle/run-experiment/SKILL.md", bridge)
+        self.assertNotIn("skills/validation-cycle/experiment-bridge/SKILL.md", bridge)
+        self.assertFalse((ROOT / "skills/validation-cycle/experiment-bridge/SKILL.md").exists())
         self.assertIn("skills/validation-cycle/experiment-plan/SKILL.md", plan)
         grant = GRANT.read_text(encoding="utf-8")
         for phrase in (

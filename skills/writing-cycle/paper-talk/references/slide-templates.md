@@ -2,16 +2,18 @@
 
 用于单一 `paper-talk` 入口的按需参考，不是第二个 skill、通用运行器或内容推断接口。改编自 Orchestra Research 的 `presenting-conference-talks` / `references/slide-templates.md`（MIT）；沿用主交付中的上游来源与许可记录。
 
-## 使用契约：先确认 Markdown，再实例化
+## 使用契约：先核对委托内 Markdown，再实例化
 
-1. 先在演讲 Markdown 中确认：论文版本、受众、talk type、净演讲时间与 Q&A、逐页论点、证据位置、图源、讲稿和备份页。页码按 **logical slide** 编号；每页记录预计秒数和下一页转场。完成条件：大纲获确认，未决事实单列。
+本文件的“确认/核定”来源可以是用户明确要求，也可以是执行者按有效原委托的裁决规则决定，不要求再新增普通阶段批准。目标、科研主张、写域或其他权限变化仍只暂停受影响项；仅视觉精修授权不包含内容或页序变更。
+
+1. 按有效委托在演讲 Markdown 中核定：论文版本、受众、talk type、净演讲时间与 Q&A、逐页论点、证据位置、图源、讲稿和备份页。页码按 **logical slide** 编号；每页记录预计秒数和下一页转场。完成条件：大纲符合委托范围与裁决规则，未决事实单列。
 2. 主执行者按大纲逐页填充以下模板；大纲需要多少页，就显式实例化多少页。模板标题只是位置提示，不是论文结论，不从标题自动生成正文。增删、合并页面须回写 Markdown。完成条件：Markdown 与导出源每页一一对应。
 3. 所有 `UNFILLED`、`待填`、示例路径及示例页标题都属于 **模板未填，不可交付**；只有从论文或用户确认资料核实后才能替换。未知 chair 不写；作者、单位、venue 不猜。论文/代码 URL 未知则明确在 Markdown 报告并省略相应链接及二维码；二维码只编码已核实地址。完成条件：正文、图注、notes 中无未填标记，缺项均有处理结论。
 4. 仅使用现有工具。依赖、字体、主题、图文件或转换工具缺失时，停止相应导出并报告；Markdown 草稿仍可交付为草稿。没有图不画虚构曲线、没有数据不填假结果。完成条件：区分源已生成、导出已完成、内容已验收三种状态。
 
 ### 类型、页数与时间
 
-以下保留上游建议范围，不是会场官方规则。会场时长优先；范围外需在 Markdown 记录并确认理由，而不是补空页凑数。主讲页含标题与结尾，不含 appendix、Q&A 备份，也不把 overlay 算作新论点。
+以下保留上游建议范围，不是会场官方规则。会场时长优先；范围外需在 Markdown 记录适用理由，可由执行者按有效委托裁决，不必新增用户批准，也不能补空页凑数。理由不豁免真实总时长或证据/权限边界。主讲页含标题与结尾，不含 appendix、Q&A 备份，也不把 overlay 算作新论点。
 
 | 类型 | 参考时长 | 主讲 logical slides | 内容深度 | 常见单页时间 |
 |---|---|---|---|---|
@@ -360,7 +362,7 @@
 
 ## python-pptx：完整、可编辑的生成骨架
 
-以下脚本**共置于 Markdown，仅作本次演讲的生成示例**。主执行者按已确认大纲编辑 `build_confirmed_outline()` 及局部页面函数；没有统一输入 schema，不自动读论文，不从标题推导正文，不提供动态内容运行时。正文和标题使用原生文本框；图表可复用论文图片，图片内部元素不因此变成可编辑图元。若要求逐元素编辑，应按真实数据建立原生图表/形状，或明确报告仅图像可替换。
+以下脚本**共置于 Markdown，仅作本次演讲的生成示例**。主执行者按委托内已核定的大纲编辑 `build_confirmed_outline()` 及局部页面函数；没有统一输入 schema，不自动读论文，不从标题推导正文，不提供动态内容运行时。正文和标题使用原生文本框；图表可复用论文图片，图片内部元素不因此变成可编辑图元。若要求逐元素编辑，应按真实数据建立原生图表/形状，或明确报告仅图像可替换。
 
 默认模板故意阻止导出：先填写 `CONFIRMED_TALK_TYPE`、元数据、页内容、notes、路径；正文与类型匹配后才保存。类型实际参与一致性校验、主讲页数范围、页预算和总时长验证，不再读取后弃用。下面 oral 22 页只展示完整填充位置，短讲须删并重写内容，invited 须显式增加有证据的页。不要绕过校验制造成功。
 
@@ -393,9 +395,9 @@ SECONDS_PER_SLIDE = {
     "poster-talk": (30, 60), "spotlight": (30, 45),
     "oral": (45, 90), "invited": (60, 120),
 }
-CONFIRMED_TALK_TYPE = "UNFILLED: 与已确认 Markdown 大纲一致的类型"
-# 仅当用户确认范围外页数时填写原因；未确认保持空字符串。
-CONFIRMED_COUNT_EXCEPTION = ""
+CONFIRMED_TALK_TYPE = "UNFILLED: 与委托内已核定 Markdown 大纲一致的类型"
+# 范围外页数必须有适用理由；可按有效委托自主裁决并在 Markdown 记录，非用户专属批准字段。
+COUNT_EXCEPTION_REASON = ""
 BASE = Path(__file__).resolve().parent
 
 
@@ -584,9 +586,9 @@ def create_presentation(title, authors, affiliation, venue, talk_type, minutes, 
     for value, label in [(authors, "作者"), (affiliation, "单位"), (venue, "会场")]:
         if value:
             require_text(value, label)
-    require_text(CONFIRMED_TALK_TYPE, "已确认演讲类型")
+    require_text(CONFIRMED_TALK_TYPE, "委托内大纲的演讲类型")
     if talk_type != CONFIRMED_TALK_TYPE:
-        raise ValueError("请求类型与已确认大纲不一致；先调整并确认大纲，不能仅改 CLI 标签")
+        raise ValueError("请求类型与委托内大纲不一致；先按委托裁决处理，不能仅改 CLI 标签")
     if talk_type not in SLIDE_COUNTS or not math.isfinite(minutes) or minutes <= 0:
         raise ValueError("类型或净演讲时间无效")
     prs = Presentation()
@@ -606,7 +608,7 @@ def create_presentation(title, authors, affiliation, venue, talk_type, minutes, 
     count = len(timings)
     low, high = SLIDE_COUNTS[talk_type]
     if not low <= count <= high:
-        require_text(CONFIRMED_COUNT_EXCEPTION, "超出建议页数的已确认理由")
+        require_text(COUNT_EXCEPTION_REASON, "超出建议页数的适用理由")
     total_seconds = sum(seconds for _, seconds in timings)
     if total_seconds > minutes * 60:
         raise ValueError(f"主讲计划 {total_seconds:g} 秒超出净预算 {minutes * 60:g} 秒")

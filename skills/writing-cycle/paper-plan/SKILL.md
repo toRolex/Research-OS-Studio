@@ -6,10 +6,11 @@ disable-model-invocation: true
 
 # Paper Plan：证据先行的论文规划
 
+Gates: none
+
 从用户自己的研究材料形成可供写作者使用的计划。显式调用或已授权正文级联，也支持用户点名；无须先运行 setup、Idea Discovery 或 Validation，无须采用固定文件名。
 
 ## 1. 确定材料与权限
-Gate: write-authorization | before=plan-write | approval=explicit-user | source=SKILL.md#1-确定材料与权限
 
 读取当前项目指令和用户指定材料位置；已有导航只用于找文件。接受实验结果、全部成功/失败记录、代码与配置、表格、图像、推导、证明、访谈/观察、文献、笔记、审稿意见及现有草稿，保持自然格式。已有 Claims 文件是候选入口，不因文件名或旧审查标签而视为已验证；摘要仅用于导航，关键主张回到原始材料。
 
@@ -48,7 +49,6 @@ Gate: write-authorization | before=plan-write | approval=explicit-user | source=
 **完成条件**：venue 要求有当前官方依据或未核实标记；冲突与待决事项可见；style 分支成功/不可读/用户取消均有准确记录。
 
 ## 4. 收敛一句话贡献，再规划章节
-Gate: framing-confirm | before=framing | approval=explicit-user | source=SKILL.md#4-收敛一句话贡献再规划章节
 
 用矩阵支持的范围陈述一句话贡献，明确 What / Why（证据）/ So What。范例只在需要对照时读 [narrative-framing.md](references/narrative-framing.md) 的对应小节，不把整份 249 行当必读。向用户展示 proposed framing；用户已指定或父调用已确认则沿用。多个实质不同 framing、换题或改变主张范围时请用户决定；其余可随计划展示待确认，不冒称已获采用。
 
@@ -85,3 +85,7 @@ Gate: framing-confirm | before=framing | approval=explicit-user | source=SKILL.m
 每项弱点要求可定位依据和**最小修订**；评分仅用户需要时提供，不表示接收概率。只应用本次规划范围内且不改变研究事实的修订；新增实验/证明、换题、删改原始材料留给用户。独立评审不可用时明确写“未独立评审”，自查不冒充独立评审；如强制要求独立评审则停于暂定稿。预算耗尽后保留未解决意见，不递归重试。
 
 **完成条件**：依模板交付计划（或父报告计划章节），列出实际已读/未读材料、评审实际状态、未解决缺口和待用户决定事项；检查所有资源指针可达、无伪造数字/引用/用户批准。报告实际写入路径后停止，不运行实验、起草全文、生成图形、编译、启动顶层 Workflow 或投稿。
+
+## 委托继承
+
+规划写入、报告路径、检索与资源额度来自[研究委托合同](references/mandate.md)。写入清单未确认时只做只读解析并形成执行草案；一次贡献不重置授权，叙事方案仍需在委托内的裁决规则下解决，不把候选选择当作新授权。

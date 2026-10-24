@@ -102,9 +102,6 @@ Gate: write-confirm | before=workspace-write | approval=explicit-user | source=S
 """
 
 
-FOREIGN_LINK = "paper-compile/references/diagnostics.md"
-
-
 def run_check(args: list[str]) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
         ["uv", "run", "--no-project", "python", str(CHECK), *args],
@@ -115,12 +112,7 @@ def run_check(args: list[str]) -> subprocess.CompletedProcess[str]:
 
 
 def contract_output(result: subprocess.CompletedProcess[str]) -> str:
-    lines = [
-        line
-        for line in (result.stdout + result.stderr).splitlines()
-        if FOREIGN_LINK not in line
-    ]
-    return "\n".join(lines)
+    return result.stdout + result.stderr
 
 
 class ConfigContractTests(unittest.TestCase):
@@ -128,12 +120,12 @@ class ConfigContractTests(unittest.TestCase):
         text = contract_output(result)
         self.assertNotEqual(result.returncode, 0, text)
         self.assertIn(needle, text)
+        print(f"MUTANT config/{needle}: rc={result.returncode}\n{text}")
 
     def assert_contract_ok(self, result: subprocess.CompletedProcess[str]) -> None:
         text = contract_output(result)
         self.assertNotIn("  - ", text, text)
-        if FOREIGN_LINK not in result.stdout:
-            self.assertEqual(result.returncode, 0, text)
+        self.assertEqual(result.returncode, 0, text)
 
     def test_valid_role_table(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -217,6 +209,8 @@ class ConfigContractTests(unittest.TestCase):
                         ["--gates-dir", str(skill), "--skill-name", "setup-research-os"]
                     )
                     self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                    self.assertIn("setup-research-os", result.stdout + result.stderr)
+                    print(f"MUTANT gate/{needle}: rc={result.returncode}\n{result.stdout}{result.stderr}")
 
     def test_shipped_templates_and_full_checker(self) -> None:
         policy = SETUP / "templates" / "compute-policy.md"

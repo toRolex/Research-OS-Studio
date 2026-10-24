@@ -1,0 +1,5 @@
+interface:
+  display_name: "create-verification-skill"
+  short_description: "为项目建立可运行的行为验证 Skill：启动、doctor、按用户路径驱动、采证据、清理并播种特征覆盖映射。"
+policy:
+  allow_implicit_invocation: false

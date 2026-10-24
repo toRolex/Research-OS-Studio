@@ -9,17 +9,22 @@
 4. 全部 markdown 相对链接指向 git 追踪内存在的文件（豁免占位符与已知 brace 行文）
 5. README.md 与 skills/README.md 的 Skill 清单与目录树一致
 6. 角色表、算力政策、研究日志字段；--skip-suite 只查显式给出的合同文件
+
+范围：静态结构、可解析声明与少量明确肯定的违约指令。任意自然语言中的隐式依赖、
+阶段顺序和额度语义仍须人工核验；结构通过不等于模型行为或全部语义已经认证。
 """
 import argparse
+import hashlib
+import json
 import math
 import re
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parent.parent
 SKILLS = ROOT / "skills"
-EXPECTED_COUNT = 39
 SETUP_NAME = "setup-research-os"
 ROLES = (
     "orchestrator",
@@ -150,9 +155,12 @@ def git_tracked() -> set[str]:
 tracked = git_tracked()
 
 # --- 1/2: 收集 skill 目录与 frontmatter -----------------------------------
+# 不写死总数：实际发现的目录必须与两份 README 清单一致（第 5 节），且每个 skill 目录
+# 都要有正文。新增或迁移 Skill 只同步清单与门基线，不需要改常数。
 skill_files = sorted(SKILLS.glob("*/*/SKILL.md"))
-if len(skill_files) != EXPECTED_COUNT:
-    err(f"skills/ 下 SKILL.md 数量为 {len(skill_files)}，期望 {EXPECTED_COUNT}")
+for skill_dir in sorted(SKILLS.glob("*/*")):
+    if skill_dir.is_dir() and not (skill_dir / "SKILL.md").is_file():
+        err(f"{skill_dir.relative_to(ROOT)}: skill 目录缺 SKILL.md")
 
 names: dict[str, str] = {}
 classifications: dict[str, str] = {}
@@ -217,7 +225,27 @@ for sf in skill_files:
     skill_bodies.append((name, rel, sf.parent, skill_text, explicit, yaml_text))
 
 # --- 4: markdown 相对链接 -------------------------------------------------
-md_files = [p for p in ROOT.rglob("*.md") if ".git" not in p.parts]
+def tracked_markdown_files() -> list[Path]:
+    """只访问 tracked Markdown 的祖先目录，保留目录枚举与栈遍历顺序。"""
+    candidates = {ROOT / rel for rel in tracked
+                  if rel.endswith(".md") and ".git" not in Path(rel).parts}
+    parents = {ROOT / parent for path in candidates
+               for parent in path.relative_to(ROOT).parents}
+    found: list[Path] = []
+    pending = [ROOT]
+    while pending:
+        directory = pending.pop()
+        try:
+            entries = list(directory.iterdir())
+        except OSError:
+            continue  # 与 rglob 一样跳过不可读／已消失的目录。
+        found.extend(path for path in entries if path in candidates)
+        pending.extend(path for path in entries
+                       if path in parents and path.is_dir() and not path.is_symlink())
+    return found
+
+
+md_files = tracked_markdown_files()
 link_re = re.compile(r"\[[^\]]*\]\(([^)\s]+)(?:\s+\"[^\"]*\")?\)")
 
 
@@ -327,78 +355,84 @@ def route_table_problems(rows: list[dict[str, str]], skill_dir: Path) -> tuple[l
     return problems_out, hints
 
 
-PAPER_WRITING_SHARED = (
-    "skills/writing-cycle/paper-plan/SKILL.md",
-    "skills/writing-cycle/academic-plotting/SKILL.md",
-    "skills/writing-cycle/paper-drafting/SKILL.md",
-    "skills/writing-cycle/paper-compile/SKILL.md",
-    "skills/writing-cycle/paper-claim-audit/SKILL.md",
-    "skills/writing-cycle/citation-audit/SKILL.md",
-    "skills/writing-cycle/claim-stress-test/SKILL.md",
-    "skills/validation-cycle/proof-review/SKILL.md",
+PAPER_WRITING_VARIANTS = ("general", "ml", "systems")
+PAPER_WRITING_REQUIRED = (
+    "skills/writing-cycle/paper-writing/SKILL.md",
+    "skills/writing-cycle/paper-writing/references/composition-map.md",
+    "skills/writing-cycle/paper-writing/references/standards.md",
 )
-PAPER_WRITING_REQUIRED: dict[str, tuple[str, ...]] = {
-    "general": PAPER_WRITING_SHARED
-    + (
-        "skills/writing-cycle/paper-writing/SKILL.md",
-        "skills/writing-cycle/paper-writing/references/composition-map.md",
-    ),
-    "ml": PAPER_WRITING_SHARED
-    + (
-        "skills/writing-cycle/ml-paper-writing/SKILL.md",
-        "skills/writing-cycle/ml-paper-writing/references/composition-map.md",
-        "skills/writing-cycle/ml-paper-writing/references/experiment-reporting.md",
-        "skills/writing-cycle/ml-paper-writing/references/reviewer-expectations.md",
-        "skills/writing-cycle/ml-paper-writing/references/venue-checklists.md",
-    ),
-    "systems": PAPER_WRITING_SHARED
-    + (
-        "skills/writing-cycle/systems-paper-writing/SKILL.md",
-        "skills/writing-cycle/systems-paper-writing/references/composition-map.md",
-        "skills/writing-cycle/systems-paper-writing/references/systems-writing-methods.md",
-        "skills/writing-cycle/systems-paper-writing/references/evaluation-methods.md",
-        "skills/writing-cycle/systems-paper-writing/references/checklist.md",
-        "skills/writing-cycle/systems-paper-writing/references/venue-and-reviewer.md",
-        "skills/writing-cycle/paper-plan/references/systems-blueprints.md",
-        "skills/writing-cycle/paper-plan/references/systems-patterns.md",
-    ),
-}
-PAPER_WRITING_FORBIDDEN: dict[str, tuple[str, ...]] = {
-    "general": (
-        "skills/writing-cycle/ml-paper-writing/SKILL.md",
-        "skills/writing-cycle/systems-paper-writing/SKILL.md",
-    ),
+PAPER_WRITING_DOMAIN_RESOURCES = {
     "ml": (
-        "skills/writing-cycle/paper-writing/SKILL.md",
-        "skills/writing-cycle/systems-paper-writing/SKILL.md",
+        "ml-ai-standards.md",
+        "ml-experiment-reporting.md",
+        "ml-reviewer-expectations.md",
+        "ml-venue-checklists.md",
+        "../templates/ml-writing-report.md",
     ),
     "systems": (
-        "skills/writing-cycle/paper-writing/SKILL.md",
-        "skills/writing-cycle/ml-paper-writing/SKILL.md",
+        "systems-standards.md",
+        "systems-writing-methods.md",
+        "systems-evaluation-methods.md",
+        "systems-checklist.md",
+        "systems-venue-and-reviewer.md",
+        "../templates/systems-paper-writing-report.md",
     ),
 }
-PAPER_WRITING_HARD_STOPS = ("paper-compile-repair", "apply-citation-fixes")
+PAPER_WRITING_SOURCE_LICENSES = {
+    "ml": ("LICENSE-ML.txt",),
+    "systems": ("LICENSE-ARIS.txt", "LICENSE-Orchestra.txt"),
+}
+
+
+def paper_writing_domain_standard_problems(variant: str, root: Path) -> list[str]:
+    """专业标准必须从统一 Skill 的安装包内真实可达。"""
+    resources = PAPER_WRITING_DOMAIN_RESOURCES.get(variant)
+    if resources is None:
+        return []
+    standards = root / "skills/writing-cycle/paper-writing/references/standards.md"
+    if not standards.is_file():
+        return []
+
+    text = standards.read_text(encoding="utf-8")
+    links = {
+        target.split("#", 1)[0]
+        for target in re.findall(r"\[[^\]]+\]\(([^)\s]+)", text)
+        if not target.startswith(("http:", "https:", "mailto:"))
+    }
+    found: list[str] = []
+    for resource in resources:
+        if resource not in links:
+            found.append(f"paper-writing/{variant} standards.md 缺专业资源链接：{resource}")
+            continue
+        target = (standards.parent / resource).resolve()
+        package = (root / "skills/writing-cycle/paper-writing").resolve()
+        if package not in target.parents or not target.is_file():
+            found.append(f"paper-writing/{variant} 专业资源不可达：{resource}")
+
+    sources = standards.parent / "sources.md"
+    source_text = sources.read_text(encoding="utf-8") if sources.is_file() else ""
+    if "sources.md" not in links:
+        found.append(f"paper-writing/{variant} standards.md 缺来源许可记录链接：sources.md")
+    for license_name in PAPER_WRITING_SOURCE_LICENSES[variant]:
+        license_path = standards.parent.parent / license_name
+        if not license_path.is_file():
+            found.append(f"paper-writing/{variant} 缺共置来源许可：{license_name}")
+        if f"../{license_name}" not in source_text:
+            found.append(f"paper-writing/{variant} sources.md 未指向共置许可：{license_name}")
+    return found
 
 
 def paper_writing_variant_problems(variant: str, text: str, root: Path) -> list[str]:
-    """单个 paper-writing playbook：本变体级联存在，且不经其他写作入口。"""
-    found: list[str] = []
-    required = PAPER_WRITING_REQUIRED.get(variant)
-    if required is None:
+    """写作变体必须到达唯一总控；专业差异在总控的按需资源中表达。"""
+    if variant not in PAPER_WRITING_VARIANTS:
         return [f"paper-writing 变体未知：{variant}"]
-    for path in required:
+    found: list[str] = []
+    for path in PAPER_WRITING_REQUIRED:
         if f"`{path}`" not in text:
-            found.append(f"paper-writing/{variant} 缺级联 {path}")
+            found.append(f"paper-writing/{variant} 缺统一入口 {path}")
         elif not (root / path).is_file():
-            found.append(f"paper-writing/{variant} 级联目标不存在：{path}")
-    for path in PAPER_WRITING_FORBIDDEN[variant]:
-        if f"`{path}`" in text:
-            found.append(f"paper-writing/{variant} 不得级联其他写作入口：{path}")
-    for name in PAPER_WRITING_HARD_STOPS:
-        if f"`{name}`" not in text:
-            found.append(f"paper-writing/{variant} 缺另行点名硬停止：{name}")
-    if "授权" not in text:
-        found.append(f"paper-writing/{variant} 未保留叶授权门")
+            found.append(f"paper-writing/{variant} 统一入口目标不存在：{path}")
+    found.extend(paper_writing_domain_standard_problems(variant, root))
     return found
 
 
@@ -413,7 +447,7 @@ def paper_writing_route_problems(rows: list[dict[str, str]], root: Path) -> list
         if variant in seen:
             found.append(f"paper-writing 变体重复：{variant}")
         seen[variant] = row
-    for variant in ("general", "ml", "systems"):
+    for variant in PAPER_WRITING_VARIANTS:
         row = seen.get(variant)
         if row is None:
             found.append(f"缺 paper-writing/{variant} 路由行")
@@ -587,7 +621,8 @@ def legacy_router_problems(files: dict[str, str]) -> list[str]:
 
 REQUIRED_RELEASE_ROUTES = (
     ("route-only", "—", "yes"),
-    ("idea-discovery", "—", "no"),
+    ("literature", "—", "no"),
+    ("discovery", "—", "no"),
     ("experiment-plan", "—", "no"),
     ("experiment-bridge", "—", "no"),
     ("paper-writing", "general", "no"),
@@ -600,6 +635,7 @@ REQUIRED_RELEASE_ROUTES = (
     ("improvement", "—", "no"),
     ("pickup", "—", "no"),
     ("custom", "—", "no"),
+    ("swarm", "—", "no"),
 )
 STALE_PROMISE_SNIPPETS = (
     "完成后立即停止，绝不自动跳转",
@@ -607,7 +643,133 @@ STALE_PROMISE_SNIPPETS = (
     "顶层工作流交付产物后立即结束，不会自动触发后续流程",
     "Top-level workflows stop upon completion and never transition to subsequent stages without explicit instruction",
 )
-HOST_FALLBACK_MARKERS = ("pi", "Claude Code", "Codex", "串行")
+HOST_PREREQUISITE_MARKERS = ("子代理", "blocked", "独立调用")
+HOST_SERIAL_SUBSTITUTES = (
+    "无该工具时由编排者串行执行",
+    "编排者按 playbook 顺序自己执行",
+    "由编排者串行完成",
+    "编排者串行完成同一合同",
+)
+
+
+INTERROGATE_BUCKETS = ("Act on", "Consider", "Noted", "Dismissed")
+INTERROGATE_FIXED_MODEL_MARKERS = ("claude-opus", "grok-4", "composer-", "cursor")
+
+
+def interrogate_dispatch_contract(text: str) -> dict:
+    """Read this Skill's local dispatch declaration, not a research runtime protocol."""
+    match = re.search(r"(?ms)^### Reviewer dispatch contract\s*\n```json\n(.*?)\n```", text)
+    if not match:
+        raise ValueError("interrogate 缺本次 reviewer 集合/隔离声明")
+    try:
+        contract = json.loads(match.group(1))
+    except json.JSONDecodeError as error:
+        raise ValueError(f"interrogate 派发声明不是合法JSON: {error}") from error
+    if not isinstance(contract, dict):
+        raise ValueError("interrogate 派发声明必须是对象")
+    return contract
+
+
+def resolve_interrogate_reviewers(contract: dict, role_text: str) -> list[dict[str, str]]:
+    """Static shape/source validation only; does not verify live tools or grant authority."""
+    inputs = contract.get("reviewer_inputs")
+    if (
+        contract.get("context") != "fresh" or contract.get("readonly") is not True
+        or contract.get("reviewer_reads_peer_findings") is not False
+        or not isinstance(inputs, list) or not all(isinstance(item, str) for item in inputs)
+        or set(inputs) != {"intent", "source_material", "rubric"} or len(inputs) != 3
+        or contract.get("lead_reads_after") != "all_reviewers_complete"
+    ):
+        raise ValueError("interrogate 隔离关系无效：reviewer只读原材料，主审须后置综合")
+    roles: dict[str, tuple[str, str]] = {}
+    for line in role_text.splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        match = ROLE_LINE_RE.fullmatch(line.strip())
+        if not match:
+            raise ValueError("角色行格式无效")
+        role, model, thinking = match.groups()
+        if role not in ROLES or role in roles or thinking not in THINKING:
+            raise ValueError("角色未知/重复或thinking无效；不允许扩展重复reviewer行")
+        roles[role] = (model, thinking)
+    reviewers = contract.get("reviewers")
+    if not isinstance(reviewers, list) or len(reviewers) < 2:
+        raise ValueError("blocked: 本次独立reviewer集合至少需要两个实例")
+    result: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for row in reviewers:
+        if not isinstance(row, dict) or not isinstance(row.get("id"), str) or not row["id"].strip() or row["id"] in seen:
+            raise ValueError("reviewer实例必须有唯一非空id")
+        seen.add(row["id"])
+        source = row.get("source")
+        if source == "role:reviewer":
+            if "reviewer" not in roles:
+                raise ValueError("blocked: 缺reviewer绑定，须明示真实session回退来源")
+            model, thinking = roles["reviewer"]
+        elif source in ("explicit", "session"):
+            if source == "session" and "reviewer" in roles:
+                raise ValueError("已有显式reviewer绑定，不能借缺行session回退绕过替代授权")
+            model, thinking = row.get("model"), row.get("thinking")
+            if not isinstance(row.get("authority"), str) or not row["authority"].strip():
+                raise ValueError("显式/回退条目缺原授权或能力来源索引，不能自行授予权限")
+        else:
+            raise ValueError("reviewer来源须为role:reviewer、explicit或session")
+        if (
+            not isinstance(model, str) or not re.fullmatch(r"[^/\s]+/\S+", model) or model.endswith("/")
+            or not isinstance(thinking, str) or thinking not in THINKING
+        ):
+            raise ValueError("reviewer模型/档位格式无效")
+        result.append({
+            "id": row["id"], "model": model, "thinking": thinking, "source": source,
+            "authority": row.get("authority", "project role:reviewer binding"),
+        })
+    distinct = contract.get("require_distinct_models", False)
+    if not isinstance(distinct, bool):
+        raise ValueError("require_distinct_models必须是布尔值")
+    if distinct and len({row["model"] for row in result}) < 2:
+        raise ValueError("blocked: 已请求多模型但可表达集合不足，不能静默降级")
+    return result
+
+
+def interrogate_contract_problems(text: str) -> list[str]:
+    """interrogate 技能的合同检查：只读、独立审查机制与宿主中立。"""
+    found: list[str] = []
+    for marker in (
+        "## 委托继承",
+        "Gates: none",
+        "只读",
+        "不自动",
+        "去重",
+        "分歧",
+        "主审",
+        "子代理",
+        "blocked",
+        ".agents/research-os-models.md",
+    ):
+        if marker not in text:
+            found.append(f"interrogate 正文缺 {marker}")
+    for bucket in INTERROGATE_BUCKETS:
+        if bucket not in text:
+            found.append(f"interrogate 主审四桶缺 {bucket}")
+    for banned in INTERROGATE_FIXED_MODEL_MARKERS:
+        if banned in text.lower():
+            found.append(f"interrogate 残留固定模型/宿主绑定：{banned}")
+    try:
+        contract = interrogate_dispatch_contract(text)
+        # Validate the shipped declaration against the actual standard setup shape.
+        template = SKILLS / "general/setup-research-os/templates/research-os-models.md"
+        resolve_interrogate_reviewers(contract, template.read_text(encoding="utf-8"))
+    except (ValueError, OSError) as error:
+        found.append(str(error))
+    step3 = text.split("## Step 3", 1)[-1].split("## Step 4", 1)[0]
+    # Reject the review's explicit affirmative reversal, not arbitrary uses of 'findings'.
+    if re.search(r"(?:^|[；。\n])\s*后续\s*reviewer\s*(?:必须|可以|应当)\s*先(?:读取|读)\s*前序\s*reviewer[^。\n]{0,120}findings[^。\n]{0,80}形成判断", step3, re.I):
+        found.append("interrogate reviewer判断前读取前序findings，与隔离声明冲突")
+    if not (SKILLS / "general" / "interrogate" / "references" / "research-review.md").exists():
+        found.append("interrogate 缺科研审查 lens research-review.md")
+    if not (SKILLS / "general" / "interrogate" / "references" / "PROVENANCE.md").exists():
+        found.append("interrogate 缺来源登记 PROVENANCE.md")
+    return found
 
 
 def release_route_problems(rows: list[dict[str, str]]) -> list[str]:
@@ -630,14 +792,52 @@ def stale_promise_problems(files: dict[str, str]) -> list[str]:
     return found
 
 
-def host_fallback_problems(text: str) -> list[str]:
-    """宿主映射必须点名三宿主，并写明无子代理时串行执行。"""
+def swarm_aggregate_contract_problems(text: str) -> list[str]:
+    """Aggregate 需在局部保留重派上限、额度门槛与最终缺口状态。"""
+    aggregate = re.search(r"(?ms)^## Phase C: Aggregate\s*\n(.*?)(?=^## Phase D: Report\s*$)", text)
+    if aggregate is None:
+        return ["swarm Aggregate 缺失或无法定位"]
+
+    contract = aggregate.group(1)
     found: list[str] = []
-    for marker in HOST_FALLBACK_MARKERS:
+    if not re.search(r"剩余额度允许时最多重派一次", contract):
+        found.append("swarm Aggregate 缺剩余额度允许时的重派上限")
+    if not re.search(r"否则直接记为缺口", contract):
+        found.append("swarm Aggregate 缺额度不足时直接记最终缺口")
+    if not re.search(r"第二次仍缺，记为缺口", contract):
+        found.append("swarm Aggregate 缺二次缺证后的最终缺口")
+    return found
+
+
+def swarm_contract_problems(text: str) -> list[str]:
+    """swarm 能力合同：分片/竞赛/混合、预声明规则、输出隔离、有界重派与缺口；无宿主/固定模型绑定。"""
+    found: list[str] = []
+    for marker in (
+        "Frame", "Fan out", "Aggregate", "Report",
+        "分片", "竞赛", "混合", "first pass", "rank all", "best-of",
+        "完成条件", "独立 brief", "输出隔离", "重派",
+        "缺口不算通过", "blocked", "子代理", "Role: implementer",
+        ".agents/research-os-models.md", "88d47514b82e7c44f00f2b2a72ff6dd12158038c",
+    ):
+        if marker not in text:
+            found.append(f"swarm 正文缺 {marker}")
+    found.extend(swarm_aggregate_contract_problems(text))
+    lowered = text.lower()
+    for banned in ("~/.cursor", "pstack-models", "grok-4.7", 'environment: "cloud"', "cloud_base_branch"):
+        if banned in lowered:
+            found.append(f"swarm 正文残留固定绑定：{banned}")
+    return found
+
+
+def host_capability_problems(text: str) -> list[str]:
+    """宿主映射按会话真实能力判定：子代理是前提，缺它时如实 blocked，不以串行代跑冒充已执行。"""
+    found: list[str] = []
+    for marker in HOST_PREREQUISITE_MARKERS:
         if marker not in text:
             found.append(f"宿主映射缺 {marker}")
-    if "无该工具时由编排者串行执行" not in text and "没有时，编排者按 playbook 顺序自己执行" not in text:
-        found.append("宿主映射未写无子代理时的串行降级")
+    for snippet in HOST_SERIAL_SUBSTITUTES:
+        if snippet in text:
+            found.append(f"宿主映射把缺子代理写成串行代跑：{snippet}")
     return found
 
 
@@ -678,6 +878,137 @@ for md in md_files:
             if rel_resolved not in tracked:
                 err(f"{rel_md}:{i}: 链接目标不存在或未追踪: {target}")
 
+
+# --- 4b: 历史归档索引 ------------------------------------------------------
+ARCHIVE_INDEX_REL = "docs/acceptance/evidence/README.md"
+ARCHIVE_NAME_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*\.tar\.gz")
+ARCHIVE_SHA_RE = re.compile(r"[0-9a-f]{64}")
+
+
+def check_archive_index(strict: bool = False) -> None:
+    """Validate structure; only strict scope requires historical byte identity.
+
+    BYTE_MATCH proves digest/size equality only, not provenance or safe contents.
+    Local-only records never cause reads of unapproved local archive bytes.
+    """
+    index = ROOT / ARCHIVE_INDEX_REL
+    if ARCHIVE_INDEX_REL not in tracked or not index.is_file():
+        err(f"历史归档索引不存在或未追踪: {ARCHIVE_INDEX_REL}")
+        return
+
+    index_text = index.read_text(encoding="utf-8")
+    index_anchors = heading_anchors(index_text)
+    rows: dict[str, tuple[str, str, str, str]] = {}
+    for line_number, line in enumerate(index_text.splitlines(), 1):
+        if not line.lstrip().startswith("|"):
+            continue
+        if not line.lstrip().startswith("| `") and not ARCHIVE_NAME_RE.search(line.split("|")[1]):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) != 6:
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 归档索引行必须恰有 6 列")
+            continue
+        name = cells[0].strip("`")
+        size = cells[1].replace(",", "")
+        historical_sha = cells[2].strip("`")
+        candidate_sha = cells[3].strip("`")
+        status = cells[4]
+        if not ARCHIVE_NAME_RE.fullmatch(name):
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 无效归档名")
+            continue
+        if name in rows:
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 重复归档记录 {name}")
+            continue
+        if not size.isdigit() or int(size) <= 0:
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 无效候选字节数 {name}")
+            continue
+        if not ARCHIVE_SHA_RE.fullmatch(historical_sha) or not ARCHIVE_SHA_RE.fullmatch(candidate_sha):
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: SHA-256 字段无效 {name}")
+            continue
+        if status not in {"仅本地保留、未入库", "已入库、待核验", "已入库、已核验"}:
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 未知归档可用状态 {name}")
+            continue
+        rows[name] = (size, historical_sha, candidate_sha, status)
+
+    if not rows:
+        err(f"{ARCHIVE_INDEX_REL}: 没有有效历史归档记录")
+        return
+
+    for name, (size, historical_sha, candidate_sha, status) in rows.items():
+        archive_rel = f"docs/acceptance/evidence/{name}"
+        archive = ROOT / archive_rel
+        available = archive_rel in tracked and archive.is_file()
+        if status == "仅本地保留、未入库":
+            if archive_rel in tracked or archive.exists():
+                err(f"归档索引状态与仓库文件矛盾: {name}")
+        elif not available:
+            err(f"归档索引状态要求已追踪的真实字节: {name}")
+
+        identity = "MISMATCH" if historical_sha != candidate_sha else "UNVERIFIED"
+        availability = "UNAVAILABLE"
+        if available and status != "仅本地保留、未入库":
+            actual_sha = hashlib.sha256(archive.read_bytes()).hexdigest()
+            availability = "AVAILABLE"
+            if actual_sha != candidate_sha or archive.stat().st_size != int(size):
+                err(f"归档候选字节与索引 SHA/size 不符: {name}")
+            elif actual_sha == historical_sha:
+                identity = "BYTE_MATCH"
+            if actual_sha != historical_sha:
+                identity = "MISMATCH"
+        if status == "已入库、已核验" and identity != "BYTE_MATCH":
+            err(f"归档核验状态与历史 SHA 不符: {name}")
+        print(f"HISTORY {identity}: {name} ({availability}; 摘要不认证来源/安全)")
+        if strict and identity != "BYTE_MATCH":
+            err(f"历史身份未通过: {name}: {identity}/{availability}")
+
+    def is_index_target(markdown: Path, target: str) -> bool:
+        path, separator, fragment = target.partition("#")
+        return (
+            lexical_relative(markdown.parent, path) == index.as_posix()
+            and (not separator or unquote(fragment) in index_anchors)
+        )
+
+    linked_names: set[str] = set()
+    for markdown in md_files:
+        rel_markdown = markdown.relative_to(ROOT).as_posix()
+        if rel_markdown == ARCHIVE_INDEX_REL or rel_markdown not in tracked:
+            continue
+        for line_number, line in enumerate(markdown.read_text(encoding="utf-8").splitlines(), 1):
+            names = set(ARCHIVE_NAME_RE.findall(line))
+            links = list(link_re.finditer(line))
+            if not names or not links:
+                continue
+            explicit_names: set[str] = set()
+            referenced_names: set[str] = set()
+            links_index = False
+            for link in links:
+                target = link.group(1)
+                valid_target = is_index_target(markdown, target)
+                links_index |= valid_target
+                link_names = set(ARCHIVE_NAME_RE.findall(link.group(0)))
+                explicit_names.update(link_names)
+                if valid_target:
+                    referenced_names.update(link_names)
+                else:
+                    for name in sorted(link_names):
+                        err(f"{rel_markdown}:{line_number}: 归档引用必须链接真实索引: {name} -> {target}")
+            # A nearby index link may support a plain-text archive mention,
+            # but never override an explicit archive link's own destination.
+            if links_index:
+                referenced_names.update(names - explicit_names)
+            for name in names:
+                # An invalid explicit target must not bypass registration.
+                if name not in rows and (name in explicit_names or name in referenced_names):
+                    err(f"归档索引缺少被引用记录: {name}")
+                if name in referenced_names:
+                    linked_names.add(name)
+                elif name not in explicit_names and name in rows and rel_markdown.startswith("docs/acceptance/"):
+                    err(f"{rel_markdown}:{line_number}: 归档引用必须链接真实索引: {name}")
+
+    for name in sorted(rows.keys() - linked_names):
+        err(f"历史归档记录没有验收文档索引入口: {name}")
+
+
 # --- 5: README 清单与目录树一致 -------------------------------------------
 actual = {f"{sf.parent.parent.name}/{sf.parent.name}" for sf in skill_files}
 for readme_name in ("README.md", "skills/README.md"):
@@ -685,7 +1016,8 @@ for readme_name in ("README.md", "skills/README.md"):
     if not rp.exists():
         err(f"{readme_name}: 不存在")
         continue
-    listed = set(re.findall(r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+)/SKILL\.md\)", rp.read_text(encoding="utf-8")))
+    readme_text = rp.read_text(encoding="utf-8")
+    listed = set(re.findall(r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+)/SKILL\.md\)", readme_text))
     if listed != actual:
         missing = sorted(actual - listed)
         extra = sorted(listed - actual)
@@ -693,7 +1025,6 @@ for readme_name in ("README.md", "skills/README.md"):
             err(f"{readme_name}: 清单缺 {len(missing)} 个 Skill: {', '.join(missing)}")
         if extra:
             err(f"{readme_name}: 清单含不存在 Skill: {', '.join(extra)}")
-
 # --- 6–9: 入口合同（路由、级联、门、旧 router） ---------------------------
 for skill_name, rel, skill_dir, skill_text, user_invoked, yaml_text in skill_bodies:
     if yaml_text is not None:
@@ -716,9 +1047,20 @@ if research_os.exists():
         err(f"skills/general/research-os/SKILL.md: {problem}")
     for problem in release_route_problems(route_rows):
         err(f"skills/general/research-os/SKILL.md: {problem}")
-    for problem in host_fallback_problems(research_os.read_text(encoding="utf-8")):
+    for problem in host_capability_problems(research_os.read_text(encoding="utf-8")):
         err(f"skills/general/research-os/SKILL.md: {problem}")
+    swarm_skill = SKILLS / "general" / "swarm" / "SKILL.md"
+    if swarm_skill.is_file():
+        for problem in swarm_contract_problems(swarm_skill.read_text(encoding="utf-8")):
+            err(f"skills/general/swarm/SKILL.md: {problem}")
+    else:
+        err("skills/general/swarm/SKILL.md: swarm 能力缺失")
     HINTS.extend(route_hints)
+
+interrogate_skill = SKILLS / "general" / "interrogate" / "SKILL.md"
+if interrogate_skill.exists():
+    for problem in interrogate_contract_problems(interrogate_skill.read_text(encoding="utf-8")):
+        err(f"skills/general/interrogate/SKILL.md: {problem}")
 
 for md in md_files:
     rel_md = md.relative_to(ROOT).as_posix()
@@ -744,67 +1086,1160 @@ for problem in stale_promise_problems(legacy_files):
     err(problem)
 
 
-# --- 叶 skill 门声明（#39 基线）；入口与 setup 不进这份路径表 ---
-LEAF_EXPECTED_GATES: dict[str, set[str]] = {
-    "skills/idea-cycle/creative-thinking-for-research/SKILL.md": {"write-path"},
-    "skills/idea-cycle/idea-discovery/SKILL.md": {"stage-checkpoint", "output-path"},
-    "skills/idea-cycle/idea-generation/SKILL.md": {"write-path"},
-    "skills/idea-cycle/idea-refinement/SKILL.md": {"anchor-clarify"},
-    "skills/idea-cycle/idea-review/SKILL.md": {"scope-clarify"},
-    "skills/idea-cycle/novelty-check/SKILL.md": set(),
-    "skills/idea-cycle/research-lit/SKILL.md": {"write-path"},
-    "skills/validation-cycle/analyze-results/SKILL.md": {"write-path"},
-    "skills/validation-cycle/experiment-audit/SKILL.md": {"write-path"},
-    "skills/validation-cycle/experiment-bridge/SKILL.md": {"run-authorization"},
-    "skills/validation-cycle/experiment-plan/SKILL.md": {"output-path"},
-    "skills/validation-cycle/experiment-queue/SKILL.md": {"batch-authorization", "precondition-block"},
-    "skills/validation-cycle/formula-derivation/SKILL.md": {"write-authorization"},
-    "skills/validation-cycle/monitor-experiment/SKILL.md": {"write-path"},
-    "skills/validation-cycle/proof-orchestrator/SKILL.md": {"round-scope", "external-action"},
-    "skills/validation-cycle/proof-repair/SKILL.md": {
-        "repair-contract",
-        "assumption-or-claim-change",
-        "compile-authorization",
-    },
+def expected_gates(skill_dir: Path, skill_name: str) -> frozenset[str] | None:
+    """按迁移状态解析门基线：已迁移为空，未迁移为旧基线，未登记为 None。"""
+    rel = f"skills/{skill_dir.parent.name}/{skill_name}/SKILL.md"
+    if skill_name in GATE_BASELINE:
+        return frozenset(GATE_BASELINE[skill_name])
+    if skill_name in EXPECTED_GATES:
+        return EXPECTED_GATES[skill_name]
+    if rel in MIGRATED_CONTRACT:
+        return frozenset()
+    if rel in LEGACY_LEAF_GATES:
+        return frozenset(LEGACY_LEAF_GATES[rel])
+    return None
+
+
+def migration_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """委托合同与 expand 边界：合同单一权威，迁移集与文档记录一致。"""
+    found: list[str] = []
+    mandate = root / MANDATE_DOC
+    if not mandate.is_file():
+        found.append(f"{MANDATE_DOC}: 研究委托合同不存在")
+    elif MANDATE_DOC not in tracked_paths:
+        found.append(f"{MANDATE_DOC}: 研究委托合同未追踪")
+    else:
+        anchors = heading_anchors(mandate.read_text(encoding="utf-8"))
+        for section in MANDATE_SECTIONS:
+            if section not in anchors:
+                found.append(f"{MANDATE_DOC}: 缺「{section}」小节")
+    entry = root / "skills/general/research-os/SKILL.md"
+    if entry.is_file() and "references/mandate.md" not in entry.read_text(encoding="utf-8"):
+        found.append("skills/general/research-os/SKILL.md: 入口未指向 references/mandate.md")
+    for rel, marker in MIGRATED_CONTRACT.items():
+        path = root / rel
+        if not path.is_file():
+            found.append(f"{rel}: 已登记迁移但文件不存在")
+        elif marker not in heading_anchors(path.read_text(encoding="utf-8")):
+            found.append(f"{rel}: 已迁移技能缺「{marker}」小节")
+    boundary = root / MIGRATION_DOC
+    if not boundary.is_file() or MIGRATION_DOC not in tracked_paths:
+        found.append(f"{MIGRATION_DOC}: 迁移边界文档缺失或未追踪")
+        return found
+    text = boundary.read_text(encoding="utf-8")
+    if "未迁移" not in heading_anchors(text):
+        found.append(f"{MIGRATION_DOC}: 缺「未迁移」小节")
+    if "LEGACY_LEAF_GATES" not in text:
+        found.append(f"{MIGRATION_DOC}: 未指明未迁移门基线的权威位置")
+    for rel in MIGRATED_CONTRACT:
+        if Path(rel).parent.name not in text:
+            found.append(f"{MIGRATION_DOC}: 未列出已迁移技能 {Path(rel).parent.name}")
+    return found
+
+
+def contract_directive_lines(text: str) -> list[str]:
+    """Read ordinary directive/declaration lines, not code examples or block quotes."""
+    result = []
+    in_code = False
+    for line in text.splitlines():
+        if line.lstrip().startswith("```"):
+            in_code = not in_code
+            continue
+        if in_code or line.lstrip().startswith(">"):
+            continue
+        line = re.sub(r"[*`]", "", line).strip()
+        result.append(re.sub(r"^(?:[-+]\s+|\d+\.\s+)", "", line))
+    return result
+
+
+def discovery_order_problems(text: str) -> list[str]:
+    """Only explicit affirmative universal mandates; ambiguous prose is manual review."""
+    for line in contract_directive_lines(text):
+        for clause in re.split(r"[；。，]", line):
+            clause = clause.strip()
+            if re.match(r"^(?:必须|务必|应当)(?:按)?固定顺序执行(?:全部|所有|五项|五个)", clause):
+                return ["固定顺序强制所有职责"]
+            if re.match(r"^(?:必须|务必|应当)(?:在)?(?:每个|每一|各个)阶段.*(?:批准|确认)", clause):
+                return ["明确要求每阶段重复批准"]
+            if re.match(r"^本(?:配方|流程)(?:必须)?(?:是|作为)(?:独立的)?第二总控", clause):
+                return ["明确声明第二总控"]
+    return []
+
+
+def arena_required_dependencies(text: str) -> set[str]:
+    """Parse named Required skills/Dependencies declarations, not arbitrary mentions."""
+    dependencies: set[str] = set()
+    for line in contract_directive_lines(text):
+        match = re.fullmatch(r"(?:Required skills|Dependencies|必需依赖):\s*([a-z0-9-]+(?:\s*,\s*[a-z0-9-]+)*)", line, re.I)
+        if match:
+            dependencies.update(item.strip().lower() for item in match[1].split(","))
+        if re.match(r"^(?:必须|务必|应当)先(?:运行|调用)\s+swarm\b", line, re.I):
+            dependencies.add("swarm")
+    sections = re.findall(r"(?ms)^## (?:Required skills|Dependencies|必需依赖)\s*\n(.*?)(?=^## |\Z)", text)
+    for section in sections:
+        for line in contract_directive_lines(section):
+            if re.fullmatch(r"[a-z][a-z0-9-]*", line):
+                dependencies.add(line)
+            link = re.fullmatch(r"\[[^]]+\]\(([^)]+)\)", line)
+            if link and Path(link[1]).name == "SKILL.md":
+                dependencies.add(Path(link[1]).parent.name)
+    return dependencies
+
+
+def shared_quota_contract_problems(text: str) -> list[str]:
+    """Check the canonical mandate link and explicit resets; prose coverage is manual."""
+    found = []
+    lines = contract_directive_lines(text)
+    if not re.search(r"\[[^]]+\]\(\.\./references/mandate\.md(?:#[^)]*)?\)", text):
+        found.append("缺共享额度权威mandate的可解析引用；完整事件覆盖语义须人工核验")
+    for line in lines:
+        for clause in re.split(r"[；。，]", line):
+            if re.match(r"^\s*(?:每次|每个)?(?:并行|换线程|重试|恢复|子代理)(?:时|后)?(?:都)?(?:从零|重新)?(?:重置|清零)", clause):
+                found.append("明确指令重置共享额度，与累计委托冲突")
+    return found
+
+
+CONTINUATION_PLAYBOOK = "skills/general/research-os/playbooks/continuation.md"
+CONTINUATION_MARKERS = (
+    "references/mandate.md",
+    "references/batch-authorization.md",
+    "可核验收束条件",
+    "wall-clock",
+    "暂停保存",
+    "停滞",
+    "真正死路",
+    "恢复前完整走",
+    "不把 Skill 文本当后台服务",
+    "blocked",
+)
+CONTINUATION_HOST_BINDINGS = ("~/.cursor", "/loop", "agent-transcripts")
+CONTINUATION_NOTICE = "skills/writing-cycle/research-improvement/NOTICE.md"
+CONTINUATION_LICENSE = "skills/writing-cycle/research-improvement/UPSTREAM-LICENSE.md"
+CONTINUATION_ENTRY_NOTICE = "skills/general/research-os/NOTICE-PSTACK.md"
+CONTINUATION_ENTRY_LICENSE = "skills/general/research-os/LICENSE-PSTACK"
+CONTINUATION_PSTACK_LICENSE_SHA256 = (
+    "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
+)
+CONTINUATION_DEPENDENCIES = "skills/writing-cycle/research-improvement/references/dependencies.md"
+
+
+def continuation_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#59 持续/暂停/恢复：委托额度、真实恢复和宿主/权限边界不漂移。"""
+    found: list[str] = []
+    path = root / CONTINUATION_PLAYBOOK
+    text = path.read_text(encoding="utf-8") if path.is_file() else ""
+    if not path.is_file():
+        found.append(f"{CONTINUATION_PLAYBOOK}: 持续执行配方不存在")
+    elif CONTINUATION_PLAYBOOK not in tracked_paths:
+        found.append(f"{CONTINUATION_PLAYBOOK}: 持续执行配方未追踪")
+    for marker in CONTINUATION_MARKERS:
+        if marker not in text:
+            found.append(f"{CONTINUATION_PLAYBOOK}: 缺「{marker}」")
+    for binding in CONTINUATION_HOST_BINDINGS:
+        if binding in text:
+            found.append(f"{CONTINUATION_PLAYBOOK}: 宿主绑定残留 {binding}")
+    required_assets = (
+        (CONTINUATION_NOTICE, "来源说明", ("cursor/plugins", FORMAL_UPSTREAM_REVISION, "MIT", "Lauren Tan"), "缺来源记录"),
+        (CONTINUATION_LICENSE, "许可证", ("MIT License", "Copyright (c) 2026 Lauren Tan"), "缺 MIT 版权文本"),
+        (
+            CONTINUATION_ENTRY_NOTICE,
+            "来源说明",
+            (
+                "cursor/plugins",
+                FORMAL_UPSTREAM_REVISION,
+                "pstack/skills/poteto-mode/playbooks/",
+                "pstack/LICENSE",
+                "continuation.md",
+                "适配范围",
+                "MIT",
+                "Lauren Tan",
+                "LICENSE-PSTACK",
+            ),
+            "缺入口包来源记录",
+        ),
+        (
+            CONTINUATION_ENTRY_LICENSE,
+            "许可证",
+            ("MIT License", "Copyright (c) 2026 Lauren Tan"),
+            "缺完整 MIT 版权文本",
+        ),
+        (CONTINUATION_DEPENDENCIES, "安装依赖映射", ("research-os/references/mandate.md", "research-os/references/batch-authorization.md", "<skills-root>/research-os/", "实际存在且可读", "composition-map.md"), "缺依赖声明"),
+    )
+    for rel, label, markers, detail in required_assets:
+        asset = root / rel
+        if not asset.is_file():
+            found.append(f"{rel}: {label}不存在")
+            continue
+        if rel not in tracked_paths:
+            found.append(f"{rel}: {label}未追踪")
+        body = asset.read_text(encoding="utf-8")
+        for marker in markers:
+            if marker not in body:
+                found.append(f"{rel}: {detail} {marker}")
+    entry_license = root / CONTINUATION_ENTRY_LICENSE
+    if entry_license.is_file():
+        entry_license_bytes = entry_license.read_bytes()
+        if hashlib.sha256(entry_license_bytes).hexdigest() != CONTINUATION_PSTACK_LICENSE_SHA256:
+            found.append(f"{CONTINUATION_ENTRY_LICENSE}: 与固定 revision 的完整 pstack MIT 字节不一致")
+        source_license = root / CONTINUATION_LICENSE
+        if source_license.is_file() and entry_license_bytes != source_license.read_bytes():
+            found.append(f"{CONTINUATION_ENTRY_LICENSE}: 与 research-improvement 上游 MIT 字节不一致")
+    return found
+
+
+TICKET59_CONTRACTS: dict[str, tuple[str, ...]] = {
+    CONTINUATION_PLAYBOOK: (
+        "未知消耗保留预留，不按 0 释放",
+    ),
+    "skills/general/research-os/playbooks/pickup.md": (
+        "必须回到**原始产物**和原始命令核对",
+        "旧总结的成功标签不能直接当事实",
+        "普通研究恢复不要求 setup-research-os",
+        "原委托来源",
+        "剩余额度",
+        "不要求恢复会话另有本轮批准清单",
+    ),
+    "skills/writing-cycle/research-improvement/SKILL.md": (
+        "独立显式调用本能力时",
+        "由已授权的 research-os 委托级联时",
+        "只核对原委托的最大轮数、当前轮次、剩余额度与写域",
+        "先展示拟改内容并等用户确认",
+        "不自动向公共仓库或 tracker 写入",
+        "不计为 fresh 独立审查",
+        "reviewer 不可用",
+    ),
+    "skills/writing-cycle/research-improvement/references/composition-map.md": (
+        "已迁移能力不要求另行点名",
+        "未迁移叶仍执行其自身门",
+        "review/repair/re-review 轮统一标 `blocked`",
+    ),
+    "skills/writing-cycle/research-improvement/references/loop-methods.md": (
+        "reviewer 不可用",
+        "只读自查建议",
+        "不计为 fresh 独立审查",
+        "不得降级为单执行者评估",
+    ),
+    CONTINUATION_DEPENDENCIES: (
+        "仅作业/费用批次分支依赖",
+        "普通研究恢复不需要 `setup-research-os`",
+        "独立 reviewer 是 review/repair/re-review 的必要条件",
+        "不计为 fresh 独立审查",
+    ),
+}
+TICKET59_FORBIDDEN_CONTRACTS: dict[str, tuple[str, ...]] = {
+    "skills/writing-cycle/research-improvement/SKILL.md": (
+        "没有任何未经再次确认的新轮次",
+    ),
+    "skills/general/research-os/playbooks/pickup.md": (
+        "文件不存在就停",
+    ),
+    "skills/writing-cycle/research-improvement/references/loop-methods.md": (
+        "审查者不可用或独立性无法建立时，标 `independent review not performed` 并降级为单执行者评估",
+    ),
+    "skills/writing-cycle/research-improvement/references/composition-map.md": (
+        "以下均为 user-invoked，只能由用户另行显式调用",
+    ),
+}
+TICKET59_DEPENDENCY_REPO_PATHS = {
+    "skills/general/research-os/references/mandate.md",
+    "skills/general/research-os/references/batch-authorization.md",
+    "skills/general/setup-research-os/templates/compute-policy.md",
+    "skills/general/setup-research-os/templates/research-log.md",
+    "skills/writing-cycle/paper-compile/SKILL.md",
+}
+TICKET59_LICENSE_SHA256 = "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e"
+
+
+def ticket59_dependency_rows(text: str) -> list[tuple[str, str, str]]:
+    """Return (name, source repository path, flattened install path) table rows."""
+    rows: list[tuple[str, str, str]] = []
+    for line in text.splitlines():
+        if not line.lstrip().startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) < 3:
+            continue
+        source = cells[1].strip("`")
+        installed = cells[2].strip("`")
+        if source.startswith("skills/"):
+            rows.append((cells[0].strip("`"), source, installed))
+    return rows
+
+
+def ticket59_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """Check #59's specific recovery/review contract and installable file map.
+
+    This is a narrow set of explicit contract clauses and path relationships, not
+    a claim that static text analysis understands arbitrary natural language.
+    """
+    found: list[str] = []
+    for rel, markers in TICKET59_CONTRACTS.items():
+        path = root / rel
+        if not path.is_file():
+            found.append(f"{rel}: #59 合同文件不存在")
+            continue
+        if rel not in tracked_paths:
+            found.append(f"{rel}: #59 合同文件未追踪")
+        body = path.read_text(encoding="utf-8")
+        if rel == CONTINUATION_PLAYBOOK:
+            found.extend(f"{rel}: {problem}" for problem in shared_quota_contract_problems(body))
+        for marker in markers:
+            if marker not in body:
+                found.append(f"{rel}: 缺少 #59 合同条款「{marker}」")
+        for obsolete in TICKET59_FORBIDDEN_CONTRACTS.get(rel, ()):
+            if obsolete in body:
+                found.append(f"{rel}: 残留与迁移合同冲突的旧条款「{obsolete}」")
+
+    dependency_path = root / CONTINUATION_DEPENDENCIES
+    if not dependency_path.is_file():
+        return found
+    dependency_text = dependency_path.read_text(encoding="utf-8")
+    rows = ticket59_dependency_rows(dependency_text)
+    mapped_sources: set[str] = set()
+    mapped_targets: set[str] = set()
+    for name, source_rel, install_cell in rows:
+        mapped_sources.add(source_rel)
+        source = root / source_rel
+        if not source.is_file():
+            found.append(f"{CONTINUATION_DEPENDENCIES}: 依赖仓库目标不存在 {source_rel}")
+        elif source_rel not in tracked_paths:
+            found.append(f"{CONTINUATION_DEPENDENCIES}: 依赖仓库目标未追踪 {source_rel}")
+        expected = "/".join(source_rel.split("/")[2:])
+        prefix = "<skills-root>/"
+        actual = install_cell.removeprefix(prefix)
+        if not install_cell.startswith(prefix) or actual != expected:
+            found.append(
+                f"{CONTINUATION_DEPENDENCIES}: {name} 扁平映射应为 {prefix}{expected}，实际为 {install_cell}"
+            )
+        mapped_targets.add(actual)
+
+    for source_rel in sorted(TICKET59_DEPENDENCY_REPO_PATHS - mapped_sources):
+        found.append(f"{CONTINUATION_DEPENDENCIES}: 缺少依赖映射 {source_rel}")
+
+    composition_path = root / "skills/writing-cycle/research-improvement/references/composition-map.md"
+    if composition_path.is_file():
+        composition = composition_path.read_text(encoding="utf-8")
+        for skill_name in re.findall(r"\|[^|]+\|\s*`([a-z0-9-]+)`\s*\|", composition):
+            if f"{skill_name}/SKILL.md" not in mapped_targets:
+                found.append(
+                    f"{CONTINUATION_DEPENDENCIES}: composition-map 分支 {skill_name} 无对应安装映射"
+                )
+
+    pickup_path = root / "skills/general/research-os/playbooks/pickup.md"
+    if pickup_path.is_file():
+        pickup = pickup_path.read_text(encoding="utf-8")
+        for source_rel in re.findall(r"`(skills/[^`]+)`", pickup):
+            if not source_rel.endswith((".md", ".py", ".sh", ".json")):
+                continue
+            if not (root / source_rel).is_file():
+                found.append(f"pickup.md: 反引号必读资源不存在 {source_rel}")
+                continue
+            target = "/".join(source_rel.split("/")[2:])
+            package = target.split("/", 1)[0]
+            if not any(mapped.startswith(f"{package}/") for mapped in mapped_targets):
+                found.append(f"{CONTINUATION_DEPENDENCIES}: pickup.md 必读包 {package} 未声明映射")
+
+    license_path = root / CONTINUATION_LICENSE
+    if license_path.is_file():
+        digest = hashlib.sha256(license_path.read_bytes()).hexdigest()
+        if digest != TICKET59_LICENSE_SHA256:
+            found.append(f"{CONTINUATION_LICENSE}: MIT 许可证全文校验失败（SHA256 {digest}）")
+    else:
+        found.append(f"{CONTINUATION_LICENSE}: MIT 许可证全文不存在")
+    return found
+
+
+# --- expand 迁移边界 -------------------------------------------------------
+# 已迁移能力遵循委托合同（references/mandate.md）：正文无旧门，并带指定的合同小节。
+# 未迁移能力保留 #39 旧门基线，照旧单独可用；某能力迁移完成后，把它的条目从这里
+# 移入 MIGRATED_CONTRACT，并在 references/migration-boundary.md 记录同一事实。
+MIGRATED_CONTRACT: dict[str, str] = {
+    "skills/general/research-os/SKILL.md": "研究委托",
+    "skills/idea-cycle/creative-thinking-for-research/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-generation/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-refinement/SKILL.md": "委托继承",
+    "skills/idea-cycle/idea-review/SKILL.md": "委托继承",
+    "skills/idea-cycle/novelty-check/SKILL.md": "委托继承",
+    "skills/idea-cycle/research-lit/SKILL.md": "委托继承",
+    "skills/organization/arena/SKILL.md": "委托继承",
+    "skills/validation-cycle/create-verification-skill/SKILL.md": "委托继承",
+    "skills/validation-cycle/maintain-verification-skill/SKILL.md": "委托继承",
+    "skills/general/swarm/SKILL.md": "委托继承",
+    "skills/general/interrogate/SKILL.md": "委托继承",
+    "skills/writing-cycle/academic-plotting/SKILL.md": "委托继承",
+    "skills/validation-cycle/create-formal-verification-skill/SKILL.md": "委托继承",
+    "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
+    "skills/writing-cycle/research-improvement/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-plan/SKILL.md": "委托继承",
+    "skills/validation-cycle/run-experiment/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-queue/SKILL.md": "委托继承",
+    "skills/validation-cycle/monitor-experiment/SKILL.md": "委托继承",
+    "skills/validation-cycle/training-health-check/SKILL.md": "委托继承",
+    "skills/validation-cycle/analyze-results/SKILL.md": "委托继承",
+    "skills/validation-cycle/experiment-audit/SKILL.md": "委托继承",
+    "skills/validation-cycle/result-to-claim/SKILL.md": "委托继承",
+    "skills/validation-cycle/formula-derivation/SKILL.md": "委托继承",
+    "skills/validation-cycle/proof-writer/SKILL.md": "委托继承",
+    "skills/validation-cycle/proof-repair/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-writing/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-plan/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-drafting/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-compile/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-compile-repair/SKILL.md": "委托继承",
+    "skills/writing-cycle/citation-audit/SKILL.md": "委托继承",
+    "skills/writing-cycle/apply-citation-fixes/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-claim-audit/SKILL.md": "委托继承",
+    "skills/writing-cycle/claim-stress-test/SKILL.md": "委托继承",
+    "skills/writing-cycle/rebuttal/SKILL.md": "委托继承",
+    "skills/writing-cycle/resubmit-pipeline/SKILL.md": "委托继承",
+    "skills/writing-cycle/paper-talk/SKILL.md": "委托继承",
+}
+MANDATE_DOC = "skills/general/research-os/references/mandate.md"
+MIGRATION_DOC = "skills/general/research-os/references/migration-boundary.md"
+MANDATE_SECTIONS = ("目标", "权限", "研究额度", "完成与停止")
+
+# --- 未迁移叶 skill 门声明（#39 基线）；入口、setup 与已迁移能力不进这份路径表 ---
+LEGACY_LEAF_GATES: dict[str, set[str]] = {
     "skills/validation-cycle/proof-review/SKILL.md": set(),
-    "skills/validation-cycle/proof-writer/SKILL.md": {"write-authorization"},
-    "skills/validation-cycle/result-to-claim/SKILL.md": {"write-path"},
-    "skills/validation-cycle/run-experiment/SKILL.md": {"run-authorization", "milestone-start"},
-    "skills/validation-cycle/training-health-check/SKILL.md": {"write-path"},
-    "skills/writing-cycle/academic-plotting/SKILL.md": {"figure-choice", "external-resource"},
-    "skills/writing-cycle/apply-citation-fixes/SKILL.md": {"apply-authorization"},
-    "skills/writing-cycle/citation-audit/SKILL.md": {"audit-scope"},
-    "skills/writing-cycle/claim-stress-test/SKILL.md": {"report-target"},
-    "skills/writing-cycle/ml-paper-writing/SKILL.md": {"workflow-authorization"},
-    "skills/writing-cycle/paper-claim-audit/SKILL.md": {"report-target"},
-    "skills/writing-cycle/paper-compile-repair/SKILL.md": {"repair-scope", "round-diff"},
-    "skills/writing-cycle/paper-compile/SKILL.md": {"build-scope"},
-    "skills/writing-cycle/paper-drafting/SKILL.md": {"boundary-confirm", "venue-conflict"},
-    "skills/writing-cycle/paper-plan/SKILL.md": {"write-authorization", "framing-confirm"},
-    "skills/writing-cycle/paper-talk/SKILL.md": {"talk-authorization", "outline-confirm"},
-    "skills/writing-cycle/paper-writing/SKILL.md": {"workflow-authorization"},
-    "skills/writing-cycle/rebuttal/SKILL.md": {"strategy-confirm", "wording-confirm"},
-    "skills/writing-cycle/research-improvement/SKILL.md": {"loop-authorization", "experiment-topup"},
-    "skills/writing-cycle/resubmit-pipeline/SKILL.md": {"adaptation-scope", "change-confirm"},
-    "skills/writing-cycle/systems-paper-writing/SKILL.md": {"workflow-authorization"},
 }
-GATE_SKIP = {
-    "skills/general/setup-research-os/SKILL.md",
+
+
+# --- #54 形式化验证资产与对应审计 -----------------------------------------
+# 来源与许可随 Skill 共置（LICENSE/NOTICE.md），正文必须区分四类对象、记录外部假设与
+# 版本／同步、审计编码与原问题对应、保留故障暴露证据，并且不绑定宿主或个人目录。
+FORMAL_UPSTREAM_REVISION = "88d47514b82e7c44f00f2b2a72ff6dd12158038c"
+FORMAL_SKILLS: dict[str, tuple[str, ...]] = {
+    "create-formal-verification-skill": (
+        "代码性质", "形式模型", "数学定理", "普通测试", "按问题选工具",
+        "外部假设", "同步", "对应审计", "故障暴露", "草稿", "子代理", "blocked",
+        "宿主", "proof 族",
+    ),
+    "maintain-formal-verification-skill": (
+        "in sync", "updated", "bug", "blocked", "同步 commit", "对应审计",
+        "占位符", "子代理", "宿主", "proof 族",
+    ),
+}
+FORMAL_REQUIRED_FILES = {
+    "create-formal-verification-skill": (
+        "LICENSE",
+        "NOTICE.md",
+        "agents/openai.yaml",
+        "references/tool-selection.md",
+        "references/assumption-ledger.md",
+        "references/correspondence-audit.md",
+        "templates/formal-verification-record.md",
+    ),
+    "maintain-formal-verification-skill": (
+        "LICENSE",
+        "NOTICE.md",
+        "agents/openai.yaml",
+    ),
+}
+FORMAL_REFERENCE_MARKERS = {
+    "references/tool-selection.md": (
+        "代码性质", "形式模型", "数学定理", "普通测试", "不强制全链", "没有可用验证器",
+    ),
+    "references/assumption-ledger.md": (
+        "外部假设", "材料", "版本", "覆盖", "同步状态", "重验", "草稿",
+    ),
+    "references/correspondence-audit.md": (
+        "原问题", "编码定义", "定理", "量词", "假设", "边界", "对象", "占位符",
+        "编译成功", "有限数值", "不得冒充",
+    ),
+    "templates/formal-verification-record.md": (
+        "外部假设与材料", "同步状态", "commit", "重验触发条件", "对应审计", "草稿",
+    ),
+}
+FORMAL_HOST_BINDINGS = ("Cursor", "~/.cursor", ".cursor/", "pstack-models", "/loop")
+FORMAL_MODEL_PIN = re.compile(
+    r"(?i)(gpt-[0-9]|claude-[0-9]|gemini-[0-9]|grok-[0-9]|deepseek-[a-z0-9]|glm-[0-9]|opus|sonnet)"
+)
+
+
+def formal_verification_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#54 形式化验证：许可、工具选择、假设与同步、对应审计、故障暴露、宿主中立。"""
+    found: list[str] = []
+    base = root / "skills/validation-cycle"
+    for name, markers in FORMAL_SKILLS.items():
+        skill_dir = base / name
+        rel_dir = f"skills/validation-cycle/{name}"
+        if not skill_dir.is_dir():
+            found.append(f"{rel_dir}: 形式化验证 Skill 不存在")
+            continue
+        for rel in ("SKILL.md", *FORMAL_REQUIRED_FILES[name]):
+            path = skill_dir / rel
+            rel_path = f"{rel_dir}/{rel}"
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少形式化验证资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+        license_path = skill_dir / "LICENSE"
+        if license_path.is_file():
+            license_text = license_path.read_text(encoding="utf-8")
+            for marker in ("MIT License", "Copyright (c) 2026 Lauren Tan"):
+                if marker not in license_text:
+                    found.append(f"{rel_dir}/LICENSE: 缺 MIT 版权文本 {marker}")
+        notice_path = skill_dir / "NOTICE.md"
+        if notice_path.is_file():
+            notice = notice_path.read_text(encoding="utf-8")
+            for marker in ("cursor/plugins", FORMAL_UPSTREAM_REVISION, "MIT"):
+                if marker not in notice:
+                    found.append(f"{rel_dir}/NOTICE.md: 缺来源记录 {marker}")
+        skill_path = skill_dir / "SKILL.md"
+        if not skill_path.is_file():
+            continue
+        text = skill_path.read_text(encoding="utf-8")
+        for marker in markers:
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺「{marker}」")
+        if "委托继承" not in heading_anchors(text):
+            found.append(f"{rel_dir}/SKILL.md: 缺「委托继承」小节")
+        for binding in FORMAL_HOST_BINDINGS:
+            if binding in text:
+                found.append(f"{rel_dir}/SKILL.md: 宿主绑定残留 {binding}")
+        if FORMAL_MODEL_PIN.search(text):
+            found.append(f"{rel_dir}/SKILL.md: 固定模型绑定")
+        yaml_path = skill_dir / "agents" / "openai.yaml"
+        if yaml_path.is_file():
+            if yaml_allow_implicit(yaml_path.read_text(encoding="utf-8")) != "false":
+                found.append(f"{rel_dir}/agents/openai.yaml: allow_implicit_invocation 必须为 false")
+        for rel, required in FORMAL_REFERENCE_MARKERS.items():
+            path = skill_dir / rel
+            if not path.is_file():
+                continue
+            body = path.read_text(encoding="utf-8")
+            for marker in required:
+                if marker not in body:
+                    found.append(f"{rel_dir}/{rel}: 缺「{marker}」")
+        if f"{rel_dir}/SKILL.md" not in MIGRATED_CONTRACT:
+            found.append(f"{rel_dir}/SKILL.md: 未登记迁移状态")
+    boundary = root / MIGRATION_DOC
+    if boundary.is_file():
+        boundary_text = boundary.read_text(encoding="utf-8")
+        for name in FORMAL_SKILLS:
+            if name not in boundary_text:
+                found.append(f"{MIGRATION_DOC}: 未列出形式化验证能力 {name}")
+    return found
+
+
+# --- #53 项目行为验证资产 ---------------------------------------------------
+# 来源与许可随 Skill 共置（LICENSE/NOTICE.md）。创建侧必须保留真实启动、健康检查、
+# 驱动、证据、清理与特征覆盖映射的机制并带 helper；维护侧必须带三态结果、只改
+# 验证、源读波与现场驱动。未执行的生成资产只能标草稿；证据须绑定被测对象且在
+# 相关材料变化后失效；不绑定宿主或固定模型，与形式化能力分工明确。
+VERIFICATION_UPSTREAM_REVISION = "88d47514b82e7c44f00f2b2a72ff6dd12158038c"
+VERIFICATION_SKILLS: dict[str, tuple[str, ...]] = {
+    "create-verification-skill": (
+        "启动", "健康检查", "驱动", "证据", "清理", "覆盖映射", "doctor",
+        "草稿", "blocked", "子代理", "宿主", "证据归属与失效", "stale",
+        "不得为新对象背书", "重跑受影响覆盖",
+        "create-formal-verification-skill", "不宣称数学定理成立",
+    ),
+    "maintain-verification-skill": (
+        "clean", "changed", "blocked", "只改验证", "源读波", "现场驱动",
+        "doctor", "证据", "清理", "verified-unreachable", "子代理", "宿主",
+        "证据归属与失效", "stale", "不得为新对象背书", "重跑受影响覆盖",
+        "maintain-formal-verification-skill",
+    ),
+}
+VERIFICATION_REQUIRED_FILES = {
+    "create-verification-skill": (
+        "LICENSE", "NOTICE.md", "agents/openai.yaml",
+        "references/feature-map-example/README.md",
+        "helpers/feature-map-lint.py",
+    ),
+    "maintain-verification-skill": (
+        "LICENSE", "NOTICE.md", "agents/openai.yaml",
+    ),
+}
+
+
+def verification_skill_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#53 行为验证：许可、共置资源、机制保留、草稿/分工语义、宿主中立。"""
+    found: list[str] = []
+    base = root / "skills/validation-cycle"
+    for name, markers in VERIFICATION_SKILLS.items():
+        skill_dir = base / name
+        rel_dir = f"skills/validation-cycle/{name}"
+        if not skill_dir.is_dir():
+            found.append(f"{rel_dir}: 行为验证 Skill 不存在")
+            continue
+        for rel in VERIFICATION_REQUIRED_FILES[name]:
+            path = skill_dir / rel
+            rel_path = f"{rel_dir}/{rel}"
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少行为验证资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+        license_path = skill_dir / "LICENSE"
+        if license_path.is_file():
+            license_text = license_path.read_text(encoding="utf-8")
+            for marker in ("MIT License", "Copyright (c) 2026 Lauren Tan"):
+                if marker not in license_text:
+                    found.append(f"{rel_dir}/LICENSE: 缺 MIT 版权文本 {marker}")
+        notice_path = skill_dir / "NOTICE.md"
+        if notice_path.is_file():
+            notice = notice_path.read_text(encoding="utf-8")
+            for marker in ("cursor/plugins", VERIFICATION_UPSTREAM_REVISION, "MIT"):
+                if marker not in notice:
+                    found.append(f"{rel_dir}/NOTICE.md: 缺来源记录 {marker}")
+        skill_path = skill_dir / "SKILL.md"
+        if not skill_path.is_file():
+            continue
+        text = skill_path.read_text(encoding="utf-8")
+        for marker in markers:
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺「{marker}」")
+        if "委托继承" not in heading_anchors(text):
+            found.append(f"{rel_dir}/SKILL.md: 缺「委托继承」小节")
+        for binding in FORMAL_HOST_BINDINGS:
+            if binding in text:
+                found.append(f"{rel_dir}/SKILL.md: 宿主绑定残留 {binding}")
+        if FORMAL_MODEL_PIN.search(text):
+            found.append(f"{rel_dir}/SKILL.md: 固定模型绑定")
+        yaml_path = skill_dir / "agents" / "openai.yaml"
+        if yaml_path.is_file() and yaml_allow_implicit(yaml_path.read_text(encoding="utf-8")) != "false":
+            found.append(f"{rel_dir}/agents/openai.yaml: allow_implicit_invocation 必须为 false")
+        if f"{rel_dir}/SKILL.md" not in MIGRATED_CONTRACT:
+            found.append(f"{rel_dir}/SKILL.md: 未登记迁移状态")
+    boundary = root / MIGRATION_DOC
+    if boundary.is_file():
+        boundary_text = boundary.read_text(encoding="utf-8")
+        for name in VERIFICATION_SKILLS:
+            if name not in boundary_text:
+                found.append(f"{MIGRATION_DOC}: 未列出行为验证能力 {name}")
+    return found
+
+RESEARCH_ASSETS = {
+    "skills/idea-cycle/research-lit": (
+        "LICENSE",
+        "references/source-methods.md",
+        "references/file-capability-audit.md",
+        "references/source-verification.md",
+        "templates/literature-report.md",
+    ),
+    "skills/idea-cycle/novelty-check": (
+        "LICENSE",
+        "references/source-verification.md",
+    ),
+    "skills/idea-cycle/creative-thinking-for-research": (
+        "LICENSE-Orchestra.txt",
+        "references/creative-frameworks.md",
+    ),
+    "skills/writing-cycle/academic-plotting": (
+        "LICENSE-ARIS.txt",
+        "LICENSE-Orchestra.txt",
+        "references/data-visualization.md",
+        "references/diagram-generation.md",
+        "references/diagram-styles.md",
+        "references/style-guide.md",
+        "references/table-and-review.md",
+        "templates/figure-note.md",
+    ),
+}
+DISCOVERY_PHASE_LEAVES = (
+    "research-lit",
+    "idea-generation",
+    "novelty-check",
+    "idea-review",
+    "idea-refinement",
+)
+DISCOVERY_LIVE_CALLERS = (
+    "README.md",
+    "docs/README-en.md",
+    "skills/README.md",
     "skills/general/research-os/SKILL.md",
+    "skills/general/research-os/playbooks/discovery.md",
+    "skills/general/research-os/playbooks/literature-review.md",
+    "skills/general/research-os/references/PRODUCT-MAP.md",
+    "skills/general/research-os/references/idea-cycle.md",
+    "skills/general/research-os/references/migration-boundary.md",
+    "docs/assets/README.md",
+    "docs/assets/demo-script.sh",
+    "docs/assets/workflow-diagrams.md",
+    "docs/user-acceptance-guide.md",
+)
+DISCOVERY_LICENSE_SHA256 = "e30cf5dd5f49b4f9b656590e23d782b4756c924a9f0ff0162b3e7b5d87006bf5"
+
+
+def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#58 检索/绘图与 #60 Discovery 资源：检查既有能力归属及随包可达。"""
+    found: list[str] = []
+    for rel_dir, rels in RESEARCH_ASSETS.items():
+        for rel in rels:
+            rel_path = f"{rel_dir}/{rel}"
+            path = root / rel_path
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少随包研究资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+    discovery_root = root / "skills/idea-cycle/idea-discovery"
+    if (discovery_root / "SKILL.md").exists() or (discovery_root / "agents/openai.yaml").exists():
+        found.append("skills/idea-cycle/idea-discovery: 旧发现控制器未退役")
+
+    composition_rel = "skills/general/research-os/references/discovery-composition.md"
+    composition = root / composition_rel
+    if not composition.is_file():
+        found.append(f"{composition_rel}: 缺少组合说明")
+    elif composition_rel not in tracked_paths:
+        found.append(f"{composition_rel}: 未追踪")
+    else:
+        text = composition.read_text(encoding="utf-8")
+        for marker in (
+            "Required skills", "DEPENDENCY MISSING / BLOCKED", "子集", "重排", "回访",
+            "目标替换", "fresh 独立评审", "原始回复", "缺少依赖只阻塞受影响职责",
+            *DISCOVERY_PHASE_LEAVES,
+        ):
+            if marker not in text:
+                found.append(f"{composition_rel}: 缺「{marker}」")
+        found.extend(f"{composition_rel}: {problem}" for problem in discovery_order_problems(text))
+        install_line = next((line for line in text.splitlines() if "--skill research-os" in line), "")
+        missing = [name for name in DISCOVERY_PHASE_LEAVES if name not in install_line]
+        if missing:
+            found.append(f"{composition_rel}: 成组安装命令缺 Required skills " + ", ".join(missing))
+        if "creative-thinking-for-research" in install_line:
+            found.append(f"{composition_rel}: 可选 creative-thinking-for-research 被误列为 Required")
+
+    playbook_rel = "skills/general/research-os/playbooks/discovery.md"
+    playbook = root / playbook_rel
+    if not playbook.is_file():
+        found.append(f"{playbook_rel}: 缺 Discovery 配方")
+    else:
+        text = playbook.read_text(encoding="utf-8")
+        if "skills/idea-cycle/" in text:
+            found.append(f"{playbook_rel}: 使用仓库源码路径，无法解析安装后的 Skill 资源")
+        if "按安装后的 Skill 名称定位其目录" not in text:
+            found.append(f"{playbook_rel}: 缺安装后 Skill 目录解析规则")
+        for marker in ("方向到 Proposal", "目标缺口", "子集", "重排", "回访", "fresh 独立评审"):
+            if marker not in text:
+                found.append(f"{playbook_rel}: 缺组合行为 {marker}")
+        for rel in DISCOVERY_PHASE_LEAVES:
+            if rel not in text:
+                found.append(f"{playbook_rel}: 缺组合叶 {rel}")
+        found.extend(f"{playbook_rel}: {problem}" for problem in discovery_order_problems(text))
+
+    required_discovery_assets = (
+        "skills/general/research-os/templates/research-brief.md",
+        "skills/general/research-os/templates/discovery-report.md",
+        "skills/general/research-os/licenses/idea-cycle/LICENSE",
+    )
+    for rel in required_discovery_assets:
+        path = root / rel
+        if not path.is_file():
+            found.append(f"{rel}: 缺 Discovery 随包资源")
+        elif rel not in tracked_paths:
+            found.append(f"{rel}: 未追踪")
+    license_path = root / required_discovery_assets[-1]
+    if license_path.is_file() and hashlib.sha256(license_path.read_bytes()).hexdigest() != DISCOVERY_LICENSE_SHA256:
+        found.append(f"{required_discovery_assets[-1]}: 上游 MIT 许可与原文不一致")
+
+    for rel in DISCOVERY_LIVE_CALLERS:
+        path = root / rel
+        if path.is_file() and "idea-discovery" in path.read_text(encoding="utf-8"):
+            found.append(f"{rel}: 仍调用已退役的 idea-discovery slug")
+
+    plotting = root / "skills/writing-cycle/academic-plotting/SKILL.md"
+    if plotting.is_file():
+        text = plotting.read_text(encoding="utf-8")
+        if "没有计划时" in text and ("确认选择" in text or "确认候选" in text):
+            found.append("skills/writing-cycle/academic-plotting/SKILL.md: 无条件要求确认普通选图")
+        if "已授权目录内" not in text or "新文件路径" not in text:
+            found.append("skills/writing-cycle/academic-plotting/SKILL.md: 缺授权目录内自主选择新路径")
+    audit = root / "skills/idea-cycle/research-lit/references/file-capability-audit.md"
+    if not audit.is_file():
+        found.append("skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺文件能力缺口审计")
+    else:
+        audit_text = audit.read_text(encoding="utf-8")
+        for marker in ("plain text", "PDF", "OCR", "connector", "plotting", "export", "host prerequisite", "not bundled", "No additional external asset is selected in this ticket", "license", "dependencies"):
+            if marker not in audit_text:
+                found.append(f"skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺「{marker}」")
+        audit_rows = (
+            "Search plain text / Markdown",
+            "Read and extract born-digital PDF text",
+            "Read scanned PDFs / image-only documents",
+            "Reference-manager and notes connectors",
+            "Plotting and diagram production",
+            "Figure export and visual inspection",
+        )
+        for topic in audit_rows:
+            prefix = f"| {topic} |"
+            row = next((line for line in audit_text.splitlines() if line.startswith(prefix)), None)
+            cells = row.strip().strip("|").split("|") if row else []
+            if len(cells) != 4 or any(not cell.strip() for cell in cells):
+                found.append(f"skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺文件能力审计条目或覆盖信息 {topic}")
+    return found
+
+
+EXPERIMENT_SKILLS: tuple[str, ...] = (
+    "experiment-plan",
+    "run-experiment",
+    "experiment-queue",
+    "monitor-experiment",
+    "training-health-check",
+    "analyze-results",
+    "experiment-audit",
+    "result-to-claim",
+)
+EXPERIMENT_JOB_CONTRACT = (
+    "输入版本", "工具链", "独立目录", "作业身份", "退出码", "原始日志", "产物",
+)
+EXPERIMENT_RECOVERY = (
+    "原作业", "不盲重跑", "旧文件", "作业退出", "产物有效", "科学结论",
+)
+EXPERIMENT_REMOTE = (
+    "远程只是执行位置", "SSH", "已有调度", "不新造执行引擎", "不锁定供应商",
+    "凭据", "独立目录", "作业身份", "原作业",
+)
+EXPERIMENT_REQUIRED_FILES = {
+    "experiment-plan": (
+        "references/mandate.md", "references/block-checks.md", "templates/experiment-plan.md",
+    ),
+    "run-experiment": (
+        "references/mandate.md",
+        "references/execution-contract.md",
+        "references/remote-execution.md",
+        "references/batch-authorization.md",
+        "references/composition-map.md",
+        "templates/run-report.md",
+    ),
+    "experiment-queue": ("references/mandate.md", "templates/batch-manifest.md"),
+    "monitor-experiment": (
+        "references/mandate.md", "references/observation-sources.md", "templates/run-status-report.md",
+    ),
+    "training-health-check": (
+        "references/mandate.md", "references/health-signals.md", "templates/health-report.md",
+    ),
+    "analyze-results": (
+        "references/mandate.md", "references/statistical-checks.md", "templates/analysis-report.md",
+    ),
+    "experiment-audit": (
+        "references/mandate.md", "references/integrity-checks.md", "templates/audit-report.md",
+    ),
+    "result-to-claim": (
+        "references/mandate.md", "references/claim-judgment.md", "templates/claim-report.md",
+    ),
 }
+EXPERIMENT_TEXT_MARKERS = {
+    "run-experiment": (
+        "唯一实验执行控制", "小批量或队列", "委托继承", *EXPERIMENT_JOB_CONTRACT,
+        "作业退出", "产物有效", "科学结论", "旧文件",
+        "远程只是执行位置", "SSH", "已有调度",
+    ),
+    "experiment-queue": (
+        "委托继承", *EXPERIMENT_JOB_CONTRACT, *EXPERIMENT_RECOVERY,
+        "不因进入队列或新波次重复索权", "研究日志",
+    ),
+    "experiment-plan": (
+        "委托继承", "数学计算", "不硬套训练 baseline", "计划声明的对照",
+        "不逐 milestone 再索权",
+    ),
+    "monitor-experiment": ("委托继承",),
+    "training-health-check": ("委托继承",),
+    "analyze-results": ("委托继承",),
+    "experiment-audit": ("委托继承", "作业退出", "产物有效", "科学结论", "unknown"),
+    "result-to-claim": ("委托继承", "作业退出", "产物有效", "科学结论", "旧文件"),
+}
+EXPERIMENT_MANDATE_MARKERS = (
+    "references/mandate.md",
+    "完整规范的唯一权威仍是 `skills/general/research-os/references/mandate.md`",
+    "分发摘录缺失",
+    "本次动作超出摘录",
+)
+EXPERIMENT_MANDATE_PACKAGE_MARKERS = (
+    "叶能力、下一阶段或一次审查完成都不重置授权",
+    "用户明确只要推荐、只审查、只规划或不要执行时，保持该范围",
+    "未授权的破坏性动作",
+    "项目内的依赖、工具与缓存可在授权内自动准备",
+    "有界首轮",
+    "并行、换线程、重试与恢复都消耗同一份额度，不重置",
+    "用户叫停是停止，不是完成",
+    "委托的验收看实际产物，不看执行者的自述",
+    "额度、权限与目标互不推导",
+)
+EXPERIMENT_COMPANION_DEPENDENCIES = {
+    "experiment-queue": ("run-experiment",),
+    "result-to-claim": ("analyze-results",),
+}
+EXPERIMENT_FILE_MARKERS = {
+    "run-experiment/references/composition-map.md": (
+        "是唯一执行控制", "experiment-plan", "experiment-queue", "monitor-experiment",
+        "training-health-check", "analyze-results", "experiment-audit", "result-to-claim",
+        "blocked",
+    ),
+    "run-experiment/references/execution-contract.md": EXPERIMENT_JOB_CONTRACT,
+    "run-experiment/references/remote-execution.md": EXPERIMENT_REMOTE,
+    "run-experiment/references/batch-authorization.md": (
+        "research-log.md", "valid_until", "scope", "cost_limit", "compute_limit", "run_limit",
+        "run_count_basis: planned-run", "concurrency_limit", "retry_limit", "worst_case_estimate",
+    ),
+    "run-experiment/templates/run-report.md": (
+        *EXPERIMENT_JOB_CONTRACT, "Artifact validity", "Scientific conclusion",
+        "Monitoring and Health", "Analysis and Independent Audit", "Tracker Update",
+        "Optional Ablation Suggestions",
+    ),
+    "experiment-queue/templates/batch-manifest.md": EXPERIMENT_JOB_CONTRACT,
+}
+EXPERIMENT_HOST_BINDINGS = FORMAL_HOST_BINDINGS
+EXPERIMENT_MODEL_PIN = FORMAL_MODEL_PIN
+EXPERIMENT_AUTHORIZATION_MARKERS = (
+    "research-log.md", "valid_until", "scope", "累计额度", "run_count_basis=planned-run",
+    "concurrency_limit", "retry_limit", "worst_case_estimate", "不按 milestone 重复索取",
+    "batch-authorization.md",
+)
+EXPERIMENT_BRIDGE_PLAYBOOK = "skills/general/research-os/playbooks/experiment-bridge.md"
 
 
+def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[str]:
+    """#56 实验执行：委托继承、桥接合流、运行/恢复/远程合同与宿主中立。"""
+    found: list[str] = []
+    base = root / "skills" / "validation-cycle"
+    legacy_bridge = base / "experiment-bridge"
+    if (legacy_bridge / "SKILL.md").exists() or any(
+        path.is_file() for path in legacy_bridge.rglob("*")
+    ):
+        found.append("skills/validation-cycle/experiment-bridge: 旧 Skill 仍可发现或安装")
+    packaged_mandate_text: str | None = None
+    for name in EXPERIMENT_SKILLS:
+        rel_dir = f"skills/validation-cycle/{name}"
+        skill_dir = base / name
+        if not skill_dir.is_dir():
+            found.append(f"{rel_dir}: 实验 Skill 不存在")
+            continue
+        for rel in ("SKILL.md", "LICENSE", "agents/openai.yaml", *EXPERIMENT_REQUIRED_FILES.get(name, ())):
+            path = skill_dir / rel
+            rel_path = f"{rel_dir}/{rel}"
+            if not path.is_file():
+                found.append(f"{rel_path}: 缺少实验执行资产")
+            elif rel_path not in tracked_paths:
+                found.append(f"{rel_path}: 未追踪")
+        skill_path = skill_dir / "SKILL.md"
+        if not skill_path.is_file():
+            continue
+        text = skill_path.read_text(encoding="utf-8")
+        for marker in EXPERIMENT_TEXT_MARKERS.get(name, ()):
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺「{marker}」")
+        for marker in EXPERIMENT_MANDATE_MARKERS:
+            if marker not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺单装委托合同引用/失效处理「{marker}」")
+        mandate_copy = skill_dir / "references" / "mandate.md"
+        canonical_mandate = root / "skills/general/research-os/references/mandate.md"
+        if mandate_copy.is_file() and canonical_mandate.is_file():
+            copy_text = mandate_copy.read_text(encoding="utf-8")
+            canonical_text = canonical_mandate.read_text(encoding="utf-8")
+            if packaged_mandate_text is None:
+                packaged_mandate_text = copy_text
+            elif copy_text != packaged_mandate_text:
+                found.append(f"{rel_dir}/references/mandate.md: 分发副本与其他实验叶不一致")
+            for marker in EXPERIMENT_MANDATE_PACKAGE_MARKERS:
+                if marker not in canonical_text:
+                    found.append(f"skills/general/research-os/references/mandate.md: 权威合同缺「{marker}」")
+                if marker not in copy_text:
+                    found.append(f"{rel_dir}/references/mandate.md: 单装合同缺「{marker}」")
+            if "本文件摘录自唯一规范源 `skills/general/research-os/references/mandate.md`" not in copy_text:
+                found.append(f"{rel_dir}/references/mandate.md: 缺规范源与分发副本关系")
+        elif not mandate_copy.is_file():
+            found.append(f"{rel_dir}/references/mandate.md: 缺单装委托合同资源")
+        elif not canonical_mandate.is_file():
+            found.append("skills/general/research-os/references/mandate.md: 委托唯一权威缺失或未追踪")
+        companions = EXPERIMENT_COMPANION_DEPENDENCIES.get(name, ())
+        if companions:
+            dependency_header = "## 联装能力依赖"
+            if dependency_header not in text:
+                found.append(f"{rel_dir}/SKILL.md: 缺联装能力依赖声明")
+            else:
+                dependency_body = text.split(dependency_header, 1)[1].split("\n## ", 1)[0]
+                for companion in companions:
+                    if f"`{companion}`" not in dependency_body:
+                        found.append(f"{rel_dir}/SKILL.md: 未声明联装依赖 {companion}")
+                if "缺失时标为 `blocked`" not in dependency_body:
+                    found.append(f"{rel_dir}/SKILL.md: 缺联装能力缺失时的 blocked 行为")
+                if "npx skills add <repo>" not in dependency_body:
+                    found.append(f"{rel_dir}/SKILL.md: 缺联装能力补装命令")
+        if "委托继承" not in heading_anchors(text):
+            found.append(f"{rel_dir}/SKILL.md: 缺「委托继承」小节")
+        if re.search(r"(?m)^Gate:", text):
+            found.append(f"{rel_dir}/SKILL.md: 已迁移实验能力残留旧门")
+        for binding in EXPERIMENT_HOST_BINDINGS:
+            if binding in text:
+                found.append(f"{rel_dir}/SKILL.md: 宿主绑定残留 {binding}")
+        if EXPERIMENT_MODEL_PIN.search(text):
+            found.append(f"{rel_dir}/SKILL.md: 固定模型绑定")
+        yaml_path = skill_dir / "agents" / "openai.yaml"
+        if yaml_path.is_file() and yaml_allow_implicit(yaml_path.read_text(encoding="utf-8")) != "false":
+            found.append(f"{rel_dir}/agents/openai.yaml: allow_implicit_invocation 必须为 false")
+        if f"{rel_dir}/SKILL.md" not in MIGRATED_CONTRACT:
+            found.append(f"{rel_dir}/SKILL.md: 未登记迁移状态")
+        for rel, markers in EXPERIMENT_FILE_MARKERS.items():
+            if not rel.startswith(f"{name}/"):
+                continue
+            path = base / rel
+            if not path.is_file():
+                asset_path = f"skills/validation-cycle/{rel}"
+                message = f"{asset_path}: 缺少实验执行资产"
+                if message not in found:
+                    found.append(message)
+                continue
+            body = path.read_text(encoding="utf-8")
+            for marker in markers:
+                if marker not in body:
+                    found.append(f"skills/validation-cycle/{rel}: 缺「{marker}」")
+    mandate = root / "skills/general/research-os/references/mandate.md"
+    if not mandate.is_file() or "skills/general/research-os/references/mandate.md" not in tracked_paths:
+        found.append("skills/general/research-os/references/mandate.md: 委托唯一权威缺失或未追踪")
+
+    # The repository-wide link check validates files; validate fragments as well
+    # for all nine shipped experiment skills, including same-file anchors.
+    for name in EXPERIMENT_SKILLS:
+        skill_dir = base / name
+        if not skill_dir.is_dir():
+            continue
+        for markdown in skill_dir.rglob("*.md"):
+            rel_markdown = markdown.relative_to(root).as_posix()
+            lines = markdown.read_text(encoding="utf-8").splitlines()
+            for line_number, line in enumerate(lines, 1):
+                for target in link_re.findall(line):
+                    if target.startswith(("http://", "https://", "mailto:")):
+                        continue
+                    file_part, separator, fragment = target.partition("#")
+                    if not separator or not fragment:
+                        fragment = ""
+                    if not file_part:
+                        target_markdown = markdown
+                    else:
+                        resolved = lexical_relative(markdown.parent, unquote(file_part))
+                        if resolved is None:
+                            continue
+                        target_markdown = Path(resolved)
+                    try:
+                        target_markdown.relative_to(skill_dir)
+                    except ValueError:
+                        found.append(
+                            f"{rel_markdown}:{line_number}: 单装时不可解析的跨叶 Markdown 引用 {target}"
+                        )
+                    if not target_markdown.is_file():
+                        continue  # Missing paths are reported by the repository-wide link check.
+                    if not fragment:
+                        continue
+                    anchor = unquote(fragment)
+                    if anchor not in heading_anchors(target_markdown.read_text(encoding="utf-8")):
+                        found.append(
+                            f"{rel_markdown}:{line_number}: 无效 Markdown fragment #{anchor}"
+                        )
+    run_text = base / "run-experiment" / "SKILL.md"
+    if run_text.is_file():
+        run_body = run_text.read_text(encoding="utf-8")
+        if "../experiment-bridge/SKILL.md" in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 仍依赖旧桥接控制器")
+        if "唯一实验执行控制" not in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 未声明唯一执行控制")
+        if "仓库中的 `experiment-queue`" not in run_body or "单装 `run-experiment` 时" not in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 缺批量队列可用性边界")
+        for marker in EXPERIMENT_AUTHORIZATION_MARKERS:
+            if marker not in run_body:
+                found.append(f"skills/validation-cycle/run-experiment/SKILL.md: 缺批次授权合同「{marker}」")
+    bridge_playbook = root / EXPERIMENT_BRIDGE_PLAYBOOK
+    if bridge_playbook.is_file():
+        playbook = bridge_playbook.read_text(encoding="utf-8")
+        for marker in (
+            "skills/validation-cycle/run-experiment/SKILL.md", "唯一执行控制",
+            "monitor-experiment", "training-health-check", "analyze-results",
+            "experiment-audit", "result-to-claim",
+        ):
+            if marker not in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 缺能力路由 {marker}")
+        for marker in (
+            "skills/validation-cycle/experiment-bridge/SKILL.md", "-s experiment-bridge",
+            "/experiment-bridge",
+        ):
+            if marker in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 残留旧 Skill 调用或安装 slug {marker}")
+        for marker in ("run_count_basis=planned-run", "每个 attempt 先记最坏预留"):
+            if marker in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 桥接 playbook 重复执行控制合同 {marker}")
+    else:
+        found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: playbook 不存在")
+    active_route_docs = (
+        "README.md", "docs/README-en.md", "docs/user-acceptance-guide.md", "skills/README.md",
+        "skills/general/research-os/SKILL.md",
+        "skills/general/research-os/references/PRODUCT-MAP.md",
+        "skills/general/research-os/references/validation.md",
+        "skills/general/research-os/references/migration-boundary.md",
+        "skills/general/research-os/references/batch-authorization.md",
+        EXPERIMENT_BRIDGE_PLAYBOOK,
+    )
+    for relative in active_route_docs:
+        path = root / relative
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        for marker in (
+            "skills/validation-cycle/experiment-bridge/SKILL.md", "-s experiment-bridge",
+        ):
+            if marker in text:
+                found.append(f"{relative}: 残留旧 Skill 路径或安装 slug {marker}")
+        if re.search(r"(?m)^\s*/experiment-bridge\b", text):
+            found.append(f"{relative}: 残留旧 /experiment-bridge 可调用入口")
+    boundary = root / MIGRATION_DOC
+    if boundary.is_file():
+        boundary_text = boundary.read_text(encoding="utf-8")
+        for name in EXPERIMENT_SKILLS:
+            if name not in boundary_text:
+                found.append(f"{MIGRATION_DOC}: 未列出实验能力 {name}")
+    return found
 
 
 for sf in skill_files:
     rel = sf.relative_to(ROOT).as_posix()
-    if rel not in LEAF_EXPECTED_GATES:
-        if rel not in GATE_SKIP:
-            err(f"{rel}: 缺少门声明基线")
+    expected = expected_gates(sf.parent, sf.parent.name)
+    if expected is None:
+        err(f"{rel}: 缺少门声明基线")
         continue
     body = sf.read_text(encoding="utf-8").split("---", 2)[-1]
-    for problem in gate_problems(sf.parent.name, sf.parent, body, frozenset(LEAF_EXPECTED_GATES[rel]), tracked):
+    for problem in gate_problems(sf.parent.name, sf.parent, body, expected, tracked):
         err(f"{rel}: {problem}")
+
+# --- arena 阶段保真（#51）：六阶段机制不得静默丢失 ---
+ARENA_REL = "skills/organization/arena/SKILL.md"
+ARENA_PHASES = ("Frame", "Fan-out", "Cross-judge", "Pick", "Graft", "Verify")
+ARENA_UPSTREAM_REMNANTS = ("~/.cursor", "pstack-models.mdc")
+
+
+def arena_contract_problems(root: Path) -> list[str]:
+    found: list[str] = []
+    path = root / ARENA_REL
+    if not path.is_file():
+        return [f"{ARENA_REL}: arena 技能不存在"]
+    text = path.read_text(encoding="utf-8")
+    for phase in ARENA_PHASES:
+        if phase not in text:
+            found.append(f"{ARENA_REL}: arena 缺阶段 {phase}")
+    for token in ARENA_UPSTREAM_REMNANTS:
+        if token in text:
+            found.append(f"{ARENA_REL}: arena 残留上游宿主绑定 {token}")
+    if "swarm" in arena_required_dependencies(text):
+        found.append(f"{ARENA_REL}: arena 声明必需依赖 swarm，不独立")
+    return found
+
+
+for problem in migration_contract_problems(ROOT, tracked):
+    err(problem)
+for problem in continuation_contract_problems(ROOT, tracked):
+    err(problem)
+for problem in ticket59_contract_problems(ROOT, tracked):
+    err(problem)
+for problem in formal_verification_problems(ROOT, tracked):
+    err(problem)
+for problem in verification_skill_problems(ROOT, tracked):
+    err(problem)
+for problem in experiment_execution_problems(ROOT, tracked):
+    err(problem)
+
+for problem in arena_contract_problems(ROOT):
+    err(problem)
+
+for problem in research_asset_problems(ROOT, tracked):
+    err(problem)
 
 
 def parse_fields(text: str) -> dict[str, list[str]]:
@@ -990,11 +2425,7 @@ def check_log(path: Path, policy_fields: dict[str, list[str]]) -> None:
 
 
 def check_gates(skill_dir: Path, skill_name: str) -> None:
-    expected = GATE_BASELINE.get(skill_name)
-    if expected is None:
-        expected = EXPECTED_GATES.get(skill_name)
-    if expected is None:
-        expected = LEAF_EXPECTED_GATES.get(f"skills/{skill_dir.parent.name}/{skill_name}/SKILL.md")
+    expected = expected_gates(skill_dir, skill_name)
     if expected is None:
         err(f"{skill_name}: 门声明不在已审阅基线")
         return
@@ -1028,7 +2459,14 @@ def run_contract(args: argparse.Namespace) -> None:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Research OS skill 与配置合同检查")
+    parser = argparse.ArgumentParser(
+        description="Research OS skill 与配置合同检查",
+        epilog="静态检查只核结构/可解析声明及有限明确违约；自然语言的隐式依赖、阶段顺序、共享额度完整语义仍须人工核验。结构通过不证明模型遵从或科研正确性。",
+    )
+    parser.add_argument(
+        "--archive-scope", choices=("structure", "history"), default="structure",
+        help="默认检查归档索引结构；history 另要求每包历史 SHA/字节完整（不认证来源/安全）",
+    )
     parser.add_argument("--role-file")
     parser.add_argument("--role-template")
     parser.add_argument("--role-refs", nargs="*")
@@ -1061,6 +2499,7 @@ def run_builtin_contract() -> None:
 
 def main() -> int:
     args = parse_args()
+    check_archive_index(strict=args.archive_scope == "history")
     if args.skip_suite:
         run_contract(args)
     else:

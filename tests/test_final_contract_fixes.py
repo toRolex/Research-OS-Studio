@@ -1,10 +1,11 @@
 """Final review regressions: expectations from approved contract, not checker."""
 import runpy
-import shutil
 import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+
+from spec48_workcopy import copy_tracked_tree
 
 ROOT = Path(__file__).resolve().parents[1]
 NS = runpy.run_path(str(ROOT / "scripts/check-skills.py"))
@@ -82,16 +83,9 @@ class FinalContracts(unittest.TestCase):
     def test_full_cli_damaged_declarations_refs_and_readme(self):
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp)
-            tracked = subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True).splitlines()
-            for rel in tracked:
-                src, dst = ROOT / rel, work / rel
-                if not src.is_file():
-                    continue
-                dst.parent.mkdir(parents=True, exist_ok=True)
-                if src.suffix in {".md", ".py", ".yaml"}:
-                    shutil.copyfile(src, dst)
-                else:
-                    dst.touch()
+            # Preserve tracked license bytes too; an empty touched file is not
+            # a valid baseline for the later CLI declaration/reference mutants.
+            copy_tracked_tree(ROOT, work)
             subprocess.run(["git", "init", "-q"], cwd=work, check=True)
             subprocess.run(["git", "add", "-A"], cwd=work, check=True)
             skill = work / "skills/general/research-os/SKILL.md"
@@ -112,14 +106,20 @@ class FinalContracts(unittest.TestCase):
             ]
             def check():
                 return subprocess.run(["uv", "run", "--no-project", "python", "scripts/check-skills.py"], cwd=work, text=True, capture_output=True)
-            self.assertEqual(check().returncode, 0)
+            baseline = check()
+            self.assertEqual(baseline.returncode, 0, baseline.stdout + baseline.stderr)
             for path, old, new in cases:
                 with self.subTest(path=path.name, mutation=new):
                     original = path.read_text()
+                    if old:
+                        self.assertIn(old, original)
                     path.write_text(original.replace(old, new, 1) if old else original + new)
                     result = check()
                     path.write_text(original)
                     self.assertNotEqual(result.returncode, 0, result.stdout)
+                    expected = "ghostwriter" if "ghostwriter" in new else "MISSING.md" if "MISSING.md" in new else path.name
+                    self.assertIn(expected, result.stdout + result.stderr)
+                    print(f"MUTANT full-cli/{path.name}/{new!r}: rc={result.returncode}\n{result.stdout}{result.stderr}")
 
 
 if __name__ == "__main__":

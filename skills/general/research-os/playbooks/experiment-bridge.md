@@ -1,45 +1,15 @@
-# experiment-bridge
+# experiment-bridge（Research OS 配方）
 
-用户要在一次授权内把已批准计划做到分析和审计。执行步骤仍在叶 skill。
+“实验桥接”可继续作为用户表达“按计划跑实验”的目标路由名，但不是可安装或可调用的 Skill。实验的执行控制、授权账本、作业身份、恢复与初步报告只有 `run-experiment` 一个权威入口；本配方不得复制其控制步骤。
 
 ## 适用
 
-已有计划或 tracker，用户要跑完并分析结果。只有计划还没写时，回到入口重匹配 experiment-plan。规模大不自动改去 improvement。
+用户已有计划或 tracker，要求在当前委托内落实并执行。仅需计划时路由到 `experiment-plan`；已知问题、计划与本批授权均齐备后，执行分支进入 `run-experiment`。规模大不自动改去 `research-improvement`。
 
-## 阶段角色
+## 配方
 
-Role: orchestrator
-
-授权检查、单一写账与亲核。
-
-Role: implementer
-
-实现与各阶段实验。
-
-Role: analyst
-
-结果分析。
-
-Role: reviewer
-
-fresh 代码审查与实验审计。
-
-## 步骤
-
-1. 读 `skills/validation-cycle/experiment-bridge/SKILL.md` 全文，并读它点名的 references 与 templates。阶段顺序、子 skill 组合和报告以该正文为准。
-2. 读工作区 `research-log.md` 里本批授权，并按 [批次授权](../references/batch-authorization.md) 做启动前检查。默认 `compute-policy.md` 不是这张授权。
-3. 检查同时核对：授权是否存在、valid_until 是否已过、scope 是否仍覆盖本次计划与写域、单次额度、累计额度（含仍在跑的预留）、run_count_basis=planned-run 的名额、concurrency_limit、retry_limit。未知消耗不按 0 释放。恰好打到上限可以启动。
-4. 任一项失败：停下说明哪一条，不写 started_at，不跑命令，不改实验产物。
-5. 全部通过后，已入账的本批确认就是范围内每次启动的用户授权。按叶 skill 执行，不重写它的阶段。每个 attempt 先记最坏预留，再启动；结束后把实际消耗和结果补上。失败、超时、无效仍占额。
-6. 删除或覆盖既有实验结果前停下，即使额度还够。用户对本批额度的确认不包含这一次破坏。
-7. 交付叶 skill 要求的报告后停止。不进入写作，不延长 valid_until。
-
-## 记账
-
-单编排者追加 attempt：run_id、attempt_id、worst_case_estimate、started_at、finished_at、actual_consumption、result_status、artifact_paths。
-
-获准跑完后，planned-run 次数、费用和算力与授权对得上。被拒场景没有作业产物。
-
-## 停止
-
-缺授权、过期、范围变更、累计越界、并发或重试越界、无法核实运行中预留，都停在作业前。pickup 只重读日志和真实作业状态。
+1. 读取 `skills/validation-cycle/run-experiment/SKILL.md` 全文、`skills/validation-cycle/run-experiment/references/composition-map.md` 与本次相关引用；不要再查找或安装旧 bridge Skill。
+2. 将实现、审查、sanity、单次／批量执行、研究日志记账、恢复和初步运行报告全部交给 `run-experiment`。它是唯一执行控制，授权与额度不由本配方重新核验或复制；批次授权字段见[批次授权参考](../references/batch-authorization.md)。
+3. 只在用户委托要求时，分别调用独立 `monitor-experiment`、`training-health-check`、`analyze-results`、`experiment-audit` 或 `result-to-claim`；每项只承担自身观察、诊断、分析、审计或 Claim 判断职责。缺少被要求的能力时，仅该分支标为 `blocked`，不得把缺失当作通过或已完成。
+4. 把独立能力的只读结果并入统一运行报告对应章节；不得启动第二个运行控制器、重置授权、自动追加消融或开始下一 Workflow。
+5. 交付用户要求的报告后停止；不自动转入写作、投稿或下一批运行。

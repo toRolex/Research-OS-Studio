@@ -42,9 +42,11 @@ Repeat for every kept block, including supplementary blocks.
 - Why this block exists:
 - Competing explanations and discriminating predictions:
 - Dataset / split / task:
-- Compared systems / strong baselines / ablations:
+- Comparison / validation route (choose training or math/non-training):
+- Training only: strongest comparable baseline(s), ablations, variants, baseline validity and same-surface evidence:
+- Math/non-training: mathematical control, known value, 证书重放/certificate replay or independent check; 数学/非训练工作不要求训练 baseline:
 - Metrics (decisive then secondary):
-- Setup details (backbone, frozen/trainable parts, hyperparameters, budget, seeds):
+- 仅训练实验填写：backbone, frozen/trainable parts, hyperparameters, budget, seeds；其他路线标记 N/A：
 - Success criterion (effect size, uncertainty and scope):
 - Failure interpretation (valid negative / inconclusive / invalid / operational failure):
 - Table / figure target:
@@ -52,7 +54,7 @@ Repeat for every kept block, including supplementary blocks.
 
 ## Criterion Evidence Map
 
-Planned locations are explicitly proposed, not existing evidence. Repeat a row for every criterion, including baseline validity and budget compliance. A raw file's existence is not a criterion verdict.
+Planned locations are explicitly proposed, not existing evidence. Repeat a row for every applicable criterion, including training-baseline validity only on the training route and budget compliance. For math/non-training work, cite the comparison, certificate, known value or independent-check evidence instead; a training baseline is not required. A raw file's existence is not a criterion verdict.
 
 | Criterion | Claim / Block | Run IDs and Comparison | Required Primary Evidence / Location / Field | Decision Rule | Existing Evidence or Not Collected / Gap |
 |-----------|---------------|------------------------|--------------------------------------------|---------------|------------------------------------------------|
@@ -63,7 +65,7 @@ Planned locations are explicitly proposed, not existing evidence. Repeat a row f
 | Milestone | Goal | Runs | Decision Gate | Cost / Turnaround | Risk / Mitigation |
 |-----------|------|------|---------------|-------------------|-------------------|
 | M0 | sanity | ... | data and metric valid before M1 | ... | ... |
-| M1 | unchanged baseline | ... | valid comparable raw evidence before M2 | ... | ... |
+| M1 | training: unchanged baseline; math/non-training: declared comparison or certificate check | ... | training: valid same-surface baseline before M2; math/non-training: declared check passes | ... | ... |
 | M2 | main method | ... | ... | ... | ... |
 | M3 | decisive ablations | ... | ... | ... | ... |
 | M4 | optional polish | ... | ... | ... | ... |
@@ -104,7 +106,7 @@ Planned locations are explicitly proposed, not existing evidence. Repeat a row f
 - [ ] Nice-to-have runs are separate from must-run runs
 - [ ] Every criterion has primary evidence requirements and a decision rule
 - [ ] Candidate scope and fixed evaluation surface are disjoint
-- [ ] Sanity and valid baseline gate candidate runs
+- [ ] Training-route candidate runs have valid same-surface baseline evidence; math/non-training routes name their applicable comparison or certificate check without requiring a training baseline
 - [ ] Tracker totals, hard limits, negative interpretations and blockers agree
 
 ---

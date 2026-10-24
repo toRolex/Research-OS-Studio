@@ -9,7 +9,7 @@
 
   <p>
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
-    <a href="../skills/README.md"><img src="https://img.shields.io/badge/skills-39-green.svg" alt="Skills"></a>
+    <a href="../skills/README.md"><img src="https://img.shields.io/badge/skills-41-green.svg" alt="Skills"></a>
     <a href="user-acceptance-guide.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome"></a>
     <a href="https://github.com/toRolex/Research-OS-Studio/stargazers"><img src="https://img.shields.io/github/stars/toRolex/Research-OS-Studio.svg?style=social" alt="GitHub stars"></a>
   </p>
@@ -33,13 +33,13 @@
 
 ## Research OS Studio
 
-Research OS Studio decomposes research into well-defined workflows. The AI assists within explicit authorization boundaries to generate candidate solutions, code, and drafts, while experiment design, result validation, and progression decisions remain in your control.
+Research OS Studio is a research-delegation suite: the main entry combines capabilities toward a user-owned goal within an explicit mandate. It can progress without ordinary stage-by-stage approvals; users retain control of goal replacement, authorization and quota boundaries, and external or destructive actions.
 
 ## Table of Contents
 
 - [Quick Start](#quick-start)
 - [Core Design Principles](#core-design-principles)
-- [39 Skills Inventory](#39-skills-inventory)
+- [Skills Inventory](#skills-inventory)
 - [Typical Research Workflows](#typical-research-workflows)
 - [Safety and Control Principles](#safety-and-control-principles)
 - [FAQ](#faq)
@@ -60,6 +60,9 @@ npx skills@latest add toRolex/Research-OS-Studio --list
 
 # Install all skills to current project
 npx skills@latest add toRolex/Research-OS-Studio --all
+
+# For the discovery route, install `research-os` and its five Required capabilities together
+npx skills@latest add toRolex/Research-OS-Studio --skill research-os research-lit idea-generation novelty-check idea-review idea-refinement --agent codex --copy -y
 ```
 
 ### 2. Workspace Setup
@@ -89,34 +92,35 @@ Saved handoffs use three routes and no new state machine: `proof` resumes one fi
 ## Core Design Principles
 
 - **Pure Agent Skills**: Installs directly without separate CLIs, Python packages, or background services.
-- **Three Research Cycles**:
+- **Three Capability Areas (not a required sequence)**:
   1. **Idea Cycle**: Literature search, multi-angle ideation, novelty verification, independent review, and proposal convergence.
   2. **Validation Cycle**: Empirical track handles experiment planning, monitoring, statistical analysis, and audits; theoretical track covers derivations, proof drafting, review, and repairs.
   3. **Writing Cycle**: Paper drafting, academic plotting, LaTeX compilation checks, citation and claim consistency audits, rebuttal preparation, and venue adaptation.
-- **Human in the Loop**: A route starts only from an explicit invocation. Reversible steps run without interruption and are shown afterwards. Three gate types stop before the side effect: irreversible actions (external sends, deleting or overwriting existing experiment data), a missing or exceeded batch grant, and a leaf skill's own approval point. A single invocation can continue across stages when the user explicitly authorizes that boundary; without it, the orchestrator does not start the next top-level workflow.
+- **Human in the Loop**: A research mandate establishes the goal, permitted scope and quota, and completion condition. The orchestrator may compose and reorder capabilities within that mandate without asking at ordinary stage transitions, output-path changes, or each repair. A read-only request stays read-only. Main-goal replacement waits for the goal owner's confirmation; work beyond authority or quota, external sends, destructive actions, and capability-specific hard gates stop only the affected work. Missing setup or an explicit budget does not block all work: begin with a bounded scope that does not assume ungranted resources. Delegate only when the active host actually supports subagents; otherwise do feasible work and report what could not be delegated.
 - **Native File Formats**: Outputs deliverables directly as Markdown, LaTeX, scripts, and data files.
 
 ---
 
-## 39 Skills Inventory
+## Skills Inventory
 
-The suite contains 39 standalone skills. Invocation is explicit except for setup:
+The inventory below follows the current `skills/` tree; its size is not a product requirement. Research OS recipe names are routing labels, not additional installable skill slugs. Invocation is explicit except for setup:
 - **Explicit except setup**: the user names the skill, or a parent playbook reads it by path. The model does not trigger it from the description.
-- **`setup-research-os`**: the one skill a model may suggest. Confirming each live model and the full draft still comes before any write.
+- **`setup-research-os`**: the one skill a model may suggest. It is optional; a suggestion is not write authorization, and role setup is not a prerequisite to bounded research.
 
 | Category | Skill Name | Invocation | Description |
 |---|---|---|---|
-| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Confirm live session models, eight roles, a zero-grant policy, and workspace seeds; a suggestion is not write authorization |
-| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified orchestrator; route-only is read-only; experiment-plan and experiment-bridge are delivered and bill a batch grant |
-| **Idea Cycle** | [idea-discovery](../skills/idea-cycle/idea-discovery/SKILL.md) | Explicit | Full ideation workflow: literature search, ideation, novelty check, review, proposal |
-| | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
+| **General** | [setup-research-os](../skills/general/setup-research-os/SKILL.md) | Suggestable | Optional workspace bootstrap for live-model role mappings, a zero-grant default policy, and workspace seeds; a suggestion is not write authorization |
+| | [research-os](../skills/general/research-os/SKILL.md) | Explicit | Unified research-delegation entry; route-only is read-only; Discovery and experiment-bridge are composable recipe names, not installable Skills; execution uniquely enters `run-experiment` and uses real host subagent capability when delegating |
+| | [swarm](../skills/general/swarm/SKILL.md) | Explicit | Parallel exploration through real host subagents, with isolated outputs and explicit synthesis |
+| | [interrogate](../skills/general/interrogate/SKILL.md) | Explicit | Read-only independent challenge of assumptions and conclusions |
+| **Organization** | [arena](../skills/organization/arena/SKILL.md) | Explicit | Compares and integrates candidate outputs through an isolated, rubric-led process |
+| **Idea Cycle** | [research-lit](../skills/idea-cycle/research-lit/SKILL.md) | Explicit | Literature search and synthesis with source verification |
 | | [idea-generation](../skills/idea-cycle/idea-generation/SKILL.md) | Explicit | Multi-angle research candidate generation with filtering logs |
 | | [creative-thinking-for-research](../skills/idea-cycle/creative-thinking-for-research/SKILL.md) | Explicit | Cognitive shifts and orthogonal exploration for ideation bottlenecks |
 | | [novelty-check](../skills/idea-cycle/novelty-check/SKILL.md) | Explicit | Search closest prior work to verify proposal novelty |
 | | [idea-review](../skills/idea-cycle/idea-review/SKILL.md) | Explicit | Independent reviewer perspective identifying proposal weaknesses |
 | | [idea-refinement](../skills/idea-cycle/idea-refinement/SKILL.md) | Explicit | Refines proposals into minimal viable and frontier routes |
 | **Validation** | [experiment-plan](../skills/validation-cycle/experiment-plan/SKILL.md) | Explicit | Creates bounded experiment plans with hypotheses, baselines, and budgets |
-| | [experiment-bridge](../skills/validation-cycle/experiment-bridge/SKILL.md) | Explicit | Full experiment workflow: implementation, test runs, monitoring, analysis, audit |
 | | [run-experiment](../skills/validation-cycle/run-experiment/SKILL.md) | Explicit | Executes experiment code within approved scope and tracks status |
 | | [experiment-queue](../skills/validation-cycle/experiment-queue/SKILL.md) | Explicit | Manages batch experiment queues and resource allocation |
 | | [monitor-experiment](../skills/validation-cycle/monitor-experiment/SKILL.md) | Explicit | Monitors running processes and hardware state without inference |
@@ -125,13 +129,14 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 | | [experiment-audit](../skills/validation-cycle/experiment-audit/SKILL.md) | Explicit | Audits code logic, evaluation metrics, and result authenticity |
 | | [result-to-claim](../skills/validation-cycle/result-to-claim/SKILL.md) | Explicit | Extracts bounded scientific claims supported by empirical data |
 | | [formula-derivation](../skills/validation-cycle/formula-derivation/SKILL.md) | Explicit | Mathematical derivations recording assumptions, steps, and error bounds |
+| | [create-formal-verification-skill](../skills/validation-cycle/create-formal-verification-skill/SKILL.md) | Explicit | Builds runnable formal checks with assumption and correspondence audits |
+| | [maintain-formal-verification-skill](../skills/validation-cycle/maintain-formal-verification-skill/SKILL.md) | Explicit | Re-aligns and reruns formal checks after code changes |
+| | [create-verification-skill](../skills/validation-cycle/create-verification-skill/SKILL.md) | Explicit | Builds runnable behavioral verification skills and evidence workflows |
+| | [maintain-verification-skill](../skills/validation-cycle/maintain-verification-skill/SKILL.md) | Explicit | Updates behavioral verification workflows for changed product behavior |
 | | [proof-writer](../skills/validation-cycle/proof-writer/SKILL.md) | Explicit | Drafts formal proofs while tracking incomplete attempts and gaps |
 | | [proof-review](../skills/validation-cycle/proof-review/SKILL.md) | Explicit | Read-only check for proof structure, lemmas, and counterexamples |
 | | [proof-repair](../skills/validation-cycle/proof-repair/SKILL.md) | Explicit | Targeted repair of proof gaps within authorized scope |
-| | [proof-orchestrator](../skills/validation-cycle/proof-orchestrator/SKILL.md) | Explicit | Manages long-horizon proofs with optional Lean formalization |
-| **Writing Cycle** | [paper-writing](../skills/writing-cycle/paper-writing/SKILL.md) | Explicit | `/research-os` paper-writing / general: planning, plotting, drafting, a real compile, and parallel audits; the leaf keeps its own authorization gate |
-| | [ml-paper-writing](../skills/writing-cycle/ml-paper-writing/SKILL.md) | Explicit | paper-writing / ml: ML materials skip the general entry; seeds, error bars, compute, limitations |
-| | [systems-paper-writing](../skills/writing-cycle/systems-paper-writing/SKILL.md) | Explicit | paper-writing / systems: systems materials skip the general entry; design rationale, end-to-end, scalability |
+| **Writing Cycle** | [paper-writing](../skills/writing-cycle/paper-writing/SKILL.md) | Explicit | The single writing organizer; general, ML/AI, and Systems are professional options with on-demand references and templates shipped together |
 | | [paper-plan](../skills/writing-cycle/paper-plan/SKILL.md) | Explicit | Outlines paper structure and builds Claim-Evidence matrices |
 | | [paper-drafting](../skills/writing-cycle/paper-drafting/SKILL.md) | Explicit | Drafts academic manuscripts grounded in experimental data |
 | | [academic-plotting](../skills/writing-cycle/academic-plotting/SKILL.md) | Explicit | Generates academic figures with reproducible plotting scripts |
@@ -150,24 +155,26 @@ The suite contains 39 standalone skills. Invocation is explicit except for setup
 
 ## Typical Research Workflows
 
+These are example recipes, not mandatory stages or a fixed pipeline. The orchestrator can compose, reorder, or revisit capabilities according to the mandate, then stop when its completion condition is met.
+
 ### 1. Idea Discovery
 ```text
 Provide a research direction
       ↓
 /research-os I have a direction and no idea
       ↓
-playbook idea-discovery
-  Stop after each phase unless the user writes "一次走完" and a budget
-  ├─ Search literature and track citations (research-lit)
-  ├─ Generate candidate ideas (idea-generation; creative-thinking if stuck)
-  ├─ Search prior work and check novelty (novelty-check)
-  ├─ Review and identify weaknesses (idea-review)
-  └─ Refine and converge route (idea-refinement)
+research-os Discovery recipe
+  Select needed capabilities from goal gaps; start locally, reorder, or revisit
+  ├─ Literature gap: research-lit
+  ├─ Candidate gap: idea-generation (creative-thinking if useful)
+  ├─ Prior work unchecked: novelty-check
+  ├─ Independent challenge needed: idea-review
+  └─ Convergence or Proposal needed: idea-refinement
       ↓
-Deliver IDEA_DISCOVERY.md and RESEARCH_PROPOSAL.md, then stop
+Deliver only the report and/or Proposal required by this mandate, then stop
 ```
 
-Leaf output-path, stage-checkpoint, review-scope, and problem-anchor gates stay in force. The next turn stays on this route; `new task` rematches. `/idea-discovery` remains the direct leaf entry.
+Full Discovery is an optional recipe, not a required route. Existing results may satisfy or omit a responsibility; new evidence may reorder work or trigger a revisit. Leaf source, review, and anchor obligations remain in force. A missing required skill blocks only its affected work and must be reported. Goal replacement, over-authority, over-quota, or file conflict also blocks only the affected branch.
 
 ### 2. Validation
 ```text
@@ -176,15 +183,17 @@ State hypothesis or target theorem
 Empirical Track                      Theoretical Track
 /experiment-plan                    formula-derivation (Derivations)
       ↓                                   ↓
-/experiment-bridge                  proof-writer (Draft proofs)
+/run-experiment                     proof-writer (Draft proofs)
   ├─ Test execution & monitoring          ↓
   ├─ Health checks & diagnostics     proof-review (Logic review)
   └─ Code & result integrity audit        ↓
       ↓                             /proof-repair (Targeted repair)
 /result-to-claim (Extract claims)         ↓
-      ↓                             /proof-orchestrator (Lean assistant)
+      ↓                             /research-os proof recipe (proof-review methods on demand)
 Delivers audit & claim report       Delivers complete proof logs
 ```
+
+The theoretical route selects and alternates derivation, proof construction, fresh read-only review, finding repair, and optional formalization from evidence; these are not mandatory stages. `/research-os` is the sole owner of long-running mandate, rounds, quota, pause/resume, and stop control.
 
 ### 3. Writing Cycle
 ```text
@@ -192,25 +201,25 @@ Provide data or theoretical findings
       ↓
 /research-os matches paper-writing from the materials
   ├─ General: general → paper-writing
-  ├─ Machine learning: ml → ml-paper-writing (not via general)
-  └─ Systems design: systems → systems-paper-writing (not via general)
+  ├─ Machine learning: ml → paper-writing + ML reporting/reviewer/venue references
+  └─ Systems design: systems → paper-writing + Systems methods/evaluation/venue references
       ↓
-The leaf skill keeps its authorization gate before planning, figures, drafting, and a real compile
+The leaf follows the active mandate rather than adding per-stage approval gates; read-only scope, goal changes, authority or quota overruns, external sends, and destructive actions remain gated
 Parallel audits: paper-claim-audit, citation-audit, claim-stress-test
 Proof manuscripts also read proof-review
       ↓
 Delivers a candidate manuscript and audit report (stops)
 Submission and upload are outside this route
-paper-compile-repair and apply-citation-fixes stay separately invoked
+paper-compile-repair and apply-citation-fixes remain distinct leaf skills; they may be invoked directly or cascaded by an authorized mandate, with each skill's exact-diff controls preserved
 ```
 
 ---
 
 ## Safety and Control Principles
 
-1. **No System Alterations**: The suite does not install or modify Python, Lean, LaTeX, CUDA drivers, or cloud credentials. It reports missing tools and adapts cleanly.
-2. **Explicit route, gated side effects**: A route starts only from an explicit invocation. Reversible steps run and are shown afterwards. External sends, deleting or overwriting existing experiment data, a batch grant that is missing or exceeded, and a leaf skill's own approval point stop before the side effect. A single invocation can continue across stages only when the user states that boundary. Without it, the orchestrator does not start the next top-level workflow.
-3. **Prior Confirmation**: Operations that involve heavy computation, file rewriting, or paid APIs require explicit user confirmation.
+1. **Environment ownership and scoped preparation**: Reuse existing resources. Project-local dependencies, tools, and caches may be prepared within a valid mandate's write scope and remaining quota; read-only capabilities do not prepare environments. Global installation/configuration, driver changes, credentials, and scheduler deployment require specific authority, not an ordinary research mandate. Report missing tools and unperformed checks honestly; stop the affected action when authority or resources are missing.
+2. **Mandate, read-only scope, and hard gates**: Keep explicit entry and user-requested read-only scope. Within the mandate, ordinary reversible work and capability transitions proceed without repeated approval. Main-goal replacement waits for the goal owner's confirmation; authority or quota overrun, external sends, destructive changes, and specific safety gates stop before the side effect; only affected work is blocked.
+3. **Quota-aware execution**: Missing setup or an explicit budget permits bounded work that does not assume ungranted resources. Heavy computation and paid external services proceed only within actual authorization and quota; missing or exceeded quota stops the affected work.
 
 ---
 
@@ -219,8 +228,9 @@ paper-compile-repair and apply-citation-fixes stay separately invoked
 **Q: Will installing this suite alter my existing project files?**  
 A: No. The `setup-research-os` command inspects your workspace and displays all proposed edits before writing anything.
 
-**Q: Which AI clients are supported?**  
-A: Any client supporting the Agent Skills format is compatible, including Claude Code, Codex, Cursor, Gemini CLI, Kimi CLI, and Pi.
+**Q: What host capabilities are required?**
+
+A host must actually discover and load Agent Skills for direct use. Delegated work additionally requires real subagent support in that host; verify its behavior rather than inferring it from a product name or successful file installation.
 
 ---
 

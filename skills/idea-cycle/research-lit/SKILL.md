@@ -9,8 +9,15 @@ disable-model-invocation: true
 
 Search and analyze research papers, find related work, and summarize key ideas for the user's research topic. Preserve the difference between a discovery lead, a verified identity, and evidence supporting a conclusion.
 
+## 委托继承
+
+Gates: none
+
+由 `/research-os` 的 `literature` 路线级联进入时，本调用继承调用者的研究委托：目标、权限、研究额度与完成条件沿用，读这份正文不再重复请求批准；只有目标替换才停下确认。独立调用时，下面「Scope and authorization」的输入、边界、预算与输出来源就是本次授权范围，不需要先 setup。
+
+本能力已按委托合同迁移，条款与已迁移清单由调用者持有；未迁移的兄弟能力仍按各自旧门停下确认。本文件只声明文献调查自己不许做什么。
+
 ## Scope and authorization
-Gate: write-path | before=report-write | approval=explicit-user | source=SKILL.md#scope-and-authorization
 
 - **Role:** explicitly invoked or path-cascaded internal capability within the caller's current literature responsibility; users may explicitly invoke it standalone. Neither role authorizes another top-level Workflow.
 - **Inputs:** topic/question or existing papers/notes; research context and relevance criteria; requested sources, date/language boundaries, confidentiality restrictions and resource budget. Read project instructions and workspace navigation if present. Setup and a particular directory layout are not prerequisites.

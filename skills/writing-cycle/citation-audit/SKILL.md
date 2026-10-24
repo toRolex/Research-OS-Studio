@@ -6,8 +6,9 @@ disable-model-invocation: true
 
 # 引用审计
 
+Gates: none
+
 ## 边界与输入
-Gate: audit-scope | before=audit-start | approval=explicit-user | source=SKILL.md#边界与输入
 
 这是 显式调用或已授权正文级联 内部能力，也支持用户点名 standalone。composed 时只贡献父报告，继承其输入范围、资源预算、报告写入授权和 bib 冻结约束；不会启动顶层 Workflow，也不会调用应用修复入口。
 
@@ -69,7 +70,7 @@ reviewer 无法启动或不能读原始材料：保留能做的条目映射和�
 
 ### soft-only：冻结所有 bib
 
-建议层服从 [apply-citation-fixes 的冻结动作表](../apply-citation-fixes/SKILL.md#soft-only-约束)。三轴结论不变。任何应用仍需用户单独调用并授权。
+建议层服从 [apply-citation-fixes 的冻结动作表](../apply-citation-fixes/SKILL.md#soft-only-约束)。三轴结论不变，本审计只返回findings、不改稿。有效父委托已覆盖修复职责、写域和剩余额度时，调用者可交由 `apply-citation-fixes` 按精确diff合同承接，不要求用户再次点名；独立调用仍显式，未覆盖时只询问缺项。bib及其他冻结要求不因此解除，审计者不自行应用修复。
 
 完成条件：冻结影响只体现在行动建议，元数据漂移／错误引用仍明确可见。
 
@@ -78,3 +79,7 @@ reviewer 无法启动或不能读原始材料：保留能做的条目映射和�
 使用 [报告提纲](templates/audit-report.md) 输出自然 Markdown，覆盖成功、空范围、部分失败和无法开展分支。报告路径只由用户／父流程授权决定；composed 可以直接返回可并入父报告的同等内容。
 
 最终列出实际覆盖数、逐条逐处结论、原始来源证据、未核实项与具体补证动作、可选建议、尚未改动任何研究材料。需要修改时仅提示用户可显式调用 `apply-citation-fixes`，不替用户调用。停止；不自动编译、渲染、同步、投稿或进入其他 Workflow。报告完成不代表真实科研结论或投稿质量通过。
+
+## 委托继承
+
+本能力保持只读，不修改研究材料；报告位置、来源读取与预算继承[研究委托](references/mandate.md)。委托已授权同一职责的修复时，父流程可承接 `apply-citation-fixes`，不要求再次独立点名；单独调用仍显式。

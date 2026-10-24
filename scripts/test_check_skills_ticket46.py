@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""#46：14 行路由组合、旧承诺 sweep、串行降级。先于实现写，期望失败。"""
+"""#46：已交付路由组合、旧承诺 sweep、宿主能力门。#49 补入 literature route。"""
 import importlib.util
 import unittest
 from pathlib import Path
@@ -8,7 +8,8 @@ ROOT = Path(__file__).resolve().parent.parent
 
 REQUIRED_ROUTES = (
     ("route-only", "—", "yes"),
-    ("idea-discovery", "—", "no"),
+    ("literature", "—", "no"),
+    ("discovery", "—", "no"),
     ("experiment-plan", "—", "no"),
     ("experiment-bridge", "—", "no"),
     ("paper-writing", "general", "no"),
@@ -19,8 +20,10 @@ REQUIRED_ROUTES = (
     ("resubmit", "—", "no"),
     ("paper-talk", "—", "no"),
     ("improvement", "—", "no"),
+    ("continuation", "—", "no"),
     ("pickup", "—", "no"),
     ("custom", "—", "no"),
+    ("swarm", "—", "no"),  # #50：新增并行覆盖路线
 )
 
 
@@ -35,7 +38,7 @@ def load():
 
 
 class ReleaseGate(unittest.TestCase):
-    def test_fourteen_routes_are_complete(self):
+    def test_release_routes_are_complete(self):
         mod = load()
         text = (ROOT / "skills/general/research-os/SKILL.md").read_text(encoding="utf-8")
         rows, errors = mod.parse_route_table(text)
@@ -102,16 +105,22 @@ class ReleaseGate(unittest.TestCase):
         files = {name: (ROOT / name).read_text(encoding="utf-8") for name in names}
         self.assertEqual(mod.stale_promise_problems(files), [])
 
-    def test_host_map_names_serial_fallback(self):
+    def test_host_map_states_blocked_without_subagents(self):
         mod = load()
         text = (ROOT / "skills/general/research-os/SKILL.md").read_text(encoding="utf-8")
-        self.assertEqual(mod.host_fallback_problems(text), [])
+        self.assertEqual(mod.host_capability_problems(text), [])
 
     def test_host_map_without_fallback_is_red(self):
         mod = load()
         text = "| pi | .agents/skills | herdr_spawn_agent | session |\n"
-        problems = mod.host_fallback_problems(text)
+        problems = mod.host_capability_problems(text)
         self.assertTrue(problems)
+
+    def test_host_map_serial_substitute_is_red(self):
+        mod = load()
+        text = "当前会话有子代理工具时派分；没有时标 blocked，可独立调用底层能力；由编排者串行完成。\n"
+        problems = mod.host_capability_problems(text)
+        self.assertTrue(any("串行代跑" in problem for problem in problems), problems)
 
 
 if __name__ == "__main__":
