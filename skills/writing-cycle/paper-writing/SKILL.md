@@ -9,13 +9,19 @@ disable-model-invocation: true
 
 Gates: none
 
-用户显式调用。这是 writing-cycle 的统一写作入口：general、ML 和 Systems 材料都在本入口组织，专业规则按需读取。一次授权内组合内部能力，交付候选稿与审查报告后停止。阶段、能力与审查输入见 [composition-map](references/composition-map.md)。
+用户显式调用。这是 writing-cycle 的统一写作入口：general、ML 和 Systems 材料都在本入口组织，专业规则按需读取。按材料主要贡献选择 general、ML/AI 或 Systems 专业分支；混合论文可并用对应参考。一次授权内组合内部能力，交付候选稿与审查报告后停止。阶段、能力与审查输入见 [composition-map](references/composition-map.md) 和 [专业资源索引](references/standards.md)。
 
 ## 委托继承
 
-写入范围、venue、交付口径、轮数、审查边界和资源额度来自[研究委托合同](../../general/research-os/references/mandate.md)。构建预算按同一累计编译次数执行，失败构建也计一次；展示已用次数、上限与剩余次数，耗尽时交付当前稿与未构建原因。没有确认的写入边界或付费调用时只做只读解析并形成执行草案；越权、预算或目标变化时停那一步，同一委托的其余工作继续。ML/AI 与 Systems 专业标准按 [domain standards](references/standards.md) 按需读取；随本 Skill 安装的专业参考与来源许可均在 `references/` 和 `LICENSE-*.txt` 中。
+写入范围、venue、交付口径、轮数、审查边界和资源额度来自[研究委托合同](references/mandate.md)。构建预算按同一累计编译次数执行，失败构建也计一次；展示已用次数、上限与剩余次数，耗尽时交付当前稿与未构建原因。没有确认的写入边界或付费调用时只做只读解析并形成执行草案；越权、预算或目标变化时停那一步，同一委托的其余工作继续。ML/AI 与 Systems 专业标准按 [domain standards](references/standards.md) 按需读取；随本 Skill 安装的专业参考与来源许可均在 `references/` 和 `LICENSE-*.txt` 中。
 
 **完成条件**：输入、venue 依据、格式与构建入口、交付口径、写入清单、轮数、审查边界与未决问题可逐项核对；没有用默认 venue、页数或预算填空。
+
+## 单包安装与依赖
+
+`paper-writing` 是组合入口，不是自包含的完整写作工具链。完整工作流需要通过可发现的 Skill slug 调用并安装其完整包（含被引用的专业参考）：`paper-plan`、`paper-drafting`、`paper-compile`、`paper-claim-audit`、`citation-audit`、`claim-stress-test`。按材料和阶段还需要 `academic-plotting`（含图表时）、`paper-compile-repair`（编译失败且修复在授权范围内时）、`apply-citation-fixes`（需要且获准修复引文时）及 `proof-review`（含定理、引理或证明时）。Systems／ML 专业分支所需的 `paper-plan`、`paper-drafting` 包内参考也属于依赖；仅安装本包不包含它们。`research-improvement` 是独立工作流，本入口明确不自动启动它。
+
+缺少某阶段所需的 Skill slug 或参考资源时，只将受影响阶段标为 `blocked`，报告缺少项；其他已授权阶段可继续。单包安装不代表上述依赖齐全，不得声称已完成完整写作流程。
 
 ## 2. 顺序
 

@@ -125,8 +125,45 @@ class ContractText(unittest.TestCase):
     def test_entry_points_at_mandate_and_keeps_readonly_and_host_map(self):
         text = ENTRY.read_text(encoding="utf-8")
         self.assertIn("references/mandate.md", text)
-        for kept in ("当前命中路线是 route-only", "blocked", "保留编号、原句及子列表", "写作请求统一进入 `paper-writing`"):
+        for kept in ("当前命中路线是 route-only", "blocked", "保留编号、原句及子列表"):
             self.assertIn(kept, text, kept)
+
+        def check_writing_routes(router):
+            rows = [
+                [cell.strip() for cell in line.strip("|").split("|")]
+                for line in router.splitlines()
+                if line.startswith("| paper-writing |")
+            ]
+            self.assertEqual(len(rows), 3)
+            self.assertEqual({row[1] for row in rows}, {"general", "ml", "systems"})
+            for row in rows:
+                self.assertEqual(row[5], f"[paper-writing-{row[1]}](playbooks/paper-writing-{row[1]}.md)")
+                playbook = ENTRY.parent / f"playbooks/paper-writing-{row[1]}.md"
+                body = playbook.read_text(encoding="utf-8")
+                self.assertIn("`skills/writing-cycle/paper-writing/SKILL.md`", body)
+                for target in re.findall(r"`(skills/[^`]+)`", body):
+                    self.assertTrue((ROOT / target).is_file(), target)
+                for retired in ("ml-paper-writing", "systems-paper-writing"):
+                    self.assertNotIn(f"writing-cycle/{retired}/", body)
+                    self.assertNotIn(f"| {retired} |", router)
+
+        check_writing_routes(text)
+        # Losing a professional branch or restoring an old controller must fail,
+        # even when the prose still says writing has a unified entry.
+        for variant in ("ml", "systems"):
+            with self.subTest(missing_or_legacy_branch=variant):
+                with self.assertRaises(AssertionError):
+                    check_writing_routes(text.replace(f"| paper-writing | {variant} |", f"| {variant}-paper-writing | {variant} |"))
+
+        readonly = text.split("## 只读优先", 1)[1].split("\n## ", 1)[0]
+        for constraint in ("route-only", "不创建任务", "不联网", "不写文件", "不派子代理"):
+            self.assertIn(constraint, readonly)
+        host_map = text.split("## 宿主映射", 1)[1].split("\n## ", 1)[0]
+        for command in ("/skill:research-os", "/research-os", "$research-os"):
+            self.assertIn(command, host_map)
+        for host, location in (("pi", ".agents/skills/"), ("Claude Code", ".claude/skills/"), ("Codex", ".agents/skills/")):
+            row = next(line for line in host_map.splitlines() if line.startswith(f"| {host} |"))
+            self.assertIn(location, row)
 
     def test_mandate_counts_user_stop_as_stop_not_completion(self):
         text = MANDATE.read_text(encoding="utf-8")

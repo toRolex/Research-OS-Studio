@@ -82,4 +82,4 @@ reviewer 无法启动或不能读原始材料：保留能做的条目映射和�
 
 ## 委托继承
 
-本能力保持只读，不修改研究材料；报告位置、来源读取与预算继承[研究委托](../../general/research-os/references/mandate.md)。委托已授权同一职责的修复时，父流程可承接 `apply-citation-fixes`，不要求再次独立点名；单独调用仍显式。
+本能力保持只读，不修改研究材料；报告位置、来源读取与预算继承[研究委托](references/mandate.md)。委托已授权同一职责的修复时，父流程可承接 `apply-citation-fixes`，不要求再次独立点名；单独调用仍显式。

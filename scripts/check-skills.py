@@ -358,15 +358,32 @@ PAPER_WRITING_REQUIRED = (
     "skills/writing-cycle/paper-writing/references/standards.md",
 )
 PAPER_WRITING_DOMAIN_RESOURCES = {
-    "ml": "ml-ai-standards.md",
-    "systems": "systems-standards.md",
+    "ml": (
+        "ml-ai-standards.md",
+        "ml-experiment-reporting.md",
+        "ml-reviewer-expectations.md",
+        "ml-venue-checklists.md",
+        "../templates/ml-writing-report.md",
+    ),
+    "systems": (
+        "systems-standards.md",
+        "systems-writing-methods.md",
+        "systems-evaluation-methods.md",
+        "systems-checklist.md",
+        "systems-venue-and-reviewer.md",
+        "../templates/systems-paper-writing-report.md",
+    ),
+}
+PAPER_WRITING_SOURCE_LICENSES = {
+    "ml": ("LICENSE-ML.txt",),
+    "systems": ("LICENSE-ARIS.txt", "LICENSE-Orchestra.txt"),
 }
 
 
 def paper_writing_domain_standard_problems(variant: str, root: Path) -> list[str]:
     """专业标准必须从统一 Skill 的安装包内真实可达。"""
-    resource = PAPER_WRITING_DOMAIN_RESOURCES.get(variant)
-    if resource is None:
+    resources = PAPER_WRITING_DOMAIN_RESOURCES.get(variant)
+    if resources is None:
         return []
     standards = root / "skills/writing-cycle/paper-writing/references/standards.md"
     if not standards.is_file():
@@ -378,13 +395,27 @@ def paper_writing_domain_standard_problems(variant: str, root: Path) -> list[str
         for target in re.findall(r"\[[^\]]+\]\(([^)\s]+)", text)
         if not target.startswith(("http:", "https:", "mailto:"))
     }
-    if resource not in links:
-        return [f"paper-writing/{variant} standards.md 缺专业参考链接：{resource}"]
+    found: list[str] = []
+    for resource in resources:
+        if resource not in links:
+            found.append(f"paper-writing/{variant} standards.md 缺专业资源链接：{resource}")
+            continue
+        target = (standards.parent / resource).resolve()
+        package = (root / "skills/writing-cycle/paper-writing").resolve()
+        if package not in target.parents or not target.is_file():
+            found.append(f"paper-writing/{variant} 专业资源不可达：{resource}")
 
-    target = (standards.parent / resource).resolve()
-    if root.resolve() not in target.parents or not target.is_file():
-        return [f"paper-writing/{variant} 专业参考不可达：{resource}"]
-    return []
+    sources = standards.parent / "sources.md"
+    source_text = sources.read_text(encoding="utf-8") if sources.is_file() else ""
+    if "sources.md" not in links:
+        found.append(f"paper-writing/{variant} standards.md 缺来源许可记录链接：sources.md")
+    for license_name in PAPER_WRITING_SOURCE_LICENSES[variant]:
+        license_path = standards.parent.parent / license_name
+        if not license_path.is_file():
+            found.append(f"paper-writing/{variant} 缺共置来源许可：{license_name}")
+        if f"../{license_name}" not in source_text:
+            found.append(f"paper-writing/{variant} sources.md 未指向共置许可：{license_name}")
+    return found
 
 
 def paper_writing_variant_problems(variant: str, text: str, root: Path) -> list[str]:
@@ -587,7 +618,7 @@ def legacy_router_problems(files: dict[str, str]) -> list[str]:
 REQUIRED_RELEASE_ROUTES = (
     ("route-only", "—", "yes"),
     ("literature", "—", "no"),
-    ("idea-discovery", "—", "no"),
+    ("discovery", "—", "no"),
     ("experiment-plan", "—", "no"),
     ("experiment-bridge", "—", "no"),
     ("paper-writing", "general", "no"),
@@ -1142,7 +1173,6 @@ def ticket59_contract_problems(root: Path, tracked_paths: set[str]) -> list[str]
 MIGRATED_CONTRACT: dict[str, str] = {
     "skills/general/research-os/SKILL.md": "研究委托",
     "skills/idea-cycle/creative-thinking-for-research/SKILL.md": "委托继承",
-    "skills/idea-cycle/idea-discovery/SKILL.md": "委托继承",
     "skills/idea-cycle/idea-generation/SKILL.md": "委托继承",
     "skills/idea-cycle/idea-refinement/SKILL.md": "委托继承",
     "skills/idea-cycle/idea-review/SKILL.md": "委托继承",
@@ -1158,7 +1188,6 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/validation-cycle/maintain-formal-verification-skill/SKILL.md": "委托继承",
     "skills/writing-cycle/research-improvement/SKILL.md": "委托继承",
     "skills/validation-cycle/experiment-plan/SKILL.md": "委托继承",
-    "skills/validation-cycle/experiment-bridge/SKILL.md": "委托继承",
     "skills/validation-cycle/run-experiment/SKILL.md": "委托继承",
     "skills/validation-cycle/experiment-queue/SKILL.md": "委托继承",
     "skills/validation-cycle/monitor-experiment/SKILL.md": "委托继承",
@@ -1169,7 +1198,6 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/validation-cycle/formula-derivation/SKILL.md": "委托继承",
     "skills/validation-cycle/proof-writer/SKILL.md": "委托继承",
     "skills/validation-cycle/proof-repair/SKILL.md": "委托继承",
-    "skills/validation-cycle/proof-orchestrator/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-writing/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-plan/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-drafting/SKILL.md": "委托继承",
@@ -1179,8 +1207,6 @@ MIGRATED_CONTRACT: dict[str, str] = {
     "skills/writing-cycle/apply-citation-fixes/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-claim-audit/SKILL.md": "委托继承",
     "skills/writing-cycle/claim-stress-test/SKILL.md": "委托继承",
-    "skills/writing-cycle/ml-paper-writing/SKILL.md": "委托继承",
-    "skills/writing-cycle/systems-paper-writing/SKILL.md": "委托继承",
     "skills/writing-cycle/rebuttal/SKILL.md": "委托继承",
     "skills/writing-cycle/resubmit-pipeline/SKILL.md": "委托继承",
     "skills/writing-cycle/paper-talk/SKILL.md": "委托继承",
@@ -1435,10 +1461,26 @@ DISCOVERY_PHASE_LEAVES = (
     "idea-review",
     "idea-refinement",
 )
+DISCOVERY_LIVE_CALLERS = (
+    "README.md",
+    "docs/README-en.md",
+    "skills/README.md",
+    "skills/general/research-os/SKILL.md",
+    "skills/general/research-os/playbooks/discovery.md",
+    "skills/general/research-os/playbooks/literature-review.md",
+    "skills/general/research-os/references/PRODUCT-MAP.md",
+    "skills/general/research-os/references/idea-cycle.md",
+    "skills/general/research-os/references/migration-boundary.md",
+    "docs/assets/README.md",
+    "docs/assets/demo-script.sh",
+    "docs/assets/workflow-diagrams.md",
+    "docs/user-acceptance-guide.md",
+)
+DISCOVERY_LICENSE_SHA256 = "e30cf5dd5f49b4f9b656590e23d782b4756c924a9f0ff0162b3e7b5d87006bf5"
 
 
 def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
-    """#58 共享检索/来源/绘图资产：复用既有能力，不新增重复 Skill。"""
+    """#58 检索/绘图与 #60 Discovery 资源：检查既有能力归属及随包可达。"""
     found: list[str] = []
     for rel_dir, rels in RESEARCH_ASSETS.items():
         for rel in rels:
@@ -1448,39 +1490,73 @@ def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
                 found.append(f"{rel_path}: 缺少随包研究资产")
             elif rel_path not in tracked_paths:
                 found.append(f"{rel_path}: 未追踪")
-    composition = root / "skills/idea-cycle/idea-discovery/references/composition-notes.md"
+    discovery_root = root / "skills/idea-cycle/idea-discovery"
+    if (discovery_root / "SKILL.md").exists() or (discovery_root / "agents/openai.yaml").exists():
+        found.append("skills/idea-cycle/idea-discovery: 旧发现控制器未退役")
+
+    composition_rel = "skills/general/research-os/references/discovery-composition.md"
+    composition = root / composition_rel
     if not composition.is_file():
-        found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 缺少组合说明")
+        found.append(f"{composition_rel}: 缺少组合说明")
+    elif composition_rel not in tracked_paths:
+        found.append(f"{composition_rel}: 未追踪")
     else:
         text = composition.read_text(encoding="utf-8")
-        for marker in ("组合配方", "Required skills", "DEPENDENCY MISSING / BLOCKED", "子集", "重排", "回访", "目标替换", "候选池与筛选", "收敛与 Proposal", *DISCOVERY_PHASE_LEAVES):
+        for marker in (
+            "Required skills", "DEPENDENCY MISSING / BLOCKED", "子集", "重排", "回访",
+            "目标替换", "fresh 独立评审", "原始回复", "缺少依赖只阻塞受影响职责",
+            *DISCOVERY_PHASE_LEAVES,
+        ):
             if marker not in text:
-                found.append(f"skills/idea-cycle/idea-discovery/references/composition-notes.md: 缺「{marker}」")
-        if "stage-checkpoint" in text:
-            found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 残留 stage-checkpoint")
-    discovery = root / "skills/idea-cycle/idea-discovery/SKILL.md"
-    if discovery.is_file():
-        text = discovery.read_text(encoding="utf-8")
-        if "stage-checkpoint" in text or "一次委托按下方 Phase 1–4.5 连续执行" in text:
-            found.append("skills/idea-cycle/idea-discovery/SKILL.md: 残留路线锁定语义")
-        for marker in ("目标缺口", "子集", "重排", "回访", "全链 Discovery 只是适用时的参考配方"):
-            if marker not in text:
-                found.append(f"skills/idea-cycle/idea-discovery/SKILL.md: 缺组合行为 {marker}")
-    playbook = root / "skills/general/research-os/playbooks/idea-discovery.md"
-    if playbook.is_file():
+                found.append(f"{composition_rel}: 缺「{marker}」")
+        if "固定顺序执行" in text or "不得跳过" in text:
+            found.append(f"{composition_rel}: 固定顺序强制所有职责")
+        install_line = next((line for line in text.splitlines() if "--skill research-os" in line), "")
+        missing = [name for name in DISCOVERY_PHASE_LEAVES if name not in install_line]
+        if missing:
+            found.append(f"{composition_rel}: 成组安装命令缺 Required skills " + ", ".join(missing))
+        if "creative-thinking-for-research" in install_line:
+            found.append(f"{composition_rel}: 可选 creative-thinking-for-research 被误列为 Required")
+
+    playbook_rel = "skills/general/research-os/playbooks/discovery.md"
+    playbook = root / playbook_rel
+    if not playbook.is_file():
+        found.append(f"{playbook_rel}: 缺 Discovery 配方")
+    else:
         text = playbook.read_text(encoding="utf-8")
-        if "stage-checkpoint" in text or "匹配后跨 turn 保持本路线" in text:
-            found.append("skills/general/research-os/playbooks/idea-discovery.md: 残留路线锁定语义")
         if "skills/idea-cycle/" in text:
-            found.append("skills/general/research-os/playbooks/idea-discovery.md: 使用仓库源码路径，无法解析安装后的 Skill 资源")
+            found.append(f"{playbook_rel}: 使用仓库源码路径，无法解析安装后的 Skill 资源")
         if "按安装后的 Skill 名称定位其目录" not in text:
-            found.append("skills/general/research-os/playbooks/idea-discovery.md: 缺安装后 Skill 目录解析规则")
-        for marker in ("缺口", "子集", "重排", "回访"):
+            found.append(f"{playbook_rel}: 缺安装后 Skill 目录解析规则")
+        for marker in ("方向到 Proposal", "目标缺口", "子集", "重排", "回访", "fresh 独立评审"):
             if marker not in text:
-                found.append(f"skills/general/research-os/playbooks/idea-discovery.md: 缺组合行为 {marker}")
+                found.append(f"{playbook_rel}: 缺组合行为 {marker}")
         for rel in DISCOVERY_PHASE_LEAVES:
             if rel not in text:
-                found.append(f"skills/general/research-os/playbooks/idea-discovery.md: 缺组合叶 {rel}")
+                found.append(f"{playbook_rel}: 缺组合叶 {rel}")
+        if "固定顺序执行" in text or "阶段批准" in text or "第二总控" in text:
+            found.append(f"{playbook_rel}: 固定顺序或重复总控语义")
+
+    required_discovery_assets = (
+        "skills/general/research-os/templates/research-brief.md",
+        "skills/general/research-os/templates/discovery-report.md",
+        "skills/general/research-os/licenses/idea-cycle/LICENSE",
+    )
+    for rel in required_discovery_assets:
+        path = root / rel
+        if not path.is_file():
+            found.append(f"{rel}: 缺 Discovery 随包资源")
+        elif rel not in tracked_paths:
+            found.append(f"{rel}: 未追踪")
+    license_path = root / required_discovery_assets[-1]
+    if license_path.is_file() and hashlib.sha256(license_path.read_bytes()).hexdigest() != DISCOVERY_LICENSE_SHA256:
+        found.append(f"{required_discovery_assets[-1]}: 上游 MIT 许可与原文不一致")
+
+    for rel in DISCOVERY_LIVE_CALLERS:
+        path = root / rel
+        if path.is_file() and "idea-discovery" in path.read_text(encoding="utf-8"):
+            found.append(f"{rel}: 仍调用已退役的 idea-discovery slug")
+
     plotting = root / "skills/writing-cycle/academic-plotting/SKILL.md"
     if plotting.is_file():
         text = plotting.read_text(encoding="utf-8")
@@ -1488,18 +1564,6 @@ def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
             found.append("skills/writing-cycle/academic-plotting/SKILL.md: 无条件要求确认普通选图")
         if "已授权目录内" not in text or "新文件路径" not in text:
             found.append("skills/writing-cycle/academic-plotting/SKILL.md: 缺授权目录内自主选择新路径")
-    if discovery.is_file():
-        text = discovery.read_text(encoding="utf-8")
-        if "路径由用户确认" in text:
-            found.append("skills/idea-cycle/idea-discovery/SKILL.md: 授权目录内仍要求逐路径批准")
-    if composition.is_file():
-        text = composition.read_text(encoding="utf-8")
-        if "一次委托连续执行下列组合" in text or "不得跳过" in text:
-            found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 固定顺序强制所有职责")
-        install_line = next((line for line in text.splitlines() if "--skill idea-discovery" in line), "")
-        missing = [name for name in DISCOVERY_PHASE_LEAVES if name not in install_line]
-        if missing:
-            found.append("skills/idea-cycle/idea-discovery/references/composition-notes.md: 成组安装命令缺 Required skills " + ", ".join(missing))
     audit = root / "skills/idea-cycle/research-lit/references/file-capability-audit.md"
     if not audit.is_file():
         found.append("skills/idea-cycle/research-lit/references/file-capability-audit.md: 缺文件能力缺口审计")
@@ -1527,7 +1591,6 @@ def research_asset_problems(root: Path, tracked_paths: set[str]) -> list[str]:
 
 EXPERIMENT_SKILLS: tuple[str, ...] = (
     "experiment-plan",
-    "experiment-bridge",
     "run-experiment",
     "experiment-queue",
     "monitor-experiment",
@@ -1550,14 +1613,12 @@ EXPERIMENT_REQUIRED_FILES = {
     "experiment-plan": (
         "references/mandate.md", "references/block-checks.md", "templates/experiment-plan.md",
     ),
-    "experiment-bridge": (
-        "references/mandate.md", "references/composition-map.md", "templates/bridge-report.md",
-    ),
     "run-experiment": (
         "references/mandate.md",
         "references/execution-contract.md",
         "references/remote-execution.md",
         "references/batch-authorization.md",
+        "references/composition-map.md",
         "templates/run-report.md",
     ),
     "experiment-queue": ("references/mandate.md", "templates/batch-manifest.md"),
@@ -1579,11 +1640,10 @@ EXPERIMENT_REQUIRED_FILES = {
 }
 EXPERIMENT_TEXT_MARKERS = {
     "run-experiment": (
-        "执行控制", "小批量或队列", "委托继承", *EXPERIMENT_JOB_CONTRACT,
+        "唯一实验执行控制", "小批量或队列", "委托继承", *EXPERIMENT_JOB_CONTRACT,
         "作业退出", "产物有效", "科学结论", "旧文件",
         "远程只是执行位置", "SSH", "已有调度",
     ),
-    "experiment-bridge": ("兼容入口", "不再重复执行控制", "委托继承"),
     "experiment-queue": (
         "委托继承", *EXPERIMENT_JOB_CONTRACT, *EXPERIMENT_RECOVERY,
         "不因进入队列或新波次重复索权", "研究日志",
@@ -1616,21 +1676,26 @@ EXPERIMENT_MANDATE_PACKAGE_MARKERS = (
     "额度、权限与目标互不推导",
 )
 EXPERIMENT_COMPANION_DEPENDENCIES = {
-    "experiment-bridge": (
-        "run-experiment", "experiment-plan", "experiment-queue", "monitor-experiment",
-        "training-health-check", "analyze-results", "experiment-audit",
-    ),
     "experiment-queue": ("run-experiment",),
     "result-to-claim": ("analyze-results",),
 }
 EXPERIMENT_FILE_MARKERS = {
+    "run-experiment/references/composition-map.md": (
+        "是唯一执行控制", "experiment-plan", "experiment-queue", "monitor-experiment",
+        "training-health-check", "analyze-results", "experiment-audit", "result-to-claim",
+        "blocked",
+    ),
     "run-experiment/references/execution-contract.md": EXPERIMENT_JOB_CONTRACT,
     "run-experiment/references/remote-execution.md": EXPERIMENT_REMOTE,
     "run-experiment/references/batch-authorization.md": (
         "research-log.md", "valid_until", "scope", "cost_limit", "compute_limit", "run_limit",
         "run_count_basis: planned-run", "concurrency_limit", "retry_limit", "worst_case_estimate",
     ),
-    "run-experiment/templates/run-report.md": EXPERIMENT_JOB_CONTRACT,
+    "run-experiment/templates/run-report.md": (
+        *EXPERIMENT_JOB_CONTRACT, "Artifact validity", "Scientific conclusion",
+        "Monitoring and Health", "Analysis and Independent Audit", "Tracker Update",
+        "Optional Ablation Suggestions",
+    ),
     "experiment-queue/templates/batch-manifest.md": EXPERIMENT_JOB_CONTRACT,
 }
 EXPERIMENT_HOST_BINDINGS = FORMAL_HOST_BINDINGS
@@ -1647,6 +1712,11 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
     """#56 实验执行：委托继承、桥接合流、运行/恢复/远程合同与宿主中立。"""
     found: list[str] = []
     base = root / "skills" / "validation-cycle"
+    legacy_bridge = base / "experiment-bridge"
+    if (legacy_bridge / "SKILL.md").exists() or any(
+        path.is_file() for path in legacy_bridge.rglob("*")
+    ):
+        found.append("skills/validation-cycle/experiment-bridge: 旧 Skill 仍可发现或安装")
     packaged_mandate_text: str | None = None
     for name in EXPERIMENT_SKILLS:
         rel_dir = f"skills/validation-cycle/{name}"
@@ -1780,7 +1850,9 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
         run_body = run_text.read_text(encoding="utf-8")
         if "../experiment-bridge/SKILL.md" in run_body:
             found.append("skills/validation-cycle/run-experiment/SKILL.md: 仍依赖旧桥接控制器")
-        if "仓库中的 `experiment-queue`" not in run_body or "单独安装时如 queue 不可用" not in run_body:
+        if "唯一实验执行控制" not in run_body:
+            found.append("skills/validation-cycle/run-experiment/SKILL.md: 未声明唯一执行控制")
+        if "仓库中的 `experiment-queue`" not in run_body or "单装 `run-experiment` 时" not in run_body:
             found.append("skills/validation-cycle/run-experiment/SKILL.md: 缺批量队列可用性边界")
         for marker in EXPERIMENT_AUTHORIZATION_MARKERS:
             if marker not in run_body:
@@ -1788,14 +1860,45 @@ def experiment_execution_problems(root: Path, tracked_paths: set[str]) -> list[s
     bridge_playbook = root / EXPERIMENT_BRIDGE_PLAYBOOK
     if bridge_playbook.is_file():
         playbook = bridge_playbook.read_text(encoding="utf-8")
-        for marker in ("run-experiment", "analyze-results", "experiment-audit"):
+        for marker in (
+            "skills/validation-cycle/run-experiment/SKILL.md", "唯一执行控制",
+            "monitor-experiment", "training-health-check", "analyze-results",
+            "experiment-audit", "result-to-claim",
+        ):
             if marker not in playbook:
                 found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 缺能力路由 {marker}")
+        for marker in (
+            "skills/validation-cycle/experiment-bridge/SKILL.md", "-s experiment-bridge",
+            "/experiment-bridge",
+        ):
+            if marker in playbook:
+                found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 残留旧 Skill 调用或安装 slug {marker}")
         for marker in ("run_count_basis=planned-run", "每个 attempt 先记最坏预留"):
             if marker in playbook:
                 found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: 桥接 playbook 重复执行控制合同 {marker}")
     else:
         found.append(f"{EXPERIMENT_BRIDGE_PLAYBOOK}: playbook 不存在")
+    active_route_docs = (
+        "README.md", "docs/README-en.md", "docs/user-acceptance-guide.md", "skills/README.md",
+        "skills/general/research-os/SKILL.md",
+        "skills/general/research-os/references/PRODUCT-MAP.md",
+        "skills/general/research-os/references/validation.md",
+        "skills/general/research-os/references/migration-boundary.md",
+        "skills/general/research-os/references/batch-authorization.md",
+        EXPERIMENT_BRIDGE_PLAYBOOK,
+    )
+    for relative in active_route_docs:
+        path = root / relative
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        for marker in (
+            "skills/validation-cycle/experiment-bridge/SKILL.md", "-s experiment-bridge",
+        ):
+            if marker in text:
+                found.append(f"{relative}: 残留旧 Skill 路径或安装 slug {marker}")
+        if re.search(r"(?m)^\s*/experiment-bridge\b", text):
+            found.append(f"{relative}: 残留旧 /experiment-bridge 可调用入口")
     boundary = root / MIGRATION_DOC
     if boundary.is_file():
         boundary_text = boundary.read_text(encoding="utf-8")

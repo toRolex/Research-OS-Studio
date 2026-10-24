@@ -1,5 +1,0 @@
-interface:
-  display_name: "Idea Discovery"
-  short_description: "按目标缺口组合发现能力"
-policy:
-  allow_implicit_invocation: false

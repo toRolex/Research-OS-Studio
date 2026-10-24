@@ -38,9 +38,9 @@ Gates: none
 |---|---|---|---|---|---|
 | route-only | — | 我该从哪开始、该用哪个、只看推荐、推荐入口、不要执行 | 用户只要入口或下一步建议 | yes | [route-only](playbooks/route-only.md) |
 | literature | — | 查文献、文献综述、梳理 related work、这批论文怎么看 | 已有明确主题或论文集合，要在有界额度内完成一次文献综合并验收 | no | [literature-review](playbooks/literature-review.md) |
-| idea-discovery | — | 我有方向没 idea、从方向到 proposal、形成完整 Proposal | 只有方向或 brief，要文献、候选、查新、评审并收敛 | no | [idea-discovery](playbooks/idea-discovery.md) |
+| discovery | — | 我有研究方向，想从研究方向到 Proposal、形成完整 Proposal | 只有方向或 brief，希望按缺口整合文献、候选、查新、fresh 独立评审与方案收敛 | no | [discovery](playbooks/discovery.md) |
 | experiment-plan | — | 设计实验、写实验计划、做实验方案 | 已有研究问题，要的是有界计划而不是开跑 | no | [experiment-plan](playbooks/experiment-plan.md) |
-| experiment-bridge | — | 跑完这个实验并分析、按计划跑实验、实验桥接 | 已有计划或 tracker，要在本批授权内做完并分析 | no | [experiment-bridge](playbooks/experiment-bridge.md) |
+| experiment-bridge | — | 跑完这个实验并分析、按计划跑实验、实验桥接 | Research OS 需求配方名（非 Skill）；执行控制唯一委托给 run-experiment，分析、监控与审计按需调用独立能力 | no | [experiment-bridge](playbooks/experiment-bridge.md) |
 | paper-writing | general | 写论文 | 已有研究材料要写成论文，且材料不是机器学习实验、也不是以系统设计与实现为核心贡献 | no | [paper-writing-general](playbooks/paper-writing-general.md) |
 | paper-writing | ml | 机器学习 | 材料是机器学习或人工智能实验，要按专业标准组织论文写作 | no | [paper-writing-ml](playbooks/paper-writing-ml.md) |
 | paper-writing | systems | 系统论文 | 材料以系统设计与实现为核心贡献，要按专业标准组织论文写作 | no | [paper-writing-systems](playbooks/paper-writing-systems.md) |
@@ -54,7 +54,7 @@ Gates: none
 | custom | — | 没有对应流程、设计一个流程 | 已交付路线都不匹配 | no | [custom](playbooks/custom.md) |
 | swarm | — | 并行覆盖、分片排查、多方案竞赛、全面摸排 | 已有明确问题，要在有界额度内用并行子代理分片、竞赛或混合探索并汇总 | no | [swarm](playbooks/swarm.md) |
 
-已命名、文件未交付：无。写作请求统一进入 `paper-writing`；general、ml、systems 仅选专业标准，旧专业入口作为兼容调用保留。
+已命名、文件未交付：无。写作统一进入 `paper-writing`；general、ml、systems 选择专业分支与资源。旧 ML/Systems 独立写作入口已合并到该统一能力，不再承诺旧 Skill 路径可调用。
 
 不占路线的独立能力：用户要对抗审查、独立挑战或多模型审查时，委托内由编排者或用户直接点名 `interrogate`：独立 reviewer 逐模型挑战、findings 去重、分歧保留，主审四桶有据判断；该调用始终只读，修复由委托按授权另行组织（如 `proof-repair`、`research-improvement`）。独立能力未安装时只阻塞依赖它的分支，不阻塞其他委托工作。
 
@@ -92,9 +92,9 @@ Role: orchestrator
 
 命中已交付 playbook 后，把其步骤逐字抄入 todolist，逐步跟踪 pending / in-progress / completed / blocked；清单保留编号、原句及子列表，只附状态和证据定位，不压缩成阶段摘要。首次展示清单后逐项直接对照 playbook，漏句先补齐；仅达到该步骤完成条件才标 completed。用当前会话的清单记录即可；route-only 只在对话内跟踪，不创建任务或文件。
 
-### 统一写作入口与兼容路由
+### 统一写作入口与专业分支
 
-`paper-writing` 是唯一写作组织入口；general、ML 与 Systems 仅用于选择领域标准。所有写作变体都走 [paper-writing-general](playbooks/paper-writing-general.md) 及其 `skills/writing-cycle/paper-writing/SKILL.md`；该入口按 `skills/writing-cycle/paper-writing/references/standards.md` 按需加载专业资源。旧 `ml-paper-writing` 与 `systems-paper-writing` 名称保留为可直接调用的兼容层，不再由入口分流到独立控制流程。审稿回复、转投和演讲仍是独立目的路线，但其 playbook 服从各自 Skill 中的委托继承合同；授权内修复不要求二次点名。
+`paper-writing` 是唯一写作组织入口；general、ML 与 Systems 仅选择领域分支和按需资源。对应主路由及专业 playbook 都进入 `skills/writing-cycle/paper-writing/SKILL.md`，由该入口与 `skills/writing-cycle/paper-writing/references/standards.md` 组织统一写作；ML/Systems 意图仍可由用户明确表达。审稿回复、转投和演讲仍是独立目的路线，但其 playbook 服从各自 Skill 中的委托继承合同；授权内修复不要求二次点名。
 
 级联进入已迁移叶时沿用本次委托，不重复请求批准；进入未迁移叶时仍按该叶自己的门停下确认，处理完该点后同一委托继续。写作范围内的编译修复与引用修复按委托继承调用，不要求用户另行点名。
 
