@@ -23,11 +23,15 @@ FIXTURE_ROOT = ROOT / "tests/fixtures/spec48-ticket60-contract-M"
 
 def baseline_files(prefix: str) -> list[str]:
     fixture = FIXTURE_ROOT / "baseline"
-    return [
-        f"{prefix}/{path.relative_to(fixture).as_posix()}"
-        for path in sorted(fixture.rglob("*"))
-        if path.is_file()
-    ]
+    resources = []
+    for path in sorted(fixture.rglob("*")):
+        if not path.is_file():
+            continue
+        relative = path.relative_to(fixture)
+        if relative.suffix == ".fixture":
+            relative = relative.with_suffix(".md")
+        resources.append(f"{prefix}/{relative.as_posix()}")
+    return resources
 
 
 @lru_cache(maxsize=None)
