@@ -52,7 +52,7 @@ Standards 审查补件：原 `tests/test_ticket60_flat_install_links.py:1–76` 
 
 **测试执行 HEAD：**`edca41919141515361b40d51438de7c9959f1003`（先提交两份验收文档的 doc-only commit；测试前该 HEAD 工作树干净）。用 tracked 文件清单重新 collect，实际 **38 个文件、398 个 pytest 节点**；逐文件串行执行 **38/38 rc=0，398 passed、760 subtests passed、0 failed、0 skipped**。包含 `scripts/test_*.py`；没有 `-k`、`--ignore`、skip 或并行。环境为 uv 0.13.5、Python 3.14.4、pytest 9.1.1；每文件 180 秒 timeout，临时目录在 `/tmp/spec48-final-merger-closeout-record/tmp/`。
 
-修复目标 `tests/test_spec48_ticket60_contract_M.py` 在该精确 HEAD 为 **12 passed、286 subtests passed**；`test_unapproved_control_whitespace_changes_are_rejected` 实际执行并通过。逐文件日志、实际 rc、完整收集节点与文件清单见 `/tmp/spec48-final-merger-closeout-record/logs/{collect.log,tracked-test-files.txt,suite/results.tsv,suite/file-00.log…file-37.log}`。此前 `431eed4` 的 397/757 旧结果没有代替本次执行。
+修复目标 `tests/test_spec48_ticket60_contract_M.py` 在该精确 HEAD 为 **12 passed、286 subtests passed**；`test_unapproved_control_whitespace_changes_are_rejected` 实际执行并通过。逐文件日志、实际 rc、完整收集节点与文件清单见 `/tmp/spec48-final-merger-closeout-record/logs/{collect.log,tracked-test-files.txt,suite/results.tsv,suite/file-01.log…file-38.log}`。此前 `431eed4` 的 397/757 旧结果没有代替本次执行。
 
 ```text
 timeout 180 env TMPDIR=/tmp/spec48-final-merger-closeout-record/tmp UV_CACHE_DIR=/tmp/spec48-final-candidate-validation-r2/logs/uv-cache uv run --offline --no-project --with pytest==9.1.1 python -m pytest --collect-only -q <logs/tracked-test-files.txt 中的全部路径>
