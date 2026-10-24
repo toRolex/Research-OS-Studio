@@ -12,6 +12,7 @@
 """
 import argparse
 import hashlib
+import json
 import math
 import re
 import subprocess
@@ -652,6 +653,81 @@ INTERROGATE_BUCKETS = ("Act on", "Consider", "Noted", "Dismissed")
 INTERROGATE_FIXED_MODEL_MARKERS = ("claude-opus", "grok-4", "composer-", "cursor")
 
 
+def interrogate_dispatch_contract(text: str) -> dict:
+    """Read this Skill's local dispatch declaration, not a research runtime protocol."""
+    match = re.search(r"(?ms)^### Reviewer dispatch contract\s*\n```json\n(.*?)\n```", text)
+    if not match:
+        raise ValueError("interrogate 缺本次 reviewer 集合/隔离声明")
+    try:
+        contract = json.loads(match.group(1))
+    except json.JSONDecodeError as error:
+        raise ValueError(f"interrogate 派发声明不是合法JSON: {error}") from error
+    if not isinstance(contract, dict):
+        raise ValueError("interrogate 派发声明必须是对象")
+    return contract
+
+
+def resolve_interrogate_reviewers(contract: dict, role_text: str) -> list[dict[str, str]]:
+    """Static shape/source validation only; does not verify live tools or grant authority."""
+    inputs = contract.get("reviewer_inputs")
+    if (
+        contract.get("context") != "fresh" or contract.get("readonly") is not True
+        or contract.get("reviewer_reads_peer_findings") is not False
+        or not isinstance(inputs, list) or not all(isinstance(item, str) for item in inputs)
+        or set(inputs) != {"intent", "source_material", "rubric"} or len(inputs) != 3
+        or contract.get("lead_reads_after") != "all_reviewers_complete"
+    ):
+        raise ValueError("interrogate 隔离关系无效：reviewer只读原材料，主审须后置综合")
+    roles: dict[str, tuple[str, str]] = {}
+    for line in role_text.splitlines():
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        match = ROLE_LINE_RE.fullmatch(line.strip())
+        if not match:
+            raise ValueError("角色行格式无效")
+        role, model, thinking = match.groups()
+        if role not in ROLES or role in roles or thinking not in THINKING:
+            raise ValueError("角色未知/重复或thinking无效；不允许扩展重复reviewer行")
+        roles[role] = (model, thinking)
+    reviewers = contract.get("reviewers")
+    if not isinstance(reviewers, list) or len(reviewers) < 2:
+        raise ValueError("blocked: 本次独立reviewer集合至少需要两个实例")
+    result: list[dict[str, str]] = []
+    seen: set[str] = set()
+    for row in reviewers:
+        if not isinstance(row, dict) or not isinstance(row.get("id"), str) or not row["id"].strip() or row["id"] in seen:
+            raise ValueError("reviewer实例必须有唯一非空id")
+        seen.add(row["id"])
+        source = row.get("source")
+        if source == "role:reviewer":
+            if "reviewer" not in roles:
+                raise ValueError("blocked: 缺reviewer绑定，须明示真实session回退来源")
+            model, thinking = roles["reviewer"]
+        elif source in ("explicit", "session"):
+            if source == "session" and "reviewer" in roles:
+                raise ValueError("已有显式reviewer绑定，不能借缺行session回退绕过替代授权")
+            model, thinking = row.get("model"), row.get("thinking")
+            if not isinstance(row.get("authority"), str) or not row["authority"].strip():
+                raise ValueError("显式/回退条目缺原授权或能力来源索引，不能自行授予权限")
+        else:
+            raise ValueError("reviewer来源须为role:reviewer、explicit或session")
+        if (
+            not isinstance(model, str) or not re.fullmatch(r"[^/\s]+/\S+", model) or model.endswith("/")
+            or not isinstance(thinking, str) or thinking not in THINKING
+        ):
+            raise ValueError("reviewer模型/档位格式无效")
+        result.append({
+            "id": row["id"], "model": model, "thinking": thinking, "source": source,
+            "authority": row.get("authority", "project role:reviewer binding"),
+        })
+    distinct = contract.get("require_distinct_models", False)
+    if not isinstance(distinct, bool):
+        raise ValueError("require_distinct_models必须是布尔值")
+    if distinct and len({row["model"] for row in result}) < 2:
+        raise ValueError("blocked: 已请求多模型但可表达集合不足，不能静默降级")
+    return result
+
+
 def interrogate_contract_problems(text: str) -> list[str]:
     """interrogate 技能的合同检查：只读、独立审查机制与宿主中立。"""
     found: list[str] = []
@@ -675,6 +751,17 @@ def interrogate_contract_problems(text: str) -> list[str]:
     for banned in INTERROGATE_FIXED_MODEL_MARKERS:
         if banned in text.lower():
             found.append(f"interrogate 残留固定模型/宿主绑定：{banned}")
+    try:
+        contract = interrogate_dispatch_contract(text)
+        # Validate the shipped declaration against the actual standard setup shape.
+        template = SKILLS / "general/setup-research-os/templates/research-os-models.md"
+        resolve_interrogate_reviewers(contract, template.read_text(encoding="utf-8"))
+    except (ValueError, OSError) as error:
+        found.append(str(error))
+    step3 = text.split("## Step 3", 1)[-1].split("## Step 4", 1)[0]
+    # Reject the review's explicit affirmative reversal, not arbitrary uses of 'findings'.
+    if re.search(r"(?:^|[；。\n])\s*后续\s*reviewer\s*(?:必须|可以|应当)\s*先(?:读取|读)\s*前序\s*reviewer[^。\n]{0,120}findings[^。\n]{0,80}形成判断", step3, re.I):
+        found.append("interrogate reviewer判断前读取前序findings，与隔离声明冲突")
     if not (SKILLS / "general" / "interrogate" / "references" / "research-review.md").exists():
         found.append("interrogate 缺科研审查 lens research-review.md")
     if not (SKILLS / "general" / "interrogate" / "references" / "PROVENANCE.md").exists():

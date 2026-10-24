@@ -5,7 +5,10 @@
 from __future__ import annotations
 
 import importlib.util
+import json
+import re
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -168,3 +171,107 @@ class NoNewRegression(unittest.TestCase):
     def test_checker_clean_on_new_skill(self):
         skill_text = read("SKILL.md")
         assert check_skills.interrogate_contract_problems(skill_text) == []
+
+
+class ReviewerSetAndIsolation(unittest.TestCase):
+    def roles(self):
+        template = (ROOT / "skills/general/setup-research-os/templates/research-os-models.md").read_text(encoding="utf-8")
+        return template.replace("example/replace-with-live-model", "test-provider/model-a")
+
+    def contract(self):
+        text = read("SKILL.md")
+        match = re.search(r"(?ms)^### Reviewer dispatch contract\s*\n```json\n(.*?)\n```", text)
+        self.assertIsNotNone(match, "interrogate needs an explicit call-local reviewer set")
+        return json.loads(match.group(1))
+
+    def test_standard_unique_setup_role_resolves_two_fresh_reviewers(self):
+        roles = self.roles()
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "roles.md"
+            path.write_text(roles, encoding="utf-8")
+            prior = list(check_skills.problems)
+            check_skills.check_role_file(path, "fixture roles")
+            self.assertEqual(check_skills.problems, prior)
+        self.assertEqual(sum(line.startswith("reviewer:") for line in roles.splitlines()), 1)
+        rows = check_skills.resolve_interrogate_reviewers(self.contract(), roles)
+        self.assertEqual(len(rows), 2)
+        self.assertEqual({row["model"] for row in rows}, {"test-provider/model-a"})
+        self.assertEqual(len({row["id"] for row in rows}), 2)
+
+    def test_explicit_multimodel_set_does_not_add_global_role_rows(self):
+        contract = self.contract()
+        contract["require_distinct_models"] = True
+        contract["reviewers"][1] = {
+            "id": "B", "source": "explicit", "model": "test-provider/model-b",
+            "thinking": "high", "authority": "original mandate explicitly permits B",
+        }
+        rows = check_skills.resolve_interrogate_reviewers(contract, self.roles())
+        self.assertEqual({row["model"] for row in rows}, {"test-provider/model-a", "test-provider/model-b"})
+        contract["reviewers"][1]["authority"] = ""
+        with self.assertRaises(ValueError):
+            check_skills.resolve_interrogate_reviewers(contract, self.roles())
+
+    def test_duplicate_global_roles_and_insufficient_multimodel_set_rejected(self):
+        with self.assertRaises(ValueError):
+            check_skills.resolve_interrogate_reviewers(self.contract(), self.roles() + "\nreviewer: test-provider/model-b | high\n")
+        contract = self.contract()
+        contract["require_distinct_models"] = True
+        with self.assertRaises(ValueError):
+            check_skills.resolve_interrogate_reviewers(contract, self.roles())
+
+    def test_missing_role_and_incomplete_set_are_blocked_not_implicit_fallback(self):
+        with self.assertRaisesRegex(ValueError, "blocked"):
+            check_skills.resolve_interrogate_reviewers(self.contract(), "")
+        contract = self.contract()
+        contract["reviewers"] = contract["reviewers"][:1]
+        with self.assertRaisesRegex(ValueError, "blocked"):
+            check_skills.resolve_interrogate_reviewers(contract, self.roles())
+
+    def test_transparent_session_sources_cannot_override_selected_role(self):
+        contract = self.contract()
+        contract["reviewers"] = [
+            {"id": label, "source": "session", "model": "test-provider/model-a",
+             "thinking": "medium", "authority": "missing role; verified session catalog"}
+            for label in ("A", "B")
+        ]
+        self.assertEqual(len(check_skills.resolve_interrogate_reviewers(contract, "")), 2)
+        with self.assertRaises(ValueError):
+            check_skills.resolve_interrogate_reviewers(contract, self.roles())
+
+    def test_negated_peer_read_rule_and_later_lead_synthesis_are_valid(self):
+        source = read("SKILL.md")
+        valid = source.replace(
+            "reviewer 各自给出 findings，互相不可见。",
+            "reviewer 各自给出 findings；后续 reviewer 不得先读前序 reviewer 的 findings 再形成判断。",
+        )
+        self.assertEqual(check_skills.interrogate_contract_problems(valid), [])
+        contract = self.contract()
+        contract["reviewer_inputs"] = ["rubric", "intent", "source_material"]
+        self.assertEqual(len(check_skills.resolve_interrogate_reviewers(contract, self.roles())), 2)
+
+    def test_malformed_explicit_thinking_is_rejected_without_crashing(self):
+        contract = self.contract()
+        contract["reviewers"][1] = {
+            "id": "B", "source": "explicit", "model": "test-provider/model-b",
+            "thinking": [], "authority": "original mandate",
+        }
+        with self.assertRaises(ValueError):
+            check_skills.resolve_interrogate_reviewers(contract, self.roles())
+
+    def test_original_report_peer_read_mutant_is_rejected(self):
+        source = read("SKILL.md")
+        before = "reviewer 各自给出 findings，互相不可见。"
+        after = "reviewer 各自给出 findings；后续 reviewer 必须先读前序 reviewer 的 findings 再形成判断。"
+        self.assertEqual(source.count(before), 1)
+        self.assertTrue(check_skills.interrogate_contract_problems(source.replace(before, after)))
+
+    def test_structural_peer_input_and_shared_context_mutants_rejected(self):
+        for key, value in (
+            ("reviewer_reads_peer_findings", True), ("context", "shared"),
+            ("reviewer_inputs", ["intent", "source_material", "rubric", "peer_findings"]),
+            ("lead_reads_after", "each_reviewer"),
+        ):
+            contract = self.contract()
+            contract[key] = value
+            with self.subTest(key=key), self.assertRaises(ValueError):
+                check_skills.resolve_interrogate_reviewers(contract, self.roles())

@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Interrogate
 
-按会话实际可用的子代理能力，每个已配置 reviewer 模型派一名独立 reviewer，从独立角度对抗审查研究对象。对抗信号来自模型多样性，不是分配人设。交付物是主审综合后的判断，不是票数或转述。本调用始终只读：不自动修订、不自动应用任何变更；后续修复由调用者按其研究委托的授权另行组织。
+按会话实际可用的子代理能力，为本次 reviewer 集合中的每个实例派一个真正 fresh 的只读上下文。独立性来自判断前的上下文/输出隔离，不是分配人设；不同模型可增加来源多样性，但不是数学正确性证明。交付物是主审综合后的判断，不是票数或转述。本调用始终只读：不自动修订、不自动应用任何变更；后续修复由调用者按其研究委托的授权另行组织。
 
 ## 委托继承
 
@@ -32,9 +32,31 @@ Gates: none
 
 **子代理前提**：按当前会话实际可调用的子代理工具判定，不按宿主品牌推定。没有子代理工具时，本技能标 blocked 并说明缺口，只给主入口能做的只读建议；不由编排者串行代跑冒充独立审查。用户仍可只读地自行审查，但那不是本技能的多 reviewer 机制。
 
-reviewer 模型从项目角色表 `.agents/research-os-models.md` 的 `reviewer:` 行解析，一行一个独立 reviewer，标注 Reviewer A、B……与行数对应。角色表缺失时如实说明没有可用的多 reviewer 配置，用当前会话可用模型中最少两个不同来源发起，并在结论中记录实际使用的模型；只有一个模型可用时如实报告「未能构成独立审查」，不把单模型自查说成已去重的独立 findings。正文引用写成 `Role: reviewer`。不给 reviewer 指定固定人设；模型配置不可用时停在该步，不改写角色表。
+全局项目角色表 `.agents/research-os-models.md` 仍是八角色各一行，`reviewer:` 是一个模型/档位绑定，不是审查者列表。下面是本次调用的派发集合和输入边界，保存在 brief/返回报告中即可，不写第二张角色表。默认 A/B 都解析同一已确认 `Role: reviewer`，但必须分成两个 fresh 只读上下文；如实标 same-model，不能把两个实例当两个模型/家族来源。
+
+### Reviewer dispatch contract
+```json
+{
+  "reviewers": [
+    {"id": "A", "source": "role:reviewer"},
+    {"id": "B", "source": "role:reviewer"}
+  ],
+  "context": "fresh",
+  "readonly": true,
+  "reviewer_inputs": ["intent", "source_material", "rubric"],
+  "reviewer_reads_peer_findings": false,
+  "lead_reads_after": "all_reviewers_complete",
+  "require_distinct_models": false
+}
+```
+
+集合数量等于 `reviewers` 的条数，至少两条，id唯一。用户/有效原委托可提供本次集合覆盖默认值；不同模型的条目用 `source: explicit`，逐项给出真实 `model`、受支持的 `thinking` 和 `authority`（原请求/委托来源）。字段只是授权索引，不是凭它自授权限；核对原话、材料范围、次数与剩余额度后才派发。不得从其他角色的模型绑定推导 reviewer 替代权。
+
+只有文件/角色行缺失时，才可从当前真实可用能力透明回退：把实际模型/档位及缺失原因列成本次 `source: session` 条目并记录来源。显式选定模型不可用或档位不支持时，已有明确替代授权可核验继承并披露；否则先停该派发请用户确认，不静默换模型/档位、不改角色表。行重复/格式错仍停澄清。需要多模型挑战时将 `require_distinct_models` 设为 true，并列至少两个不同且获授权的模型；不足则该请求 blocked，列缺项，不悄悄以 same-model 降级。只有同模型但能提供多个真实fresh上下文时可完成默认独立审查，不冒充多模型。工具无法隔离上下文、阻止peer输出访问，或额度不能支持所需数量时，同样 blocked，不自扮reviewer。
 
 读取 [references/reviewer-prompt.md](references/reviewer-prompt.md)，用同一模板填入意图、审查材料、[references/rubric.md](references/rubric.md) 与 [references/code-quality-review.md](references/code-quality-review.md)（代码变更）或 [references/research-review.md](references/research-review.md)（研究材料/证明），派发给每个 reviewer，要求只读。reviewer 各自给出 findings，互相不可见。
+
+派发前按上面的输入边界核对每份prompt：只含意图、原始材料及rubric，不含peer findings、先前reviewer摘要/裁决，也不共享reviewer输出位置的读取权限。各自完成判断前不得互读；主审仅在全部reviewer完成后取得其输出做Step 4/5综合。声明与正文若冲突则停止该派发并澄清，不能只留“独立”字样却给前序意见。
 
 ## Step 4，综合 findings
 
@@ -59,7 +81,7 @@ reviewer 模型从项目角色表 `.agents/research-os-models.md` 的 `reviewer:
 > [Step 2 的意图段]
 
 ### Reviewers
-- Reviewer [label]: [模型名], [N findings]（每个 reviewer 一条）
+- Reviewer [id]: [模型/档位、角色或本次显式来源、授权依据、实际fresh上下文与隔离核对], [N findings]（每个实例一条；same-model不计为多个模型来源）
 
 ### Act On
 [每条：描述、哪些模型提出、为何要紧。]
