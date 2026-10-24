@@ -871,6 +871,13 @@ def check_archive_index(strict: bool = False) -> None:
         if strict and identity != "BYTE_MATCH":
             err(f"历史身份未通过: {name}: {identity}/{availability}")
 
+    def is_index_target(markdown: Path, target: str) -> bool:
+        path, separator, fragment = target.partition("#")
+        return (
+            lexical_relative(markdown.parent, path) == index.as_posix()
+            and (not separator or unquote(fragment) in index_anchors)
+        )
+
     linked_names: set[str] = set()
     for markdown in md_files:
         rel_markdown = markdown.relative_to(ROOT).as_posix()
@@ -878,20 +885,33 @@ def check_archive_index(strict: bool = False) -> None:
             continue
         for line_number, line in enumerate(markdown.read_text(encoding="utf-8").splitlines(), 1):
             names = set(ARCHIVE_NAME_RE.findall(line))
-            targets = link_re.findall(line)
-            if not names or not targets:
+            links = list(link_re.finditer(line))
+            if not names or not links:
                 continue
-            links_index = any(
-                lexical_relative(markdown.parent, target.split("#")[0]) == index.as_posix()
-                and ("#" not in target or unquote(target.split("#", 1)[1]) in index_anchors)
-                for target in targets
-            )
+            explicit_names: set[str] = set()
+            referenced_names: set[str] = set()
+            links_index = False
+            for link in links:
+                target = link.group(1)
+                valid_target = is_index_target(markdown, target)
+                links_index |= valid_target
+                link_names = set(ARCHIVE_NAME_RE.findall(link.group(0)))
+                explicit_names.update(link_names)
+                if valid_target:
+                    referenced_names.update(link_names)
+                else:
+                    for name in sorted(link_names & rows.keys()):
+                        err(f"{rel_markdown}:{line_number}: 归档引用必须链接真实索引: {name} -> {target}")
+            # A nearby index link may support a plain-text archive mention,
+            # but never override an explicit archive link's own destination.
+            if links_index:
+                referenced_names.update(names - explicit_names)
             for name in names:
-                if links_index:
+                if name in referenced_names:
                     linked_names.add(name)
                     if name not in rows:
                         err(f"归档索引缺少被引用记录: {name}")
-                elif name in rows and rel_markdown.startswith("docs/acceptance/"):
+                elif name not in explicit_names and name in rows and rel_markdown.startswith("docs/acceptance/"):
                     err(f"{rel_markdown}:{line_number}: 归档引用必须链接真实索引: {name}")
 
     for name in sorted(rows.keys() - linked_names):

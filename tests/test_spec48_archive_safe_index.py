@@ -9,6 +9,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from spec48_workcopy import copy_tracked_tree
+
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts/check-skills.py"
 INDEX_REL = "docs/acceptance/evidence/README.md"
@@ -141,6 +143,59 @@ class HistoricalArchiveIndexTests(unittest.TestCase):
         self.tracked.add(INDEX_REL)
         self.index.unlink()
         self.assertTrue(self.check()[0])
+
+    def test_each_explicit_archive_link_owns_its_href_and_fragment(self):
+        self.index.write_text("# Fixture\n" + self.row())
+        good = "[历史归档索引](evidence/README.md)"
+        cases = (
+            (f"`{self.name}`，见 {good}", True),
+            (f"[{self.name}](evidence/README.md) {good}", True),
+            (f"[{self.name}](evidence/README.md#fixture) {good}", True),
+            (f"[{self.name}](fixture.md) {good}", False),
+            (f"[{self.name}](evidence/README.md#missing) {good}", False),
+            (f"[{self.name}](fixture.md) [{self.name}](evidence/README.md)", False),
+            (f"{good} [{self.name}](evidence/README.md#missing)", False),
+        )
+        for line, valid in cases:
+            with self.subTest(line=line):
+                self.doc.write_text(line + "\n")
+                errors, _ = self.check()
+                self.assertEqual(not errors, valid, errors)
+                if not valid:
+                    self.assertIn("归档引用必须链接真实索引", "\n".join(errors))
+
+    def test_full_cli_rejects_same_line_masked_archive_links(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            work = Path(tmp)
+            copy_tracked_tree(ROOT, work)
+            for command in (["git", "init", "-q"], ["git", "add", "-A"]):
+                subprocess.run(command, cwd=work, check=True, capture_output=True, timeout=30)
+            doc = work / "docs/acceptance/v2-release-host-regression.md"
+            original = doc.read_text()
+            name = "v2-release-host-regression.tar.gz"
+            good = "[历史归档索引](evidence/README.md)"
+            cases = (
+                ("baseline", "", 0),
+                ("body-name-index", f"`{name}`，见 {good}", 0),
+                ("explicit-valid", f"[{name}](evidence/README.md) {good}", 0),
+                ("explicit-valid-fragment", f"[{name}](evidence/README.md#安全与可验证性限制) {good}", 0),
+                ("wrong-alone", f"[{name}](../../README.md)", 1),
+                ("masked-href", f"[{name}](../../README.md) {good}", 1),
+                ("masked-fragment", f"[{name}](evidence/README.md#missing) {good}", 1),
+                ("masked-by-same-archive", f"[{name}](../../README.md) [{name}](evidence/README.md)", 1),
+            )
+            for label, line, rc in cases:
+                with self.subTest(case=label):
+                    doc.write_text(original + (f"\n- {line}\n" if line else ""))
+                    command = ["uv", "run", "--offline", "--no-project", "python", "scripts/check-skills.py"]
+                    result = subprocess.run(command, cwd=work, capture_output=True, text=True, timeout=35)
+                    diff = subprocess.check_output(["git", "diff", "--", str(doc)], cwd=work, text=True, timeout=30)
+                    print(f"CLI F3 {label}: command={command!r}, rc={result.returncode}\n{result.stdout}{result.stderr}{diff}")
+                    self.assertEqual(result.returncode, rc, result.stdout + result.stderr)
+                    if rc:
+                        self.assertIn("归档引用必须链接真实索引", result.stdout)
+                        self.assertIn(name, result.stdout)
+                        self.assertNotIn("链接目标不存在或未追踪", result.stdout)
 
     def assert_evidence_contract(self, text):
         for needle in ("v2-accept-deliverables.tar.gz", "历史原包字节未找到", "清单自引用",
