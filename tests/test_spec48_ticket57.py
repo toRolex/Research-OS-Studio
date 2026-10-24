@@ -30,9 +30,6 @@ MIGRATED_WRITING = (
     "rebuttal",
     "resubmit-pipeline",
 )
-HISTORICAL = re.compile(
-    r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
-)
 
 
 def load():
@@ -55,7 +52,7 @@ def checker_problem_lines(root: Path = ROOT) -> list[str]:
 
 
 def fresh_problem_lines(root: Path = ROOT) -> list[str]:
-    return [line for line in checker_problem_lines(root) if not HISTORICAL.match(line)]
+    return checker_problem_lines(root)
 
 
 class MigrationContract(unittest.TestCase):

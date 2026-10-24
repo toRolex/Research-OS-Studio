@@ -1,8 +1,7 @@
 """#58 完成研究发现、检索与绘图的随包闭环。
 
 期望来自 #48 spec（US36、ID9-ID11、ID17）与 #58 票面，不从被测脚本反读。
-历史基线：`docs/acceptance/**` 的 9 条 evidence tarball 断链与 7 个既有测试
-失败不由本票修复；本票不得新增回归。
+默认结构 scope 不允许任何失败；历史身份严格 scope 另报未验证。
 """
 import importlib.util
 import re
@@ -21,9 +20,6 @@ DISCOVERY = SKILLS / "general/research-os"
 COMPOSITION = DISCOVERY / "references/discovery-composition.md"
 PLAYBOOK = DISCOVERY / "playbooks/discovery.md"
 BOUNDARY = SKILLS / "general/research-os/references/migration-boundary.md"
-HISTORICAL = re.compile(
-    r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
-)
 
 MIGRATED_TICKET58 = (
     "skills/idea-cycle/creative-thinking-for-research/SKILL.md",
@@ -67,7 +63,7 @@ def checker_problems(root: Path) -> list[str]:
 
 
 def fresh_problems(root: Path) -> list[str]:
-    return [line for line in checker_problems(root) if not HISTORICAL.match(line)]
+    return checker_problems(root)
 
 
 def stage_skill(root: Path) -> None:

@@ -2,9 +2,8 @@
 
 期望来自 #48 spec（决策 6、Testing #6/#4）与 #53 票面，不从被测脚本反读。覆盖：
 许可与共置资源、创建侧真实启动/健康/驱动/证据/清理/覆盖映射机制、维护侧三态
-结果与覆盖要求、草稿与失败如实报告、helper 正反例、宿主中立与迁移登记。历史
-基线：`integration/spec-48` @ `e84f779` 的 checker 已因 `docs/acceptance/**` 链
-到被忽略的 `evidence/*.tar.gz` 有 9 条 FAIL；本票只允许这一组历史失败。
+结果与覆盖要求、草稿与失败如实报告、helper 正反例、宿主中立与迁移登记。
+默认结构检查须真实通过；历史身份单独报告，不允许任何失败基线。
 """
 import importlib.util
 import re
@@ -23,8 +22,9 @@ HELPER = CREATE / "helpers" / "feature-map-lint.py"
 BOUNDARY = SKILLS / "general/research-os/references/migration-boundary.md"
 UPSTREAM_REVISION = "88d47514b82e7c44f00f2b2a72ff6dd12158038c"
 
-HISTORICAL = re.compile(
-    r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
+HISTORY_STATUS = re.compile(
+    r"HISTORY (UNVERIFIED|MISMATCH|BYTE_MATCH): [A-Za-z0-9][A-Za-z0-9._-]*\.tar\.gz "
+    r"\((UNAVAILABLE|AVAILABLE); 摘要不认证来源/安全\)"
 )
 MODEL_PIN = re.compile(
     r"(?i)(gpt-[0-9]|claude-[0-9]|gemini-[0-9]|grok-[0-9]|deepseek-[a-z0-9]|glm-[0-9]|opus|sonnet)"
@@ -48,7 +48,8 @@ def problem_lines(root: Path) -> list[str]:
         capture_output=True,
         text=True,
     )
-    output = result.stdout.splitlines()
+    # Recognize only the explicit history-status grammar, never arbitrary output.
+    output = [line for line in result.stdout.splitlines() if not HISTORY_STATUS.fullmatch(line)]
     lines = [line for line in output if line.startswith("  - ")]
     failure = re.fullmatch(r"FAIL: (\d+) 个问题", output[0]) if output else None
     valid_failure = (
@@ -263,8 +264,7 @@ class FeatureMapLintHelper(unittest.TestCase):
 class RegistrationAndEntry(unittest.TestCase):
     def test_checker_reports_no_new_failures(self):
         lines = problem_lines(ROOT)
-        non_historical = [line for line in lines if not HISTORICAL.match(line)]
-        self.assertEqual(non_historical, [], "不允许新增 checker 失败")
+        self.assertEqual(lines, [], "不允许任何 checker 结构失败")
 
     def test_checker_crash_is_not_filtered_as_a_historical_failure(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -275,6 +275,7 @@ class RegistrationAndEntry(unittest.TestCase):
                 "import sys\nprint('checker crashed', file=sys.stderr)\nsys.exit(2)\n",
                 "import sys\nprint('FAIL: 0 个问题')\nprint('checker crashed', file=sys.stderr)\nsys.exit(1)\n",
                 "print('checker crashed')\nraise SystemExit(1)\n",
+                "print('HISTORY PASS: fake.tar.gz')\nprint('OK: fake')\n",
             ):
                 (scripts / "check-skills.py").write_text(source, encoding="utf-8")
                 with self.subTest(source=source), self.assertRaises(AssertionError):

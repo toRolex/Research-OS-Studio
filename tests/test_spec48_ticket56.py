@@ -1,8 +1,7 @@
 """#56 授权内实验执行与远程执行位置。
 
 期望来自 #48 spec（Implementation 8、9、13–17；Testing 8）与 #56 票面。
-历史基线：`integration/spec-48` 的 `docs/acceptance/**` 链到被 `.gitignore`
-忽略的 `evidence/*.tar.gz`，checker 已因此 FAIL；本票只允许这 9 条历史断链。
+默认结构 scope 不允许任何失败；历史身份严格 scope 另报未验证。
 """
 import importlib.util
 import re
@@ -33,19 +32,6 @@ BOUNDARY = ROOT / "skills/general/research-os/references/migration-boundary.md"
 BRIDGE_PLAYBOOK = ROOT / "skills/general/research-os/playbooks/experiment-bridge.md"
 UPSTREAM = ROOT / "docs/upstream-sources-and-licenses.md"
 
-HISTORICAL = frozenset(
-    {
-        "  - docs/acceptance/v2-release-host-regression.md:93: 链接目标不存在或未追踪: evidence/v2-release-host-regression.tar.gz",
-        "  - docs/acceptance/v2-final-contract-fixes.md:53: 链接目标不存在或未追踪: evidence/v2-final-contract-fixes.tar.gz",
-        "  - docs/acceptance/v2-release-gate-combinations.md:49: 链接目标不存在或未追踪: evidence/v2-release-gate-combinations.tar.gz",
-        "  - docs/acceptance/v2-merged-host-smoke.md:54: 链接目标不存在或未追踪: evidence/v2-merged-host-smoke.tar.gz",
-        "  - docs/acceptance/v2-accept-validation.md:98: 链接目标不存在或未追踪: evidence/v2-accept-validation.tar.gz",
-        "  - docs/acceptance/v2-accept-hosts.md:9: 链接目标不存在或未追踪: evidence/v2-accept-hosts.tar.gz",
-        "  - docs/acceptance/v2-final-contract-independent-verify.md:41: 链接目标不存在或未追踪: evidence/v2-final-contract-independent-verify.tar.gz",
-        "  - docs/acceptance/v2-final-contract-independent-verify.md:53: 链接目标不存在或未追踪: evidence/v2-merged-host-smoke.tar.gz",
-        "  - docs/acceptance/v2-accept-remediation.md:92: 链接目标不存在或未追踪: evidence/v2-accept-remediation.tar.gz",
-    }
-)
 MODEL_PIN = re.compile(
     r"(?i)(gpt-[0-9]|claude-[0-9]|gemini-[0-9]|grok-[0-9]|deepseek-[a-z0-9]|glm-[0-9]|opus|sonnet)"
 )
@@ -73,7 +59,7 @@ def problem_lines(root: Path) -> list[str]:
 
 
 def fresh_problems(root: Path) -> list[str]:
-    return [line for line in problem_lines(root) if line not in HISTORICAL]
+    return problem_lines(root)
 
 
 def text(path: Path) -> str:
@@ -349,7 +335,7 @@ class WorkflowRemediation(unittest.TestCase):
 
 class CheckerContract(unittest.TestCase):
     def test_builtin_checker_registers_ticket56_contract(self):
-        self.assertEqual(set(problem_lines(ROOT)), HISTORICAL)
+        self.assertEqual(problem_lines(ROOT), [])
         self.assertEqual(fresh_problems(ROOT), [])
 
     def test_checker_detects_missing_recovery_contract(self):

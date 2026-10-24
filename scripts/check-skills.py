@@ -795,16 +795,24 @@ ARCHIVE_NAME_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*\.tar\.gz")
 ARCHIVE_SHA_RE = re.compile(r"[0-9a-f]{64}")
 
 
-def check_archive_index() -> None:
-    """Keep historical package absence and SHA divergence explicit failures."""
+def check_archive_index(strict: bool = False) -> None:
+    """Validate structure; only strict scope requires historical byte identity.
+
+    BYTE_MATCH proves digest/size equality only, not provenance or safe contents.
+    Local-only records never cause reads of unapproved local archive bytes.
+    """
     index = ROOT / ARCHIVE_INDEX_REL
     if ARCHIVE_INDEX_REL not in tracked or not index.is_file():
         err(f"历史归档索引不存在或未追踪: {ARCHIVE_INDEX_REL}")
         return
 
+    index_text = index.read_text(encoding="utf-8")
+    index_anchors = heading_anchors(index_text)
     rows: dict[str, tuple[str, str, str, str]] = {}
-    for line_number, line in enumerate(index.read_text(encoding="utf-8").splitlines(), 1):
-        if not line.startswith("| `"):
+    for line_number, line in enumerate(index_text.splitlines(), 1):
+        if not line.lstrip().startswith("|"):
+            continue
+        if not line.lstrip().startswith("| `") and not ARCHIVE_NAME_RE.search(line.split("|")[1]):
             continue
         cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
         if len(cells) != 6:
@@ -827,7 +835,7 @@ def check_archive_index() -> None:
         if not ARCHIVE_SHA_RE.fullmatch(historical_sha) or not ARCHIVE_SHA_RE.fullmatch(candidate_sha):
             err(f"{ARCHIVE_INDEX_REL}:{line_number}: SHA-256 字段无效 {name}")
             continue
-        if status != "仅本地保留、未入库":
+        if status not in {"仅本地保留、未入库", "已入库、待核验", "已入库、已核验"}:
             err(f"{ARCHIVE_INDEX_REL}:{line_number}: 未知归档可用状态 {name}")
             continue
         rows[name] = (size, historical_sha, candidate_sha, status)
@@ -836,15 +844,32 @@ def check_archive_index() -> None:
         err(f"{ARCHIVE_INDEX_REL}: 没有有效历史归档记录")
         return
 
-    for name, (_, historical_sha, candidate_sha, status) in rows.items():
+    for name, (size, historical_sha, candidate_sha, status) in rows.items():
         archive_rel = f"docs/acceptance/evidence/{name}"
         archive = ROOT / archive_rel
-        if archive_rel in tracked and archive.is_file():
-            if status == "仅本地保留、未入库":
-                err(f"归档索引状态与已追踪文件矛盾: {name}")
+        available = archive_rel in tracked and archive.is_file()
+        if status == "仅本地保留、未入库":
+            if archive_rel in tracked or archive.exists():
+                err(f"归档索引状态与仓库文件矛盾: {name}")
+        elif not available:
+            err(f"归档索引状态要求已追踪的真实字节: {name}")
+
+        identity = "MISMATCH" if historical_sha != candidate_sha else "UNVERIFIED"
+        availability = "UNAVAILABLE"
+        if available and status != "仅本地保留、未入库":
             actual_sha = hashlib.sha256(archive.read_bytes()).hexdigest()
+            availability = "AVAILABLE"
+            if actual_sha != candidate_sha or archive.stat().st_size != int(size):
+                err(f"归档候选字节与索引 SHA/size 不符: {name}")
+            elif actual_sha == historical_sha:
+                identity = "BYTE_MATCH"
             if actual_sha != historical_sha:
-                err(f"历史归档 SHA 与文档记录不符: {name}")
+                identity = "MISMATCH"
+        if status == "已入库、已核验" and identity != "BYTE_MATCH":
+            err(f"归档核验状态与历史 SHA 不符: {name}")
+        print(f"HISTORY {identity}: {name} ({availability}; 摘要不认证来源/安全)")
+        if strict and identity != "BYTE_MATCH":
+            err(f"历史身份未通过: {name}: {identity}/{availability}")
 
     linked_names: set[str] = set()
     for markdown in md_files:
@@ -856,25 +881,22 @@ def check_archive_index() -> None:
             targets = link_re.findall(line)
             if not names or not targets:
                 continue
+            links_index = any(
+                lexical_relative(markdown.parent, target.split("#")[0]) == index.as_posix()
+                and ("#" not in target or unquote(target.split("#", 1)[1]) in index_anchors)
+                for target in targets
+            )
             for name in names:
-                if any(target.startswith("evidence/README.md") for target in targets):
+                if links_index:
                     linked_names.add(name)
                     if name not in rows:
                         err(f"归档索引缺少被引用记录: {name}")
-                if name in rows:
-                    archive_rel = f"docs/acceptance/evidence/{name}"
-                    if archive_rel not in tracked:
-                        # Preserve the established nonzero diagnostic: this is the
-                        # unavailable archive object, not the now-valid index link.
-                        err(
-                            f"{rel_markdown}:{line_number}: 链接目标不存在或未追踪: evidence/{name}"
-                        )
+                elif name in rows and rel_markdown.startswith("docs/acceptance/"):
+                    err(f"{rel_markdown}:{line_number}: 归档引用必须链接真实索引: {name}")
 
     for name in sorted(rows.keys() - linked_names):
         err(f"历史归档记录没有验收文档索引入口: {name}")
 
-
-check_archive_index()
 
 # --- 5: README 清单与目录树一致 -------------------------------------------
 actual = {f"{sf.parent.parent.name}/{sf.parent.name}" for sf in skill_files}
@@ -2267,6 +2289,10 @@ def run_contract(args: argparse.Namespace) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Research OS skill 与配置合同检查")
+    parser.add_argument(
+        "--archive-scope", choices=("structure", "history"), default="structure",
+        help="默认检查归档索引结构；history 另要求每包历史 SHA/字节完整（不认证来源/安全）",
+    )
     parser.add_argument("--role-file")
     parser.add_argument("--role-template")
     parser.add_argument("--role-refs", nargs="*")
@@ -2299,6 +2325,7 @@ def run_builtin_contract() -> None:
 
 def main() -> int:
     args = parse_args()
+    check_archive_index(strict=args.archive_scope == "history")
     if args.skip_suite:
         run_contract(args)
     else:

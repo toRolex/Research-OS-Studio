@@ -1,8 +1,7 @@
 """#49 研究委托合同与最小单入口。
 
-期望来自 #48 spec 与 #49 票面，不从被测脚本反读。历史基线：`bce31c1` 的
-`docs/acceptance/**` 链到被 `.gitignore` 忽略的 `evidence/*.tar.gz`，checker 已因此 FAIL；
-本票只允许这一组历史失败，不新增断链，也不把 checker 说成全绿。
+期望来自 #48 spec 与 #49 票面，不从被测脚本反读。
+默认结构 scope 不允许任何失败；历史身份严格 scope 另报未验证。
 """
 import importlib.util
 import re
@@ -24,10 +23,6 @@ LEAF = ROOT / "skills/idea-cycle/research-lit/SKILL.md"
 PLAYBOOK = ROOT / "skills/general/research-os/playbooks/literature-review.md"
 SKILLS = ROOT / "skills"
 
-# 历史断链：main 上已存在，任何票都不得把它当自己的回归。
-HISTORICAL = re.compile(
-    r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
-)
 MANDATE_SECTIONS = ("目标", "权限", "研究额度", "完成与停止")
 README_LIST = re.compile(r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+)/SKILL\.md\)")
 
@@ -56,7 +51,7 @@ def problem_lines(root: Path) -> list[str]:
 
 
 def fresh_problems(root: Path) -> list[str]:
-    return [line for line in problem_lines(root) if not HISTORICAL.match(line)]
+    return problem_lines(root)
 
 
 def heading_set(text: str) -> set[str]:

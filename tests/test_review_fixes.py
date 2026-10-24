@@ -72,8 +72,13 @@ class ReviewFixes(unittest.TestCase):
         )
         for text in cases:
             with self.subTest(text=text):
+                self.assertNotEqual(text, original)
                 path.write_text(text)
-                self.assert_rejected()
+                result = run(self.root)
+                self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertNotIn("Traceback", result.stderr)
+                self.assertIn("compute", result.stdout + result.stderr)
+                print(f"MUTANT compute/{cases.index(text)}: rc={result.returncode}\n{result.stdout}{result.stderr}")
         path.write_text(original.replace("compute_limit: 0", "compute_limit: 1"))
         result = run(self.root)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

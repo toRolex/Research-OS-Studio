@@ -17,23 +17,6 @@ SKILLS = ROOT / "skills"
 
 SETUP = "skills/general/setup-research-os/SKILL.md"
 ROUTER = "skills/general/ask-research-os/SKILL.md"
-HISTORICAL_CHECKER_PROBLEM = re.compile(
-    r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
-)
-# 仅为 #60 恢复归档策略前的过渡基线；修复证据后须删除此允许集和替换诊断测试。
-HISTORICAL_CHECKER_PROBLEMS = frozenset(
-    {
-        "  - docs/acceptance/v2-release-host-regression.md:93: 链接目标不存在或未追踪: evidence/v2-release-host-regression.tar.gz",
-        "  - docs/acceptance/v2-final-contract-fixes.md:53: 链接目标不存在或未追踪: evidence/v2-final-contract-fixes.tar.gz",
-        "  - docs/acceptance/v2-release-gate-combinations.md:49: 链接目标不存在或未追踪: evidence/v2-release-gate-combinations.tar.gz",
-        "  - docs/acceptance/v2-merged-host-smoke.md:54: 链接目标不存在或未追踪: evidence/v2-merged-host-smoke.tar.gz",
-        "  - docs/acceptance/v2-accept-validation.md:98: 链接目标不存在或未追踪: evidence/v2-accept-validation.tar.gz",
-        "  - docs/acceptance/v2-accept-hosts.md:9: 链接目标不存在或未追踪: evidence/v2-accept-hosts.tar.gz",
-        "  - docs/acceptance/v2-final-contract-independent-verify.md:41: 链接目标不存在或未追踪: evidence/v2-final-contract-independent-verify.tar.gz",
-        "  - docs/acceptance/v2-final-contract-independent-verify.md:53: 链接目标不存在或未追踪: evidence/v2-merged-host-smoke.tar.gz",
-        "  - docs/acceptance/v2-accept-remediation.md:92: 链接目标不存在或未追踪: evidence/v2-accept-remediation.tar.gz",
-    }
-)
 # 本票拥有的叶。入口与 setup 基线由后续票并入同一 checker。
 LEAF_GATES = {
     "skills/validation-cycle/proof-review/SKILL.md": set(),
@@ -69,19 +52,12 @@ def load_checker():
     return module
 
 
-def has_only_historical_checker_problems(result: subprocess.CompletedProcess[str]) -> bool:
-    problems = [line for line in result.stdout.splitlines() if line.startswith("  - ")]
-    return (
-        result.returncode == 1
-        and len(problems) == 9
-        and set(problems) == HISTORICAL_CHECKER_PROBLEMS
-    )
-
-
 class PolicyAndGates(unittest.TestCase):
-    def test_checker_has_only_recorded_tarball_gaps_and_leaf_baseline(self) -> None:
+    def test_checker_structure_and_leaf_baseline(self) -> None:
         result = run_check(ROOT)
-        self.assertTrue(has_only_historical_checker_problems(result), result.stdout + result.stderr)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("HISTORY UNVERIFIED", result.stdout)
+        self.assertIn("HISTORY MISMATCH", result.stdout)
         module = load_checker()
         for rel, expected in LEAF_GATES.items():
             text = (ROOT / rel).read_text(encoding="utf-8")
@@ -133,10 +109,12 @@ class PolicyAndGates(unittest.TestCase):
         for rel in (SETUP, ROUTER):
             self.assertNotIn(rel, LEAF_GATES)
 
-    def test_checker_historical_archive_gaps_and_rejects_broken_index_link(self) -> None:
+    def test_checker_rejects_broken_real_index_link(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp) / "repo"
             copy_worktree(work)
+            baseline = run_check(work)
+            self.assertEqual(baseline.returncode, 0, baseline.stdout + baseline.stderr)
             doc = work / "docs/acceptance/v2-release-host-regression.md"
             original = doc.read_text(encoding="utf-8")
             replaced = original.replace(
@@ -149,11 +127,7 @@ class PolicyAndGates(unittest.TestCase):
 
             result = run_check(work)
             problems = [line for line in result.stdout.splitlines() if line.startswith("  - ")]
-            self.assertEqual(len(problems), 11, result.stdout + result.stderr)
-            archive_problems = {
-                line for line in problems if HISTORICAL_CHECKER_PROBLEM.fullmatch(line)
-            }
-            self.assertEqual(archive_problems, HISTORICAL_CHECKER_PROBLEMS)
+            self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertTrue(
                 any("evidence/README-replaced.md" in line for line in problems),
                 result.stdout + result.stderr,
@@ -163,7 +137,7 @@ class PolicyAndGates(unittest.TestCase):
                     for line in problems),
                 result.stdout + result.stderr,
             )
-            self.assertFalse(has_only_historical_checker_problems(result), result.stdout + result.stderr)
+            self.assertNotIn("链接目标不存在或未追踪: evidence/v2-", result.stdout)
 
     def test_readme_says_explicit_except_setup(self) -> None:
         text = (ROOT / "skills" / "README.md").read_text(encoding="utf-8")
@@ -194,6 +168,8 @@ class PolicyAndGates(unittest.TestCase):
             "drop-disable": lambda text: text.replace("disable-model-invocation: true\n", "", 1),
         }
         copy_worktree(work)
+        baseline = run_check(work)
+        self.assertEqual(baseline.returncode, 0, baseline.stdout + baseline.stderr)
         original = (work / leaf.relative_to(ROOT)).read_text(encoding="utf-8")
         yaml = work / "skills/validation-cycle/proof-repair/agents/openai.yaml"
         yaml_original = yaml.read_text(encoding="utf-8")
@@ -210,6 +186,7 @@ class PolicyAndGates(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0, name)
             blob = result.stdout + result.stderr
             self.assertTrue("proof-repair" in blob or "allow_implicit_invocation" in blob, name + blob)
+            print(f"MUTANT policy/{name}: rc={result.returncode}\n{blob}")
 
 
 if __name__ == "__main__":

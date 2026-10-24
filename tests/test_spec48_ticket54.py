@@ -1,9 +1,7 @@
 """#54 交付形式化验证资产及对应审计能力。
 
-期望来自 #48 spec（ID7、Testing #6）与 #54 票面，不从被测脚本反读。历史基线：
-`integration/spec-48` @ `98e4333` 的 `docs/acceptance/**` 链到被 `.gitignore` 忽略的
-`evidence/*.tar.gz`，checker 已因此 FAIL；本票只允许这一组历史失败，不新增断链，
-也不把 checker 说成全绿。
+期望来自 #48 spec（ID7、Testing #6）与 #54 票面，不从被测脚本反读。
+默认结构 scope 不允许任何失败；历史身份严格 scope 另报未验证。
 """
 import importlib.util
 import re
@@ -26,9 +24,6 @@ ENTRY = SKILLS / "general/research-os/SKILL.md"
 UPSTREAM = "docs/upstream-sources-and-licenses.md"
 REVISION = "88d47514b82e7c44f00f2b2a72ff6dd12158038c"
 
-HISTORICAL = re.compile(
-    r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
-)
 README_LIST = re.compile(r"\]\((?:skills/)?([a-z-]+/[a-z0-9-]+)/SKILL\.md\)")
 KINDS = ("代码性质", "形式模型", "数学定理", "普通测试")
 MODEL_PIN = re.compile(
@@ -61,7 +56,7 @@ def problem_lines(root: Path) -> list[str]:
 
 
 def fresh_problems(root: Path) -> list[str]:
-    return [line for line in problem_lines(root) if not HISTORICAL.match(line)]
+    return problem_lines(root)
 
 
 def heading_set(text: str) -> set[str]:

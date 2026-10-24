@@ -4,7 +4,7 @@
 职责与完整候选阅读、预先 rubric、输出隔离、交叉评判与主编排者综合、数学整合后
 重查假设/记号/依赖闭合、胜出不等于原命题成立、独立于 swarm、缺子代理 blocked、
 不固定品牌模型或个人路径、随包 MIT 归属。静态结构合同；不冒称科研质量。
-历史 checker 失败（docs/acceptance 断链）单列，不算本票回归。
+默认结构 scope 不允许任何失败，历史身份另列。
 """
 import importlib.util
 import os
@@ -27,11 +27,6 @@ LICENSE = ARENA / "LICENSE"
 ENTRY = ROOT / "skills/general/research-os/SKILL.md"
 BOUNDARY = ROOT / "skills/general/research-os/references/migration-boundary.md"
 SOURCE_RECORD = ROOT / "docs/upstream-sources-and-licenses.md"
-
-# 历史断链：main 上已存在（#49 记录），任何票不得把它当自己的回归。
-HISTORICAL = re.compile(
-    r"^  - docs/acceptance/[^:]+:\d+: 链接目标不存在或未追踪: evidence/\S+\.tar\.gz$"
-)
 
 PHASES = ("Frame", "Fan-out", "Cross-judge", "Pick", "Graft", "Verify")
 FORBIDDEN_PERSONAL = ("~/.cursor", "/Users/", "pstack-models.mdc", "poteto-mode")
@@ -59,7 +54,7 @@ def problem_lines(root: Path) -> list[str]:
 
 
 def fresh_problems(root: Path) -> list[str]:
-    return [line for line in problem_lines(root) if not HISTORICAL.match(line)]
+    return problem_lines(root)
 
 
 def _force_rmtree(func, path, _exc):
