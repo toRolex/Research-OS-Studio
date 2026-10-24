@@ -4,13 +4,15 @@ Spec #48 / Ticket #52。worktree `/Users/rolex/.t3/worktrees/Research OS Studio/
 
 ## 状态
 
-| 单元 | 交付目标 | 状态 | 产物 | 验收证据 |
-|---|---|---|---|---|
-| U1 interrogate 技能 | 独立挑战、findings 去重、分歧保留、主审有据判断，只读 | done | `skills/general/interrogate/` | 绿：21 passed |
-| U2 科研 reviewer 参考 | 覆盖实际材料与证明义务，共识≠数学证据 | done | `references/research-review.md` | 绿 + 红重放 |
-| U3 上游保真+来源 | rubric/reviewer/lead 机制保留，来源 revision+许可记录 | done | 同目录 references + PROVENANCE + LICENSE | diff 逐字节核对 |
-| U4 登记 | MIGRATED_CONTRACT、README 清单、入口指针、checker 函数 | done | `scripts/check-skills.py`、两 README、research-os 入口、migration-boundary | 绿 + checker 无新错 |
-| U5 安装实测 | 可丢弃目录 `--list` 发现新技能 | done | 本文「安装证据」 | 实跑 npx skills@latest |
+2026-10-24按本记录当时收束阶段补记下一步列；原五列和历史结果不改，不把后继修复/复审倒灌为当时验证。
+
+| 单元 | 交付目标 | 状态 | 产物 | 验收证据 | 当时下一步 / 阻塞 |
+|---|---|---|---|---|---|
+| U1 interrogate 技能 | 独立挑战、findings 去重、分歧保留、主审有据判断，只读 | done | `skills/general/interrogate/` | 绿：21 passed | 无（本票静态合同范围）；真实派发/科研未验 |
+| U2 科研 reviewer 参考 | 覆盖实际材料与证明义务，共识≠数学证据 | done | `references/research-review.md` | 绿 + 红重放 | 无（参考交付范围）；不等于数学正确性 |
+| U3 上游保真+来源 | rubric/reviewer/lead 机制保留，来源 revision+许可记录 | done | 同目录 references + PROVENANCE + LICENSE | diff 逐字节核对 | 无（当时采用核对范围）；后续变更另核 |
+| U4 登记 | MIGRATED_CONTRACT、README 清单、入口指针、checker 函数 | done | `scripts/check-skills.py`、两 README、research-os 入口、migration-boundary | 绿 + checker 无新错 | 无（本票登记）；整包验收由后票/parent收口 |
+| U5 安装实测 | 可丢弃目录 `--list` 发现新技能 | done | 本文「安装证据」 | 实跑 npx skills@latest | 无（安装可达范围）；宿主行为不外推 |
 
 ## 决策
 

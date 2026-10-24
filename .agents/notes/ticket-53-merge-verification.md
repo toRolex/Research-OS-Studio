@@ -4,10 +4,12 @@
 
 ## 状态
 
+2026-10-24依据本记录2026-10-21合并验收收束阶段补记下三项下一步；第1项已有“动态证据待下项”不重复改，历史失败/时间与证据保留，本次未重跑。
+
 - 合同与原 R1–R3 核对：done（静态）；两独立正文均内联对象/依赖/验证资产绑定、stale 与受影响覆盖重跑；上游启动/doctor/证据清理等机制仍在，动态证据待下项。
-- 干净 archive / fault injection / 真 CLI 单装 / 精确基线比较：done；票测 27 passed/49 subtests，候选全套 7 failed/163 passed/93 subtests；7 个失败 nodeid、9 条 checker 完整诊断均与 dd70401 基线精确一致。两包真 CLI 单装、完整文件/许可/执行位及安装副本 helper 正反例通过。
-- no-ff 语义整合与最终联合/全量复验：done；merge b545af55，五票联合 116 passed/49 subtests；全量 7 failed/184 passed/93 subtests，失败 ID 与 checker 9 诊断同基线精确一致；最终单装与整包安装均通过。
-- 验收记录提交：done（本文件作为独立验收提交）；仓库身份 `rolex <torolex@163.com>`，ignored 原始证据不提交，不 push/PR/issues/清 worktree。
+- 干净 archive / fault injection / 真 CLI 单装 / 精确基线比较：done；票测 27 passed/49 subtests，候选全套 7 failed/163 passed/93 subtests；7 个失败 nodeid、9 条 checker 完整诊断均与 dd70401 基线精确一致。两包真 CLI 单装、完整文件/许可/执行位及安装副本 helper 正反例通过。；当时下一步/阻塞：进入下项整合复验，历史失败不改绿。
+- no-ff 语义整合与最终联合/全量复验：done；merge b545af55，五票联合 116 passed/49 subtests；全量 7 failed/184 passed/93 subtests，失败 ID 与 checker 9 诊断同基线精确一致；最终单装与整包安装均通过。；当时下一步/阻塞：无（该候选验收范围）；科研/宿主E2E不在本次。
+- 验收记录提交：done（本文件作为独立验收提交）；仓库身份 `rolex <torolex@163.com>`，ignored 原始证据不提交，不 push/PR/issues/清 worktree。；当时下一步/阻塞：交parent后续总验收；不把本票记录当整包通过。
 
 ## 固定对象与边界
 

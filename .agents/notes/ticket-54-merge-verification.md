@@ -13,12 +13,14 @@
 - **结论：无本票阻断，5 项 AC 接受；已无冲突 no-ff 合并为 `6aaad916dca838e08527573d73f055d56d6e2566`。**
 - 合并 parents 为 `98e4333` 与 `6de82c7`；合并树与源 tip 逐字一致（`git diff --exit-code 6de82c7 HEAD`）。源两提交作者 `pi-worker <pi-worker@local>` 保持原样，没有改写；本 worker 的合并和本记录提交使用仓库有效身份 `rolex <torolex@163.com>`。
 
-| 单元 | 状态 | 验收产物 |
-|---|---|---|
-| 来源、实际 diff、两技能与资源逐 AC 审查 | done | 下表及原文件 |
-| 候选/基线/独立损坏副本复验 | done | `targeted-premerge`、`suite-{candidate,baseline}`、`checker-{candidate,baseline}`、`independent-red` |
-| 真实缓存 CLI 分别独立安装两能力 | done | `install-*`、`list-*`、`install-inspection` |
-| no-ff 整合与合并后复验 | done | merge 6aaad91；`targeted-postmerge`、`suite-postmerge`、`checker-postmerge` |
+2026-10-24依据本记录原`6aaad91`合并验收阶段补记下一步列；原结论、历史失败和证据不改，本次未重跑历史。
+
+| 单元 | 状态 | 验收产物 | 当时下一步 / 阻塞 |
+|---|---|---|---|
+| 来源、实际 diff、两技能与资源逐 AC 审查 | done | 下表及原文件 | 无（当时本票AC范围）；未来变更另核 |
+| 候选/基线/独立损坏副本复验 | done | `targeted-premerge`、`suite-{candidate,baseline}`、`checker-{candidate,baseline}`、`independent-red` | 无（该次复验）；历史7失败/9诊断保留，不称全包通过 |
+| 真实缓存 CLI 分别独立安装两能力 | done | `install-*`、`list-*`、`install-inspection` | 无（安装可达范围）；真实形式化任务/宿主行为未验 |
+| no-ff 整合与合并后复验 | done | merge 6aaad91；`targeted-postmerge`、`suite-postmerge`、`checker-postmerge` | 无（该次合并/复验）；后续整体验收交parent |
 
 证据统一位于 `.agents/notes/ticket-54-verification-evidence/`，文中日志名均补 `.txt`。该目录 ignored、保留本地；仅强制追踪本记录，未把大体积快照/日志或 orchestrator notes 纳入提交。
 

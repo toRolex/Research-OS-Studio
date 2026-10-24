@@ -4,17 +4,19 @@ Spec #48 / Ticket #54（12 个 slice 中的第 6 个）。worktree `/Users/rolex
 
 ## 状态
 
-| 单元 | 交付目标 | 状态 | 产物 | 验收证据 |
-|---|---|---|---|---|
-| U1 创建能力 | 建立可重跑形式化检查并留下项目本地 verify skill；许可/来源/资源自包含 | done | `skills/validation-cycle/create-formal-verification-skill/`（SKILL.md、LICENSE、NOTICE.md、3 references、1 template、openai.yaml） | `FormalSkillContract`、`QuestionChoosesTool`、`FlatInstall`（见下） |
-| U2 维护能力 | 代码变化后重新对齐、重跑并区分漂移与 bug；同步假设/版本/对应审计 | done | `skills/validation-cycle/maintain-formal-verification-skill/`（SKILL.md、LICENSE、NOTICE.md、openai.yaml） | `AssumptionVersionSync`、`CorrespondenceAudit`、`FaultExposureAndDraft` |
-| U3 四类区分与工具选择 | 代码性质/形式模型/数学定理/普通测试；按问题选工具、不强制全链 | done | `references/tool-selection.md` + SKILL 正文「1. 从代码和问题选目标」「2. 按问题选工具」 | `QuestionChoosesTool::*`（3 例） |
-| U4 假设与同步 | 外部假设、材料、依赖版本、实际覆盖、同步状态、变化失效 | done | `references/assumption-ledger.md` + `templates/formal-verification-record.md` + 两份 SKILL 第 4/5 节 | `AssumptionVersionSync::*`（2 例） |
-| U5 对应审计 | 原问题↔编码定义↔定理声明；占位符/编译/有限数值不冒充定理 | done | `references/correspondence-audit.md` + 两份 SKILL 审计段 | `CorrespondenceAudit::*`（3 例） |
-| U6 故障暴露与草稿 | 破坏变体必须被抓住；未执行资产标草稿 | done | create 第 3/7 节、maintain 第 6 步 | `FaultExposureAndDraft::*`（2 例） |
-| U7 宿主中立 | 移除 Cursor/个人目录/固定模型；子代理前提与 blocked | done | 两份 SKILL 的「委托继承」与结尾段 | `HostNeutrality::*`（2 例），checker 同规则 |
-| U8 登记与检查器 | 迁移登记、README 清单、入口指针、独立 checker 函数、来源文档 | done | `scripts/check-skills.py`（`formal_verification_problems`）、`migration-boundary.md`、两份 README、入口、`docs/upstream-sources-and-licenses.md` | `Registration::*`、`CheckerCounterexamples::*`（5 例） |
-| U9 安装与来源核对 | 可丢弃目录实际安装、资源可达；离线资料亲核正文与许可 | done | 本文「安装证据」「来源核对」 | CLI 实跑；LICENSE blob/SHA256 复核 |
+2026-10-24按本记录当时本票收束阶段补记下一步列；原五列/历史失败与来源不改，未重跑或追认为当前形式化真值。
+
+| 单元 | 交付目标 | 状态 | 产物 | 验收证据 | 当时下一步 / 阻塞 |
+|---|---|---|---|---|---|
+| U1 创建能力 | 建立可重跑形式化检查并留下项目本地 verify skill；许可/来源/资源自包含 | done | `skills/validation-cycle/create-formal-verification-skill/`（SKILL.md、LICENSE、NOTICE.md、3 references、1 template、openai.yaml） | `FormalSkillContract`、`QuestionChoosesTool`、`FlatInstall`（见下） | 无（本票合同/资源范围）；真实任务另验 |
+| U2 维护能力 | 代码变化后重新对齐、重跑并区分漂移与 bug；同步假设/版本/对应审计 | done | `skills/validation-cycle/maintain-formal-verification-skill/`（SKILL.md、LICENSE、NOTICE.md、openai.yaml） | `AssumptionVersionSync`、`CorrespondenceAudit`、`FaultExposureAndDraft` | 无（本票交付范围）；实际对象变化须另重验 |
+| U3 四类区分与工具选择 | 代码性质/形式模型/数学定理/普通测试；按问题选工具、不强制全链 | done | `references/tool-selection.md` + SKILL 正文「1. 从代码和问题选目标」「2. 按问题选工具」 | `QuestionChoosesTool::*`（3 例） | 无（工具判据范围）；不强加全链验证 |
+| U4 假设与同步 | 外部假设、材料、依赖版本、实际覆盖、同步状态、变化失效 | done | `references/assumption-ledger.md` + `templates/formal-verification-record.md` + 两份 SKILL 第 4/5 节 | `AssumptionVersionSync::*`（2 例） | 无（当时合同范围）；后续输入变化按失效规则核验 |
+| U5 对应审计 | 原问题↔编码定义↔定理声明；占位符/编译/有限数值不冒充定理 | done | `references/correspondence-audit.md` + 两份 SKILL 审计段 | `CorrespondenceAudit::*`（3 例） | 无（本票方法范围）；具体定理不由此认证 |
+| U6 故障暴露与草稿 | 破坏变体必须被抓住；未执行资产标草稿 | done | create 第 3/7 节、maintain 第 6 步 | `FaultExposureAndDraft::*`（2 例） | 无（合同范围）；实际检查仍须运行取证 |
+| U7 宿主中立 | 移除 Cursor/个人目录/固定模型；子代理前提与 blocked | done | 两份 SKILL 的「委托继承」与结尾段 | `HostNeutrality::*`（2 例），checker 同规则 | 无（静态范围）；宿主/科研行为未验 |
+| U8 登记与检查器 | 迁移登记、README 清单、入口指针、独立 checker 函数、来源文档 | done | `scripts/check-skills.py`（`formal_verification_problems`）、`migration-boundary.md`、两份 README、入口、`docs/upstream-sources-and-licenses.md` | `Registration::*`、`CheckerCounterexamples::*`（5 例） | 无（本票登记）；全套历史问题保留，整包交parent |
+| U9 安装与来源核对 | 可丢弃目录实际安装、资源可达；离线资料亲核正文与许可 | done | 本文「安装证据」「来源核对」 | CLI 实跑；LICENSE blob/SHA256 复核 | 无（安装/来源范围）；不外推真实形式化或宿主E2E |
 
 ## 入口判定
 
