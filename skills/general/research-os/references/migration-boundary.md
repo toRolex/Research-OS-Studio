@@ -1,8 +1,8 @@
 # 迁移边界
 
-本发行按批迁移到[研究委托合同](mandate.md)。**已迁移**能力遵循该合同；**未迁移**能力保留旧门声明并照旧可用。两批并存是设计，不是遗漏：不把整包说成已统一。
+本页记录 Research OS 路由能力的委托继承登记与边界资源。已登记的委托能力遵循[研究委托合同](mandate.md)；独立只读的 `proof-review` 不继承委托写权限。不要再把当前套件描述成“新旧两批旧门并行”，也不要把 `proof-review` 误写成委托级联叶。
 
-## 已迁移
+## 委托继承能力与相关资源
 
 | 能力 | 正文 | 委托落点 |
 | --- | --- | --- |
@@ -34,7 +34,6 @@
 | 结果到 Claim | `skills/validation-cycle/result-to-claim/SKILL.md` | 「委托继承」小节；范围受限候选主张，采用由用户决定 |
 | 数学公式推导 | `skills/validation-cycle/formula-derivation/SKILL.md` | 「委托继承」小节；委托写域内可建新文件，原对象/假设变化须用户确认；推导不自动变成证明 |
 | 证明构造 | `skills/validation-cycle/proof-writer/SKILL.md` | 「委托继承」小节；保留原命题、假设、失败路线和有限尝试；不自动进入审查或修复 |
-| 证明审查 | `skills/validation-cycle/proof-review/SKILL.md` | 独立 fresh 只读返回 findings；不修改证明或替代修复授权；能力不可用时标明限制 |
 | 证明修复 | `skills/validation-cycle/proof-repair/SKILL.md` | 「委托继承」小节；修复限于 finding 和委托写域，命题/假设变化仍需决定，编译命令及副产物范围单独核对 |
 | Proof 审计/数学方法资源 | `skills/validation-cycle/proof-review/SKILL.md` 与其 `references/` | 旧控制器已删除；审计、独立意见、压力测试、记号、Lean、提示/交接模板与 EtaSkill NOTICE 随 proof-review 包共置，按审查分支披露 |
 | 统一写作 | `skills/writing-cycle/paper-writing/SKILL.md` | 「委托继承」小节；ML/Systems 标准按需引用，委托内编译与引用修复继承授权，不自动投稿 |
@@ -50,17 +49,23 @@
 | 转投适配 | `skills/writing-cycle/resubmit-pipeline/SKILL.md` | 「委托继承」小节；旧稿只读，不自动投稿 |
 | 会议演讲 | `skills/writing-cycle/paper-talk/SKILL.md` | 「委托继承」小节；只准备材料，不自动发布 |
 
-迁移一个能力的完整动作：把正文改成继承委托（去掉旧 `Gate:`，写出该能力的边界与完成条件），在 `scripts/check-skills.py` 的 `MIGRATED_CONTRACT` 登记路径与小节名，把同一行加入本表，并从 `LEGACY_LEAF_GATES` 删除。
+将能力纳入委托继承登记时：把正文改为继承委托（移除不再适用的旧 `Gate:`，写清该能力的边界与完成条件），在 `scripts/check-skills.py` 的 `MIGRATED_CONTRACT` 登记路径与小节名，并在本表记录同一能力。不能为满足迁移表而给独立只读能力虚构旧门或委托继承关系。
 
 ## 未迁移
 
-其余叶 Skill 仍以 `Gate: <id> | before=… | approval=explicit-user | source=…` 声明自己的批准点；权威清单是 `scripts/check-skills.py` 的 `LEGACY_LEAF_GATES`，本文件不复制整表以免两份漂移。
+本节说明不纳入 Research OS 委托继承登记的独立能力，不表示仍有一批旧批准门与委托合同并行。
 
-由委托级联进入未迁移能力时，仍按该能力自己的门停下确认；这不撤销委托，处理完该点后同一委托继续。等该能力迁移，这个中途停点才消失。
+| 能力 | 正文 | 边界 |
+| --- | --- | --- |
+| 证明审查 | `skills/validation-cycle/proof-review/SKILL.md` | 独立 fresh 只读返回 findings；正文显式 `Gates: none`；不继承调用者的写权限，也不修改证明或替代修复授权。所需方法、交接模板、许可证与 NOTICE 随包共置，按审查分支读取。 |
 
-## 迁移期间仍生效的完整性检查
+委托可以按授权调用该只读审查能力；能力不可用或必要输入无法读取时，只将受影响的审查标为 blocked，不以自查替代独立意见。它不是仍待移除的一批旧阶段门。
 
-迁移只改授权与停点语义，不放宽结构约束：门声明格式、来源锚点与追踪状态、frontmatter 与调用策略、共置资源与相对链接、README 清单与实际目录的一致性都继续检查。已迁移能力额外检查合同小节是否存在，因此删门不会连职责约束一起丢。
+若未来有未迁移叶能力声明旧门，权威门基线以 `scripts/check-skills.py` 的 `LEGACY_LEAF_GATES` 为准；当前 `proof-review` 对应的门集合为空，与正文 `Gates: none` 一致。
+
+## 持续有效的完整性检查
+
+委托继承登记只改授权与停点语义，不放宽结构约束：门声明格式、来源锚点与追踪状态、frontmatter 与调用策略、共置资源与相对链接、README 清单与实际目录的一致性都持续检查。登记为委托继承的能力额外检查合同小节是否存在，因此删去不适用的旧门不会连职责约束一起丢。
 
 ## 参考
 
