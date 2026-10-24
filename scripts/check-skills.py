@@ -900,17 +900,18 @@ def check_archive_index(strict: bool = False) -> None:
                 if valid_target:
                     referenced_names.update(link_names)
                 else:
-                    for name in sorted(link_names & rows.keys()):
+                    for name in sorted(link_names):
                         err(f"{rel_markdown}:{line_number}: 归档引用必须链接真实索引: {name} -> {target}")
             # A nearby index link may support a plain-text archive mention,
             # but never override an explicit archive link's own destination.
             if links_index:
                 referenced_names.update(names - explicit_names)
             for name in names:
+                # An invalid explicit target must not bypass registration.
+                if name not in rows and (name in explicit_names or name in referenced_names):
+                    err(f"归档索引缺少被引用记录: {name}")
                 if name in referenced_names:
                     linked_names.add(name)
-                    if name not in rows:
-                        err(f"归档索引缺少被引用记录: {name}")
                 elif name not in explicit_names and name in rows and rel_markdown.startswith("docs/acceptance/"):
                     err(f"{rel_markdown}:{line_number}: 归档引用必须链接真实索引: {name}")
 

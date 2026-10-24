@@ -197,6 +197,39 @@ class HistoricalArchiveIndexTests(unittest.TestCase):
                         self.assertIn(name, result.stdout)
                         self.assertNotIn("链接目标不存在或未追踪", result.stdout)
 
+    def test_full_cli_archive_name_target_registration_matrix(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            work = Path(tmp)
+            copy_tracked_tree(ROOT, work)
+            for command in (["git", "init", "-q"], ["git", "add", "-A"]):
+                subprocess.run(command, cwd=work, check=True, capture_output=True, timeout=30)
+            doc = work / "docs/acceptance/v2-release-host-regression.md"
+            original = doc.read_text()
+            command = ["uv", "run", "--offline", "--no-project", "python", "scripts/check-skills.py"]
+            baseline = subprocess.run(command, cwd=work, capture_output=True, text=True, timeout=35)
+            self.assertEqual(baseline.returncode, 0, baseline.stdout + baseline.stderr)
+            names = ((True, "v2-release-host-regression.tar.gz"), (False, "review-unknown.tar.gz"))
+            targets = (("valid", "evidence/README.md"), ("bad-href", "../../README.md"),
+                       ("bad-fragment", "evidence/README.md#missing"))
+            for known, name in names:
+                for kind, target in targets:
+                    for with_good_link in (False, True):
+                        with self.subTest(known=known, target=kind, good_link=with_good_link):
+                            line = f"- [{name}]({target})"
+                            if with_good_link:
+                                line += " [历史归档索引](evidence/README.md)"
+                            doc.write_text(original + "\n" + line + "\n")
+                            result = subprocess.run(command, cwd=work, capture_output=True, text=True, timeout=35)
+                            diff = subprocess.check_output(["git", "diff", "--", str(doc)], cwd=work, text=True, timeout=30)
+                            print(f"CLI MATRIX known={known} target={kind} good_link={with_good_link}: "
+                                  f"command={command!r}, rc={result.returncode}\n{result.stdout}{result.stderr}{diff}")
+                            output = result.stdout + result.stderr
+                            self.assertEqual(result.returncode, 0 if known and kind == "valid" else 1, output)
+                            self.assertEqual(f"归档索引缺少被引用记录: {name}" in output, not known, output)
+                            self.assertEqual(f"归档引用必须链接真实索引: {name} -> {target}" in output,
+                                             kind != "valid", output)
+                            self.assertNotIn("链接目标不存在或未追踪", output)
+
     def assert_evidence_contract(self, text):
         for needle in ("v2-accept-deliverables.tar.gz", "历史原包字节未找到", "清单自引用",
                        "不能证明来源", "未纳入本仓库", "不能充当原包", "不得将下面的摘要当成原包恢复"):
