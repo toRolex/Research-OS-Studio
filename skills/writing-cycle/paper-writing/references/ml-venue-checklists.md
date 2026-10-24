@@ -107,7 +107,7 @@ Upstream recorded: NeurIPS 2025 9 pages; ICML 2026 8 (+1 camera-ready); ICLR 202
 
 - This Skill ships no conference template, style file, `.bib`/`.bst` or example PDF, and grants no license to any external asset. Upstream templates include third-party LPPL/algorithm packages and files whose redistribution terms are not covered by the repository MIT license, so they are not vendored here.
 - Use the template the user already has, in the form its license allows; otherwise obtain the current official template through the user's own authorized channel and check its included license before copying it into the project.
-- When a user template conflicts with the current official rules, show the conflict and let the user decide; record the decision and any remaining noncompliance rather than silently choosing.
+- When a user template conflicts with the current official rules, record the conflict and its source. Ordinary adaptation already covered by a valid mandate may proceed in the authorized draft without another approval; preserve the venue, research claims and protected template assets. Pause the affected item for a decision when the goal or authority must change, or competing user requirements remain unresolved. Record the applied adaptation or user decision and any remaining noncompliance; never silently replace a template or claim unsupported compliance.
 
 ## Checklist use
 
