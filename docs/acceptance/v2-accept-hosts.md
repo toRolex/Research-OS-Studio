@@ -6,7 +6,7 @@
 - 行为安装先源 `54f2ada`，最后重装源 `a15c586`（本轮两处正文小修）；在 `/tmp/research-os-v2-hosts/project` 用 Skills CLI **1.7.0**，`add /tmp/research-os-v2-hosts/tickets --skill '*' --agent claude-code --agent codex --agent pi --copy --yes` 三次限定安装。第二次网络 npm 超时，改缓存 `npx --offline` 成功。三份各39技能，每个源文件与安装副本SHA-256一致，0 mismatch；没有 `--global`。
 - 版本：pi 1.0.0、Claude Code 2.1.228、Codex 0.151.0、UV 0.12.22。模型分别请求 `cliproxy/glm-5.3-flash`、Claude `haiku`（真实响应模型见session）、Codex `deepseek-v4.1-flash`。不把CLI存在当登录证明：79个真实调用均有tool/session输出。
 - 默认工具均未限制成read-only。pi多数轮关闭extension discovery但保留默认read/bash/edit/write，另 **route-all-default/pi** 不关闭extension，完整默认工具也通过。Claude默认工具、bypassPermissions只在toy测试进程；Codex默认工具workspace-write，setup第一次写被`.agents`沙箱保护拒绝，随后仅toy进程danger-full-access重启重试，没有改用户配置。
-- 完整证据已归档 [v2-accept-hosts.tar.gz](evidence/v2-accept-hosts.tar.gz)，8.15MB，SHA256 `cab141490a54d13564d27723a6f8cfcff726d555698da26668111d0eb3cefa9e`。解包后根 `v2-accept-hosts/`；`SHA256SUMS.json`逐文件hash，`evidence-index.json`79轮exit/耗时/变动，`installation-manifest.json`完整安装hash。每场景有prompt、命令、stdout JSONL、stderr、结果、前后快照、全局表stat/hash。Claude宿主session在`host-sessions/`；pi session在各场景目录；Codex原始thread events包含thread id。临时原件 `/tmp/research-os-v2-hosts`仍保留。
+- 原包 `v2-accept-hosts.tar.gz` 仅本地保留、未纳入本仓；先前候选为8.15MB，SHA256 `cab141490a54d13564d27723a6f8cfcff726d555698da26668111d0eb3cefa9e`，清单自引用项等核验边界见[历史归档索引](evidence/README.md)。候选包记录的根为 `v2-accept-hosts/`；`SHA256SUMS.json`逐文件hash，`evidence-index.json`79轮exit/耗时/变动，`installation-manifest.json`完整安装hash。每场景有prompt、命令、stdout JSONL、stderr、结果、前后快照、全局表stat/hash。Claude宿主session在`host-sessions/`；pi session在各场景目录；Codex原始thread events包含thread id。临时原件 `/tmp/research-os-v2-hosts`仍保留。
 
 ## 真实发现与小修
 

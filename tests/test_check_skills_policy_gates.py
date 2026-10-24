@@ -133,15 +133,15 @@ class PolicyAndGates(unittest.TestCase):
         for rel in (SETUP, ROUTER):
             self.assertNotIn(rel, LEAF_GATES)
 
-    def test_checker_historical_allowlist_rejects_replaced_diagnostic(self) -> None:
+    def test_checker_historical_archive_gaps_and_rejects_broken_index_link(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             work = Path(tmp) / "repo"
             copy_worktree(work)
             doc = work / "docs/acceptance/v2-release-host-regression.md"
             original = doc.read_text(encoding="utf-8")
             replaced = original.replace(
-                "](evidence/v2-release-host-regression.tar.gz)",
-                "](evidence/v2-release-host-regression-replaced.tar.gz)",
+                "](evidence/README.md)",
+                "](evidence/README-replaced.md)",
                 1,
             )
             self.assertNotEqual(original, replaced)
@@ -149,9 +149,18 @@ class PolicyAndGates(unittest.TestCase):
 
             result = run_check(work)
             problems = [line for line in result.stdout.splitlines() if line.startswith("  - ")]
-            self.assertEqual(len(problems), 9, result.stdout + result.stderr)
+            self.assertEqual(len(problems), 11, result.stdout + result.stderr)
+            archive_problems = {
+                line for line in problems if HISTORICAL_CHECKER_PROBLEM.fullmatch(line)
+            }
+            self.assertEqual(archive_problems, HISTORICAL_CHECKER_PROBLEMS)
             self.assertTrue(
-                all(HISTORICAL_CHECKER_PROBLEM.fullmatch(line) for line in problems),
+                any("evidence/README-replaced.md" in line for line in problems),
+                result.stdout + result.stderr,
+            )
+            self.assertTrue(
+                any("没有验收文档索引入口: v2-release-host-regression.tar.gz" in line
+                    for line in problems),
                 result.stdout + result.stderr,
             )
             self.assertFalse(has_only_historical_checker_problems(result), result.stdout + result.stderr)

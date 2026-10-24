@@ -788,6 +788,94 @@ for md in md_files:
             if rel_resolved not in tracked:
                 err(f"{rel_md}:{i}: 链接目标不存在或未追踪: {target}")
 
+
+# --- 4b: 历史归档索引 ------------------------------------------------------
+ARCHIVE_INDEX_REL = "docs/acceptance/evidence/README.md"
+ARCHIVE_NAME_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9._-]*\.tar\.gz")
+ARCHIVE_SHA_RE = re.compile(r"[0-9a-f]{64}")
+
+
+def check_archive_index() -> None:
+    """Keep historical package absence and SHA divergence explicit failures."""
+    index = ROOT / ARCHIVE_INDEX_REL
+    if ARCHIVE_INDEX_REL not in tracked or not index.is_file():
+        err(f"历史归档索引不存在或未追踪: {ARCHIVE_INDEX_REL}")
+        return
+
+    rows: dict[str, tuple[str, str, str, str]] = {}
+    for line_number, line in enumerate(index.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.startswith("| `"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) != 6:
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 归档索引行必须恰有 6 列")
+            continue
+        name = cells[0].strip("`")
+        size = cells[1].replace(",", "")
+        historical_sha = cells[2].strip("`")
+        candidate_sha = cells[3].strip("`")
+        status = cells[4]
+        if not ARCHIVE_NAME_RE.fullmatch(name):
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 无效归档名")
+            continue
+        if name in rows:
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 重复归档记录 {name}")
+            continue
+        if not size.isdigit() or int(size) <= 0:
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 无效候选字节数 {name}")
+            continue
+        if not ARCHIVE_SHA_RE.fullmatch(historical_sha) or not ARCHIVE_SHA_RE.fullmatch(candidate_sha):
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: SHA-256 字段无效 {name}")
+            continue
+        if status != "仅本地保留、未入库":
+            err(f"{ARCHIVE_INDEX_REL}:{line_number}: 未知归档可用状态 {name}")
+            continue
+        rows[name] = (size, historical_sha, candidate_sha, status)
+
+    if not rows:
+        err(f"{ARCHIVE_INDEX_REL}: 没有有效历史归档记录")
+        return
+
+    for name, (_, historical_sha, candidate_sha, status) in rows.items():
+        archive_rel = f"docs/acceptance/evidence/{name}"
+        archive = ROOT / archive_rel
+        if archive_rel in tracked and archive.is_file():
+            if status == "仅本地保留、未入库":
+                err(f"归档索引状态与已追踪文件矛盾: {name}")
+            actual_sha = hashlib.sha256(archive.read_bytes()).hexdigest()
+            if actual_sha != historical_sha:
+                err(f"历史归档 SHA 与文档记录不符: {name}")
+
+    linked_names: set[str] = set()
+    for markdown in md_files:
+        rel_markdown = markdown.relative_to(ROOT).as_posix()
+        if rel_markdown == ARCHIVE_INDEX_REL or rel_markdown not in tracked:
+            continue
+        for line_number, line in enumerate(markdown.read_text(encoding="utf-8").splitlines(), 1):
+            names = set(ARCHIVE_NAME_RE.findall(line))
+            targets = link_re.findall(line)
+            if not names or not targets:
+                continue
+            for name in names:
+                if any(target.startswith("evidence/README.md") for target in targets):
+                    linked_names.add(name)
+                    if name not in rows:
+                        err(f"归档索引缺少被引用记录: {name}")
+                if name in rows:
+                    archive_rel = f"docs/acceptance/evidence/{name}"
+                    if archive_rel not in tracked:
+                        # Preserve the established nonzero diagnostic: this is the
+                        # unavailable archive object, not the now-valid index link.
+                        err(
+                            f"{rel_markdown}:{line_number}: 链接目标不存在或未追踪: evidence/{name}"
+                        )
+
+    for name in sorted(rows.keys() - linked_names):
+        err(f"历史归档记录没有验收文档索引入口: {name}")
+
+
+check_archive_index()
+
 # --- 5: README 清单与目录树一致 -------------------------------------------
 actual = {f"{sf.parent.parent.name}/{sf.parent.name}" for sf in skill_files}
 for readme_name in ("README.md", "skills/README.md"):

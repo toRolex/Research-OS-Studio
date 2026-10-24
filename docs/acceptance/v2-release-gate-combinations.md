@@ -46,7 +46,7 @@ Talk禁止修改诊断也选route-only安全出口，但同时真实读取paper-
 
 ## 最小可复核归档
 
-[evidence/v2-release-gate-combinations.tar.gz](evidence/v2-release-gate-combinations.tar.gz)：**12,544,022 bytes（约12MiB），577文件**；SHA-256 **`2291c39cbe506db6fa90c11e684e5047d9300ebd813d35496d5942e6cbb3efc1`**。根 `ros-v2-release-gates/`，`evidence/SHA256SUMS.json`逐文件SHA/bytes；归档577成员、manifest576条（不含自身），直接解包内字节核 **0 mismatch**。
+原包 `v2-release-gate-combinations.tar.gz` 仅本地保留、未纳入本仓；先前候选预检记录及缺口见[历史归档索引](evidence/README.md)：候选 **12,544,022 bytes（约12MiB），577文件**；SHA-256 **`2291c39cbe506db6fa90c11e684e5047d9300ebd813d35496d5942e6cbb3efc1`**。根 `ros-v2-release-gates/`，`evidence/SHA256SUMS.json`逐文件SHA/bytes；归档577成员、manifest576条（不含自身），直接解包内字节核 **0 mismatch**。
 
 包含本次完整raw prompt/session/stream/stdout/stderr/输入预期/前后快照、真实安装270文件、当前所用ML/talk/Idea与一手source副本、两pickup真实handoff原件、原批准prompt、机械索引与UV操作脚本。大批旧validation完整副本仅留 `/tmp/ros-v2-release-gates/project/fixtures/original-validation`，历史权威包链接原validation报告；不重复45MiB remediation旧包/79MiB旧deliverables包，不包含clone `.git`、node_modules或凭据。
 

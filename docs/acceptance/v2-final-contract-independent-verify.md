@@ -32,13 +32,13 @@
 
 ## 2.49MB原归档独立安全核
 
-原包 `evidence/v2-final-contract-fixes.tar.gz`：**2,489,643 bytes**；SHA256 **`f2657476febf3689258397dc35d924b0e32ba5b4ca505d946374438d056b2df1`**。
+原包 `v2-final-contract-fixes.tar.gz` 仅本地保留、未纳入本仓；候选与核验缺口记录在同目录的历史归档索引中：**2,489,643 bytes**；SHA256 **`f2657476febf3689258397dc35d924b0e32ba5b4ca505d946374438d056b2df1`**。
 
 - 456常规文件（无link/绝对路径/`..`逃逸），455 manifest payload的bytes+SHA全部匹配。
 - 包内272份skills文件与当前仓库逐字一致；无把旧宿主全矩阵当新skill验证。
 - 所有payload及解码JSON字符串扫描 private key/provider key/Bearer/URL userinfo/signed token query，候选**0**，不输出值，不重打/改写原包，不抹失败。
 
-独立复验新轻包 [v2-final-contract-independent-verify.tar.gz](evidence/v2-final-contract-independent-verify.tar.gz)：**31,575 bytes**，SHA256 **`e2107183209155532ccec7e95a9f278ec45508b9418a8f62eb4797be52b4d7d4`**，49常规文件/48payload匹配，含原反例RED/GREEN、所有suite/独立archive与trace audit、GitHub命令结果、额外脚本误计失败日志；不复制损坏源码树，敏感候选0。原失败不删。
+独立复验候选轻包 `v2-final-contract-independent-verify.tar.gz` 仅本地保留、未纳入本仓；候选与核验缺口见[历史归档索引](evidence/README.md)：**31,575 bytes**，SHA256 **`e2107183209155532ccec7e95a9f278ec45508b9418a8f62eb4797be52b4d7d4`**，49常规文件/48payload匹配，含原反例RED/GREEN、所有suite/独立archive与trace audit、GitHub命令结果、额外脚本误计失败日志；不复制损坏源码树。原失败不删。先前安全扫描另报告个人绝对路径类候选，故不再声称“敏感候选0”；索引保留该类扫描局限。
 
 ## 合后当前skill三宿主轻验
 
@@ -50,7 +50,7 @@
 - **Claude retry仍不是严格首次清单PASS**：步骤4插入读取状态破坏原句连续，伪“长度限制截断”的表后纠正保留。pi/Codex首清单完整；各host资源全文实读由原工具结果核，不由报告自述判定。
 - Codex真实fresh尝试EPERM停在凭据锁、无模型回应，明确independent review not performed；有限fallback与过期门可接受，不升成三宿主fresh均成功。
 
-轻验包 [v2-merged-host-smoke.tar.gz](evidence/v2-merged-host-smoke.tar.gz)：1,636,956 bytes，SHA256 `cead0cd3fd83e9ce6c897934e55b30c7fc727b3128830ab141066d8c6ca4db10`。独立亲核447常规文件/446payload全部bytes+SHA、272current源、四项目before/after全同；无安装树重复，无敏感候选。脚本/辅助计数失败保留，以tar机械计数为准。
+轻验包 `v2-merged-host-smoke.tar.gz` 仅本地保留、未纳入本仓；先前候选为1,636,956 bytes、SHA256 `cead0cd3fd83e9ce6c897934e55b30c7fc727b3128830ab141066d8c6ca4db10`；详见[历史归档索引](evidence/README.md)。独立亲核447常规文件/446payload全部bytes+SHA、272current源、四项目before/after全同；无安装树重复。脚本/辅助计数失败保留，以tar机械计数为准。
 
 ## UV、LSP、diff
 

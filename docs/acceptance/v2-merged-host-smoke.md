@@ -51,6 +51,6 @@ project reviewer=gpt medium；implementer/writer=glm high；analyst/prover=gpt m
 
 各case完整`command.json/prompt.md/stdout.jsonl/stderr.txt/result.json`与native session、child prompt/command/stdout/stderr/session、before/after、tool/identity索引齐全；失败不删除。`assistant.md`是辅助提取，不替代原trace。脚本与source一份保留；轻tar不重复三份安装skills，仅一份当前完整skills源+安装810manifest，以及每project小primary/log/role表。
 
-提交轻包 [v2-merged-host-smoke.tar.gz](evidence/v2-merged-host-smoke.tar.gz)：**1,636,956 bytes**，SHA256 **`cead0cd3fd83e9ce6c897934e55b30c7fc727b3128830ab141066d8c6ca4db10`**。447常规文件（446manifest payload＋manifest自身），无重复安装树；source272文件。merger独立直接读tar核446payload字节/SHA、272current源、四before/after全匹配。原辅助archive-result曾把目录计入424，修为272，首错误日志保留不当污染源证据；最终tar计数为准。
+原轻包 `v2-merged-host-smoke.tar.gz` 仅本地保留、未纳入本仓；先前候选预检记录及缺口见[历史归档索引](evidence/README.md)：**1,636,956 bytes**，SHA256 **`cead0cd3fd83e9ce6c897934e55b30c7fc727b3128830ab141066d8c6ca4db10`**。447常规文件（446manifest payload＋manifest自身），无重复安装树；source272文件。merger独立直接读tar核446payload字节/SHA、272current源、四before/after全匹配。原辅助archive-result曾把目录计入424，修为272，首错误日志保留不当污染源证据；最终tar计数为准。
 
 逐payload SHA与JSON解码敏感候选扫描见包内 `evidence/SHA256SUMS.json`、`evidence/security-scan.json`；53,690解码字符串及payload，敏感候选0。SHA仅验收侧机械核对，不是产品运行协议。本报告不声称发布/所有未来宿主/所有role或完整科研流程通过。

@@ -50,7 +50,7 @@
 
 ## 轻归档与安全
 
-[evidence/v2-final-contract-fixes.tar.gz](evidence/v2-final-contract-fixes.tar.gz)：**2,489,643 bytes**，SHA-256 **`f2657476febf3689258397dc35d924b0e32ba5b4ca505d946374438d056b2df1`**。
+原包 `v2-final-contract-fixes.tar.gz` 仅本地保留、未纳入本仓；先前候选预检记录及缺口见[历史归档索引](evidence/README.md)：候选 **2,489,643 bytes**，SHA-256 **`f2657476febf3689258397dc35d924b0e32ba5b4ca505d946374438d056b2df1`**。
 
 根 `ros-v2-final-contract/`；455 payload SHA+bytes逐项验证匹配、manifest本身不自列，常规文件456。含两原review、红绿/全suite/LSP、所有四case完整父child session/prompt/raw stdout/stderr、真实result/meter、canonical日志、前后快照、工具索引、source副本和scratch fixture/核验脚本。gzip压缩小，不过滤失败原轨迹，不另复制旧大包。
 
