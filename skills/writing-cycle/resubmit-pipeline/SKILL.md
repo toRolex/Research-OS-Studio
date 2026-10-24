@@ -51,8 +51,8 @@ Gates: none
 
 在新目录上运行已实现的内部能力，检查阶段均为只读，不改任何研究材料：
 
-- 用 `paper-compile` 按其正文做一次 check-only 编译验收：真实构建（如获临时写域与预算批准）或静态诊断；报告构建状态、错误原文与位置、PDF 核验逐项结果。失败时可在委托授权内承接 `paper-compile-repair`；超出授权只报告并停下该分支。
-- 用 `citation-audit` 做一次 detect-only 引用检测；soft-only（冻结 bib）默认开启：bib 不增删改，只给正文收窄或撤回主张的建议。委托已授权引用修复时承接 `apply-citation-fixes`；否则不展示其 diff 也不代行。
+- 用 `paper-compile` 按其正文做一次 check-only 编译验收：真实构建（如获临时写域与预算批准）或静态诊断；报告构建状态、错误原文与位置、PDF 核验逐项结果。失败时只列待修项，第 4 步再按有效委托由 `paper-compile-repair` 承接；本步不执行修复。
+- 用 `citation-audit` 做一次 detect-only 引用检测；soft-only（冻结 bib）默认开启：bib 不增删改，只给正文收窄或撤回主张的建议。引用修复仅列入第 4 步待修清单，届时按有效委托由 `apply-citation-fixes` 承接；本步不展示其修复 diff 也不代行。
 
 两个结果都保留未核实项并说明检查覆盖缺口；旧稿 PDF 不能冒充新稿构建成功，无新 PDF 的检查单列未检查。
 
