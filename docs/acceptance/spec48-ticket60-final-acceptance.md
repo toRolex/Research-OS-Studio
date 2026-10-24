@@ -5,6 +5,7 @@
 ## 最终集成状态（2026-10-24）
 
 - 最终 review candidate `242a9fb7c1a3c693ac3f93d5953f4c7d884cc5d3` 已从原干净 integration HEAD `4816745b3f18db76adf64524a4eef080196339b6` 以 fast-forward-only 合入；本轮验收补记见 [`spec48-final-verification.md`](spec48-final-verification.md)。issue 状态仍由 parent 处理。
+- 精确 doc-only 测试 HEAD `edca41919141515361b40d51438de7c9959f1003` 全 38 个 tracked 测试文件逐个串行运行：398 passed、760 subtests passed、无失败/跳过；最终细节与结果提交链见补充验收记录。
 - 21 个确认 Spec finding 有独立关闭或精确对象继承证据；Standards 13 个原 ID 中 8 个关闭，5 个抽象建议（S1/S2/SL3-1/S4-1/W6-S2）明确延期且未修。
 - #60 AC4 最终按 TD3 所声明的 sibling 依赖边可解析接受；这**不表示** `paper-compile-repair` 单装即可提供完整修复功能，也不表示多宿主或真实端到端执行已通过。下文保留 R2 当时记录及其证据边界。
 - 历史轴仍有 8 项 unavailable（7 `UNVERIFIED`、1 `MISMATCH`），不记 history PASS；科研真值、生产 SSH、远程作业和多宿主 E2E 未验证。

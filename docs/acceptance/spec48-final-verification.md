@@ -44,19 +44,30 @@ Standards 审查补件：原 `tests/test_ticket60_flat_install_links.py:1–76` 
 
 ## 结构、历史与明确限制
 
-- 结构与历史分轴。预期默认结构命令：`uv run --offline --no-project python scripts/check-skills.py --archive-scope structure`；严格历史命令独立运行：`uv run --offline --no-project python scripts/check-skills.py --archive-scope history`。历史轴的既有结果为 **rc=1**：7 项 `UNVERIFIED` + 1 项 `MISMATCH`，全部 `UNAVAILABLE`；不是 history PASS，也不等同结构检查失败。最终新 HEAD 上的实际 rc 与输出待按下述计划补记。
+- 结构与历史分轴。默认结构命令：`uv run --offline --no-project python scripts/check-skills.py --archive-scope structure`；严格历史命令独立运行：`uv run --offline --no-project python scripts/check-skills.py --archive-scope history`。本轮精确 HEAD 上结构 rc=0、历史 rc=1：7 项 `UNVERIFIED` + 1 项 `MISMATCH`，全部 `UNAVAILABLE`；不是 history PASS，也不等同结构检查失败，实际结果见下文。
 - 科研质量/定理真值、真实模型派发、生产 SSH、远程作业/恢复、多宿主宿主 E2E、完整 PPT/TeX 导出均未在本次验收中实测；不声称通过。
 - 测试基准边界：`/tmp/spec48-final-candidate-validation-r2/REPORT.md` 的全 38 文件、397 passed、757 subtests 是旧精确对象 `431eed4` 的结果，**不得作为新候选 `242a9fb` 的全绿证据**。此前旧失败日志保持原位，不覆盖。
 
-## 最终提交验证计划（结果待实跑）
+## 最终提交验证结果
 
-计划先以仅文档变更提交本记录和 ticket 60 状态说明；记录该精确 SHA 后，才在该 HEAD 全量 collect 并逐文件串行执行全部 tracked basename `test_*.py`（含 `scripts/`，当前枚举基数 38）。不使用 `-k`、`--ignore`、skip 或并行；每条命令 180 秒上限，`TMPDIR` 与 `UV_CACHE_DIR` 均在 `/tmp/spec48-final-merger-closeout-record/`。命令形状：
+**测试执行 HEAD：**`edca41919141515361b40d51438de7c9959f1003`（先提交两份验收文档的 doc-only commit；测试前该 HEAD 工作树干净）。用 tracked 文件清单重新 collect，实际 **38 个文件、398 个 pytest 节点**；逐文件串行执行 **38/38 rc=0，398 passed、760 subtests passed、0 failed、0 skipped**。包含 `scripts/test_*.py`；没有 `-k`、`--ignore`、skip 或并行。环境为 uv 0.13.5、Python 3.14.4、pytest 9.1.1；每文件 180 秒 timeout，临时目录在 `/tmp/spec48-final-merger-closeout-record/tmp/`。
+
+修复目标 `tests/test_spec48_ticket60_contract_M.py` 在该精确 HEAD 为 **12 passed、286 subtests passed**；`test_unapproved_control_whitespace_changes_are_rejected` 实际执行并通过。逐文件日志、实际 rc、完整收集节点与文件清单见 `/tmp/spec48-final-merger-closeout-record/logs/{collect.log,tracked-test-files.txt,suite/results.tsv,suite/file-00.log…file-37.log}`。此前 `431eed4` 的 397/757 旧结果没有代替本次执行。
 
 ```text
-uv run --offline --no-project --with pytest==9.1.1 python -m pytest --collect-only -q <本次 git ls-files 枚举的全部 tracked test_*.py>
-uv run --offline --no-project --with pytest==9.1.1 python -m pytest -vv --tb=short <依序逐个传入一个 tracked test_*.py>
+timeout 180 env TMPDIR=/tmp/spec48-final-merger-closeout-record/tmp UV_CACHE_DIR=/tmp/spec48-final-candidate-validation-r2/logs/uv-cache uv run --offline --no-project --with pytest==9.1.1 python -m pytest --collect-only -q <logs/tracked-test-files.txt 中的全部路径>
+timeout 180 env TMPDIR=/tmp/spec48-final-merger-closeout-record/tmp UV_CACHE_DIR=/tmp/spec48-final-candidate-validation-r2/logs/uv-cache PYTHONDONTWRITEBYTECODE=1 uv run --offline --no-project --with pytest==9.1.1 python -m pytest -vv --tb=short <逐个传入一个 tracked test_*.py>
 ```
 
-实际 collect 节点数、逐文件 rc、通过/失败/subtests、structure/history rc、diff/status、执行 SHA 和最后文档提交 SHA 将在全量测试完成后追加；不预填旧计数。测试执行 SHA 与最终验收文档 HEAD 的关系、文档-only tree 不变证明及最终 structure 重跑结果一并记录在本节及 `/tmp/spec48-final-merger-closeout-record/REPORT.md`。
+**结构 / 历史独立结果（均在测试执行 HEAD）：**
+
+| 命令 | rc 与结果 |
+|---|---|
+| `uv run --offline --no-project python scripts/check-skills.py --archive-scope structure` | **rc=0**；`OK: 41 个 Skill（U 40 / M 1）`。 |
+| `uv run --offline --no-project python scripts/check-skills.py --archive-scope history` | **rc=1**；8 项均 `UNAVAILABLE`：7 `UNVERIFIED`、`v2-accept-validation.tar.gz` 为 `MISMATCH`。不是 history PASS。 |
+
+命令原始输出与 rc 见 `/tmp/spec48-final-merger-closeout-record/logs/check-{structure,history}.{log,rc}`。测试前 `git diff --check`、候选范围 diff check 均 rc=0，status 干净；受保护 notes SHA 仍相同。
+
+这次结果提交仅更新验收文档，是 `edca419` 的 doc-only 后继；**测试执行 SHA 仍是 `edca41919141515361b40d51438de7c9959f1003`**。最终 HEAD 的精确 SHA、其与测试 HEAD 的 ancestry、非文档 tree 不变校验及最终 structure 重跑结果记录于 `/tmp/spec48-final-merger-closeout-record/REPORT.md`。结果提交后另行复跑 structure checker；不重跑 suite，不改产品或测试。
 
 **本地限制：**不 push、不关闭 issue、不清理 worktree/历史材料。issue tracker 后续由 parent 处理。
