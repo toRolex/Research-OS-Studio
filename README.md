@@ -179,7 +179,7 @@ research-os Discovery 配方
   └─ 学术演讲：/research-os 做会议演讲 → paper-talk
       ↓
 交付候选回复、新目录投稿材料或 slides/notes/script
-叶 skill 的策略、措辞、范围、大纲与外发确认仍停
+有效委托内按裁决规则继续；目标替换、越权及外发等真实边界仍停
 ```
 
 ---

@@ -1,9 +1,11 @@
 #!/bin/bash
 # Research OS Studio 演示脚本
 # 用于制作 README 演示 GIF
+# 所有命令与结果均为模拟台词，不进行真实扫描、安装或研究操作。
 
 echo "🚀 Research OS Studio 演示"
 echo "=========================="
+echo "🧪 以下全部为模拟演示，不执行真实扫描、安装、初始化或计划写入。"
 echo ""
 sleep 1
 
@@ -11,7 +13,7 @@ sleep 1
 echo "📦 步骤1: 安装 Skills 套件"
 echo "$ npx skills@latest add toRolex/Research-OS-Studio --list"
 sleep 2
-echo "📋 发现 39 个可安装的 Skills..."
+echo "📋 [模拟] 展示当前套件可安装的 Skills 列表（未执行真实扫描）..."
 sleep 1
 echo "$ npx skills@latest add toRolex/Research-OS-Studio --all"
 sleep 2

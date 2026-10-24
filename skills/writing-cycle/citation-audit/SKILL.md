@@ -70,7 +70,7 @@ reviewer 无法启动或不能读原始材料：保留能做的条目映射和�
 
 ### soft-only：冻结所有 bib
 
-建议层服从 [apply-citation-fixes 的冻结动作表](../apply-citation-fixes/SKILL.md#soft-only-约束)。三轴结论不变。任何应用仍需用户单独调用并授权。
+建议层服从 [apply-citation-fixes 的冻结动作表](../apply-citation-fixes/SKILL.md#soft-only-约束)。三轴结论不变，本审计只返回findings、不改稿。有效父委托已覆盖修复职责、写域和剩余额度时，调用者可交由 `apply-citation-fixes` 按精确diff合同承接，不要求用户再次点名；独立调用仍显式，未覆盖时只询问缺项。bib及其他冻结要求不因此解除，审计者不自行应用修复。
 
 完成条件：冻结影响只体现在行动建议，元数据漂移／错误引用仍明确可见。
 
