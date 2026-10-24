@@ -217,7 +217,7 @@ paper-compile-repair and apply-citation-fixes remain distinct leaf skills; they 
 
 ## Safety and Control Principles
 
-1. **No System Alterations**: The suite does not install or modify Python, Lean, LaTeX, CUDA drivers, or cloud credentials. It reports missing tools and adapts cleanly.
+1. **Environment ownership and scoped preparation**: Reuse existing resources. Project-local dependencies, tools, and caches may be prepared within a valid mandate's write scope and remaining quota; read-only capabilities do not prepare environments. Global installation/configuration, driver changes, credentials, and scheduler deployment require specific authority, not an ordinary research mandate. Report missing tools and unperformed checks honestly; stop the affected action when authority or resources are missing.
 2. **Mandate, read-only scope, and hard gates**: Keep explicit entry and user-requested read-only scope. Within the mandate, ordinary reversible work and capability transitions proceed without repeated approval. Main-goal replacement waits for the goal owner's confirmation; authority or quota overrun, external sends, destructive changes, and specific safety gates stop before the side effect; only affected work is blocked.
 3. **Quota-aware execution**: Missing setup or an explicit budget permits bounded work that does not assume ungranted resources. Heavy computation and paid external services proceed only within actual authorization and quota; missing or exceeded quota stops the affected work.
 

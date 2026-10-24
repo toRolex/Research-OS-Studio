@@ -13,7 +13,7 @@ Check whether a proposed method/idea has already been done in the literature. Ju
 
 Gates: none
 
-由 `/research-os` 的 Discovery 组合进入时，本调用继承调用者的研究委托：目标、权限、研究额度与完成条件沿用，读这份正文不再重复请求批准；只有目标替换才停下确认。独立调用时，下面「Scope and authorization」的输入、边界、预算与输出来源就是本次授权范围，不需要先 setup。
+由 `/research-os` 的 Discovery 组合进入时，本调用继承调用者的研究委托：目标、权限、研究额度与完成条件沿用，读这份正文不再重复请求批准；只有目标替换才停下确认。独立调用时，下列 Role／Inputs／Resources／Writes／Budget 字段的输入、边界、预算与输出来源就是本次授权范围，不需要先 setup。
 
 本能力已按委托合同迁移；未迁移的兄弟能力仍按各自旧门停下确认。公开检索不授权上传私有材料、付费服务、新凭据、远程写入或安装环境；越过这些边界属于越权，超过给定检索/读取额度属于超额，都只阻塞对应动作。
 

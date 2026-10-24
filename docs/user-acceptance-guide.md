@@ -10,7 +10,7 @@
 ## 一、验收准备与环境所有权原则
 
 ### 1. 基础环境与工具所有权
-- **环境所有权归用户所有**：Research OS 不会且不得自动为用户安装或配置 Python、Lean、LaTeX、R、CUDA/GPU 驱动、SSH 密钥或 Slurm 调度器。
+- **环境所有权归用户所有**：复用现有资源；项目内依赖、工具与缓存可在有效委托覆盖的写域和剩余额度内准备。全局安装/配置、CUDA/GPU 驱动、SSH 凭据及调度器部署不由普通科研授权推导，须有相应明确权限；只读能力不执行环境准备，缺授权只停止相关动作。
 - **工具缺失如实报告**：当 Skill 需要的外部工具（如 `pdflatex`、`lean`、`web_search` 或特定 Python 库）不存在时，Skill 必须如实报告工具缺失缺口并安全降级，**绝不伪造执行成功**。
 - **授权与副作用边界**：高成本计算、付费 API 和外部执行须有相应范围与额度授权；普通授权内工作不因阶段转换、输出路径变化或每轮修复而重复请求批准。对外发送、破坏性覆盖/删除、超出授权或额度，以及具体能力声明的硬门，仍在副作用前停下并只阻塞相关工作。
 - **研究委托**：`/research-os` 按目标、授权范围与额度、完成条件持续组合和重排所需能力；产出报告本身不是必须停止信号。只读请求始终只读。缺少 setup 或明确预算时可先做不依赖未授权资源的有界工作；只有主要目标被替换时才要求目标所有者确认。仅在当前宿主确有子代理能力时派发，不把本地串行工作冒称为委托执行。
@@ -216,8 +216,8 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 - **`/research-os` proof（长期证明、续接与可选 Lean）**
   - **操作**：针对已有证明、复杂义务或推广障碍，从 `/research-os` proof 进入；新会话恢复时走 pickup。旧 proof-orchestrator Skill 控制器已移除。
   - **核验**：
-    1. 在新目录中记录继承状态与尝试历史，不污染旧轮次；
-    2. **无 Lean 环境降级**：无 Lean 工具链时，正常执行普通数学推导，并显式标注“未执行 Lean 形式化验证”，绝不强行安装工具链；
+    1. 按 pickup 回查原委托、有效性、写域、累计消耗与在途预留，在授权位置记录继承状态和尝试历史，不固定新目录；保留已有材料，不擅自覆盖。涉及原远程 job 时先核对身份、状态及产物，不自动续期、清零消耗或新建替代作业；
+    2. **无 Lean 环境**：Lean 不是前置条件，普通数学推导如实标注“未执行 Lean 形式化验证”；形式化有价值且有效委托覆盖项目内工具准备、写域和额度时可准备 Lean，否则保留未验证状态，不越权安装；
     3. **已有 Lean 环境辅助**：若有 Lean 环境，必须先读取引理 signature，以 kernel / build 结果为准，带有 `sorry` 的声明不得标记为形式化通过；
     4. 支持生成自包含的手动交接包（Manual Handoff Package）。
 
@@ -250,8 +250,8 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
   - **操作**：在可丢弃副本里分别给出通用材料、机器学习实验材料、系统设计与实现材料，显式调用 `/research-os` 并要求写论文。
   - **核验**：
     1. 三类材料都进入同一 `paper-writing` 入口；按需读取 ML 的实验报告/reviewer/venue 参考或 Systems 的写作/评价/checklist/venue 参考与对应报告模板。
-    2. 授权确认前按统一入口的委托合同只读、零写入。确认后按统一 composition map 走规划、图表、起草、真实编译，以及 claim、citation、stress；含证明时才读 `proof-review`。
-    3. 交付候选稿与审查报告后停止。投稿与上传不发生。`paper-compile-repair` 与 `apply-citation-fixes` 仍须另行点名。
+    2. 先核对有效委托；未获相应写入授权时只读、零写入。已授权工作按统一 composition map 走规划、图表、起草、编译与 claim、citation、stress；含证明时才读 `proof-review`，只读审查不改稿。工具缺失或构建未获授权时如实标记未运行。
+    3. 交付候选稿与审查报告，投稿与上传不发生。有效父委托覆盖职责、文件与额度时可级联 `paper-compile-repair`、`apply-citation-fixes`，不要求再次点名，仍核对精确 diff、写域与预算；独立调用须显式点名并明确授权。越权、未授权覆盖/删除及外发停在副作用前。
 - **ML/AI 分支核验**：每次对比写明 seeds、runs、error bars、超参与选择、compute、复现与 Limitations；缺失处保留 `[SEED COUNT NEEDED]` 或 `[COMPUTE NEEDED]`，不用默认值填空，不补跑实验。
 - **Systems 分支核验**：按专业方法检查摘要、Gap、alternatives、end-to-end、microbenchmark／ablation、scalability；缺少扩展性证据时保留 `MISSING SCALABILITY EVIDENCE`，不外推曲线，依赖缺口的主张不标为 `submission-candidate`。
 - **`research-improvement`（#28 全研究有界改进循环）**
@@ -307,9 +307,9 @@ npx skills@latest add toRolex/Research-OS-Studio --skill '*' --agent claude-code
 | 5 | **实验执行有界** | `experiment-bridge` 仅是 `/research-os` 配方名，不是 Skill/slash 入口；执行唯一进入 `run-experiment`，严格限制在批准预算和文件范围内并保留全部 attempts 历史；分析/审计仍是独立职责 | [ ] 通过 |
 | 6 | **结果审计与 Claim** | `experiment-audit` 独立查作弊/幻觉；`result-to-claim` 收窄不确定结论 | [ ] 通过 |
 | 7 | **数学证明与修复** | `proof-review` 只读报告；`proof-repair` 遇反例不擅改命题，无 Lean 安全降级 | [ ] 通过 |
-| 8 | **论文写作与编译** | `/research-os` paper-writing 三变体各自走本专业入口，授权前零写入，交付候选稿与审查报告；编译修复与引用修复仍须另行点名 | [ ] 通过 |
-| 9 | **ML/Systems 专业规范** | ml 不经通用入口，seeds/compute 缺口保持可见；systems 不经通用入口，缺扩展性保持 `MISSING SCALABILITY EVIDENCE` | [ ] 通过 |
+| 8 | **论文写作与编译** | `/research-os` 统一进入 `paper-writing`，按材料加载 general/ML/Systems 参考；未授权写入时只读，交付候选稿与审查报告；编译/引用修复可在有效父委托职责、写域及额度内级联并核对精确 diff，独立调用显式点名 | [ ] 通过 |
+| 9 | **ML/Systems 专业规范** | 共用 `paper-writing` 入口，ML 分支加载实验/审稿/venue 规范，seeds/compute 缺口保持可见；Systems 分支加载写作/评价规范，缺扩展性保持 `MISSING SCALABILITY EVIDENCE` | [ ] 通过 |
 | 10 | **审稿、转投、演讲** | `/research-os` 进入 rebuttal、resubmit、paper-talk；策略、措辞、范围、改动、授权、大纲与外发仍停；旧稿保留，三产物是 slides、notes、script | [ ] 通过 |
-| 11 | **工具缺失与边界** | 缺失外部环境（LaTeX/Lean/GPU）如实报告并降级，不假报成功，不自装环境 | [ ] 通过 |
+| 11 | **工具缺失与边界** | 缺失环境如实报告，不假报成功；项目内准备须在有效授权写域/额度内，只读能力不准备；全局配置、驱动/凭据/部署等缺权限则停止相关动作 | [ ] 通过 |
 | 12 | **组合门** | 只读优先于执行词；可逆步骤不停；外发、删覆盖、批次越界、叶审批点停在副作用前 | [ ] 通过 |
 | 13 | **宿主能力与分派** | 在实际宿主核验 Skill 发现/加载及当前子代理能力；仅把真实支持的子代理用于委托。无该能力时继续可有界完成的部分，并如实标明未执行的委托工作，不以品牌或串行代跑冒称委托已执行 | [ ] 通过 |
