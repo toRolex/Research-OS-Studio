@@ -193,7 +193,7 @@ research-os Discovery 配方
 | 分类 | 技能名称 | 调用方式 | 说明 |
 |---|---|---|---|
 | **General** | [setup-research-os](skills/general/setup-research-os/SKILL.md) | 可建议 | 可选的项目初始化：确认本 session 可用模型的角色映射、零授权默认政策与工作区种子；建议本身不是写入授权，也不是开始研究的前置条件 |
-| | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口：一次调用是一份研究委托（目标/权限/额度/完成条件见 `references/mandate.md`）；只读走 route-only；仅在宿主具备真实子代理能力时委托。兼容入口和未迁移路线仍按其当前合同工作；此清单不表示 #55B/C 已合入（边界见 `references/migration-boundary.md`） |
+| | [research-os](skills/general/research-os/SKILL.md) | 显式 | 统一编排入口：一次调用是一份研究委托（目标/权限/额度/完成条件见 `references/mandate.md`）；只读走 route-only；仅在宿主具备真实子代理能力时委托。数学研究已迁入 proof 路线，旧长期证明控制器已删除；分支所需独立安装的 slug 与依赖见 [proof 配方](skills/general/research-os/playbooks/proof.md)，独立只读审查边界见[迁移说明](skills/general/research-os/references/migration-boundary.md) |
 | | [swarm](skills/general/swarm/SKILL.md) | 显式 | 并行覆盖：分片、竞赛或混合探索，派发宿主真实子代理并汇总；独立 brief、输出隔离、缺证据有界重派，缺口不算通过（改编自 pstack swarm，MIT，见其 LICENSE） |
 | | [interrogate](skills/general/interrogate/SKILL.md) | 显式 | 对抗审查：独立 reviewer 逐模型挑战研究材料或变更，findings 去重、分歧保留，主审四桶有据判断；始终只读，修复由委托按授权另行组织 |
 | **Organization** | [arena](skills/organization/arena/SKILL.md) | 显式 | 候选比较与整合：同一任务并行独立候选，预先 rubric、交叉评判、主编排者逐项选基座并手工整合，数学整合后重查假设/记号/依赖闭合；胜出不等于原命题成立；已迁移到研究委托合同，缺子代理时标 blocked |
