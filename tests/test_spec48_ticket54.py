@@ -13,6 +13,7 @@ import unittest
 from pathlib import Path
 
 from spec48_workcopy import copy_tracked_tree
+from spec48_checker_result import parse_checker_result
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts" / "check-skills.py"
@@ -51,8 +52,9 @@ def problem_lines(root: Path) -> list[str]:
         cwd=root,
         capture_output=True,
         text=True,
+        timeout=30,
     )
-    return [line for line in result.stdout.splitlines() if line.startswith("  - ")]
+    return parse_checker_result(result)
 
 
 def fresh_problems(root: Path) -> list[str]:

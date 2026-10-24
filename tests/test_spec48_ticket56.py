@@ -12,6 +12,7 @@ import unittest
 from pathlib import Path
 
 from spec48_workcopy import copy_tracked_tree
+from spec48_checker_result import parse_checker_result
 
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts" / "check-skills.py"
@@ -54,8 +55,9 @@ def problem_lines(root: Path) -> list[str]:
         cwd=root_dir,
         capture_output=True,
         text=True,
+        timeout=30,
     )
-    return [line for line in result.stdout.splitlines() if line.startswith("  - ")]
+    return parse_checker_result(result)
 
 
 def fresh_problems(root: Path) -> list[str]:
@@ -338,7 +340,7 @@ class CheckerContract(unittest.TestCase):
         self.assertEqual(problem_lines(ROOT), [])
         self.assertEqual(fresh_problems(ROOT), [])
 
-    def test_checker_detects_missing_recovery_contract(self):
+    def test_checker_accepts_equivalent_interruption_wording(self):
         with WorkCopy() as root:
             queue_path = root.path / QUEUE.relative_to(ROOT) / "SKILL.md"
             queue_path.write_text(
@@ -346,7 +348,22 @@ class CheckerContract(unittest.TestCase):
                 encoding="utf-8",
             )
             root.stage()
-            self.assertIn("断线", "\n".join(fresh_problems(root)))
+            self.assertEqual(fresh_problems(root), [])
+
+    def test_checker_detects_blind_rerun_without_original_job_lookup(self):
+        with WorkCopy() as root:
+            queue_path = root.path / QUEUE.relative_to(ROOT) / "SKILL.md"
+            lines = queue_path.read_text(encoding="utf-8").splitlines()
+            lines = [
+                "- **可恢复**：断线后直接创建新作业并盲重跑，不查询旧任务。旧文件、作业退出、产物有效和科学结论分别记录。"
+                if line.startswith("- **可恢复**：") else line
+                for line in lines
+            ]
+            queue_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+            root.stage()
+            problems = "\n".join(fresh_problems(root))
+            self.assertIn("experiment-queue/SKILL.md", problems)
+            self.assertIn("不盲重跑", problems)
 
     def test_checker_detects_missing_remote_contract(self):
         with WorkCopy() as root:

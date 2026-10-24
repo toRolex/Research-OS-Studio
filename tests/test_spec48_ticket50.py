@@ -10,6 +10,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from spec48_checker_result import parse_checker_result
+
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts" / "check-skills.py"
 SWARM_SKILL = ROOT / "skills" / "general" / "swarm" / "SKILL.md"
@@ -32,6 +34,7 @@ def _run_checker() -> subprocess.CompletedProcess[str]:
         cwd=ROOT,
         capture_output=True,
         text=True,
+        timeout=30,
     )
 
 
@@ -179,10 +182,5 @@ class EntryDiscovery(unittest.TestCase):
 
     def test_full_checker_green_with_no_new_failures(self):
         result = _run_checker()
-        allowed_history = "evidence/"
-        unexpected = [
-            line for line in result.stdout.splitlines()
-            if line.strip().startswith("- ") and not (allowed_history in line and line.rstrip().endswith(".tar.gz"))
-        ]
-        assert result.returncode in (0, 1)
-        assert not unexpected, "checker 出现本票新增失败：\n" + "\n".join(unexpected)
+        assert not parse_checker_result(result)
+        assert result.returncode == 0

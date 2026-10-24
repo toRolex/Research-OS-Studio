@@ -13,6 +13,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from spec48_checker_result import parse_checker_result
+
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts" / "check-skills.py"
 SKILLS = ROOT / "skills"
@@ -22,10 +24,6 @@ HELPER = CREATE / "helpers" / "feature-map-lint.py"
 BOUNDARY = SKILLS / "general/research-os/references/migration-boundary.md"
 UPSTREAM_REVISION = "88d47514b82e7c44f00f2b2a72ff6dd12158038c"
 
-HISTORY_STATUS = re.compile(
-    r"HISTORY (UNVERIFIED|MISMATCH|BYTE_MATCH): [A-Za-z0-9][A-Za-z0-9._-]*\.tar\.gz "
-    r"\((UNAVAILABLE|AVAILABLE); 摘要不认证来源/安全\)"
-)
 MODEL_PIN = re.compile(
     r"(?i)(gpt-[0-9]|claude-[0-9]|gemini-[0-9]|grok-[0-9]|deepseek-[a-z0-9]|glm-[0-9]|opus|sonnet)"
 )
@@ -47,38 +45,9 @@ def problem_lines(root: Path) -> list[str]:
         cwd=root,
         capture_output=True,
         text=True,
+        timeout=30,
     )
-    # Recognize only the explicit history-status grammar, never arbitrary output.
-    output = [line for line in result.stdout.splitlines() if not HISTORY_STATUS.fullmatch(line)]
-    lines = [line for line in output if line.startswith("  - ")]
-    failure = re.fullmatch(r"FAIL: (\d+) 个问题", output[0]) if output else None
-    valid_failure = (
-        result.returncode == 1
-        and failure is not None
-        and int(failure.group(1)) == len(lines)
-        and len(output) == len(lines) + 1
-    )
-    valid_success = (
-        result.returncode == 0
-        and len(output) == 1
-        and output[0].startswith("OK: ")
-    )
-    if result.stderr:
-        raise AssertionError(
-            f"checker wrote to stderr (exit={result.returncode}): {result.stderr!r}"
-        )
-    if result.returncode == 0 and not valid_success:
-        raise AssertionError(f"checker returned success without a valid OK summary: {result.stdout!r}")
-    if result.returncode == 1 and not valid_failure:
-        raise AssertionError(
-            f"checker did not finish with a valid report (exit=1): {result.stdout!r}"
-        )
-    if result.returncode not in (0, 1):
-        raise AssertionError(
-            f"checker exited unexpectedly (exit={result.returncode}): "
-            f"stdout={result.stdout!r}; stderr={result.stderr!r}"
-        )
-    return lines
+    return parse_checker_result(result)
 
 
 def tracked(root: Path) -> set[str]:

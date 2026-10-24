@@ -10,6 +10,8 @@ import sys
 import unittest
 from pathlib import Path
 
+from spec48_checker_result import parse_checker_result
+
 ROOT = Path(__file__).resolve().parents[1]
 CHECK = ROOT / "scripts" / "check-skills.py"
 SKILLS = ROOT / "skills" / "writing-cycle"
@@ -47,8 +49,9 @@ def checker_problem_lines(root: Path = ROOT) -> list[str]:
         cwd=root,
         capture_output=True,
         text=True,
+        timeout=30,
     )
-    return [line for line in result.stdout.splitlines() if line.startswith("  - ")]
+    return parse_checker_result(result)
 
 
 def fresh_problem_lines(root: Path = ROOT) -> list[str]:
